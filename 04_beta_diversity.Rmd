@@ -77,7 +77,7 @@ adonis2(beta_q0n$S ~ Species+Species:Habitat,
   tt()
   
 ```
-```{r pairwise_neutral, comment="", message=FALSE, warning=FALSE}
+```{r pairwise_neutral_metagenomics, comment="", message=FALSE, warning=FALSE}
 pairwise.adonis(beta_q0n$S, sample_metadata$Species, perm = 999)
 ```
 
@@ -106,7 +106,7 @@ adonis2(beta_q1n$S ~ Species,
         broom::tidy() %>%
         tt()
 ```
-```{r pairwise_neutral, comment="", message=FALSE, warning=FALSE}
+```{r pairwise_neutral_metagenomics2, comment="", message=FALSE, warning=FALSE}
 pairwise.adonis(beta_q1n$S, sample_metadata$Species, perm = 999)
 ```
 
@@ -256,10 +256,11 @@ beta_q1f$S %>%
 
 ## Amplicon
 
-```{r div_load_data_ampli, comment="", echo=FALSE, message=FALSE, warning=FALSE}
-load("resources/16S/data_nocopyfilt.Rdata")
+```{r div_load_data_ampli2, comment="", message=FALSE, warning=FALSE}
+load("resources/amplicon/data_nocopyfilt.Rdata")
 ```
-```{r filter_copy, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+
+```{r filter_copy3, comment="", message=FALSE, warning=FALSE}
 genome_metadata <- genome_metadata %>%
   filter(!is.na(phylum))
 
@@ -267,7 +268,7 @@ genome_counts_filt <- genome_counts_filt %>%
   filter(genome %in% genome_metadata$genome)%>%
   mutate_at(vars(-genome),~./sum(.))%>% 
   column_to_rownames(., "genome") %>% 
-  copy_filt(., 0.00005)%>%
+  .[,colSums(.)>0.00005] %>%
   filter(rowSums(across(everything())) != 0) %>% 
   rownames_to_column(., "genome")
 
@@ -298,61 +299,101 @@ set.seed(2024)
 ### Permanova
 ```{r permanova_ampli, comment="", message=FALSE, warning=FALSE}
 #Richness
-betadisper(beta_q0n$S, sample_metadata$Species) %>% permutest(.) 
+betadisper(beta_q0n$S, 
+           sample_metadata %>% 
+              filter(sample %in% labels(beta_q0n$S)) %>% 
+              arrange(match(sample,labels(beta_q0n$S))) %>% 
+              pull(Species)) %>% 
+          permutest(.) 
+
 adonis2(beta_q0n$S ~ Species+Species:Habitat,
         by="terms", 
-        data = sample_metadata %>% arrange(match(sample,labels(beta_q0n$S))), 
+        data = sample_metadata %>% 
+              filter(sample %in% labels(beta_q0n$S)) %>% 
+              arrange(match(sample,labels(beta_q0n$S))), 
         permutations = 999) %>%
   broom::tidy() %>% 
   tt()
 
-betadisper(beta_q0n$S, sample_metadata$Species) %>% permutest(.) 
 adonis2(beta_q0n$S ~ Species,
         by="terms", 
-        data = sample_metadata %>% arrange(match(sample,labels(beta_q0n$S))), 
+        data = sample_metadata %>% 
+              filter(sample %in% labels(beta_q0n$S)) %>% 
+              arrange(match(sample,labels(beta_q0n$S))), 
         permutations = 999) %>%
   broom::tidy() %>% 
   tt()
 ```
 ```{r pairwise_rich, comment="", message=FALSE, warning=FALSE}
-pairwise.adonis(beta_q0n$S, sample_metadata$Species, perm = 999)
+pairwise.adonis(beta_q0n$S, 
+                sample_metadata %>% 
+                    filter(sample %in% labels(beta_q0n$S)) %>% 
+                    arrange(match(sample,labels(beta_q0n$S))) %>% 
+                    pull(Species), 
+                perm = 999)
 ```
 
 ```{r permanova_neutral_ampli, comment="", message=FALSE, warning=FALSE}
 #Neutral diversity
-betadisper(beta_q1n$S, sample_metadata$Species) %>% permutest(.) 
+betadisper(beta_q1n$S, 
+           sample_metadata %>% 
+              filter(sample %in% labels(beta_q0n$S)) %>% 
+              arrange(match(sample,labels(beta_q0n$S))) %>% 
+              pull(Species)) %>% 
+          permutest(.) 
+
 adonis2(beta_q1n$S ~ Species+Species:Habitat,
         by="terms",
-        data = sample_metadata %>% arrange(match(sample,labels(beta_q1n$S))), 
+        data = sample_metadata %>% 
+              filter(sample %in% labels(beta_q0n$S)) %>% 
+              arrange(match(sample,labels(beta_q0n$S))), 
         permutations = 999) %>%
         broom::tidy() %>%
         tt()
 
 adonis2(beta_q1n$S ~ Species,
         by="terms",
-        data = sample_metadata %>% arrange(match(sample,labels(beta_q1n$S))), 
+        data = sample_metadata %>% 
+              filter(sample %in% labels(beta_q0n$S)) %>% 
+              arrange(match(sample,labels(beta_q0n$S))), 
         permutations = 999) %>%
         broom::tidy() %>%
         tt()
 
 adonis2(beta_q1n$S ~ Habitat,
         by="terms",
-        data = sample_metadata %>% arrange(match(sample,labels(beta_q1n$S))), 
-        permutations = 999, 
-        strata = sample_metadata %>% arrange(match(sample,labels(beta_q1n$S))) %>% pull(Species)) %>%
+        data = sample_metadata %>% 
+              filter(sample %in% labels(beta_q0n$S)) %>% 
+              arrange(match(sample,labels(beta_q0n$S))), 
+        permutations = 999,
+        strata = sample_metadata %>% 
+              filter(sample %in% labels(beta_q0n$S)) %>% 
+              arrange(match(sample,labels(beta_q0n$S))) %>% 
+              pull(Species)) %>% 
         broom::tidy() %>%
         tt()
 
 adonis2(beta_q1n$S ~ Species,
         by="terms",
-        data = sample_metadata %>% arrange(match(sample,labels(beta_q1n$S))), 
-        permutations = 999, 
-        strata = sample_metadata %>% arrange(match(sample,labels(beta_q1n$S))) %>% pull(Habitat)) %>%
+        data = sample_metadata %>% 
+              filter(sample %in% labels(beta_q0n$S)) %>% 
+              arrange(match(sample,labels(beta_q0n$S))), 
+        permutations = 999,
+        strata = sample_metadata %>% 
+              filter(sample %in% labels(beta_q0n$S)) %>% 
+              arrange(match(sample,labels(beta_q0n$S))) %>% 
+              pull(Species)) %>% 
         broom::tidy() %>%
         tt()
 ```
+
 ```{r pairwise_neutral, comment="", message=FALSE, warning=FALSE}
-pairwise.adonis(beta_q1n$S, sample_metadata$Species, perm = 999)
+pairwise.adonis(beta_q1n$S, 
+                sample_metadata %>% 
+                    filter(sample %in% labels(beta_q0n$S)) %>% 
+                    arrange(match(sample,labels(beta_q0n$S))) %>% 
+                    pull(Species), 
+                perm = 999)
 ```
 
 ### NMDS
