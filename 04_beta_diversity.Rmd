@@ -1,0 +1,412 @@
+# Beta diversity
+## Metagenomics
+```{r load_data_beta}
+load("resources/metagenomics/data_filtered.Rdata")
+treatment_colors <- c("#e5bd5b", "#6b7398", "#76b183", "#d57d2c", "#2a2d26", "#f9d4cc", "#3c634e", "#ea68c3")
+load("resources/metagenomics/beta_filtered.Rdata")
+sample_metadata<-sample_metadata %>% 
+  filter(!sample %in% c("H06", "H20"))
+```
+
+```{r beta_div, comment="", message=FALSE, warning=FALSE, eval=FALSE}
+beta_q0n <- genome_counts_filt %>%
+  select(-H06, -H20) %>% 
+  column_to_rownames(., "genome") %>%
+  filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
+  select_if(~!all(. == 0)) %>%
+  hillpair(., q = 0)
+
+beta_q1n <- genome_counts_filt %>%
+    select(-H06, -H20) %>% 
+  column_to_rownames(., "genome") %>%
+  filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
+  select_if(~!all(. == 0)) %>%
+  hillpair(., q = 1)
+
+genome_counts_filt_beta <- genome_counts_filt %>%
+    select(-H06, -H20) %>% 
+  column_to_rownames(., "genome") %>%
+  filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
+  select_if(~!all(. == 0))%>%
+  rownames_to_column(., "genome")
+
+genome_tree <- keep.tip(genome_tree, tip=genome_counts_filt_beta$genome)
+beta_q1p <- genome_counts_filt %>%
+    select(-H06, -H20) %>% 
+  column_to_rownames(., "genome") %>%
+  filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
+  select_if(~!all(. == 0)) %>%
+  hillpair(., q = 1, tree = genome_tree)
+
+genome_gifts1 <- genome_gifts[genome_counts_filt_beta$genome,]
+genome_gifts1 <- genome_gifts1[, colSums(genome_gifts1 != 0) > 0]
+
+dist <- genome_gifts1 %>%
+  to.elements(., GIFT_db) %>%
+  traits2dist(., method = "gower")
+
+beta_q1f <- genome_counts_filt %>%
+    select(-H06, -H20) %>% 
+  column_to_rownames(., "genome") %>%
+  filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
+  select_if(~!all(. == 0)) %>%
+  hillpair(., q = 1, dist = dist)
+```
+
+```{r save_beta, comment="", message=FALSE,echo=FALSE,warning=FALSE, eval=FALSE}
+save(beta_q0n, 
+     beta_q1n, 
+     beta_q1p, 
+     beta_q1f, 
+     file = "resources/metagenomics/beta_filtered.Rdata")
+```
+
+```{r}
+set.seed(2024)
+```
+
+### Permanova
+```{r permanova, comment="", message=FALSE, warning=FALSE}
+#Richness
+betadisper(beta_q0n$S, sample_metadata$Species) %>% permutest(.) 
+adonis2(beta_q0n$S ~ Species+Species:Habitat,
+        by="terms", 
+        data = sample_metadata %>% arrange(match(sample,labels(beta_q0n$S))), 
+        permutations = 999) %>%
+  broom::tidy() %>% 
+  tt()
+  
+```
+```{r pairwise_neutral, comment="", message=FALSE, warning=FALSE}
+pairwise.adonis(beta_q0n$S, sample_metadata$Species, perm = 999)
+```
+
+```{r permanova_neutral, comment="", message=FALSE, warning=FALSE}
+#Neutral diversity
+betadisper(beta_q1n$S, sample_metadata$Species) %>% permutest(.) 
+adonis2(beta_q1n$S ~ Species+Species:Habitat,
+        by="terms",
+        data = sample_metadata %>% arrange(match(sample,labels(beta_q1n$S))), 
+        permutations = 999) %>%
+        broom::tidy() %>%
+        tt()
+adonis2(beta_q1n$S ~ Habitat,
+        by="terms",
+        data = sample_metadata %>% arrange(match(sample,labels(beta_q1n$S))), 
+        permutations = 999, 
+        strata = sample_metadata %>% arrange(match(sample,labels(beta_q1n$S))) %>% pull(Species)) %>%
+        broom::tidy() %>%
+        tt()
+
+adonis2(beta_q1n$S ~ Species,
+        by="terms",
+        data = sample_metadata %>% arrange(match(sample,labels(beta_q1n$S))), 
+        permutations = 999, 
+        strata = sample_metadata %>% arrange(match(sample,labels(beta_q1n$S))) %>% pull(Habitat)) %>%
+        broom::tidy() %>%
+        tt()
+```
+```{r pairwise_neutral, comment="", message=FALSE, warning=FALSE}
+pairwise.adonis(beta_q1n$S, sample_metadata$Species, perm = 999)
+```
+
+```{r permanova_phylo, comment="", message=FALSE, warning=FALSE}
+#Phylogenetic diversity
+betadisper(beta_q1p$S, sample_metadata$Species) %>% permutest(.) 
+adonis2(beta_q1p$S ~ Species+Species:Habitat,
+        by="terms",
+        data = sample_metadata %>% arrange(match(sample,labels(beta_q1p$S))), 
+        permutations = 999) %>%
+        broom::tidy() %>%
+        tt()
+```
+```{r pairwise_phylo, comment="", message=FALSE, warning=FALSE}
+pairwise.adonis(beta_q1p$S, sample_metadata$Species, perm = 999)
+```
+```{r permanova_func, comment="", message=FALSE, warning=FALSE}
+#Functional diversity
+betadisper(beta_q1f$S, sample_metadata$Species) %>% permutest(.) 
+adonis2(beta_q1f$S ~ Species+Species:Habitat,
+        by="terms", 
+        data = sample_metadata %>% arrange(match(sample,labels(beta_q1f$S))), 
+        permutations = 999) %>%
+        broom::tidy() %>%
+        tt()
+```
+
+
+### NMDS
+#### Richness
+```{r beta_div_nmds_richness_plot, comment="", message=FALSE, warning=FALSE, fig.height=7, fig.width=10, fig.fullwidth=TRUE}
+beta_q0n$S %>%
+  vegan::metaMDS(., trymax = 500, k = 2, trace=0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(sample_metadata, by = join_by(sample == sample)) %>%
+  group_by(Species) %>%
+  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
+  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
+  ungroup() %>%
+  ggplot(aes(x = NMDS1, y = NMDS2, color = Species)) +
+  geom_point(size = 4) +
+  scale_color_manual(values = treatment_colors) +
+  geom_segment(aes(x = x_cen, y = y_cen, xend = NMDS1, yend = NMDS2), alpha = 0.9, show.legend = FALSE) +
+  theme(
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    panel.background = element_blank(),
+    axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"),
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.position = "right", legend.box = "vertical"
+    ) +
+    labs(color="Species", shape="Habitat")
+#+geom_text_repel(aes(label = sample), size=3)
+
+```
+
+
+#### Neutral diversity
+
+```{r beta_div_nmds_neutral_plot, comment="", message=FALSE, warning=FALSE, fig.height=7, fig.width=12, fig.fullwidth=TRUE}
+beta_q1n$S %>%
+  vegan::metaMDS(., trymax = 500, k = 2, trace=0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(sample_metadata, by = join_by(sample == sample)) %>%
+  group_by(Species) %>%
+  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
+  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
+  ungroup() %>%
+  ggplot(aes(x = NMDS1, y = NMDS2, color = Species, shape = as.factor(Habitat))) +
+  geom_point(size = 4) +
+  scale_color_manual(values = treatment_colors) + #,labels=c("high" = "High-altitude", "low" = "Low-altitude")
+  geom_segment(aes(x = x_cen, y = y_cen, xend = NMDS1, yend = NMDS2), alpha = 0.9, show.legend = FALSE) +
+  theme(
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    panel.background = element_blank(),
+    axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"),
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.position = "right", legend.box = "vertical"
+    ) +
+    labs(color="Species", shape="Habitat")
+#+geom_text_repel(aes(label = sample), size=3)
+```
+
+#### Phylogenetic diversity
+
+```{r beta_div_nmds_phylo_plot, comment="", message=FALSE, warning=FALSE, fig.height=7, fig.width=10, fig.fullwidth=TRUE}
+beta_q1p$S %>%
+  vegan::metaMDS(., trymax = 500, k = 2, trace=0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(sample_metadata, by = join_by(sample == sample)) %>%
+  group_by(Species) %>%
+  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
+  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
+  ungroup() %>%
+  ggplot(aes(x = NMDS1, y = NMDS2, color = Species, shape = as.factor(Habitat))) +
+  geom_point(size = 4) +
+  scale_color_manual(values = treatment_colors,labels=c("high" = "High-altitude", "low" = "Low-altitude")) +
+  geom_segment(aes(x = x_cen, y = y_cen, xend = NMDS1, yend = NMDS2), alpha = 0.9, show.legend = FALSE) +
+  theme(
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    panel.background = element_blank(),
+    axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"),
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.position = "right", legend.box = "vertical"
+    ) +
+    labs(color="Altitude", shape="Habitat")
+#+geom_text_repel(aes(label = sample), size=3)
+```
+
+
+#### Functional diversity
+
+```{r beta_div_nmds_funct_plot, comment="", message=FALSE, warning=FALSE, fig.height=7, fig.width=10, fig.fullwidth=TRUE}
+beta_q1f$S %>%
+  vegan::metaMDS(., trymax = 500, k = 2, trace=0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(sample_metadata, by = join_by(sample == sample)) %>%
+  group_by(Species) %>%
+  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
+  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
+  ungroup() %>%
+  ggplot(aes(x = NMDS1, y = NMDS2, color = Species, shape = as.factor(Habitat))) +
+  geom_point(size = 4) +
+  scale_color_manual(values = treatment_colors,labels=c("high" = "High-altitude", "low" = "Low-altitude")) +
+  geom_segment(aes(x = x_cen, y = y_cen, xend = NMDS1, yend = NMDS2), alpha = 0.9, show.legend = FALSE) +
+  theme(
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    panel.background = element_blank(),
+    axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"),
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.position = "right", legend.box = "vertical"
+    ) +
+    labs(color="Altitude", shape="Habitat")
+#+geom_text_repel(aes(label = sample), size=3)
+```
+
+## Amplicon
+
+```{r div_load_data_ampli, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+load("resources/16S/data_nocopyfilt.Rdata")
+```
+```{r filter_copy, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+genome_metadata <- genome_metadata %>%
+  filter(!is.na(phylum))
+
+genome_counts_filt <- genome_counts_filt %>% 
+  filter(genome %in% genome_metadata$genome)%>%
+  mutate_at(vars(-genome),~./sum(.))%>% 
+  column_to_rownames(., "genome") %>% 
+  copy_filt(., 0.00005)%>%
+  filter(rowSums(across(everything())) != 0) %>% 
+  rownames_to_column(., "genome")
+
+genome_metadata <- genome_metadata %>% 
+  filter(genome %in% genome_counts_filt$genome)
+```
+
+```{r beta_div_ampli, comment="", message=FALSE, warning=FALSE, eval=FALSE}
+beta_q0n <- genome_counts_filt %>%
+#  select(-H06, -H20) %>% 
+  column_to_rownames(., "genome") %>%
+  filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
+  select_if(~!all(. == 0)) %>%
+  hillpair(., q = 0)
+
+beta_q1n <- genome_counts_filt %>%
+#    select(-H06, -H20) %>% 
+  column_to_rownames(., "genome") %>%
+  filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
+  select_if(~!all(. == 0)) %>%
+  hillpair(., q = 1)
+```
+
+```{r seed_ampli, comment="", message=FALSE, warning=FALSE}
+set.seed(2024)
+```
+
+### Permanova
+```{r permanova_ampli, comment="", message=FALSE, warning=FALSE}
+#Richness
+betadisper(beta_q0n$S, sample_metadata$Species) %>% permutest(.) 
+adonis2(beta_q0n$S ~ Species+Species:Habitat,
+        by="terms", 
+        data = sample_metadata %>% arrange(match(sample,labels(beta_q0n$S))), 
+        permutations = 999) %>%
+  broom::tidy() %>% 
+  tt()
+
+betadisper(beta_q0n$S, sample_metadata$Species) %>% permutest(.) 
+adonis2(beta_q0n$S ~ Species,
+        by="terms", 
+        data = sample_metadata %>% arrange(match(sample,labels(beta_q0n$S))), 
+        permutations = 999) %>%
+  broom::tidy() %>% 
+  tt()
+```
+```{r pairwise_rich, comment="", message=FALSE, warning=FALSE}
+pairwise.adonis(beta_q0n$S, sample_metadata$Species, perm = 999)
+```
+
+```{r permanova_neutral_ampli, comment="", message=FALSE, warning=FALSE}
+#Neutral diversity
+betadisper(beta_q1n$S, sample_metadata$Species) %>% permutest(.) 
+adonis2(beta_q1n$S ~ Species+Species:Habitat,
+        by="terms",
+        data = sample_metadata %>% arrange(match(sample,labels(beta_q1n$S))), 
+        permutations = 999) %>%
+        broom::tidy() %>%
+        tt()
+
+adonis2(beta_q1n$S ~ Species,
+        by="terms",
+        data = sample_metadata %>% arrange(match(sample,labels(beta_q1n$S))), 
+        permutations = 999) %>%
+        broom::tidy() %>%
+        tt()
+
+adonis2(beta_q1n$S ~ Habitat,
+        by="terms",
+        data = sample_metadata %>% arrange(match(sample,labels(beta_q1n$S))), 
+        permutations = 999, 
+        strata = sample_metadata %>% arrange(match(sample,labels(beta_q1n$S))) %>% pull(Species)) %>%
+        broom::tidy() %>%
+        tt()
+
+adonis2(beta_q1n$S ~ Species,
+        by="terms",
+        data = sample_metadata %>% arrange(match(sample,labels(beta_q1n$S))), 
+        permutations = 999, 
+        strata = sample_metadata %>% arrange(match(sample,labels(beta_q1n$S))) %>% pull(Habitat)) %>%
+        broom::tidy() %>%
+        tt()
+```
+```{r pairwise_neutral, comment="", message=FALSE, warning=FALSE}
+pairwise.adonis(beta_q1n$S, sample_metadata$Species, perm = 999)
+```
+
+### NMDS
+#### Richness
+```{r beta_div_nmds_richness_plot_ampli, comment="", message=FALSE, warning=FALSE, fig.height=7, fig.width=10, fig.fullwidth=TRUE}
+beta_q0n$S %>%
+  vegan::metaMDS(., trymax = 500, k = 2, trace=0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(sample_metadata, by = join_by(sample == sample)) %>%
+  group_by(Species) %>%
+  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
+  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
+  ungroup() %>%
+  ggplot(aes(x = NMDS1, y = NMDS2, color = Species, shape = as.factor(Habitat))) +
+  geom_point(size = 4) +
+  scale_color_manual(values = treatment_colors) +
+  geom_segment(aes(x = x_cen, y = y_cen, xend = NMDS1, yend = NMDS2), alpha = 0.9, show.legend = FALSE) +
+  theme(
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    panel.background = element_blank(),
+    axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"),
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.position = "right", legend.box = "vertical"
+    ) +
+  labs(color="Species", shape="Habitat")
+```
+
+
+#### Neutral diversity
+```{r beta_div_nmds_neutral_plot_ampli, comment="", message=FALSE, warning=FALSE, fig.height=7, fig.width=10, fig.fullwidth=TRUE}
+beta_q1n$S %>%
+  vegan::metaMDS(., trymax = 500, k = 2, trace=0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(sample_metadata, by = join_by(sample == sample)) %>%
+  group_by(Species) %>%
+  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
+  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
+  ungroup() %>%
+  ggplot(aes(x = NMDS1, y = NMDS2, color = Species, shape = as.factor(Habitat))) +
+  geom_point(size = 4) +
+  scale_color_manual(values = treatment_colors) + #,labels=c("high" = "High-altitude", "low" = "Low-altitude")
+  geom_segment(aes(x = x_cen, y = y_cen, xend = NMDS1, yend = NMDS2), alpha = 0.9, show.legend = FALSE) +
+  theme(
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    panel.background = element_blank(),
+    axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"),
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.position = "right", legend.box = "vertical"
+    ) +
+    labs(color="Species", shape="Habitat")+geom_text_repel(aes(label = sample), size=3)
+```

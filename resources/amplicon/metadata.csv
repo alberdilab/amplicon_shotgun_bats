@@ -1,0 +1,189 @@
+Sample,Plate,Extraction_Round,PCR_Control,Control,Species,Latitude,Longitude,Life_stage,Sex,Habitat,Sp_Hab,Sp_Biome
+GM1.E04,1,15,No,True sample,Eptesicus bottae,30.94398,35.07323,adult,male,Natural,Eb_Nat,Eb_Arid
+GM1.E05,1,15,No,True sample,Eptesicus bottae,30.94398,35.07323,adult,female,Natural,Eb_Nat,Eb_Arid
+GM1.E11,1,16,No,True sample,Eptesicus bottae,30.76877,35.27905,adult,male,Anthropogenic,Eb_Anth,Eb_Arid
+GM1.E15_r1,1,16,No,True sample,Eptesicus bottae,30.00946,35.09695,adult,female,Anthropogenic,Eb_Anth,Eb_Arid
+GM1.E25,1,17,No,True sample,Eptesicus bottae,30.04847,35.08011,adult,female,Natural,Eb_Nat,Eb_Arid
+GM1.E31,1,18,No,True sample,Eptesicus bottae,29.82104,35.03658,adult,female,Anthropogenic,Eb_Anth,Eb_Arid
+GM1.E40,1,19,No,True sample,Eptesicus bottae,30.81102,35.27299,adult,female,Anthropogenic,Eb_Anth,Eb_Arid
+GM1.E50_r1,1,20,No,True sample,Eptesicus bottae,30.37134,35.15411,unknown,female,Anthropogenic,Eb_Anth,Eb_Arid
+GM1.H17,1,26,No,True sample,Hypsugo ariel,30.07258,34.82869,adult,female,Natural,Ha_Nat,Ha_Arid
+GM1.H19,1,27,No,True sample,Hypsugo ariel,30.07258,34.82869,adult,female,Natural,Ha_Nat,Ha_Arid
+GM1.H40,1,29,No,True sample,Hypsugo ariel,30.93769,35.04099,adult,male,Natural,Ha_Nat,Ha_Arid
+GM1.P19_r1,1,3,No,True sample,Pipistrellus kuhlii,30.81465,34.81362,adult,male,Natural,Pk_Nat,Pk_Arid
+GM1.P19_r2,1,3,No,True sample,Pipistrellus kuhlii,30.81465,34.81362,adult,male,Natural,Pk_Nat,Pk_Arid
+GM1.P26,1,3,No,True sample,Pipistrellus kuhlii,30.85377,34.78443,adult,female,Anthropogenic,Pk_Anth,Pk_Arid
+GM1.P39,1,5,No,True sample,Pipistrellus kuhlii,30.81465,34.81362,adult,male,Natural,Pk_Nat,Pk_Arid
+GM1.P57,1,7,No,True sample,Pipistrellus kuhlii,29.57374,34.97178,juvenile,female,Anthropogenic,Pk_Anth,Pk_Med
+GM10.B02,2,2,No,Control sample,Not applicable,not collected,not collected,not applicable,not applicable,Not applicable,Not applicable,Not applicable
+GM10.B04,2,4,No,Control sample,Not applicable,not collected,not collected,not applicable,not applicable,Not applicable,Not applicable,Not applicable
+GM10.B09,2,9,No,Control sample,Not applicable,not collected,not collected,not applicable,not applicable,Not applicable,Not applicable,Not applicable
+GM10.E07,2,15,No,True sample,Eptesicus bottae,30.94398,35.07323,adult,female,Natural,Eb_Nat,Eb_Arid
+GM10.E23,2,17,No,True sample,Eptesicus bottae,30.04847,35.08011,juvenile,female,Natural,Eb_Nat,Eb_Arid
+GM10.H18,2,27,No,True sample,Hypsugo ariel,30.07258,34.82869,adult,female,Natural,Ha_Nat,Ha_Arid
+GM10.H30,2,28,No,True sample,Hypsugo ariel,30.04847,35.08011,adult,female,Natural,Ha_Nat,Ha_Arid
+GM10.H33,2,28,No,True sample,Hypsugo ariel,30.81726,35.28288,adult,male,Anthropogenic,Ha_Anth,Ha_Arid
+GM10.H45,2,30,No,True sample,Hypsugo ariel,30.956,35.36392,adult,female,Anthropogenic,Ha_Anth,Ha_Arid
+GM10.P04,2,1,No,True sample,Pipistrellus kuhlii,30.84797,34.78022,juvenile,male,Anthropogenic,Pk_Anth,Pk_Arid
+GM10.P08,2,1,No,True sample,Pipistrellus kuhlii,30.84797,34.78022,adult,male,Anthropogenic,Pk_Anth,Pk_Arid
+GM10.P29,2,4,No,True sample,Pipistrellus kuhlii,30.85377,34.78443,adult,female,Anthropogenic,Pk_Anth,Pk_Arid
+GM10.P33,2,4,No,True sample,Pipistrellus kuhlii,30.9899,34.89813,adult,female,Anthropogenic,Pk_Anth,Pk_Arid
+GM10.P40,2,5,No,True sample,Pipistrellus kuhlii,30.9899,34.89813,adult,male,Anthropogenic,Pk_Anth,Pk_Arid
+GM10.P70,2,8,No,True sample,Pipistrellus kuhlii,32.4523039,34.9551671,adult,male,Anthropogenic,Pk_Anth,Pk_Med
+GM11.B15,2,15,No,Control sample,Not applicable,not collected,not collected,not applicable,not applicable,Not applicable,Not applicable,Not applicable
+GM11.B19,2,19,No,Control sample,Not applicable,not collected,not collected,not applicable,not applicable,Not applicable,Not applicable,Not applicable
+GM11.E09,2,16,No,True sample,Eptesicus bottae,30.76877,35.27905,adult,female,Anthropogenic,Eb_Anth,Eb_Arid
+GM11.E20,2,17,No,True sample,Eptesicus bottae,30.00946,35.09695,adult,female,Anthropogenic,Eb_Anth,Eb_Arid
+GM11.E44,2,19,No,True sample,Eptesicus bottae,30.37134,35.15411,adult,female,Anthropogenic,Eb_Anth,Eb_Arid
+GM11.E56,2,21,No,True sample,Eptesicus bottae,30.84797,34.78022,adult,male,Anthropogenic,Eb_Anth,Eb_Arid
+GM11.H04,2,25,No,True sample,Hypsugo ariel,30.956,35.36392,adult,female,Anthropogenic,Ha_Anth,Ha_Arid
+GM11.H06,2,25,No,True sample,Hypsugo ariel,30.956,35.36392,adult,female,Anthropogenic,Ha_Anth,Ha_Arid
+GM11.H13_r3,2,26,No,True sample,Hypsugo ariel,30.60219,34.93769,adult,male,Natural,Ha_Nat,Ha_Arid
+GM11.H43,2,29,No,True sample,Hypsugo ariel,30.956,35.36392,adult,female,Anthropogenic,Ha_Anth,Ha_Arid
+GM11.P05,2,1,No,True sample,Pipistrellus kuhlii,30.84797,34.78022,adult,male,Anthropogenic,Pk_Anth,Pk_Arid
+GM11.P35_r3,2,4,No,True sample,Pipistrellus kuhlii,30.81465,34.81362,adult,male,Natural,Pk_Nat,Pk_Arid
+GM11.P61,2,7,No,True sample,Pipistrellus kuhlii,29.57374,34.97178,adult,female,Anthropogenic,Pk_Anth,Pk_Med
+GM11.P64_r3,2,8,No,True sample,Pipistrellus kuhlii,30.84797,34.78022,adult,female,Anthropogenic,Pk_Anth,Pk_Arid
+GM11.P65,2,8,No,True sample,Pipistrellus kuhlii,30.84797,34.78022,adult,male,Anthropogenic,Pk_Anth,Pk_Arid
+GM11.P75,2,9,No,True sample,Pipistrellus kuhlii,31.62847,34.7996862,adult,male,Anthropogenic,Pk_Anth,Pk_Med
+GM12.B06,2,6,No,Control sample,Not applicable,not collected,not collected,not applicable,not applicable,Not applicable,Not applicable,Not applicable
+GM12.B25,2,25,No,Control sample,Not applicable,not collected,not collected,not applicable,not applicable,Not applicable,Not applicable,Not applicable
+GM12.B27,2,27,No,Control sample,Not applicable,not collected,not collected,not applicable,not applicable,Not applicable,Not applicable,Not applicable
+GM12.E15_r2,2,16,No,True sample,Eptesicus bottae,30.00946,35.09695,adult,female,Anthropogenic,Eb_Anth,Eb_Arid
+GM12.E15_r3,2,16,No,True sample,Eptesicus bottae,30.00946,35.09695,adult,female,Anthropogenic,Eb_Anth,Eb_Arid
+GM12.E29_r3,2,18,No,True sample,Eptesicus bottae,30.04847,35.08011,adult,female,Natural,Eb_Nat,Eb_Arid
+GM12.E33,2,18,No,True sample,Eptesicus bottae,30.04847,35.08011,adult,female,Natural,Eb_Nat,Eb_Arid
+GM12.E47_r3,2,20,No,True sample,Eptesicus bottae,30.37134,35.15411,adult,female,Anthropogenic,Eb_Anth,Eb_Arid
+GM12.E50_r3,2,20,No,True sample,Eptesicus bottae,30.37134,35.15411,unknown,female,Anthropogenic,Eb_Anth,Eb_Arid
+GM12.H09_r3,2,26,No,True sample,Hypsugo ariel,30.60219,34.93769,adult,male,Natural,Ha_Nat,Ha_Arid
+GM12.H47,2,30,No,True sample,Hypsugo ariel,30.956,35.36392,adult,male,Anthropogenic,Ha_Anth,Ha_Arid
+GM12.H50,2,30,No,True sample,Hypsugo ariel,30.94398,35.07323,adult,male,Natural,Ha_Nat,Ha_Arid
+GM12.P24,2,3,No,True sample,Pipistrellus kuhlii,30.9899,34.89813,adult,female,Anthropogenic,Pk_Anth,Pk_Arid
+GM12.P41,2,5,No,True sample,Pipistrellus kuhlii,30.9899,34.89813,unknown,unknown,Anthropogenic,Pk_Anth,Pk_Arid
+GM12.P43,2,5,No,True sample,Pipistrellus kuhlii,30.9899,34.89813,adult,male,Anthropogenic,Pk_Anth,Pk_Arid
+GM12.P45,2,5,No,True sample,Pipistrellus kuhlii,29.57374,34.97178,adult,female,Anthropogenic,Pk_Anth,Pk_Arid
+GM2.B03,1,3,No,Control sample,Not applicable,not collected,not collected,not applicable,not applicable,Not applicable,Not applicable,Not applicable
+GM2.B07,1,5,No,Control sample,Not applicable,not collected,not collected,not applicable,not applicable,Not applicable,Not applicable,Not applicable
+GM2.B28,1,28,No,Control sample,Not applicable,not collected,not collected,not applicable,not applicable,Not applicable,Not applicable,Not applicable
+GM2.B29,1,29,No,Control sample,Not applicable,not collected,not collected,not applicable,not applicable,Not applicable,Not applicable,Not applicable
+GM2.E18,1,17,No,True sample,Eptesicus bottae,30.00946,35.09695,adult,female,Anthropogenic,Eb_Anth,Eb_Arid
+GM2.E48,1,20,No,True sample,Eptesicus bottae,30.37134,35.15411,adult,female,Anthropogenic,Eb_Anth,Eb_Arid
+GM2.H34,1,28,No,True sample,Hypsugo ariel,30.81726,35.28288,adult,female,Anthropogenic,Ha_Anth,Ha_Arid
+GM2.H36,1,29,No,True sample,Hypsugo ariel,30.94398,35.07323,adult,female,Natural,Ha_Nat,Ha_Arid
+GM2.H37,1,29,No,True sample,Hypsugo ariel,30.93769,35.04099,adult,male,Natural,Ha_Nat,Ha_Arid
+GM2.H38,1,29,No,True sample,Hypsugo ariel,30.93769,35.04099,adult,female,Natural,Ha_Nat,Ha_Arid
+GM2.P09,1,1,No,True sample,Pipistrellus kuhlii,30.84797,34.78022,adult,female,Anthropogenic,Pk_Anth,Pk_Arid
+GM2.P28,1,4,No,True sample,Pipistrellus kuhlii,30.85377,34.78443,adult,female,Anthropogenic,Pk_Anth,Pk_Arid
+GM2.P37,1,5,No,True sample,Pipistrellus kuhlii,30.81465,34.81362,adult,male,Natural,Pk_Nat,Pk_Arid
+GM2.P59,1,7,No,True sample,Pipistrellus kuhlii,29.57374,34.97178,juvenile,female,Anthropogenic,Pk_Anth,Pk_Med
+GM2.P64_r1,1,8,No,True sample,Pipistrellus kuhlii,30.84797,34.78022,adult,female,Anthropogenic,Pk_Anth,Pk_Arid
+GM2.P68,1,8,No,True sample,Pipistrellus kuhlii,32.4523039,34.9551671,adult,female,Anthropogenic,Pk_Anth,Pk_Med
+GM3.E16,1,16,No,True sample,Eptesicus bottae,30.00946,35.09695,adult,male,Anthropogenic,Eb_Anth,Eb_Arid
+GM3.E29_r1,1,18,No,True sample,Eptesicus bottae,30.04847,35.08011,adult,female,Natural,Eb_Nat,Eb_Arid
+GM3.E37_r1,1,19,No,True sample,Eptesicus bottae,30.04847,35.08011,adult,female,Natural,Eb_Nat,Eb_Arid
+GM3.E37_r2,1,19,No,True sample,Eptesicus bottae,30.04847,35.08011,adult,female,Natural,Eb_Nat,Eb_Arid
+GM3.E45,1,20,No,True sample,Eptesicus bottae,30.37134,35.15411,adult,female,Anthropogenic,Eb_Anth,Eb_Arid
+GM3.E50_r2,1,20,No,True sample,Eptesicus bottae,30.37134,35.15411,unknown,female,Anthropogenic,Eb_Anth,Eb_Arid
+GM3.E58,1,30,No,True sample,Eptesicus bottae,30.60219,34.93769,adult,male,Natural,Eb_Nat,Eb_Arid
+GM3.H26,1,27,No,True sample,Hypsugo ariel,30.60219,34.93769,adult,male,Natural,Ha_Nat,Ha_Arid
+GM3.H28,1,28,No,True sample,Hypsugo ariel,30.04847,35.08011,adult,female,Natural,Ha_Nat,Ha_Arid
+GM3.H35,1,28,No,True sample,Hypsugo ariel,30.94398,35.07323,adult,male,Natural,Ha_Nat,Ha_Arid
+GM3.H49,1,30,No,True sample,Hypsugo ariel,30.94398,35.07323,adult,male,Natural,Ha_Nat,Ha_Arid
+GM3.P36,1,4,No,True sample,Pipistrellus kuhlii,30.81465,34.81362,adult,female,Natural,Pk_Nat,Pk_Arid
+GM3.P52,1,6,No,True sample,Pipistrellus kuhlii,32.4523039,34.9551671,adult,female,Anthropogenic,Pk_Anth,Pk_Med
+GM3.P58,1,7,No,True sample,Pipistrellus kuhlii,29.57374,34.97178,juvenile,female,Anthropogenic,Pk_Anth,Pk_Med
+GM3.P64_r2,1,8,No,True sample,Pipistrellus kuhlii,30.84797,34.78022,adult,female,Anthropogenic,Pk_Anth,Pk_Arid
+GM3.P71,1,8,No,True sample,Pipistrellus kuhlii,31.62847,34.7996862,adult,male,Anthropogenic,Pk_Anth,Pk_Med
+GM4.B17,1,17,No,Control sample,Not applicable,not collected,not collected,not applicable,not applicable,Not applicable,Not applicable,Not applicable
+GM4.B30,1,30,No,Control sample,Not applicable,not collected,not collected,not applicable,not applicable,Not applicable,Not applicable,Not applicable
+GM4.E03,1,15,No,True sample,Eptesicus bottae,30.94398,35.07323,adult,female,Natural,Eb_Nat,Eb_Arid
+GM4.E06_r1,1,15,No,True sample,Eptesicus bottae,30.94398,35.07323,adult,female,Natural,Eb_Nat,Eb_Arid
+GM4.E27,1,18,No,True sample,Eptesicus bottae,30.04847,35.08011,juvenile,female,Natural,Eb_Nat,Eb_Arid
+GM4.E47_r1,1,20,No,True sample,Eptesicus bottae,30.37134,35.15411,adult,female,Anthropogenic,Eb_Anth,Eb_Arid
+GM4.H08,1,25,No,True sample,Hypsugo ariel,30.94398,35.07323,adult,male,Natural,Ha_Nat,Ha_Arid
+GM4.H20,1,27,No,True sample,Hypsugo ariel,30.07258,34.82869,adult,female,Natural,Ha_Nat,Ha_Arid
+GM4.H23,1,27,No,True sample,Hypsugo ariel,30.07258,34.82869,adult,female,Natural,Ha_Nat,Ha_Arid
+GM4.P10_r1,1,2,No,True sample,Pipistrellus kuhlii,30.84797,34.78022,adult,male,Anthropogenic,Pk_Anth,Pk_Arid
+GM4.P10_r2,1,2,No,True sample,Pipistrellus kuhlii,30.84797,34.78022,adult,male,Anthropogenic,Pk_Anth,Pk_Arid
+GM4.P35_r1,1,4,No,True sample,Pipistrellus kuhlii,30.81465,34.81362,adult,male,Natural,Pk_Nat,Pk_Arid
+GM4.P35_r2,1,4,No,True sample,Pipistrellus kuhlii,30.81465,34.81362,adult,male,Natural,Pk_Nat,Pk_Arid
+GM4.P42,1,5,No,True sample,Pipistrellus kuhlii,30.9899,34.89813,adult,male,Anthropogenic,Pk_Anth,Pk_Arid
+GM4.P53,1,6,No,True sample,Pipistrellus kuhlii,32.4523039,34.9551671,adult,female,Anthropogenic,Pk_Anth,Pk_Med
+GM5.B26,1,26,No,Control sample,Not applicable,not collected,not collected,not applicable,not applicable,Not applicable,Not applicable,Not applicable
+GM5.E10,1,16,No,True sample,Eptesicus bottae,30.76877,35.27905,adult,female,Anthropogenic,Eb_Anth,Eb_Arid
+GM5.E34,1,18,No,True sample,Eptesicus bottae,30.04847,35.08011,adult,female,Natural,Eb_Nat,Eb_Arid
+GM5.H09_r1,1,26,No,True sample,Hypsugo ariel,30.60219,34.93769,adult,male,Natural,Ha_Nat,Ha_Arid
+GM5.H16,1,26,No,True sample,Hypsugo ariel,30.60219,34.93769,adult,female,Natural,Ha_Nat,Ha_Arid
+GM5.H22,1,27,No,True sample,Hypsugo ariel,30.07258,34.82869,adult,female,Natural,Ha_Nat,Ha_Arid
+GM5.H25,1,27,No,True sample,Hypsugo ariel,30.07258,34.82869,adult,female,Natural,Ha_Nat,Ha_Arid
+GM5.H39_r1,1,29,No,True sample,Hypsugo ariel,30.93769,35.04099,adult,male,Natural,Ha_Nat,Ha_Arid
+GM5.P02_r1,1,1,No,True sample,Pipistrellus kuhlii,30.84797,34.78022,adult,female,Anthropogenic,Pk_Anth,Pk_Arid
+GM5.P14,1,2,No,True sample,Pipistrellus kuhlii,30.84797,34.78022,adult,male,Anthropogenic,Pk_Anth,Pk_Arid
+GM5.P18,1,2,No,True sample,Pipistrellus kuhlii,30.81465,34.81362,adult,male,Natural,Pk_Nat,Pk_Arid
+GM5.P34,1,4,No,True sample,Pipistrellus kuhlii,30.9899,34.89813,adult,female,Anthropogenic,Pk_Anth,Pk_Arid
+GM5.P50,1,6,No,True sample,Pipistrellus kuhlii,31.62847,34.7996862,adult,male,Anthropogenic,Pk_Anth,Pk_Med
+GM5.P51,1,6,No,True sample,Pipistrellus kuhlii,31.62847,34.7996862,adult,male,Anthropogenic,Pk_Anth,Pk_Med
+GM5.P60,1,7,No,True sample,Pipistrellus kuhlii,29.57374,34.97178,adult,female,Anthropogenic,Pk_Anth,Pk_Med
+GM5.P72,1,8,No,True sample,Pipistrellus kuhlii,31.62847,34.7996862,adult,male,Anthropogenic,Pk_Anth,Pk_Med
+GM6.B21,1,21,No,Control sample,Not applicable,not collected,not collected,not applicable,not applicable,Not applicable,Not applicable,Not applicable
+GM6.E02,1,15,No,True sample,Eptesicus bottae,30.94398,35.07323,adult,male,Natural,Eb_Nat,Eb_Arid
+GM6.E12,1,16,No,True sample,Eptesicus bottae,30.76877,35.27905,adult,female,Anthropogenic,Eb_Anth,Eb_Arid
+GM6.E19,1,17,No,True sample,Eptesicus bottae,30.00946,35.09695,juvenile,female,Anthropogenic,Eb_Anth,Eb_Arid
+GM6.E47_r2,1,20,No,True sample,Eptesicus bottae,30.37134,35.15411,adult,female,Anthropogenic,Eb_Anth,Eb_Arid
+GM6.E57,1,21,No,True sample,Eptesicus bottae,30.84797,34.78022,adult,male,Anthropogenic,Eb_Anth,Eb_Arid
+GM6.H11,1,26,No,True sample,Hypsugo ariel,30.60219,34.93769,adult,male,Natural,Ha_Nat,Ha_Arid
+GM6.H14,1,26,No,True sample,Hypsugo ariel,30.60219,34.93769,adult,male,Natural,Ha_Nat,Ha_Arid
+GM6.H32,1,28,No,True sample,Hypsugo ariel,30.37134,35.15411,adult,male,Anthropogenic,Ha_Anth,Ha_Arid
+GM6.H39_r2,1,29,No,True sample,Hypsugo ariel,30.93769,35.04099,adult,male,Natural,Ha_Nat,Ha_Arid
+GM6.P21,1,3,No,True sample,Pipistrellus kuhlii,30.81465,34.81362,adult,male,Natural,Pk_Nat,Pk_Arid
+GM6.P30,1,4,No,True sample,Pipistrellus kuhlii,30.85377,34.78443,adult,female,Anthropogenic,Pk_Anth,Pk_Arid
+GM6.P48,1,6,No,True sample,Pipistrellus kuhlii,30.84797,34.78022,adult,female,Anthropogenic,Pk_Anth,Pk_Arid
+GM6.P66,1,8,No,True sample,Pipistrellus kuhlii,32.4523039,34.9551671,adult,female,Anthropogenic,Pk_Anth,Pk_Med
+GM6.PCR1,1,NA,Yes,Control sample,Not applicable,not collected,not collected,not applicable,not applicable,Not applicable,Not applicable,Not applicable
+GM7.B08,2,8,No,Control sample,Not applicable,not collected,not collected,not applicable,not applicable,Not applicable,Not applicable,Not applicable
+GM7.E17,2,16,No,True sample,Eptesicus bottae,30.00946,35.09695,juvenile,male,Anthropogenic,Eb_Anth,Eb_Arid
+GM7.E38,2,19,No,True sample,Eptesicus bottae,30.04847,35.08011,adult,female,Natural,Eb_Nat,Eb_Arid
+GM7.E54,2,21,No,True sample,Eptesicus bottae,30.76877,35.27905,adult,female,Anthropogenic,Eb_Anth,Eb_Arid
+GM7.H07,2,25,No,True sample,Hypsugo ariel,30.956,35.36392,adult,female,Anthropogenic,Ha_Anth,Ha_Arid
+GM7.H12,2,26,No,True sample,Hypsugo ariel,30.60219,34.93769,juvenile,female,Natural,Ha_Nat,Ha_Arid
+GM7.H13_r2,2,26,No,True sample,Hypsugo ariel,30.60219,34.93769,adult,male,Natural,Ha_Nat,Ha_Arid
+GM7.H27,2,28,No,True sample,Hypsugo ariel,30.60219,34.93769,adult,male,Natural,Ha_Nat,Ha_Arid
+GM7.H44,2,29,No,True sample,Hypsugo ariel,30.956,35.36392,adult,male,Anthropogenic,Ha_Anth,Ha_Arid
+GM7.P01,2,1,No,True sample,Pipistrellus kuhlii,30.85377,34.78443,adult,female,Anthropogenic,Pk_Anth,Pk_Arid
+GM7.P02_r2,2,1,No,True sample,Pipistrellus kuhlii,31.84797,35.78022,adult,female,Anthropogenic,Pk_Anth,Pk_Arid
+GM7.P32,2,4,No,True sample,Pipistrellus kuhlii,30.9899,34.89813,adult,female,Anthropogenic,Pk_Anth,Pk_Arid
+GM7.P63,2,7,No,True sample,Pipistrellus kuhlii,32.4523039,34.9551671,adult,female,Anthropogenic,Pk_Anth,Pk_Med
+GM7.P73,2,9,No,True sample,Pipistrellus kuhlii,31.62847,34.7996862,adult,male,Anthropogenic,Pk_Anth,Pk_Med
+GM7.P76,2,9,No,True sample,Pipistrellus kuhlii,31.62847,34.7996862,adult,male,Anthropogenic,Pk_Anth,Pk_Med
+GM8.B16,2,16,No,Control sample,Not applicable,not collected,not collected,not applicable,not applicable,Not applicable,Not applicable,Not applicable
+GM8.B18,2,18,No,Control sample,Not applicable,not collected,not collected,not applicable,not applicable,Not applicable,Not applicable,Not applicable
+GM8.B20,2,20,No,Control sample,Not applicable,not collected,not collected,not applicable,not applicable,Not applicable,Not applicable,Not applicable
+GM8.E08,2,15,No,True sample,Eptesicus bottae,30.76877,35.27905,adult,female,Anthropogenic,Eb_Anth,Eb_Arid
+GM8.E30,2,18,No,True sample,Eptesicus bottae,29.82104,35.03658,adult,male,Anthropogenic,Eb_Anth,Eb_Arid
+GM8.E43,2,19,No,True sample,Eptesicus bottae,30.60219,34.93769,adult,female,Natural,Eb_Nat,Eb_Arid
+GM8.E49,2,20,No,True sample,Eptesicus bottae,30.37134,35.15411,adult,female,Anthropogenic,Eb_Anth,Eb_Arid
+GM8.H10,2,26,No,True sample,Hypsugo ariel,30.60219,34.93769,adult,male,Natural,Ha_Nat,Ha_Arid
+GM8.H29,2,28,No,True sample,Hypsugo ariel,30.04847,35.08011,juvenile,female,Natural,Ha_Nat,Ha_Arid
+GM8.H52,2,30,No,True sample,Hypsugo ariel,30.94398,35.07323,adult,male,Natural,Ha_Nat,Ha_Arid
+GM8.P02_r3,2,1,No,True sample,Pipistrellus kuhlii,32.84797,36.78022,adult,female,Anthropogenic,Pk_Anth,Pk_Arid
+GM8.P31,2,4,No,True sample,Pipistrellus kuhlii,30.85377,34.78443,adult,female,Anthropogenic,Pk_Anth,Pk_Arid
+GM8.P47,2,6,No,True sample,Pipistrellus kuhlii,30.84797,34.78022,adult,male,Anthropogenic,Pk_Anth,Pk_Arid
+GM8.P67,2,8,No,True sample,Pipistrellus kuhlii,32.4523039,34.9551671,adult,female,Anthropogenic,Pk_Anth,Pk_Med
+GM8.P79,2,9,No,True sample,Pipistrellus kuhlii,31.62847,34.7996862,adult,female,Anthropogenic,Pk_Anth,Pk_Med
+GM8.PCR2,2,NA,Yes,Control sample,Not applicable,not collected,not collected,not applicable,not applicable,Not applicable,Not applicable,Not applicable
+GM9.B01,2,1,No,Control sample,Not applicable,not collected,not collected,not applicable,not applicable,Not applicable,Not applicable,Not applicable
+GM9.B05,2,5,No,Control sample,Not applicable,not collected,not collected,not applicable,not applicable,Not applicable,Not applicable,Not applicable
+GM9.E06_r2,2,15,No,True sample,Eptesicus bottae,30.94398,35.07323,adult,female,Natural,Eb_Nat,Eb_Arid
+GM9.E06_r3,2,15,No,True sample,Eptesicus bottae,30.94398,35.07323,adult,female,Natural,Eb_Nat,Eb_Arid
+GM9.E29_r2,2,18,No,True sample,Eptesicus bottae,30.04847,35.08011,adult,female,Natural,Eb_Nat,Eb_Arid
+GM9.E37_r3,2,19,No,True sample,Eptesicus bottae,30.04847,35.08011,adult,female,Natural,Eb_Nat,Eb_Arid
+GM9.E41,2,19,No,True sample,Eptesicus bottae,30.81102,35.27299,adult,male,Anthropogenic,Eb_Anth,Eb_Arid
+GM9.H09_r2,2,26,No,True sample,Hypsugo ariel,30.60219,34.93769,adult,male,Natural,Ha_Nat,Ha_Arid
+GM9.H39_r3,2,29,No,True sample,Hypsugo ariel,30.93769,35.04099,adult,male,Natural,Ha_Nat,Ha_Arid
+GM9.H48,2,30,No,True sample,Hypsugo ariel,30.956,35.36392,adult,female,Anthropogenic,Ha_Anth,Ha_Arid
+GM9.P10_r3,2,2,No,True sample,Pipistrellus kuhlii,30.84797,34.78022,adult,male,Anthropogenic,Pk_Anth,Pk_Arid
+GM9.P17,2,2,No,True sample,Pipistrellus kuhlii,30.84797,34.78022,adult,female,Anthropogenic,Pk_Anth,Pk_Arid
+GM9.P19_r3,2,3,No,True sample,Pipistrellus kuhlii,30.81465,34.81362,adult,male,Natural,Pk_Nat,Pk_Arid
+GM9.P25,2,3,No,True sample,Pipistrellus kuhlii,30.85377,34.78443,adult,female,Anthropogenic,Pk_Anth,Pk_Arid
+GM9.P27,2,3,No,True sample,Pipistrellus kuhlii,30.85377,34.78443,adult,male,Anthropogenic,Pk_Anth,Pk_Arid
+GM9.P69,2,8,No,True sample,Pipistrellus kuhlii,32.4523039,34.9551671,adult,male,Anthropogenic,Pk_Anth,Pk_Med

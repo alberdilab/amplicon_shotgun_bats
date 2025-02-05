@@ -1,0 +1,242 @@
+# Alpha diversity
+
+## Metagenomics
+
+```{r load_data_alpha}
+load("resources/metagenomics/data_filtered.Rdata")
+treatment_colors <- c("#e5bd5b", "#6b7398", "#76b183", "#d57d2c", "#2a2d26", "#f9d4cc", "#3c634e", "#ea68c3")
+```
+
+```{r alpha_div, comment="", message=FALSE, warning=FALSE}
+# Calculate Hill numbers
+richness <- genome_counts_filt %>%
+  column_to_rownames(var = "genome") %>%
+  dplyr::select(where(~ !all(. == 0))) %>%
+  hilldiv(., q = 0) %>%
+  t() %>%
+  as.data.frame() %>%
+  dplyr::rename(richness = 1) %>%
+  rownames_to_column(var = "sample")
+
+neutral <- genome_counts_filt %>%
+  column_to_rownames(var = "genome") %>%
+  dplyr::select(where(~ !all(. == 0))) %>%
+  hilldiv(., q = 1) %>%
+  t() %>%
+  as.data.frame() %>%
+  dplyr::rename(neutral = 1) %>%
+  rownames_to_column(var = "sample")
+
+phylogenetic <- genome_counts_filt %>%
+  column_to_rownames(var = "genome") %>%
+  dplyr::select(where(~ !all(. == 0))) %>%
+  hilldiv(., q = 1, tree = genome_tree) %>%
+  t() %>%
+  as.data.frame() %>%
+  dplyr::rename(phylogenetic = 1) %>%
+  rownames_to_column(var = "sample")
+
+# Aggregate basal GIFT into elements
+dist <- genome_gifts %>%
+  to.elements(., GIFT_db) %>%
+  traits2dist(., method = "gower")
+
+functional <- genome_counts_filt %>%
+  filter(genome %in% rownames(dist)) %>% 
+  column_to_rownames(var = "genome") %>%
+  dplyr::select(where(~ !all(. == 0))) %>%
+  hilldiv(., q = 1, dist = dist) %>%
+  t() %>%
+  as.data.frame() %>%
+  dplyr::rename(functional = 1) %>%
+  rownames_to_column(var = "sample") %>%
+  mutate(functional = if_else(is.nan(functional), 1, functional))
+
+# Merge all metrics
+alpha_div <- richness %>%
+  full_join(neutral, by = join_by(sample == sample)) %>%
+  full_join(phylogenetic, by = join_by(sample == sample)) %>%
+  full_join(functional, by = join_by(sample == sample))
+```
+
+
+```{r alpha_div_diets_summary_all, comment="",echo=FALSE, message=FALSE, warning=FALSE}
+alpha_div %>%
+  pivot_longer(-sample, names_to = "alpha", values_to = "value") %>%
+  left_join(sample_metadata, by = join_by(sample == sample)) %>%
+    group_by(alpha)%>%
+    summarise(total_mean=mean(value, na.rm=T),
+              total_sd=sd(value, na.rm=T),
+              Eb_mean=mean(value[Species=="Eb"], na.rm=T),
+              Eb_sd=sd(value[Species=="Eb"], na.rm=T),
+              Ha_mean=mean(value[Species=="Ha"], na.rm=T),
+              Ha_sd=sd(value[Species=="Ha"], na.rm=T),
+              Pk_mean=mean(value[Species=="Pk"], na.rm=T),
+              Pk_sd=sd(value[Species=="Pk"], na.rm=T)) %>%
+    mutate(Total=str_c(round(total_mean,3),"±",round(total_sd,3)),
+           Eptesicus=str_c(round(Eb_mean,3),"±",round(Eb_sd,3)),
+           Hypsugo=str_c(round(Ha_mean,3),"±",round(Ha_sd,3)),
+           Pipistrellus=str_c(round(Pk_mean,3),"±",round(Pk_sd,3))) %>% 
+  arrange(-Eb_mean) %>% 
+    dplyr::select(alpha,Total,Eptesicus,Pipistrellus,Hypsugo) %>% 
+  tt()
+```
+
+
+### Mixed models
+
+```{r rich_MM, comment="", message=FALSE, warning=FALSE}
+alpha_div_meta <- alpha_div %>%
+  left_join(sample_metadata, by = join_by(sample == sample))
+
+Model_richness_random <- lme(fixed = richness ~ Species, data = alpha_div_meta,
+               random = ~ 1 | Habitat)
+summary(Model_richness_random)
+anova(Model_richness_random)
+emmeans(Model_richness_random, pairwise ~ Species)
+
+Model_richness<- lm(formula = richness ~ Species*Habitat, data = alpha_div_meta) 
+
+Model_richness<- lm(formula = richness ~ Species, data = alpha_div_meta) 
+summary(Model_richness)
+anova(Model_richness)
+emmeans(Model_richness, pairwise ~ Species)
+
+Model_richness_river_random <- lme(fixed = richness ~ Habitat, data = alpha_div_meta,
+               random = ~ 1 | Species)
+summary(Model_richness_river_random)
+anova(Model_richness_river_random)
+
+#emmeans(Model_richness_river_random, pairwise ~ Habitat)
+```
+
+```{r neutral_MM, comment="", message=FALSE, warning=FALSE}
+Model_neutral_random <- lme(fixed = neutral ~ Species, data = alpha_div_meta,
+               random = ~ 1 | Habitat)
+summary(Model_neutral_random)
+anova(Model_neutral_random)
+emmeans(Model_neutral_random, pairwise ~ Species)
+
+Model_neutral<- lm(formula = neutral ~ Species*Habitat, data = alpha_div_meta) 
+summary(Model_neutral)
+anova(Model_neutral)
+
+Model_neutral<- lm(formula = neutral ~ Species+Habitat, data = alpha_div_meta) 
+summary(Model_neutral)
+anova(Model_neutral)
+emmeans(Model_neutral, pairwise ~ Species)
+
+Model_neutral_river_random <- lme(fixed = neutral ~ Habitat, data = alpha_div_meta,
+               random = ~ 1 | Species)
+summary(Model_neutral_river_random)
+anova(Model_neutral_river_random)
+
+emmeans(Model_neutral_river_random, pairwise ~ Habitat)
+```
+
+```{r phylo_MM, comment="", message=FALSE, warning=FALSE}
+Model_phylogenetic_random <- lme(fixed = phylogenetic ~ Species, data = alpha_div_meta,
+               random = ~ 1 | Habitat)
+summary(Model_phylogenetic_random)
+anova(Model_phylogenetic_random)
+emmeans(Model_phylogenetic_random, pairwise ~ Species)
+
+Model_phylogenetic<- lm(formula = phylogenetic ~ Species*Habitat, data = alpha_div_meta) 
+summary(Model_phylogenetic)
+anova(Model_phylogenetic)
+
+Model_phylogenetic<- lm(formula = phylogenetic ~ Species, data = alpha_div_meta) 
+summary(Model_phylogenetic)
+anova(Model_phylogenetic)
+emmeans(Model_phylogenetic, pairwise ~ Species)
+
+Model_phylogenetic_river_random <- lme(fixed = phylogenetic ~ Habitat, data = alpha_div_meta,
+               random = ~ 1 | Species)
+summary(Model_phylogenetic_river_random)
+anova(Model_phylogenetic_river_random)
+
+emmeans(Model_phylogenetic_river_random, pairwise ~ Habitat)
+
+```
+
+```{r funct_MM, comment="", message=FALSE, warning=FALSE}
+Model_functional_random <- lme(fixed = functional ~ Species, data = alpha_div_meta,
+               random = ~ 1 | Habitat)
+summary(Model_functional_random)
+anova(Model_functional_random)
+emmeans(Model_functional_random, pairwise ~ Species)
+
+Model_functional<- lm(formula = functional ~ Species*Habitat, data = alpha_div_meta) 
+summary(Model_functional)
+anova(Model_functional)
+
+Model_functional<- lm(formula = functional ~ Species, data = alpha_div_meta) 
+summary(Model_functional)
+anova(Model_functional)
+emmeans(Model_functional, pairwise ~ Species)
+
+
+Model_functional_river_random <- lme(fixed = functional ~ Habitat, data = alpha_div_meta,
+               random = ~ 1 | Species)
+summary(Model_functional_river_random)
+anova(Model_functional_river_random)
+
+emmeans(Model_functional_river_random, pairwise ~ Habitat)
+```
+
+```{r}
+alpha_div_meta <- alpha_div %>% 
+  mutate(method="shotgun")
+saveRDS(alpha_div_meta, "resources/metagenomics/metagenome_alpha_div.rds")
+```
+
+## Amplicon
+
+```{r div_load_data, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+load("resources/16S/data_nocopyfilt.Rdata")
+```
+```{r filter_copy, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+richness <- genome_counts_filt %>%
+  column_to_rownames(var = "genome") %>%
+  dplyr::select(where(~ !all(. == 0))) %>%
+  hilldiv(., q = 0) %>%
+  t() %>%
+  as.data.frame() %>%
+  dplyr::rename(richness = 1) %>%
+  rownames_to_column(var = "sample")
+
+neutral <- genome_counts_filt %>%
+  column_to_rownames(var = "genome") %>%
+  dplyr::select(where(~ !all(. == 0))) %>%
+  hilldiv(., q = 1) %>%
+  t() %>%
+  as.data.frame() %>%
+  dplyr::rename(neutral = 1) %>%
+  rownames_to_column(var = "sample")
+
+alpha_div <- richness %>%
+  full_join(neutral, by = join_by(sample == sample)) 
+```
+
+```{r alpha_div_diets_summary_all, comment="",echo=FALSE, message=FALSE, warning=FALSE}
+alpha_div %>%
+  pivot_longer(-sample, names_to = "alpha", values_to = "value") %>%
+  left_join(sample_metadata, by = join_by(sample == sample)) %>%
+    group_by(alpha)%>%
+    summarise(total_mean=mean(value, na.rm=T),
+              total_sd=sd(value, na.rm=T),
+              Eb_mean=mean(value[Species=="Eb"], na.rm=T),
+              Eb_sd=sd(value[Species=="Eb"], na.rm=T),
+              Ha_mean=mean(value[Species=="Ha"], na.rm=T),
+              Ha_sd=sd(value[Species=="Ha"], na.rm=T),
+              Pk_mean=mean(value[Species=="Pk"], na.rm=T),
+              Pk_sd=sd(value[Species=="Pk"], na.rm=T)) %>%
+    mutate(Total=str_c(round(total_mean,3),"±",round(total_sd,3)),
+           Eptesicus=str_c(round(Eb_mean,3),"±",round(Eb_sd,3)),
+           Hypsugo=str_c(round(Ha_mean,3),"±",round(Ha_sd,3)),
+           Pipistrellus=str_c(round(Pk_mean,3),"±",round(Pk_sd,3))) %>% 
+  arrange(-Eb_mean) %>% 
+    dplyr::select(alpha,Total,Eptesicus,Pipistrellus,Hypsugo) %>% 
+  tt()
+```
+
