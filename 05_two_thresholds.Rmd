@@ -31,7 +31,7 @@ master_table %>%
 ```
 
 ## Single to individuals
-```{r single_sp, comment="", message=FALSE, warning=FALSE}
+```{r single_sp2, comment="", message=FALSE, warning=FALSE}
 total_single <- master_table %>%
   group_by(prevalence,copy_threshold,genome) %>%
   summarise(freq=sum(pa, na.rm = TRUE), .groups = "drop") %>%
@@ -266,6 +266,7 @@ alpha_both <- data.frame(
 alpha_both <- alpha_both %>% 
   mutate(method="16S")
 ```
+
 ```{r alpha_table_save, comment="", message=FALSE, warning=FALSE}
 write_csv(alpha_both,"resources/amplicon/alpha_twothreshold_table.csv")
 ```

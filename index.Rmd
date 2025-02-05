@@ -85,5 +85,5 @@ library(lme4)
 library(nlme)
 library(pairwiseAdonis)
 library(emmeans)
-#library(hilldiv2)
+library(hilldiv2)
 ```

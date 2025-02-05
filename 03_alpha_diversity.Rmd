@@ -60,7 +60,7 @@ alpha_div <- richness %>%
 ```
 
 
-```{r alpha_div_diets_summary_all, comment="",echo=FALSE, message=FALSE, warning=FALSE}
+```{r alpha_div_diets_summary_all_metagenomics, comment="",echo=FALSE, message=FALSE, warning=FALSE}
 alpha_div %>%
   pivot_longer(-sample, names_to = "alpha", values_to = "value") %>%
   left_join(sample_metadata, by = join_by(sample == sample)) %>%
@@ -192,10 +192,11 @@ saveRDS(alpha_div_meta, "resources/metagenomics/metagenome_alpha_div.rds")
 
 ## Amplicon
 
-```{r div_load_data, comment="", echo=FALSE, message=FALSE, warning=FALSE}
-load("resources/16S/data_nocopyfilt.Rdata")
+```{r div_load_data, comment="", message=FALSE, warning=FALSE}
+load("resources/amplicon/data_nocopyfilt.Rdata")
 ```
-```{r filter_copy, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+
+```{r filter_copy2, comment="", message=FALSE, warning=FALSE}
 richness <- genome_counts_filt %>%
   column_to_rownames(var = "genome") %>%
   dplyr::select(where(~ !all(. == 0))) %>%
@@ -218,7 +219,7 @@ alpha_div <- richness %>%
   full_join(neutral, by = join_by(sample == sample)) 
 ```
 
-```{r alpha_div_diets_summary_all, comment="",echo=FALSE, message=FALSE, warning=FALSE}
+```{r alpha_div_diets_summary_all_amplicon, comment="",echo=FALSE, message=FALSE, warning=FALSE}
 alpha_div %>%
   pivot_longer(-sample, names_to = "alpha", values_to = "value") %>%
   left_join(sample_metadata, by = join_by(sample == sample)) %>%
