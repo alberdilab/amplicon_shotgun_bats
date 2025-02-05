@@ -1,0 +1,1024 @@
+# Community composition
+
+## Metagenomics
+
+```{r bats_load_data_tax, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+load("resources/metagenomics/data_filtered.Rdata")
+```
+
+### Taxonomy overview 
+
+***Number of Archaea phyla***
+```{r arch, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+genome_metadata %>% 
+  filter(domain == "Archaea")%>%
+  dplyr::select(phylum) %>%
+  unique() %>%
+  pull() %>%
+  length()%>% 
+  cat()
+```
+
+***Number of Archaea phyla***
+```{r arch, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+genome_metadata %>% 
+  filter(domain == "Bacteria")%>%
+  dplyr::select(phylum) %>%
+  unique() %>%
+  pull() %>%
+  length()%>% 
+  cat()
+```
+
+#### Phylum level
+```{r taxonomy_barplot, fig.height=6, fig.width=10, fig.fullwidth=TRUE}
+genome_counts_filt %>%
+  mutate_at(vars(-genome),~./sum(.)) %>% #apply TSS nornalisation
+  pivot_longer(-genome, names_to = "sample", values_to = "count") %>% #reduce to minimum number of columns
+  left_join(., genome_metadata, by = join_by(genome == genome)) %>% #append genome metadata
+  left_join(., sample_metadata, by = join_by(sample == sample)) %>% #append sample metadata
+  filter(count > 0) %>% #filter 0 counts
+  ggplot(., aes(x=sample,y=count, fill=phylum, group=phylum)) + #grouping enables keeping the same sorting of taxonomic units
+    geom_bar(stat="identity", colour="white", linewidth=0.1) + #plot stacked bars with white borders
+    scale_fill_manual(values=phylum_colors) +
+    facet_nested(~factor(Species, labels=c("Eb" = "Eptesicus", "Ha" = "Hypsugo", "Pk" = "Pipistrellus")),  scales="free") + #facet per day and treatment
+    guides(fill = guide_legend(ncol = 1)) +
+    theme(axis.text.x = element_blank(),
+          axis.ticks.x = element_blank(),
+          axis.title.x = element_blank(),
+          panel.background = element_blank(),
+          panel.border = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          strip.background = element_rect(fill = "white"),
+          strip.text = element_text(size = 12, lineheight = 0.6,face="bold"),
+          axis.line = element_line(linewidth = 0.5, linetype = "solid", colour = "black")) +
+   labs(fill="Phylum",y = "Relative abundance",x="Samples")
+```
+
+***Phylum relative abundances***
+```{r taxonomy_phylum_summary, warning=FALSE, comments="", message=FALSE}
+phylum_summary <- genome_counts_filt %>%
+  mutate_at(vars(-genome),~./sum(.)) %>%
+  pivot_longer(-genome, names_to = "sample", values_to = "count") %>%
+  left_join(sample_metadata, by = join_by(sample == sample)) %>%
+  left_join(genome_metadata, by = join_by(genome == genome)) %>%
+  group_by(sample,phylum,Species, Region) %>%
+  summarise(relabun=sum(count))
+```
+
+```{r taxonomy_phylum_summary, warning=FALSE, comments="", message=FALSE}
+phylum_summary %>%
+    group_by(phylum) %>%
+    summarise(Total_mean=mean(relabun*100, na.rm=T),
+              Total_sd=sd(relabun*100, na.rm=T),
+              Eb_mean=mean(relabun[Species=="Eb"]*100, na.rm=T),
+              Eb_sd=sd(relabun[Species=="Eb"]*100, na.rm=T),
+              Ha_mean=mean(relabun[Species=="Ha"]*100, na.rm=T),
+              Ha_sd=sd(relabun[Species=="Ha"]*100, na.rm=T),
+              Pk_mean=mean(relabun[Species=="Pk"]*100, na.rm=T),
+              Pk_sd=sd(relabun[Species=="Pk"]*100, na.rm=T)) %>%
+    mutate(Total_meta=str_c(round(Total_mean,3),"±",round(Total_sd,3)),
+           Eptesicus_meta=str_c(round(Eb_mean,3),"±",round(Eb_sd,3)),
+           Hypsugo_meta=str_c(round(Ha_mean,3),"±",round(Ha_sd,3)),
+           Pipistrellus_meta=str_c(round(Pk_mean,3),"±",round(Pk_sd,3))) %>% 
+  arrange(-Eb_mean)%>% 
+    dplyr::select(phylum,Total_meta,Eptesicus_meta,Hypsugo_meta,Pipistrellus_meta)
+```
+
+#### Family level
+
+***Percentange of families in each group***
+```{r taxonomy_family_summary, warning=FALSE, comments="", message=FALSE}
+family_summary <- genome_counts_filt %>%
+  mutate_at(vars(-genome),~./sum(.)) %>% #apply TSS nornalisation
+  pivot_longer(-genome, names_to = "sample", values_to = "count") %>% #reduce to minimum number of columns
+  left_join(sample_metadata, by = join_by(sample == sample)) %>% #append sample metadata
+  left_join(., genome_metadata, by = join_by(genome == genome)) %>% #append genome metadata
+  group_by(sample,family, Species) %>%
+  summarise(relabun=sum(count))
+```
+
+```{r taxonomy_family_summary_origin, warning=FALSE, comments="", message=FALSE}
+family_summary %>%
+    group_by(family) %>%
+    summarise(Eb_mean=mean(relabun[Species=="Eb"]*100, na.rm=T),
+              Eb_sd=sd(relabun[Species=="Eb"]*100, na.rm=T),
+              Ha_mean=mean(relabun[Species=="Ha"]*100, na.rm=T),
+              Ha_sd=sd(relabun[Species=="Ha"]*100, na.rm=T),
+              Pk_mean=mean(relabun[Species=="Pk"]*100, na.rm=T),
+              Pk_sd=sd(relabun[Species=="Pk"]*100, na.rm=T)) %>%
+    mutate(Eptesicus=str_c(round(Eb_mean,3),"±",round(Eb_sd,3)),
+           Hypsugo=str_c(round(Ha_mean,3),"±",round(Ha_sd,3)),
+           Pipistrellus=str_c(round(Pk_mean,3),"±",round(Pk_sd,3))) %>%
+  arrange(-Eb_mean, -Ha_mean) %>%
+  dplyr::select(family,Eptesicus,Hypsugo,Pipistrellus)
+
+```
+
+```{r taxonomy_jitterplot_family, warning=FALSE, comments="", message=FALSE, fig.height=8, fig.width=10, fig.fullwidth=TRUE}
+family_arrange <- family_summary %>%
+    group_by(family) %>%
+    summarise(mean=sum(relabun)) %>%
+    arrange(-mean) %>%
+    select(family) %>%
+    pull()
+
+# Per environment
+family_summary %>%
+    left_join(genome_metadata %>% select(family,phylum) %>% unique(),by=join_by(family==family)) %>%
+    filter(family %in% family_arrange[1:20]) %>%
+    mutate(family=factor(family,levels=rev(family_arrange[1:20]))) %>%
+    filter(relabun > 0) %>%
+    ggplot(aes(x=relabun, y=family, group=family, color=phylum)) +
+        scale_color_manual(values=phylum_colors[-8]) +
+        geom_jitter(alpha=0.5) + 
+        facet_grid(.~Species)+
+        theme_minimal() + 
+        labs(y="Family", x="Relative abundance", color="Phylum")
+
+```
+
+
+#### Genus level
+
+***Percetange of genera in each group***
+```{r taxonomy_genus_summary, warning=FALSE, comments="", message=FALSE}
+genus_summary <- genome_counts_filt %>%
+  mutate_at(vars(-genome),~./sum(.)) %>%
+  pivot_longer(-genome, names_to = "sample", values_to = "count") %>%
+  left_join(sample_metadata, by = join_by(sample == sample)) %>% 
+  left_join(genome_metadata, by = join_by(genome == genome)) %>%
+  group_by(sample,phylum,genus, Species) %>%
+  summarise(relabun=sum(count)) 
+
+genus_summary %>%
+  group_by(genus) %>%
+  summarise(Eb_mean=mean(relabun[Species=="Eb"]*100, na.rm=T),
+            Eb_sd=sd(relabun[Species=="Eb"]*100, na.rm=T),
+            Ha_mean=mean(relabun[Species=="Ha"]*100, na.rm=T),
+            Ha_sd=sd(relabun[Species=="Ha"]*100, na.rm=T),
+            Pk_mean=mean(relabun[Species=="Pk"]*100, na.rm=T),
+            Pk_sd=sd(relabun[Species=="Pk"]*100, na.rm=T)) %>%
+  mutate(Eptesicus=str_c(round(Eb_mean,3),"±",round(Eb_sd,3)),
+         Hypsugo=str_c(round(Ha_mean,3),"±",round(Ha_sd,3)),
+         Pipistrellus=str_c(round(Pk_mean,3),"±",round(Pk_sd,3))) %>% 
+  arrange(-Eb_mean, -Ha_mean) %>%
+  dplyr::select(genus,Eptesicus,Hypsugo,Pipistrellus)
+```
+
+```{r taxonomy_jitterplot_genus, fig.height=14, fig.width=10, fig.fullwidth=TRUE}
+genus_summary_sort <- genus_summary %>%
+    group_by(genus) %>%
+    summarise(mean=mean(relabun, na.rm=T),sd=sd(relabun, na.rm=T)) %>%
+    arrange(-mean) 
+
+genus_summary %>%
+  mutate(genus=factor(genus, levels=rev(genus_summary_sort %>% pull(genus)))) %>%
+  filter(relabun > 0) %>%
+  ggplot(aes(x=relabun, y=genus, group=genus, color=phylum)) +
+  scale_color_manual(values=phylum_colors) +
+  geom_jitter(alpha=0.5) + 
+  facet_grid(.~Species)+
+  theme_minimal() + 
+  theme(axis.text.y = element_text(size=6))+
+  labs(y="Genera", x="Relative abundance", color="Phylum")
+
+```
+
+***Number of mags and distinct taxonomy***
+```{r tax_overview, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+bats=c("Eb", "Pk", "Ha")
+
+total_mags <- data.frame(
+  Bat = character(),
+  MAGs = numeric(), 
+  Phylum = numeric(),
+  Family = numeric(),
+  Genus = numeric()
+)
+
+preabs_table <- genome_counts_filt %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  column_to_rownames("genome") %>%
+  mutate(across(everything(), ~ as.integer(. > 0))) %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("sample") %>%
+  left_join(sample_metadata[c("sample", "Species")], by = "sample") %>%
+  group_by(Species) %>%
+  summarize(across(-sample, sum), .groups = "drop") %>%
+  column_to_rownames("Species") %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("genome")  %>% 
+  left_join(genome_metadata, by=join_by("genome"=="genome"))
+
+phylum <- preabs_table %>% 
+  distinct(phylum)
+
+family <- preabs_table %>% 
+  distinct(phylum, class, order, family)
+
+genus <- preabs_table %>% 
+  distinct(phylum, class, order, family, genus)
+
+ total_mags <- rbind(
+    total_mags,
+    data.frame(
+      Bat = "Total",
+      MAGs = nrow(preabs_table),
+      Phylum = nrow(phylum),
+      Family = nrow(family),
+      Genus = nrow(genus)
+      )
+  )
+
+for (bat in bats) { 
+  number <- preabs_table %>% 
+    select({{bat}}) %>% 
+    filter(.>=1)
+  
+  phylum <- preabs_table %>% 
+     select({{bat}}, phylum) %>%
+     filter(!!sym(bat)>=1) %>% 
+     distinct(phylum)
+  
+  family <- preabs_table %>% 
+     select({{bat}}, phylum, class, order, family) %>%
+     filter(!!sym(bat)>=1) %>% 
+     distinct(phylum, class, order, family)
+  
+  genus <- preabs_table %>% 
+     select({{bat}}, phylum, class, order, family, genus) %>%
+     filter(!!sym(bat)>=1) %>% 
+     distinct(phylum, class, order, family, genus)
+   
+  total_mags <- rbind(
+    total_mags,
+    data.frame(
+      Bat = bat,
+      MAGs = nrow(number),
+      Phylum = nrow(phylum),
+      Family = nrow(family),
+      Genus = nrow(genus)
+      )
+  )
+}
+```
+```{r}
+bats=c("Eb", "Pk", "Ha")
+
+no_annotation <- data.frame(
+  Bat = character(),
+  No_genus = numeric(), 
+  No_species = numeric()
+)
+
+preabs_table <- genome_counts_filt %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  column_to_rownames("genome") %>%
+  mutate(across(everything(), ~ as.integer(. > 0))) %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("sample") %>%
+  left_join(sample_metadata[c("sample", "Species")], by = "sample") %>%
+  group_by(Species) %>%
+  summarize(across(-sample, sum), .groups = "drop") %>%
+  column_to_rownames("Species") %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("genome")  %>% 
+  left_join(genome_metadata, by=join_by("genome"=="genome"))
+
+genus <- preabs_table %>%
+  filter(genus == "")
+
+species <- preabs_table %>%
+  filter(species == "")
+
+ no_annotation <- rbind(
+    no_annotation,
+    data.frame(
+      Bat = "Total",
+      No_genus = nrow(genus),
+      No_species = nrow(species)
+      )
+  )
+
+for (bat in bats) { 
+  number <- preabs_table %>% 
+    select({{bat}}) %>% 
+    filter(.>=1)
+  
+  genus <- preabs_table %>% 
+     select({{bat}}, phylum, class, order, family, genus) %>%
+     filter(!!sym(bat)>=1) %>%
+    filter(genus == "")
+  
+  species <- preabs_table %>% 
+     filter(!!sym(bat)>=1) %>%
+    filter(species == "")
+   
+  no_annotation <- rbind(
+    no_annotation,
+    data.frame(
+      Bat = bat,
+      No_genus = nrow(genus),
+      No_species = nrow(species)
+      )
+  )
+}
+```
+
+**Total percentage of MAGs without genus-level annotation**
+```{r gen_percet, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+nongenera <- genome_metadata %>%
+  filter(genus == "") %>%
+  summarize(Mag_nogenera = n()) %>% 
+  pull()
+nmags <- total_mags %>% 
+  filter(Bat=="Total") %>% 
+  select(MAGs) %>% 
+  pull()
+perct <- nongenera*100/nmags
+cat(perct)
+```
+
+***Percentage of MAGs without genus-level annotation by phylum***
+```{r nongene_phylum_gut, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+total_mag_phylum <- genome_metadata %>%
+  group_by(phylum) %>%
+  summarize(Total_MAGs = n())
+genome_metadata %>%
+  filter(genus == "") %>%
+  group_by(phylum) %>%
+  summarize(MAGs_nogenus = n()) %>% 
+  left_join(total_mag_phylum, by = join_by(phylum == phylum)) %>% 
+  mutate(Percentage_nogenus=100*MAGs_nogenus/Total_MAGs) %>% 
+  tt()
+```
+
+**Number of bacterial species**
+```{r phyla, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+genome_metadata %>% 
+  filter(domain == "Bacteria")%>%
+  dplyr::select(species) %>%
+  unique() %>%
+  pull() %>%
+  length() %>% 
+  cat()
+```
+
+**Total percentage of MAGs without species-level annotation**
+```{r sp_percet, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+nonspecies <- genome_metadata %>%
+  filter(species == "") %>%
+  summarize(Mag_nospecies = n()) %>% 
+  pull()
+perct <- nonspecies*100/nmags
+cat(perct)
+```
+
+**MAGs without species-level annotation**
+```{r nonspe_phylum, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+total_mag_phylum <- genome_metadata %>%
+  group_by(phylum) %>%
+  summarize(MAGs_total = n())
+genome_metadata %>%
+  filter(species == "") %>%
+  group_by(phylum) %>%
+  summarize(MAGs_nospecies = n()) %>% 
+  left_join(total_mag_phylum, by = join_by(phylum == phylum)) %>%
+  mutate(species_annotated=MAGs_total-MAGs_nospecies) %>% 
+  mutate(Percentage_nospecies=100*MAGs_nospecies/MAGs_total) %>% 
+  mutate(Percentage_species=100-100*MAGs_nospecies/MAGs_total)%>% 
+  tt()
+```
+
+
+```{r}
+bats=c("Eb", "Pk", "Ha")
+
+# Initialize an empty results data frame
+single_sp <- data.frame(
+  Bat = character(),
+  Singel_species = numeric()
+)
+
+table_upset_analysis <- genome_counts_filt %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  column_to_rownames("genome") %>%
+  mutate(across(everything(), ~ as.integer(. > 0))) %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("sample") %>%
+  left_join(sample_metadata[c("sample", "Species")], by = "sample") %>%
+  group_by(Species) %>%
+  summarize(across(-sample, sum), .groups = "drop") %>%
+  column_to_rownames("Species") %>%
+  mutate(across(everything(), ~ as.integer(. > 0))) %>% 
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("sample")
+
+unique_all <- table_upset_analysis %>% 
+      filter(rowSums(across(Eb:Pk)) == 1)
+
+    single_sp <- rbind(
+    single_sp,
+    data.frame(
+      Bat = "Total",  # Label for the total value
+      Singel_species = nrow(unique_all) # Aggregate sum of column sums
+    )
+  )
+  
+  for (bat in bats) {  
+    unique <- table_upset_analysis %>%
+      filter(rowSums(across(Eb:Pk)) == 1) %>% 
+      select(all_of(bat)) %>% 
+      filter(.>0) %>% 
+      nrow()
+    # Add results to the results data frame
+    single_sp <- rbind(
+      single_sp,
+      data.frame(
+        Bat = bat,
+        Singel_species = unique # Aggregate sum of column sums
+      )
+    )
+  }
+
+```
+
+```{r}
+single_ind <- data.frame(
+  Bat = character(),
+  Single_individual = numeric()
+)
+
+ singleton_filt <- freq_table %>%
+  rowwise() %>%
+  mutate(row_sum = sum(c_across(-asv))) %>% # Calculate row sum for specific columns
+  filter(row_sum == 1) %>% 
+  column_to_rownames(var = "asv")  %>% 
+  filter(row_sum==1)
+
+     single_ind <- rbind(
+      single_ind,
+      data.frame(
+        Bat = "Total",
+        Single_individual = nrow(singleton_filt) # Aggregate sum of column sums
+      )
+    )
+     
+for (bat in bats) {
+  singleton_filt <- freq_table %>%
+    rowwise() %>%
+    mutate(row_sum = sum(c_across(-asv))) %>% 
+    filter(row_sum == 1) %>% 
+    column_to_rownames(var = "asv")  %>% 
+    select(bat) %>% 
+    filter(.==1)
+
+      single_ind <- rbind(
+      single_ind,
+      data.frame(
+        Bat = bat,
+        Single_individual = nrow(singleton_filt) # Aggregate sum of column sums
+      )
+    )
+  }
+  
+```
+
+## Summary table
+```{r}
+summary_table<-total_mags %>% 
+  left_join(., no_annotation, by="Bat") %>% 
+  left_join(., singel_ind, by="Bat") %>% 
+  left_join(., singel_sp, by="Bat")
+summary_table
+```
+
+```{r}
+summary_table %>% 
+  select(-Phylum,-Family, -Genus) %>% 
+  rowwise() %>% 
+  mutate(No_genus_perc=No_genus*100/MAGs)%>% 
+  mutate(No_species_perc=No_species*100/MAGs) %>% 
+  mutate(ASV_rare_perc=ASV_rare*100/MAGs) %>% 
+  mutate(Singleton_perc=Singleton*100/MAGs)%>% 
+  mutate(ASV_unique_perc=ASV_unique*100/MAGs) %>% 
+  mutate(Singleton_per_unique=Singleton*100/ASV_unique) %>% 
+  select(1,8:13)
+```
+
+## Amplicon
+### Taxonomy overview 
+```{r div_load_data_ampli, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+load("resources/16S/data_nocopyfilt.Rdata")
+```
+```{r filter_copy_ampli, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+genome_metadata <- genome_metadata %>%
+  filter(!is.na(phylum))
+
+genome_counts_filt <- genome_counts_filt %>% 
+  filter(genome %in% genome_metadata$genome)%>%
+  mutate_at(vars(-genome),~./sum(.))%>% 
+  column_to_rownames(., "genome") %>% 
+  copy_filt(., 0.00005)%>%
+  filter(rowSums(across(everything())) != 0) %>% 
+  rownames_to_column(., "genome")
+
+genome_metadata <- genome_metadata %>% 
+  filter(genome %in% genome_counts_filt$genome)
+```
+
+#### Phylum level
+```{r taxonomy_barplot_ampli, fig.height=6, fig.width=10, fig.fullwidth=TRUE}
+genome_counts_filt %>%
+  mutate_at(vars(-genome),~./sum(.)) %>% #apply TSS nornalisation
+  pivot_longer(-genome, names_to = "sample", values_to = "count") %>% #reduce to minimum number of columns
+  left_join(., genome_metadata, by = join_by(genome == genome)) %>% #append genome metadata
+  left_join(., sample_metadata, by = join_by(sample == sample)) %>% #append sample metadata
+  filter(count > 0) %>% #filter 0 counts
+  ggplot(., aes(x=sample,y=count, fill=phylum, group=phylum)) + #grouping enables keeping the same sorting of taxonomic units
+    geom_bar(stat="identity", colour="white", linewidth=0.1) + #plot stacked bars with white borders
+    scale_fill_manual(values=phylum_colors) +
+    facet_nested(~factor(Species, labels=c("Eb" = "Eptesicus", "Ha" = "Hypsugo", "Pk" = "Pipistrellus")),  scales="free") + #facet per day and treatment
+    guides(fill = guide_legend(ncol = 1)) +
+    theme(axis.text.x = element_blank(),
+          axis.ticks.x = element_blank(),
+          axis.title.x = element_blank(),
+          panel.background = element_blank(),
+          panel.border = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          strip.background = element_rect(fill = "white"),
+          strip.text = element_text(size = 12, lineheight = 0.6,face="bold"),
+          axis.line = element_line(linewidth = 0.5, linetype = "solid", colour = "black")) +
+   labs(fill="Phylum",y = "Relative abundance",x="Samples")
+```
+
+
+***Phylum relative abundances***
+```{r taxonomy_phylum_summary_ampli, warning=FALSE, comments="", message=FALSE}
+phylum_summary <- genome_counts_filt %>%
+  mutate_at(vars(-genome),~./sum(.)) %>%
+  pivot_longer(-genome, names_to = "sample", values_to = "count") %>%
+  left_join(sample_metadata, by = join_by(sample == sample)) %>%
+  left_join(genome_metadata, by = join_by(genome == genome)) %>%
+  group_by(sample,phylum,Species) %>%
+  summarise(relabun=sum(count))
+```
+
+```{r taxonomy_phylum_summary_ampli, warning=FALSE, comments="", message=FALSE}
+phylum_summary %>%
+    group_by(phylum) %>%
+    summarise(Total_mean=mean(relabun*100, na.rm=T),
+              Total_sd=sd(relabun*100, na.rm=T),
+              Eb_mean=mean(relabun[Species=="Eb"]*100, na.rm=T),
+              Eb_sd=sd(relabun[Species=="Eb"]*100, na.rm=T),
+              Ha_mean=mean(relabun[Species=="Ha"]*100, na.rm=T),
+              Ha_sd=sd(relabun[Species=="Ha"]*100, na.rm=T),
+              Pk_mean=mean(relabun[Species=="Pk"]*100, na.rm=T),
+              Pk_sd=sd(relabun[Species=="Pk"]*100, na.rm=T)) %>%
+    mutate(Total=str_c(round(Total_mean,3),"±",round(Total_sd,3)),
+           Eptesicus=str_c(round(Eb_mean,3),"±",round(Eb_sd,3)),
+           Hypsugo=str_c(round(Ha_mean,3),"±",round(Ha_sd,3)),
+           Pipistrellus=str_c(round(Pk_mean,3),"±",round(Pk_sd,3))) %>% 
+  arrange(-Eb_mean)%>% 
+    dplyr::select(phylum,Total,Eptesicus,Hypsugo,Pipistrellus)
+```
+
+#### Family level
+
+***Percentange of families in each group***
+```{r taxonomy_family_summary_ampli, warning=FALSE, comments="", message=FALSE}
+family_summary <- genome_counts_filt %>%
+  mutate_at(vars(-genome),~./sum(.)) %>% #apply TSS nornalisation
+  pivot_longer(-genome, names_to = "sample", values_to = "count") %>% #reduce to minimum number of columns
+  left_join(sample_metadata, by = join_by(sample == sample)) %>% #append sample metadata
+  left_join(., genome_metadata, by = join_by(genome == genome)) %>% #append genome metadata
+  group_by(sample,family, Species) %>%
+  summarise(relabun=sum(count))
+```
+
+```{r taxonomy_family_summary_ampli1, warning=FALSE, comments="", message=FALSE}
+family_summary %>%
+    group_by(family) %>%
+    summarise(Eb_mean=mean(relabun[Species=="Eb"]*100, na.rm=T),
+              Eb_sd=sd(relabun[Species=="Eb"]*100, na.rm=T),
+              Ha_mean=mean(relabun[Species=="Ha"]*100, na.rm=T),
+              Ha_sd=sd(relabun[Species=="Ha"]*100, na.rm=T),
+              Pk_mean=mean(relabun[Species=="Pk"]*100, na.rm=T),
+              Pk_sd=sd(relabun[Species=="Pk"]*100, na.rm=T)) %>%
+    mutate(Eptesicus=str_c(round(Eb_mean,3),"±",round(Eb_sd,3)),
+           Hypsugo=str_c(round(Ha_mean,3),"±",round(Ha_sd,3)),
+           Pipistrellus=str_c(round(Pk_mean,3),"±",round(Pk_sd,3))) %>% 
+  arrange(-Pk_mean) %>% 
+    dplyr::select(family,Eptesicus,Hypsugo,Pipistrellus) %>% 
+  left_join(., genome_metadata[c(3,6)] %>% unique(), by=join_by(family==family))
+```
+```{r taxonomy_jitterplot_family_ampli, warning=FALSE, comments="", message=FALSE, fig.height=8, fig.width=10, fig.fullwidth=TRUE}
+family_arrange <- family_summary %>%
+    group_by(family) %>%
+    summarise(mean=sum(relabun)) %>%
+    arrange(-mean) %>%
+    select(family) %>%
+    pull()
+
+# Per environment
+family_summary %>%
+    left_join(genome_metadata %>% select(family,phylum) %>% unique(),by=join_by(family==family)) %>%
+    filter(family %in% family_arrange[1:20]) %>%
+    mutate(family=factor(family,levels=rev(family_arrange[1:20]))) %>%
+    filter(relabun > 0) %>%
+    ggplot(aes(x=relabun, y=family, group=family, color=phylum)) +
+        scale_color_manual(values=phylum_colors[-8]) +
+        geom_jitter(alpha=0.5) + 
+        facet_grid(.~Species)+
+        theme_minimal() + 
+        labs(y="Family", x="Relative abundance", color="Phylum")
+
+```
+
+#### Genus level
+
+***Percetange of genera in each group***
+
+```{r taxonomy_genus_summary_ampli, warning=FALSE, comments="", message=FALSE}
+genus_summary <- genome_counts_filt %>%
+  mutate_at(vars(-genome),~./sum(.)) %>% 
+  pivot_longer(-genome, names_to = "sample", values_to = "count") %>% 
+  left_join(sample_metadata, by = join_by(sample == sample)) %>% 
+  left_join(genome_metadata, by = join_by(genome == genome)) %>% 
+  group_by(sample,phylum,genus, Species) %>%
+  summarise(relabun=sum(count)) 
+
+genus_summary %>%
+    group_by(genus) %>%
+    summarise(Eb_mean=mean(relabun[Species=="Eb"]*100, na.rm=T),
+              Eb_sd=sd(relabun[Species=="Eb"]*100, na.rm=T),
+              Ha_mean=mean(relabun[Species=="Ha"]*100, na.rm=T),
+              Ha_sd=sd(relabun[Species=="Ha"]*100, na.rm=T),
+              Pk_mean=mean(relabun[Species=="Pk"]*100, na.rm=T),
+              Pk_sd=sd(relabun[Species=="Pk"]*100, na.rm=T)) %>%
+    mutate(Eptesicus=str_c(round(Eb_mean,3),"±",round(Eb_sd,3)),
+           Hypsugo=str_c(round(Ha_mean,3),"±",round(Ha_sd,3)),
+           Pipistrellus=str_c(round(Pk_mean,3),"±",round(Pk_sd,3))) %>% 
+  arrange(-Pk_mean) %>% 
+    dplyr::select(genus,Eptesicus,Hypsugo,Pipistrellus) %>% 
+  left_join(., genome_metadata[c(3,7)] %>% unique(), by=join_by(genus==genus))
+```
+
+```{r taxonomy_jitterplot_genus_ampli, fig.height=14, fig.width=10, fig.fullwidth=TRUE}
+genus_summary_sort <- genus_summary %>%
+    group_by(genus) %>%
+    summarise(mean=mean(relabun, na.rm=T),sd=sd(relabun, na.rm=T)) %>%
+    arrange(-mean) 
+
+genus_summary %>%
+  mutate(genus=factor(genus, levels=rev(genus_summary_sort %>% pull(genus)))) %>%
+  filter(relabun > 0) %>%
+  ggplot(aes(x=relabun, y=genus, group=genus, color=phylum)) +
+  scale_color_manual(values=phylum_colors) +
+  geom_jitter(alpha=0.5) + 
+  facet_grid(.~Species)+ 
+  theme_minimal() + 
+  theme(axis.text.y = element_text(size=6))+
+  labs(y="Genera", x="Relative abundance", color="Phylum")
+```
+
+***Number of mags and distinct taxonomy***
+```{r total_ASv_ampli, warning=FALSE, comments="", message=FALSE}
+bats=c("Eb", "Pk", "Ha")
+
+total_mags <- data.frame(
+  Bat = character(),
+  MAGs = numeric(), 
+  Phylum = numeric(),
+  Family = numeric(),
+  Genus = numeric()
+)
+
+preabs_table <- genome_counts_filt %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  column_to_rownames("genome") %>%
+  mutate(across(everything(), ~ as.integer(. > 0))) %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("sample") %>%
+  left_join(sample_metadata[c("sample", "Species")], by = "sample") %>%
+  group_by(Species) %>%
+  summarize(across(-sample, sum), .groups = "drop") %>%
+  column_to_rownames("Species") %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("genome")  %>% 
+  left_join(genome_metadata, by=join_by("genome"=="genome"))
+
+phylum <- preabs_table %>% 
+  distinct(phylum)
+
+family <- preabs_table %>% 
+  distinct(phylum, class, order, family)
+
+genus <- preabs_table %>% 
+  distinct(phylum, class, order, family, genus)
+
+ total_mags <- rbind(
+    total_mags,
+    data.frame(
+      Bat = "Total",
+      MAGs = nrow(preabs_table),
+      Phylum = nrow(phylum),
+      Family = nrow(family),
+      Genus = nrow(genus)
+      )
+  )
+
+for (bat in bats) { 
+  number <- preabs_table %>% 
+    select({{bat}}) %>% 
+    filter(.>=1)
+  
+  phylum <- preabs_table %>% 
+     select({{bat}}, phylum) %>%
+     filter(!!sym(bat)>=1) %>% 
+     distinct(phylum)
+  
+  family <- preabs_table %>% 
+     select({{bat}}, phylum, class, order, family) %>%
+     filter(!!sym(bat)>=1) %>% 
+     distinct(phylum, class, order, family)
+  
+  genus <- preabs_table %>% 
+     select({{bat}}, phylum, class, order, family, genus) %>%
+     filter(!!sym(bat)>=1) %>% 
+     distinct(phylum, class, order, family, genus)
+   
+  total_mags <- rbind(
+    total_mags,
+    data.frame(
+      Bat = bat,
+      MAGs = nrow(number),
+      Phylum = nrow(phylum),
+      Family = nrow(family),
+      Genus = nrow(genus)
+      )
+  )
+}
+```
+```{r total_annot_ampli, warning=FALSE, comments="", message=FALSE}
+bats=c("Eb", "Pk", "Ha")
+
+no_annotation <- data.frame(
+  Bat = character(),
+  No_genus = numeric(), 
+  No_species = numeric()
+)
+
+preabs_table <- genome_counts_filt %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  column_to_rownames("genome") %>%
+  mutate(across(everything(), ~ as.integer(. > 0))) %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("sample") %>%
+  left_join(sample_metadata[c("sample", "Species")], by = "sample") %>%
+  group_by(Species) %>%
+  summarize(across(-sample, sum), .groups = "drop") %>%
+  column_to_rownames("Species") %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("genome")  %>% 
+  left_join(genome_metadata, by=join_by("genome"=="genome"))
+
+genus <- preabs_table  %>%
+    filter(is.na(genus))
+
+species <- preabs_table  %>%
+    filter(is.na(species))
+
+ no_annotation <- rbind(
+    no_annotation,
+    data.frame(
+      Bat = "Total",
+      No_genus = nrow(genus),
+      No_species = nrow(species)
+      )
+  )
+
+for (bat in bats) { 
+  number <- preabs_table %>% 
+    select({{bat}}) %>% 
+    filter(.>=1)
+  
+  genus <- preabs_table %>% 
+     select({{bat}}, phylum, class, order, family, genus) %>%
+     filter(!!sym(bat)>=1) %>%
+    filter(is.na(genus))
+  
+  species <- preabs_table %>% 
+     filter(!!sym(bat)>=1) %>%
+    filter(is.na(species))
+   
+  no_annotation <- rbind(
+    no_annotation,
+    data.frame(
+      Bat = bat,
+      No_genus = nrow(genus),
+      No_species = nrow(species)
+      )
+  )
+}
+```
+
+**Total percentage of MAGs without genus-level annotation**
+```{r gen_percet_ampli, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+nongenera <- genome_metadata %>%
+  filter(is.na(genus)) %>%
+  summarize(Mag_nogenera = n()) %>% 
+  pull()
+nmags <- total_mags %>% 
+  filter(Bat=="Total") %>% 
+  select(MAGs) %>% 
+  pull()
+perct <- nongenera*100/nmags
+cat(perct)
+```
+
+***Percentage of MAGs without genus-level annotation by phylum***
+```{r nongene_phylum_gut_ampli, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+total_mag_phylum <- genome_metadata %>%
+  group_by(phylum) %>%
+  summarize(Total_MAGs = n())
+genome_metadata %>%
+  filter(is.na(genus)) %>%
+  group_by(phylum) %>%
+  summarize(MAGs_nogenus = n()) %>% 
+  left_join(total_mag_phylum, by = join_by(phylum == phylum)) %>% 
+  mutate(Percentage_nogenus=100*MAGs_nogenus/Total_MAGs) %>% 
+  tt()
+```
+
+
+**Number of bacterial species**
+```{r phyla_ampli, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+genome_metadata %>% 
+  filter(domain == "Bacteria")%>%
+  dplyr::select(species) %>%
+  unique() %>%
+  pull() %>%
+  length() %>% 
+  cat()
+```
+
+**Total percentage of MAGs without species-level annotation**
+```{r sp_percet_ampli, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+nonspecies <- genome_metadata %>%
+  filter(species == "") %>%
+  summarize(Mag_nospecies = n()) %>% 
+  pull()
+perct <- nonspecies*100/nmags
+cat(perct)
+```
+
+**MAGs without species-level annotation**
+```{r nonspe_phylum_ampli, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+total_mag_phylum <- genome_metadata %>%
+  group_by(phylum) %>%
+  summarize(MAGs_total = n())
+genome_metadata %>%
+  filter(is.na(species)) %>%
+  group_by(phylum) %>%
+  summarize(MAGs_nospecies = n()) %>% 
+  left_join(total_mag_phylum, by = join_by(phylum == phylum)) %>%
+  mutate(species_annotated=MAGs_total-MAGs_nospecies) %>% 
+  mutate(Percentage_nospecies=100*MAGs_nospecies/MAGs_total) %>% 
+  mutate(Percentage_species=100-100*MAGs_nospecies/MAGs_total)%>% 
+  tt()
+```
+
+***ASVs in single species***
+```{r single_sp_ampli, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+bats=c("Eb", "Pk", "Ha")
+
+# Initialize an empty results data frame
+single_sp <- data.frame(
+  Bat = character(),
+  Single_species = numeric()
+)
+
+table_upset_analysis <- genome_counts_filt %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  column_to_rownames("genome") %>%
+  mutate(across(everything(), ~ as.integer(. > 0))) %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("sample") %>%
+  left_join(sample_metadata[c("sample", "Species")], by = "sample") %>%
+  group_by(Species) %>%
+  summarize(across(-sample, sum), .groups = "drop") %>%
+  column_to_rownames("Species") %>%
+  mutate(across(everything(), ~ as.integer(. > 0))) %>% 
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("sample")
+
+unique_all <- table_upset_analysis %>% 
+      filter(rowSums(across(Eb:Pk)) == 1)
+
+    single_sp <- rbind(
+    single_sp,
+    data.frame(
+      Bat = "Total",  # Label for the total value
+      Single_species = nrow(unique_all) # Aggregate sum of column sums
+    )
+  )
+  
+  for (bat in bats) {  
+    unique <- table_upset_analysis %>%
+      filter(rowSums(across(Eb:Pk)) == 1) %>% 
+      select(bat) %>% 
+      filter(.>0) %>% 
+      nrow()
+    # Add results to the results data frame
+    single_sp <- rbind(
+      single_sp,
+      data.frame(
+        Bat = bat,
+        Single_species = unique # Aggregate sum of column sums
+      )
+    )
+  }
+
+```
+
+***ASVs in a single individual***
+```{r single_ind_ampli, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+single_ind <- data.frame(
+  Bat = character(),
+  Single_individual = numeric()
+)
+
+ singleton_filt <- freq_table %>%
+  rowwise() %>%
+  mutate(row_sum = sum(c_across(-asv))) %>% # Calculate row sum for specific columns
+  filter(row_sum == 1) %>% 
+  column_to_rownames(var = "asv")  %>% 
+  filter(row_sum==1)
+
+     single_ind <- rbind(
+      single_ind,
+      data.frame(
+        Bat = "Total",
+        Single_individual = nrow(singleton_filt) # Aggregate sum of column sums
+      )
+    )
+     
+for (bat in bats) {
+  singleton_filt <- freq_table %>%
+    rowwise() %>%
+    mutate(row_sum = sum(c_across(-asv))) %>% 
+    filter(row_sum == 1) %>% 
+    column_to_rownames(var = "asv")  %>% 
+    select(bat) %>% 
+    filter(.==1)
+
+      single_ind <- rbind(
+      single_ind,
+      data.frame(
+        Bat = bat,
+        Single_individual = nrow(singleton_filt) # Aggregate sum of column sums
+      )
+    )
+  }
+  
+```
+
+## Summary table
+```{r merge_ampli, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+summary_table <- total_mags %>% 
+  left_join(., no_annotation, by="Bat") %>% 
+  left_join(., results_rare, by="Bat")%>% 
+  left_join(., single_ind, by="Bat") %>% 
+  left_join(., single_sp, by="Bat")
+summary_table
+```
+
+
+```{r summary_table_ampli, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+summary_table %>% 
+  select(-Phylum,-Family, -Genus) %>% 
+  rowwise() %>% 
+  mutate(No_genus_perc=No_genus*100/MAGs)%>% 
+  mutate(No_species_perc=No_species*100/MAGs) %>% 
+  mutate(ASV_rare_perc=ASV_rare*100/MAGs) %>% 
+  mutate(Singleton_perc=Singleton*100/MAGs)%>% 
+  mutate(ASV_unique_perc=ASV_unique*100/MAGs) %>% 
+  mutate(Singleton_per_unique=Singleton*100/ASV_unique) %>% 
+  select(1,8:13)
+```

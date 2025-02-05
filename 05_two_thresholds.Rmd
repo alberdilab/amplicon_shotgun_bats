@@ -1,0 +1,320 @@
+# Copy filtering & prevalence
+
+```{r open, comment="", message=FALSE, warning=FALSE}
+load("resources/amplicon/data_nocopyfilt.Rdata")
+load("resources/amplicon/master_table.Rdata")
+```
+
+## Total ASVs
+```{r totalasv, message=FALSE, fig.height=10, fig.width=16, fig.fullwidth=TRUE}
+asv_total <- master_table %>% 
+  group_by(copy_threshold,prevalence, genome) %>% 
+  summarise(asv_count=sum(value != 0, na.rm = TRUE)) %>%
+  group_by(copy_threshold, prevalence) %>% 
+  summarise(Total=sum(asv_count != 0, na.rm = TRUE)) 
+master_table %>% 
+  group_by(Species,copy_threshold,prevalence) %>% 
+  summarise(asv_count=sum(value != 0, na.rm = TRUE)) %>% 
+   pivot_wider(names_from = Species, values_from = c(asv_count))%>%
+  left_join(., asv_total, by=join_by("prevalence"=="prevalence","copy_threshold"=="copy_threshold")) %>% 
+  pivot_longer(!c(copy_threshold,prevalence), names_to = "Species",values_to = "ASVs") %>%
+  ggplot(aes(x=prevalence,y=ASVs,group=Species, color=Species)) + 
+      geom_line(size = 1) +
+       geom_point(size = 2) +
+      facet_wrap(~ copy_threshold, scales = "free_y")+
+    labs(
+    x = "Prevalence threshold (%)",
+    y = "Total ASVs",
+    color = "Bat species"
+  ) +
+  theme_minimal()
+```
+
+## Single to individuals
+```{r single_sp, comment="", message=FALSE, warning=FALSE}
+total_single <- master_table %>%
+  group_by(prevalence,copy_threshold,genome) %>%
+  summarise(freq=sum(pa, na.rm = TRUE), .groups = "drop") %>%
+  filter(freq==1) %>% 
+  group_by(prevalence, copy_threshold)%>%
+  summarise(total=n())
+
+master_table %>% 
+  group_by(Species, copy_threshold, prevalence, genome) %>%
+  summarise(freq=sum(pa, na.rm = TRUE), .groups = "drop") %>%
+   pivot_wider(names_from = Species, values_from = c(freq)) %>% 
+  filter(rowSums(across(Eb:Pk)) == 1)  %>%
+  pivot_longer(!c(copy_threshold,prevalence,genome), names_to = "Species",values_to = "single") %>%
+  filter(single==1) %>% 
+  group_by(Species, copy_threshold, prevalence)%>%
+  summarise(single=n())%>%
+   pivot_wider(names_from = Species, values_from = c(single))%>% 
+    left_join(., total_single, by=join_by("prevalence"=="prevalence","copy_threshold"=="copy_threshold"))
+```
+
+## Single to species
+```{r single_sp, message=FALSE, fig.height=10, fig.width=16, fig.fullwidth=TRUE}
+master_table %>% 
+  group_by(Species, copy_threshold, prevalence, genome) %>%
+  summarise(freq=sum(pa, na.rm = TRUE), .groups = "drop") %>%
+   pivot_wider(names_from = Species, values_from = c(freq)) %>% 
+  mutate(across(c("Eb", "Pk", "Ha"), ~ as.integer(. > 0))) %>% 
+  filter(rowSums(across(Eb:Pk)) == 1)  %>%
+  pivot_longer(!c(copy_threshold,prevalence,genome), names_to = "Species",values_to = "unique") %>%
+  filter(unique==1) %>% 
+  group_by(Species, copy_threshold, prevalence)%>%
+  summarise(unique=n())%>%
+  ggplot(aes(x=prevalence,y=unique,group=Species, color=Species)) +
+      geom_line(size = 1) +
+       geom_point(size = 2) +
+      facet_wrap(~ copy_threshold, scales = "free_y")+
+    labs(
+    x = "Prevalence threshold (%)",
+    y = " Single to species",
+    color = "Bat species"
+  ) +
+  theme_minimal()
+```
+
+## Alpha Diversity
+
+```{r alpha_thres, comment="", message=FALSE, warning=FALSE}
+ prev_threshold<- c("p0", "p10", "p20","p30", "p40")
+copy_threshold <- c("t0", "t1", "t2", "t3", "t4")
+
+bats <- c("Eb", "Pk", "Ha")
+
+results <- data.frame(
+  alpha = character(),
+  Total = numeric(),
+  Eptesicus=character(),
+  Pipistrellus=character(),
+  Hypsugo=character(),
+  Copy_threshold=character(),
+  Prevalence=character()
+)
+
+  for (copy in copy_threshold) {
+    genome_table <- master_table %>% 
+      filter(copy_threshold==copy) %>% 
+      select(-copy_threshold,-pa) %>%
+      pivot_wider(names_from = genome, values_from = value)
+    for (prev in prev_threshold) {
+      prev_table <- genome_table %>% 
+        filter(prevalence==prev) %>% 
+        select(-Species, -prevalence) %>%
+        column_to_rownames(., "sample") %>% 
+        filter(rowSums(across(everything())) != 0) %>% 
+        t() %>% 
+        as.data.frame()
+      richness <- prev_table %>%
+        dplyr::select(where(~ !all(. == 0))) %>%
+        hilldiv(., q = 0) %>%
+        t() %>%
+        as.data.frame() %>%
+        dplyr::rename(richness = 1) %>%
+        rownames_to_column(var = "sample")
+      neutral <- prev_table %>%
+        dplyr::select(where(~ !all(. == 0))) %>%
+        hilldiv(., q = 1) %>%
+        t() %>%
+        as.data.frame() %>%
+        dplyr::rename(neutral = 1) %>%
+        rownames_to_column(var = "sample")
+      
+      alpha_div <- richness %>%
+        full_join(neutral, by = join_by(sample == sample)) 
+      
+      div <- alpha_div %>%
+        pivot_longer(-sample, names_to = "alpha", values_to = "value") %>%
+        left_join(sample_metadata, by = join_by(sample == sample)) %>%
+        group_by(alpha)%>%
+        summarise(total_mean=mean(value, na.rm=T),
+              total_sd=sd(value, na.rm=T),
+              Eb_mean=mean(value[Species=="Eb"], na.rm=T),
+              Eb_sd=sd(value[Species=="Eb"], na.rm=T),
+              Ha_mean=mean(value[Species=="Ha"], na.rm=T),
+              Ha_sd=sd(value[Species=="Ha"], na.rm=T),
+              Pk_mean=mean(value[Species=="Pk"], na.rm=T),
+              Pk_sd=sd(value[Species=="Pk"], na.rm=T)) %>%
+        mutate(Total=str_c(round(total_mean,3),"±",round(total_sd,3)),
+           Eptesicus=str_c(round(Eb_mean,3),"±",round(Eb_sd,3)),
+           Hypsugo=str_c(round(Ha_mean,3),"±",round(Ha_sd,3)),
+           Pipistrellus=str_c(round(Pk_mean,3),"±",round(Pk_sd,3))) %>% 
+        dplyr::select(alpha,Total,Eptesicus,Pipistrellus,Hypsugo) %>% 
+        mutate(Prevalence=prev) %>% 
+        mutate(Copy_threshold=copy) %>% 
+        as.data.frame()
+      
+      results <- rbind(results, div)
+      }
+    } 
+
+results <- results %>%
+  mutate(across(everything(), ~ ifelse(is.na(.), 0, .)))
+  
+```
+
+
+```{r richness_thres, message=FALSE, fig.height=10, fig.width=16, fig.fullwidth=TRUE}
+# Create the Faceted Line Plot
+results %>% 
+  pivot_longer(!c(alpha, Prevalence, Copy_threshold), names_to = "Species",values_to = "value") %>% 
+  filter(alpha=="richness") %>% 
+ggplot(., aes(x = Prevalence, y = as.numeric(gsub("±.*", "", value)), 
+                    group = Species, color = Species)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  facet_wrap(~ Copy_threshold, scales = "free_y") +
+  labs(
+    title = "Alpha Diversity Across Copy filtering and Prevalence Thresholds",
+    x = "Prevalence Threshold",
+    y = "Richness",
+    color = "Species"
+  ) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 12, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = "bottom"
+  )
+```
+
+```{r neutral_threshol, message=FALSE, fig.height=10, fig.width=16, fig.fullwidth=TRUE}
+# Create the Faceted Line Plot
+results %>% 
+  pivot_longer(!c(alpha, Prevalence, Copy_threshold), names_to = "Species",values_to = "value") %>% 
+  filter(alpha=="neutral") %>% 
+ggplot(., aes(x = Prevalence, y = as.numeric(gsub("±.*", "", value)), 
+                    group = Species, color = Species)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  facet_wrap(~ Copy_threshold, scales = "free_y") +
+  labs(
+    title = "Alpha Diversity Across Copy filtering and Prevalence Thresholds",
+    x = "Prevalence Threshold",
+    y = "Neutral",
+    color = "Species"
+  ) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 12, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = "bottom"
+  )
+```
+
+### Comparison alpha diversity: amplicom different threshold vs metagenomics
+
+```{r alpha_table, comment="", message=FALSE, warning=FALSE}
+#Create alpha table
+ prev_threshold<- c("p0", "p10", "p20","p30", "p40")
+copy_threshold <- c("t0", "t1", "t2", "t3", "t4")
+
+bats <- c("Eb", "Pk", "Ha")
+
+alpha_both <- data.frame(
+  alpha = character(),
+  Total = numeric(),
+  Eptesicus=character(),
+  Pipistrellus=character(),
+  Hypsugo=character(),
+  Copy_threshold=character(),
+  Prevalence=character()
+)
+
+  for (copy in copy_threshold) {
+    genome_table <- master_table %>% 
+      filter(copy_threshold==copy) %>% 
+      select(-copy_threshold,-pa) %>%
+      pivot_wider(names_from = genome, values_from = value)
+    for (prev in prev_threshold) {
+      prev_table <- genome_table %>% 
+        filter(prevalence==prev) %>% 
+        select(-Species, -prevalence) %>%
+        column_to_rownames(., "sample") %>% 
+        filter(rowSums(across(everything())) != 0) %>% 
+        t() %>% 
+        as.data.frame()
+      richness <- prev_table %>%
+        dplyr::select(where(~ !all(. == 0))) %>%
+        hilldiv(., q = 0) %>%
+        t() %>%
+        as.data.frame() %>%
+        dplyr::rename(richness = 1) %>%
+        rownames_to_column(var = "sample")
+      neutral <- prev_table %>%
+        dplyr::select(where(~ !all(. == 0))) %>%
+        hilldiv(., q = 1) %>%
+        t() %>%
+        as.data.frame() %>%
+        dplyr::rename(neutral = 1) %>%
+        rownames_to_column(var = "sample")
+      
+      alpha_div <- richness %>%
+        full_join(neutral, by = join_by(sample == sample)) 
+      
+      div <- alpha_div %>%
+        mutate(prevalence=prev) %>% 
+        mutate(copy_threshold=copy) %>% 
+        as.data.frame()
+      
+      alpha_both <- rbind(alpha_both, div)
+      }
+    } 
+
+alpha_both <- alpha_both %>% 
+  mutate(method="16S")
+```
+```{r alpha_table_save, comment="", message=FALSE, warning=FALSE}
+write_csv(alpha_both,"resources/amplicon/alpha_twothreshold_table.csv")
+```
+
+```{r comparison_alpha, comment="", message=FALSE, warning=FALSE}
+
+metagenome_alpha_div <- readRDS("resources/metagenomics/metagenome_alpha_div.rds") %>% 
+  select(sample, richness, neutral, method)
+
+prev_threshold<- c("p0", "p10", "p20","p30", "p40")
+copy_threshold <- c("t0", "t1", "t2", "t3", "t4")
+
+wilcox_results_table <- data.frame(
+  Copy_threshold = character(),
+  Prevalence = character(),
+  W_statistic = numeric(),
+  P_value = numeric(),
+  stringsAsFactors = FALSE
+)
+
+for (copy in copy_threshold) {
+  alpha_Filt <- alpha_both %>% 
+    filter(copy_threshold==copy) %>% 
+    select(-copy_threshold) 
+  for (prev in prev_threshold) {
+    all_result <- alpha_Filt %>% 
+      filter(prevalence==prev) %>% 
+      select(-prevalence) %>% 
+      rbind(., metagenome_alpha_div) %>%
+      group_by(sample) %>%
+      summarize(
+        shotgun = richness[method == "shotgun"],
+        m_16S = richness[method == "16S"]
+        ) %>%
+      summarize(wilcox_result = list(wilcox.test(shotgun, m_16S, paired = TRUE)))
+    
+    wilcox_test <- all_result$wilcox_result[[1]]
+    
+    wilcox_results_table <- wilcox_results_table %>%
+      add_row(
+        Copy_threshold = copy,
+        Prevalence= prev,
+        W_statistic = wilcox_test$statistic,
+        P_value = wilcox_test$p.value
+      )
+  }
+}
+
+
+wilcox_results_table %>% 
+  tt()
+```
