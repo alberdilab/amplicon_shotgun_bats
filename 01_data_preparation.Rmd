@@ -187,7 +187,7 @@ read_counts_row <- column_to_rownames(read_counts, "asv")
 taxonomy_table_row <- column_to_rownames(taxonomy_sp, "asv")
 ```
 
-# Create a phyloseq object
+## Create a phyloseq object
 ```{r amplidata, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 #Phyloseq object
 count_phy <- otu_table(read_counts_row, taxa_are_rows=T)
@@ -202,7 +202,7 @@ physeq_sample <- subset_samples(physeq.raw, Control == "True sample")
 physeq_sample <- prune_taxa(taxa_sums(physeq_sample)>0, physeq_sample)
 ```
 
-# Remove contaminants
+## Remove contaminants
 ```{r decotam, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 sample_data(physeq.raw)$is.neg <- sample_data(physeq.raw)$Control == "Control sample"
 contamdf.prev <- isContaminant(physeq.raw, method="prevalence", neg="is.neg")
@@ -254,7 +254,7 @@ physeq.final.filt <- prune_taxa(taxa_sums(physeq.final)>0, physeq.final)
 saveRDS(physeq.final.filt,"resources/amplicon/physeq_final_nocopyfilter.RData")
 ```
 
-# Merging amplicon and shotgun data
+# Merging amplicon and metagenomic data
 
 ```{r load16Sdata, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 physeq_16S <- readRDS("resources/amplicon/physeq_final_nocopyfilter.RData")
@@ -304,14 +304,14 @@ genome_metadata_16S <-  data.frame(physeq_16S@tax_table) %>%
   filter(asv %in% asv_16S_filt$asv)
 ```
 
-```{r}
+```{r save_16S, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 save(sample_metadata_16S, 
      asv_16S_filt, 
      genome_metadata_16S,
      file = "resources/amplicon/data_withoutcopy.Rdata")
 ```
 
-```{r comparabledata, comment="", message=FALSE, warning=FALSE}
+```{r comparabledata, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 #keep samples present in metagenomic study
 sample_metadata_16S_filt <- sample_metadata_16S[sample_metadata_16S$sample %in% sample_metadata$sample,]
 
@@ -319,7 +319,7 @@ sample_metadata_16S_filt <- sample_metadata_16S[sample_metadata_16S$sample %in% 
 sample_metagenomic_filt <- sample_metadata[sample_metadata$sample %in% sample_metadata_16S$sample,]
 ```
 
-## Prepare the metagenomic data
+## Filtering the metagenomic data to match amplicon data
 ```{r metagenomicdata, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 phyloM_samples <- sample_metagenomic_filt %>%
   column_to_rownames(., "sample") %>% 
@@ -355,7 +355,7 @@ save(sample_metadata,
      file = "resources/metagenomics/data_filtered.Rdata")
 ```
 
-## Prepare the 16S data
+## Matching the 16S data to metagenomic data
 ```{r 16Sdata, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 
 phylo_samples <- sample_metadata_16S_filt %>% 

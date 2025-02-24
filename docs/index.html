@@ -24,7 +24,7 @@
 <meta name="author" content="Antton Alberdi" />
 
 
-<meta name="date" content="2025-02-05" />
+<meta name="date" content="2025-02-24" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -1876,7 +1876,7 @@ a.anchor-section::before {content: '#';font-size: 80%;}
 
 <style type="text/css">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -1886,7 +1886,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
 { counter-reset: source-line 0; }
@@ -2052,62 +2052,63 @@ color: #a52929;
 <li class="chapter" data-level="3" data-path="amplicon.html"><a href="amplicon.html"><i class="fa fa-check"></i><b>3</b> Amplicon</a>
 <ul>
 <li class="chapter" data-level="3.1" data-path="amplicon.html"><a href="amplicon.html#load-data"><i class="fa fa-check"></i><b>3.1</b> Load data</a></li>
+<li class="chapter" data-level="3.2" data-path="amplicon.html"><a href="amplicon.html#create-a-phyloseq-object"><i class="fa fa-check"></i><b>3.2</b> Create a phyloseq object</a></li>
+<li class="chapter" data-level="3.3" data-path="amplicon.html"><a href="amplicon.html#remove-contaminants"><i class="fa fa-check"></i><b>3.3</b> Remove contaminants</a></li>
+<li class="chapter" data-level="3.4" data-path="amplicon.html"><a href="amplicon.html#basic-filtering"><i class="fa fa-check"></i><b>3.4</b> Basic filtering</a></li>
+<li class="chapter" data-level="3.5" data-path="amplicon.html"><a href="amplicon.html#removing-chloroplast-and-mitochondria"><i class="fa fa-check"></i><b>3.5</b> Removing chloroplast and mitochondria</a></li>
+<li class="chapter" data-level="3.6" data-path="amplicon.html"><a href="amplicon.html#save"><i class="fa fa-check"></i><b>3.6</b> Save</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="create-a-phyloseq-object.html"><a href="create-a-phyloseq-object.html"><i class="fa fa-check"></i><b>4</b> Create a phyloseq object</a></li>
-<li class="chapter" data-level="5" data-path="remove-contaminants.html"><a href="remove-contaminants.html"><i class="fa fa-check"></i><b>5</b> Remove contaminants</a>
+<li class="chapter" data-level="4" data-path="merging-amplicon-and-metagenomic-data.html"><a href="merging-amplicon-and-metagenomic-data.html"><i class="fa fa-check"></i><b>4</b> Merging amplicon and metagenomic data</a>
 <ul>
-<li class="chapter" data-level="5.1" data-path="remove-contaminants.html"><a href="remove-contaminants.html#basic-filtering"><i class="fa fa-check"></i><b>5.1</b> Basic filtering</a></li>
-<li class="chapter" data-level="5.2" data-path="remove-contaminants.html"><a href="remove-contaminants.html#removing-chloroplast-and-mitochondria"><i class="fa fa-check"></i><b>5.2</b> Removing chloroplast and mitochondria</a></li>
-<li class="chapter" data-level="5.3" data-path="remove-contaminants.html"><a href="remove-contaminants.html#save"><i class="fa fa-check"></i><b>5.3</b> Save</a></li>
+<li class="chapter" data-level="4.1" data-path="merging-amplicon-and-metagenomic-data.html"><a href="merging-amplicon-and-metagenomic-data.html#filtering-the-metagenomic-data-to-match-amplicon-data"><i class="fa fa-check"></i><b>4.1</b> Filtering the metagenomic data to match amplicon data</a></li>
+<li class="chapter" data-level="4.2" data-path="merging-amplicon-and-metagenomic-data.html"><a href="merging-amplicon-and-metagenomic-data.html#matching-the-16s-data-to-metagenomic-data"><i class="fa fa-check"></i><b>4.2</b> Matching the 16S data to metagenomic data</a></li>
+<li class="chapter" data-level="4.3" data-path="merging-amplicon-and-metagenomic-data.html"><a href="merging-amplicon-and-metagenomic-data.html#create-master-table-for-amplicon-data"><i class="fa fa-check"></i><b>4.3</b> Create master table for amplicon data</a></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="merging-amplicon-and-shotgun-data.html"><a href="merging-amplicon-and-shotgun-data.html"><i class="fa fa-check"></i><b>6</b> Merging amplicon and shotgun data</a>
+<li class="chapter" data-level="5" data-path="community-composition.html"><a href="community-composition.html"><i class="fa fa-check"></i><b>5</b> Community composition</a>
 <ul>
-<li class="chapter" data-level="6.1" data-path="merging-amplicon-and-shotgun-data.html"><a href="merging-amplicon-and-shotgun-data.html#prepare-the-metagenomic-data"><i class="fa fa-check"></i><b>6.1</b> Prepare the metagenomic data</a></li>
-<li class="chapter" data-level="6.2" data-path="merging-amplicon-and-shotgun-data.html"><a href="merging-amplicon-and-shotgun-data.html#prepare-the-16s-data"><i class="fa fa-check"></i><b>6.2</b> Prepare the 16S data</a></li>
-<li class="chapter" data-level="6.3" data-path="merging-amplicon-and-shotgun-data.html"><a href="merging-amplicon-and-shotgun-data.html#create-master-table-for-amplicon-data"><i class="fa fa-check"></i><b>6.3</b> Create master table for amplicon data</a></li>
+<li class="chapter" data-level="5.1" data-path="community-composition.html"><a href="community-composition.html#metagenomics-1"><i class="fa fa-check"></i><b>5.1</b> Metagenomics</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="community-composition.html"><a href="community-composition.html#taxonomy-overview"><i class="fa fa-check"></i><b>5.1.1</b> Taxonomy overview</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="community-composition.html"><a href="community-composition.html"><i class="fa fa-check"></i><b>7</b> Community composition</a>
+<li class="chapter" data-level="5.2" data-path="community-composition.html"><a href="community-composition.html#summary-table"><i class="fa fa-check"></i><b>5.2</b> Summary table</a></li>
+<li class="chapter" data-level="5.3" data-path="community-composition.html"><a href="community-composition.html#amplicon-1"><i class="fa fa-check"></i><b>5.3</b> Amplicon</a>
 <ul>
-<li class="chapter" data-level="7.1" data-path="community-composition.html"><a href="community-composition.html#metagenomics-1"><i class="fa fa-check"></i><b>7.1</b> Metagenomics</a>
-<ul>
-<li class="chapter" data-level="7.1.1" data-path="community-composition.html"><a href="community-composition.html#taxonomy-overview"><i class="fa fa-check"></i><b>7.1.1</b> Taxonomy overview</a></li>
+<li class="chapter" data-level="5.3.1" data-path="community-composition.html"><a href="community-composition.html#taxonomy-overview-1"><i class="fa fa-check"></i><b>5.3.1</b> Taxonomy overview</a></li>
 </ul></li>
-<li class="chapter" data-level="7.2" data-path="community-composition.html"><a href="community-composition.html#summary-table"><i class="fa fa-check"></i><b>7.2</b> Summary table</a></li>
-<li class="chapter" data-level="7.3" data-path="community-composition.html"><a href="community-composition.html#amplicon-1"><i class="fa fa-check"></i><b>7.3</b> Amplicon</a>
-<ul>
-<li class="chapter" data-level="7.3.1" data-path="community-composition.html"><a href="community-composition.html#taxonomy-overview-1"><i class="fa fa-check"></i><b>7.3.1</b> Taxonomy overview</a></li>
+<li class="chapter" data-level="5.4" data-path="community-composition.html"><a href="community-composition.html#summary-table-1"><i class="fa fa-check"></i><b>5.4</b> Summary table</a></li>
 </ul></li>
-<li class="chapter" data-level="7.4" data-path="community-composition.html"><a href="community-composition.html#summary-table-1"><i class="fa fa-check"></i><b>7.4</b> Summary table</a></li>
+<li class="chapter" data-level="6" data-path="alpha-diversity.html"><a href="alpha-diversity.html"><i class="fa fa-check"></i><b>6</b> Alpha diversity</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="alpha-diversity.html"><a href="alpha-diversity.html#metagenomics-2"><i class="fa fa-check"></i><b>6.1</b> Metagenomics</a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="alpha-diversity.html"><a href="alpha-diversity.html#mixed-models"><i class="fa fa-check"></i><b>6.1.1</b> Mixed models</a></li>
 </ul></li>
-<li class="chapter" data-level="8" data-path="alpha-diversity.html"><a href="alpha-diversity.html"><i class="fa fa-check"></i><b>8</b> Alpha diversity</a>
+<li class="chapter" data-level="6.2" data-path="alpha-diversity.html"><a href="alpha-diversity.html#amplicon-2"><i class="fa fa-check"></i><b>6.2</b> Amplicon</a>
 <ul>
-<li class="chapter" data-level="8.1" data-path="alpha-diversity.html"><a href="alpha-diversity.html#metagenomics-2"><i class="fa fa-check"></i><b>8.1</b> Metagenomics</a>
-<ul>
-<li class="chapter" data-level="8.1.1" data-path="alpha-diversity.html"><a href="alpha-diversity.html#mixed-models"><i class="fa fa-check"></i><b>8.1.1</b> Mixed models</a></li>
-</ul></li>
-<li class="chapter" data-level="8.2" data-path="alpha-diversity.html"><a href="alpha-diversity.html#amplicon-2"><i class="fa fa-check"></i><b>8.2</b> Amplicon</a></li>
-</ul></li>
-<li class="chapter" data-level="9" data-path="beta-diversity.html"><a href="beta-diversity.html"><i class="fa fa-check"></i><b>9</b> Beta diversity</a>
-<ul>
-<li class="chapter" data-level="9.1" data-path="beta-diversity.html"><a href="beta-diversity.html#metagenomics-3"><i class="fa fa-check"></i><b>9.1</b> Metagenomics</a>
-<ul>
-<li class="chapter" data-level="9.1.1" data-path="beta-diversity.html"><a href="beta-diversity.html#permanova"><i class="fa fa-check"></i><b>9.1.1</b> Permanova</a></li>
-<li class="chapter" data-level="9.1.2" data-path="beta-diversity.html"><a href="beta-diversity.html#nmds"><i class="fa fa-check"></i><b>9.1.2</b> NMDS</a></li>
-</ul></li>
-<li class="chapter" data-level="9.2" data-path="beta-diversity.html"><a href="beta-diversity.html#amplicon-3"><i class="fa fa-check"></i><b>9.2</b> Amplicon</a>
-<ul>
-<li class="chapter" data-level="9.2.1" data-path="beta-diversity.html"><a href="beta-diversity.html#permanova-1"><i class="fa fa-check"></i><b>9.2.1</b> Permanova</a></li>
-<li class="chapter" data-level="9.2.2" data-path="beta-diversity.html"><a href="beta-diversity.html#nmds-1"><i class="fa fa-check"></i><b>9.2.2</b> NMDS</a></li>
+<li class="chapter" data-level="6.2.1" data-path="alpha-diversity.html"><a href="alpha-diversity.html#mixed-models-1"><i class="fa fa-check"></i><b>6.2.1</b> Mixed models</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="10" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html"><i class="fa fa-check"></i><b>10</b> Copy filtering &amp; prevalence</a>
+<li class="chapter" data-level="7" data-path="beta-diversity.html"><a href="beta-diversity.html"><i class="fa fa-check"></i><b>7</b> Beta diversity</a>
 <ul>
-<li class="chapter" data-level="10.1" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#total-asvs"><i class="fa fa-check"></i><b>10.1</b> Total ASVs</a></li>
-<li class="chapter" data-level="10.2" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#single-to-individuals"><i class="fa fa-check"></i><b>10.2</b> Single to individuals</a></li>
-<li class="chapter" data-level="10.3" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#single-to-species"><i class="fa fa-check"></i><b>10.3</b> Single to species</a></li>
-<li class="chapter" data-level="10.4" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#alpha-diversity-1"><i class="fa fa-check"></i><b>10.4</b> Alpha Diversity</a>
+<li class="chapter" data-level="7.1" data-path="beta-diversity.html"><a href="beta-diversity.html#metagenomics-3"><i class="fa fa-check"></i><b>7.1</b> Metagenomics</a>
 <ul>
-<li class="chapter" data-level="10.4.1" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#comparison-alpha-diversity-amplicom-different-threshold-vs-metagenomics"><i class="fa fa-check"></i><b>10.4.1</b> Comparison alpha diversity: amplicom different threshold vs metagenomics</a></li>
+<li class="chapter" data-level="7.1.1" data-path="beta-diversity.html"><a href="beta-diversity.html#permanova"><i class="fa fa-check"></i><b>7.1.1</b> Permanova</a></li>
+<li class="chapter" data-level="7.1.2" data-path="beta-diversity.html"><a href="beta-diversity.html#nmds"><i class="fa fa-check"></i><b>7.1.2</b> NMDS</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="beta-diversity.html"><a href="beta-diversity.html#amplicon-3"><i class="fa fa-check"></i><b>7.2</b> Amplicon</a>
+<ul>
+<li class="chapter" data-level="7.2.1" data-path="beta-diversity.html"><a href="beta-diversity.html#permanova-1"><i class="fa fa-check"></i><b>7.2.1</b> Permanova</a></li>
+<li class="chapter" data-level="7.2.2" data-path="beta-diversity.html"><a href="beta-diversity.html#nmds-1"><i class="fa fa-check"></i><b>7.2.2</b> NMDS</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html"><i class="fa fa-check"></i><b>8</b> Copy filtering &amp; prevalence</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#total-asvs"><i class="fa fa-check"></i><b>8.1</b> Total ASVs</a></li>
+<li class="chapter" data-level="8.2" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#single-to-individuals"><i class="fa fa-check"></i><b>8.2</b> Single to individuals</a></li>
+<li class="chapter" data-level="8.3" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#single-to-species"><i class="fa fa-check"></i><b>8.3</b> Single to species</a></li>
+<li class="chapter" data-level="8.4" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#alpha-diversity-1"><i class="fa fa-check"></i><b>8.4</b> Alpha Diversity</a>
+<ul>
+<li class="chapter" data-level="8.4.1" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#comparison-alpha-diversity-amplicom-different-threshold-vs-metagenomics"><i class="fa fa-check"></i><b>8.4.1</b> Comparison alpha diversity: amplicom different threshold vs metagenomics</a></li>
 </ul></li>
 </ul></li>
 <li class="divider"></li>
@@ -2137,7 +2138,7 @@ color: #a52929;
 <h2 class="subtitle"><em>Bats microbiota using amplicon and shotgun</em></h2>
 <p class="author"><em>Ostaizka Aizpurua<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></em></p>
 <p class="author"><em>Antton Alberdi<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></em></p>
-<p class="date"><em>2025-02-05</em></p>
+<p class="date"><em>2025-02-24</em></p>
 </div>
 <div id="introduction" class="section level1 hasAnchor" number="1">
 <h1><span class="header-section-number">Chapter 1</span> Introduction<a href="index.html#introduction" class="anchor-section" aria-label="Anchor link to header"></a></h1>
@@ -2188,14 +2189,14 @@ color: #a52929;
 <span id="cb2-29"><a href="index.html#cb2-29" tabindex="-1"></a><span class="fu">library</span>(vegan)</span>
 <span id="cb2-30"><a href="index.html#cb2-30" tabindex="-1"></a><span class="fu">library</span>(Rtsne)</span>
 <span id="cb2-31"><a href="index.html#cb2-31" tabindex="-1"></a><span class="fu">library</span>(geiger)</span>
-<span id="cb2-32"><a href="index.html#cb2-32" tabindex="-1"></a><span class="fu">library</span>(hilldiv2)</span>
-<span id="cb2-33"><a href="index.html#cb2-33" tabindex="-1"></a><span class="fu">library</span>(distillR)</span>
-<span id="cb2-34"><a href="index.html#cb2-34" tabindex="-1"></a><span class="fu">library</span>(ANCOMBC)</span>
-<span id="cb2-35"><a href="index.html#cb2-35" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
-<span id="cb2-36"><a href="index.html#cb2-36" tabindex="-1"></a><span class="fu">library</span>(nlme)</span>
-<span id="cb2-37"><a href="index.html#cb2-37" tabindex="-1"></a><span class="fu">library</span>(pairwiseAdonis)</span>
-<span id="cb2-38"><a href="index.html#cb2-38" tabindex="-1"></a><span class="fu">library</span>(emmeans)</span>
-<span id="cb2-39"><a href="index.html#cb2-39" tabindex="-1"></a><span class="fu">library</span>(hilldiv2)</span></code></pre></div>
+<span id="cb2-32"><a href="index.html#cb2-32" tabindex="-1"></a><span class="fu">library</span>(hilldiv)</span>
+<span id="cb2-33"><a href="index.html#cb2-33" tabindex="-1"></a><span class="fu">library</span>(hilldiv2)</span>
+<span id="cb2-34"><a href="index.html#cb2-34" tabindex="-1"></a><span class="fu">library</span>(distillR)</span>
+<span id="cb2-35"><a href="index.html#cb2-35" tabindex="-1"></a><span class="fu">library</span>(ANCOMBC)</span>
+<span id="cb2-36"><a href="index.html#cb2-36" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb2-37"><a href="index.html#cb2-37" tabindex="-1"></a><span class="fu">library</span>(nlme)</span>
+<span id="cb2-38"><a href="index.html#cb2-38" tabindex="-1"></a><span class="fu">library</span>(pairwiseAdonis)</span>
+<span id="cb2-39"><a href="index.html#cb2-39" tabindex="-1"></a><span class="fu">library</span>(emmeans)</span></code></pre></div>
 
 </div>
 </div>

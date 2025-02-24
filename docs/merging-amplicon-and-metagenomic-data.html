@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 3 Amplicon | AlberdiLab | Aizpurua et al. 2025</title>
+  <title>Chapter 4 Merging amplicon and metagenomic data | AlberdiLab | Aizpurua et al. 2025</title>
   <meta name="description" content="&lt;p&gt;Data analysis code for the study on the study of gut microbiomes of Pyrenean brook salamanders in high and low altitudes.&lt;/p&gt;" />
   <meta name="generator" content="bookdown 0.41 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 3 Amplicon | AlberdiLab | Aizpurua et al. 2025" />
+  <meta property="og:title" content="Chapter 4 Merging amplicon and metagenomic data | AlberdiLab | Aizpurua et al. 2025" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="&lt;p&gt;Data analysis code for the study on the study of gut microbiomes of Pyrenean brook salamanders in high and low altitudes.&lt;/p&gt;" />
   <meta name="github-repo" content="alberdilab/amplicon_shotgun_bats" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 3 Amplicon | AlberdiLab | Aizpurua et al. 2025" />
+  <meta name="twitter:title" content="Chapter 4 Merging amplicon and metagenomic data | AlberdiLab | Aizpurua et al. 2025" />
   
   <meta name="twitter:description" content="&lt;p&gt;Data analysis code for the study on the study of gut microbiomes of Pyrenean brook salamanders in high and low altitudes.&lt;/p&gt;" />
   
@@ -31,8 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="metagenomics.html"/>
-<link rel="next" href="merging-amplicon-and-metagenomic-data.html"/>
+<link rel="prev" href="amplicon.html"/>
+<link rel="next" href="community-composition.html"/>
 
 
 
@@ -2133,81 +2133,190 @@ color: #a52929;
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="amplicon" class="section level1 hasAnchor" number="3">
-<h1><span class="header-section-number">Chapter 3</span> Amplicon<a href="amplicon.html#amplicon" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div id="load-data" class="section level2 hasAnchor" number="3.1">
-<h2><span class="header-section-number">3.1</span> Load data<a href="amplicon.html#load-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb15-1"><a href="amplicon.html#cb15-1" tabindex="-1"></a>read_counts <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="st">&quot;resources/amplicon/ASVs_count_overlap10_nochim0.tsv&quot;</span>) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">asv =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb15-2"><a href="amplicon.html#cb15-2" tabindex="-1"></a>  <span class="fu">as.data.frame</span>()</span>
-<span id="cb15-3"><a href="amplicon.html#cb15-3" tabindex="-1"></a><span class="co">#asvs &lt;- read_counts$asv</span></span>
-<span id="cb15-4"><a href="amplicon.html#cb15-4" tabindex="-1"></a>taxonomy_sp <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="st">&quot;resources/amplicon/taxonomy_species_tax_overlap10_nochim0.tsv&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb15-5"><a href="amplicon.html#cb15-5" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">asv =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb15-6"><a href="amplicon.html#cb15-6" tabindex="-1"></a>  <span class="fu">as.data.frame</span>()</span>
-<span id="cb15-7"><a href="amplicon.html#cb15-7" tabindex="-1"></a>hierarchy <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;resources/amplicon/metadata.csv&quot;</span>)</span>
-<span id="cb15-8"><a href="amplicon.html#cb15-8" tabindex="-1"></a>samples <span class="ot">&lt;-</span> read_counts <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>asv) <span class="sc">%&gt;%</span> <span class="fu">colnames</span>()</span>
-<span id="cb15-9"><a href="amplicon.html#cb15-9" tabindex="-1"></a>hierarchy <span class="ot">&lt;-</span> hierarchy[hierarchy<span class="sc">$</span>Sample <span class="sc">%in%</span> samples,]</span>
-<span id="cb15-10"><a href="amplicon.html#cb15-10" tabindex="-1"></a>metadata <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">column_to_rownames</span>(hierarchy, <span class="st">&quot;Sample&quot;</span>)</span>
-<span id="cb15-11"><a href="amplicon.html#cb15-11" tabindex="-1"></a>read_counts_row <span class="ot">&lt;-</span> <span class="fu">column_to_rownames</span>(read_counts, <span class="st">&quot;asv&quot;</span>)</span>
-<span id="cb15-12"><a href="amplicon.html#cb15-12" tabindex="-1"></a>taxonomy_table_row <span class="ot">&lt;-</span> <span class="fu">column_to_rownames</span>(taxonomy_sp, <span class="st">&quot;asv&quot;</span>)</span></code></pre></div>
+<div id="merging-amplicon-and-metagenomic-data" class="section level1 hasAnchor" number="4">
+<h1><span class="header-section-number">Chapter 4</span> Merging amplicon and metagenomic data<a href="merging-amplicon-and-metagenomic-data.html#merging-amplicon-and-metagenomic-data" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb22-1"><a href="merging-amplicon-and-metagenomic-data.html#cb22-1" tabindex="-1"></a>physeq_16S <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;resources/amplicon/physeq_final_nocopyfilter.RData&quot;</span>)</span>
+<span id="cb22-2"><a href="merging-amplicon-and-metagenomic-data.html#cb22-2" tabindex="-1"></a>physeq_16S <span class="ot">&lt;-</span> <span class="fu">prune_taxa</span>(<span class="fu">taxa_sums</span>(physeq_16S)<span class="sc">&gt;</span><span class="dv">0</span>, physeq_16S)</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb23-1"><a href="merging-amplicon-and-metagenomic-data.html#cb23-1" tabindex="-1"></a><span class="co">#list duplicated data</span></span>
+<span id="cb23-2"><a href="merging-amplicon-and-metagenomic-data.html#cb23-2" tabindex="-1"></a>remov_samples <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;P19_r1&quot;</span>, <span class="st">&quot;P19_r2&quot;</span>, <span class="st">&quot;P10_r2&quot;</span>, <span class="st">&quot;P10_r1&quot;</span>, <span class="st">&quot;E06_r3&quot;</span>, <span class="st">&quot;E06_r2&quot;</span>, <span class="st">&quot;E15_r1&quot;</span>, <span class="st">&quot;E29_r1&quot;</span>, <span class="st">&quot;E29_r2&quot;</span>, <span class="st">&quot;E37_r2&quot;</span>, <span class="st">&quot;E37_r3&quot;</span>, <span class="st">&quot;E47_r2&quot;</span>, <span class="st">&quot;E50_r1&quot;</span>, <span class="st">&quot;H09_r1&quot;</span>, <span class="st">&quot;H13_r2&quot;</span>, <span class="st">&quot;H39_r1&quot;</span>, <span class="st">&quot;P35_r3&quot;</span>, <span class="st">&quot;P64_r2&quot;</span>, <span class="st">&quot;P64_r3&quot;</span>)</span>
+<span id="cb23-3"><a href="merging-amplicon-and-metagenomic-data.html#cb23-3" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="merging-amplicon-and-metagenomic-data.html#cb23-4" tabindex="-1"></a><span class="co">#Change the names in asv_table</span></span>
+<span id="cb23-5"><a href="merging-amplicon-and-metagenomic-data.html#cb23-5" tabindex="-1"></a>asv_16S <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(physeq_16S<span class="sc">@</span>otu_table) </span>
+<span id="cb23-6"><a href="merging-amplicon-and-metagenomic-data.html#cb23-6" tabindex="-1"></a><span class="fu">names</span>(asv_16S) <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">&quot;^[^.]+</span><span class="sc">\\</span><span class="st">.&quot;</span>, <span class="st">&quot;&quot;</span>,<span class="fu">names</span>(asv_16S))</span>
+<span id="cb23-7"><a href="merging-amplicon-and-metagenomic-data.html#cb23-7" tabindex="-1"></a><span class="fu">colnames</span>(asv_16S)</span>
+<span id="cb23-8"><a href="merging-amplicon-and-metagenomic-data.html#cb23-8" tabindex="-1"></a><span class="co">#filter duplicated data</span></span>
+<span id="cb23-9"><a href="merging-amplicon-and-metagenomic-data.html#cb23-9" tabindex="-1"></a>asv_16S_filt <span class="ot">&lt;-</span> asv_16S[, <span class="sc">-</span><span class="fu">which</span>(<span class="fu">names</span>(asv_16S) <span class="sc">%in%</span> remov_samples)]</span>
+<span id="cb23-10"><a href="merging-amplicon-and-metagenomic-data.html#cb23-10" tabindex="-1"></a><span class="co">#remove _r* from the names</span></span>
+<span id="cb23-11"><a href="merging-amplicon-and-metagenomic-data.html#cb23-11" tabindex="-1"></a><span class="fu">names</span>(asv_16S_filt) <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="at">pattern =</span> <span class="st">&quot;_r[1-3]$&quot;</span>, <span class="st">&quot;&quot;</span>, <span class="at">x =</span> <span class="fu">names</span>(asv_16S_filt))</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb24-1"><a href="merging-amplicon-and-metagenomic-data.html#cb24-1" tabindex="-1"></a>asv_16S_filt <span class="ot">&lt;-</span> asv_16S_filt[<span class="fu">rowSums</span>(asv_16S_filt[, <span class="sc">-</span><span class="dv">1</span>] <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">!=</span> <span class="dv">0</span>, ] <span class="sc">%&gt;%</span> </span>
+<span id="cb24-2"><a href="merging-amplicon-and-metagenomic-data.html#cb24-2" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(., <span class="st">&quot;asv&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb25-1"><a href="merging-amplicon-and-metagenomic-data.html#cb25-1" tabindex="-1"></a><span class="co">#Prepare the samples data and filter</span></span>
+<span id="cb25-2"><a href="merging-amplicon-and-metagenomic-data.html#cb25-2" tabindex="-1"></a>sample_metadata_16S <span class="ot">&lt;-</span>  <span class="fu">data.frame</span>(physeq_16S<span class="sc">@</span>sam_data) <span class="sc">%&gt;%</span> </span>
+<span id="cb25-3"><a href="merging-amplicon-and-metagenomic-data.html#cb25-3" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(., <span class="st">&quot;sample_id&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb25-4"><a href="merging-amplicon-and-metagenomic-data.html#cb25-4" tabindex="-1"></a>  <span class="fu">separate_wider_delim</span>(sample_id, <span class="st">&quot;.&quot;</span>, <span class="at">names =</span> <span class="fu">c</span>(<span class="st">&#39;id&#39;</span>, <span class="st">&#39;sample&#39;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb25-5"><a href="merging-amplicon-and-metagenomic-data.html#cb25-5" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>id) <span class="sc">%&gt;%</span> </span>
+<span id="cb25-6"><a href="merging-amplicon-and-metagenomic-data.html#cb25-6" tabindex="-1"></a>  <span class="fu">separate_wider_delim</span>(Sp_Biome, <span class="st">&quot;_&quot;</span>, <span class="at">names =</span> <span class="fu">c</span>(<span class="st">&#39;Sp&#39;</span>, <span class="st">&#39;Biome&#39;</span>)) <span class="sc">%&gt;%</span>  </span>
+<span id="cb25-7"><a href="merging-amplicon-and-metagenomic-data.html#cb25-7" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(., <span class="st">&quot;sample&quot;</span>) </span>
+<span id="cb25-8"><a href="merging-amplicon-and-metagenomic-data.html#cb25-8" tabindex="-1"></a></span>
+<span id="cb25-9"><a href="merging-amplicon-and-metagenomic-data.html#cb25-9" tabindex="-1"></a><span class="co"># Define the row indices to keep based on row names</span></span>
+<span id="cb25-10"><a href="merging-amplicon-and-metagenomic-data.html#cb25-10" tabindex="-1"></a>rows_to_remove <span class="ot">&lt;-</span> <span class="sc">!</span>(<span class="fu">rownames</span>(sample_metadata_16S) <span class="sc">%in%</span> remov_samples)</span>
+<span id="cb25-11"><a href="merging-amplicon-and-metagenomic-data.html#cb25-11" tabindex="-1"></a><span class="co"># Filter the data frame based on the row indices</span></span>
+<span id="cb25-12"><a href="merging-amplicon-and-metagenomic-data.html#cb25-12" tabindex="-1"></a>sample_metadata_16S <span class="ot">&lt;-</span> sample_metadata_16S[rows_to_remove, ]</span>
+<span id="cb25-13"><a href="merging-amplicon-and-metagenomic-data.html#cb25-13" tabindex="-1"></a></span>
+<span id="cb25-14"><a href="merging-amplicon-and-metagenomic-data.html#cb25-14" tabindex="-1"></a><span class="co">#remove _r*</span></span>
+<span id="cb25-15"><a href="merging-amplicon-and-metagenomic-data.html#cb25-15" tabindex="-1"></a><span class="fu">rownames</span>(sample_metadata_16S) <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="at">pattern =</span> <span class="st">&quot;_r[1-3]$&quot;</span>, <span class="st">&quot;&quot;</span>, <span class="at">x =</span> <span class="fu">rownames</span>(sample_metadata_16S))</span>
+<span id="cb25-16"><a href="merging-amplicon-and-metagenomic-data.html#cb25-16" tabindex="-1"></a></span>
+<span id="cb25-17"><a href="merging-amplicon-and-metagenomic-data.html#cb25-17" tabindex="-1"></a>sample_metadata_16S <span class="ot">&lt;-</span> sample_metadata_16S <span class="sc">%&gt;%</span> </span>
+<span id="cb25-18"><a href="merging-amplicon-and-metagenomic-data.html#cb25-18" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(., <span class="st">&quot;sample&quot;</span>)</span>
+<span id="cb25-19"><a href="merging-amplicon-and-metagenomic-data.html#cb25-19" tabindex="-1"></a></span>
+<span id="cb25-20"><a href="merging-amplicon-and-metagenomic-data.html#cb25-20" tabindex="-1"></a>genome_metadata_16S <span class="ot">&lt;-</span>  <span class="fu">data.frame</span>(physeq_16S<span class="sc">@</span>tax_table) <span class="sc">%&gt;%</span> </span>
+<span id="cb25-21"><a href="merging-amplicon-and-metagenomic-data.html#cb25-21" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(., <span class="st">&quot;asv&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb25-22"><a href="merging-amplicon-and-metagenomic-data.html#cb25-22" tabindex="-1"></a>  <span class="fu">filter</span>(asv <span class="sc">%in%</span> asv_16S_filt<span class="sc">$</span>asv)</span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb26-1"><a href="merging-amplicon-and-metagenomic-data.html#cb26-1" tabindex="-1"></a><span class="fu">save</span>(sample_metadata_16S, </span>
+<span id="cb26-2"><a href="merging-amplicon-and-metagenomic-data.html#cb26-2" tabindex="-1"></a>     asv_16S_filt, </span>
+<span id="cb26-3"><a href="merging-amplicon-and-metagenomic-data.html#cb26-3" tabindex="-1"></a>     genome_metadata_16S,</span>
+<span id="cb26-4"><a href="merging-amplicon-and-metagenomic-data.html#cb26-4" tabindex="-1"></a>     <span class="at">file =</span> <span class="st">&quot;resources/amplicon/data_withoutcopy.Rdata&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb27-1"><a href="merging-amplicon-and-metagenomic-data.html#cb27-1" tabindex="-1"></a><span class="co">#keep samples present in metagenomic study</span></span>
+<span id="cb27-2"><a href="merging-amplicon-and-metagenomic-data.html#cb27-2" tabindex="-1"></a>sample_metadata_16S_filt <span class="ot">&lt;-</span> sample_metadata_16S[sample_metadata_16S<span class="sc">$</span>sample <span class="sc">%in%</span> sample_metadata<span class="sc">$</span>sample,]</span>
+<span id="cb27-3"><a href="merging-amplicon-and-metagenomic-data.html#cb27-3" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="merging-amplicon-and-metagenomic-data.html#cb27-4" tabindex="-1"></a><span class="co">#keep samples present in 16S study</span></span>
+<span id="cb27-5"><a href="merging-amplicon-and-metagenomic-data.html#cb27-5" tabindex="-1"></a>sample_metagenomic_filt <span class="ot">&lt;-</span> sample_metadata[sample_metadata<span class="sc">$</span>sample <span class="sc">%in%</span> sample_metadata_16S<span class="sc">$</span>sample,]</span></code></pre></div>
+<div id="filtering-the-metagenomic-data-to-match-amplicon-data" class="section level2 hasAnchor" number="4.1">
+<h2><span class="header-section-number">4.1</span> Filtering the metagenomic data to match amplicon data<a href="merging-amplicon-and-metagenomic-data.html#filtering-the-metagenomic-data-to-match-amplicon-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb28-1"><a href="merging-amplicon-and-metagenomic-data.html#cb28-1" tabindex="-1"></a>phyloM_samples <span class="ot">&lt;-</span> sample_metagenomic_filt <span class="sc">%&gt;%</span></span>
+<span id="cb28-2"><a href="merging-amplicon-and-metagenomic-data.html#cb28-2" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(., <span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-3"><a href="merging-amplicon-and-metagenomic-data.html#cb28-3" tabindex="-1"></a>  <span class="fu">sample_data</span>() <span class="co">#convert to phyloseq sample_data object</span></span>
+<span id="cb28-4"><a href="merging-amplicon-and-metagenomic-data.html#cb28-4" tabindex="-1"></a></span>
+<span id="cb28-5"><a href="merging-amplicon-and-metagenomic-data.html#cb28-5" tabindex="-1"></a><span class="fu">sam_data</span>(genome_data) <span class="ot">&lt;-</span> phyloM_samples</span>
+<span id="cb28-6"><a href="merging-amplicon-and-metagenomic-data.html#cb28-6" tabindex="-1"></a>phyloseq_metagenome_filtered <span class="ot">&lt;-</span> <span class="fu">prune_taxa</span>(<span class="fu">taxa_sums</span>(genome_data)<span class="sc">&gt;</span><span class="dv">0</span>, genome_data)</span>
+<span id="cb28-7"><a href="merging-amplicon-and-metagenomic-data.html#cb28-7" tabindex="-1"></a></span>
+<span id="cb28-8"><a href="merging-amplicon-and-metagenomic-data.html#cb28-8" tabindex="-1"></a>sample_metadata <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(phyloseq_metagenome_filtered<span class="sc">@</span>sam_data)<span class="sc">%&gt;%</span> </span>
+<span id="cb28-9"><a href="merging-amplicon-and-metagenomic-data.html#cb28-9" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(., <span class="st">&quot;sample&quot;</span>)</span>
+<span id="cb28-10"><a href="merging-amplicon-and-metagenomic-data.html#cb28-10" tabindex="-1"></a>genome_metadata <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(phyloseq_metagenome_filtered<span class="sc">@</span>tax_table) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-11"><a href="merging-amplicon-and-metagenomic-data.html#cb28-11" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(., <span class="st">&quot;genome&quot;</span>)</span>
+<span id="cb28-12"><a href="merging-amplicon-and-metagenomic-data.html#cb28-12" tabindex="-1"></a>genome_counts_filt <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(phyloseq_metagenome_filtered<span class="sc">@</span>otu_table) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-13"><a href="merging-amplicon-and-metagenomic-data.html#cb28-13" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(., <span class="st">&quot;genome&quot;</span>)</span>
+<span id="cb28-14"><a href="merging-amplicon-and-metagenomic-data.html#cb28-14" tabindex="-1"></a></span>
+<span id="cb28-15"><a href="merging-amplicon-and-metagenomic-data.html#cb28-15" tabindex="-1"></a>preprocess_info <span class="ot">&lt;-</span> preprocess_info <span class="sc">%&gt;%</span> </span>
+<span id="cb28-16"><a href="merging-amplicon-and-metagenomic-data.html#cb28-16" tabindex="-1"></a>  <span class="fu">filter</span>(sample <span class="sc">%in%</span> sample_metadata<span class="sc">$</span>sample)</span>
+<span id="cb28-17"><a href="merging-amplicon-and-metagenomic-data.html#cb28-17" tabindex="-1"></a></span>
+<span id="cb28-18"><a href="merging-amplicon-and-metagenomic-data.html#cb28-18" tabindex="-1"></a>genome_tree <span class="ot">&lt;-</span> <span class="fu">keep.tip</span>(genome_tree, <span class="at">tip=</span>genome_metadata<span class="sc">$</span>genome) </span>
+<span id="cb28-19"><a href="merging-amplicon-and-metagenomic-data.html#cb28-19" tabindex="-1"></a></span>
+<span id="cb28-20"><a href="merging-amplicon-and-metagenomic-data.html#cb28-20" tabindex="-1"></a>genome_gifts <span class="ot">&lt;-</span> genome_gifts[<span class="fu">rownames</span>(genome_gifts) <span class="sc">%in%</span> genome_counts_filt<span class="sc">$</span>genome,]</span>
+<span id="cb28-21"><a href="merging-amplicon-and-metagenomic-data.html#cb28-21" tabindex="-1"></a></span>
+<span id="cb28-22"><a href="merging-amplicon-and-metagenomic-data.html#cb28-22" tabindex="-1"></a><span class="fu">save</span>(sample_metadata, </span>
+<span id="cb28-23"><a href="merging-amplicon-and-metagenomic-data.html#cb28-23" tabindex="-1"></a>     genome_metadata, </span>
+<span id="cb28-24"><a href="merging-amplicon-and-metagenomic-data.html#cb28-24" tabindex="-1"></a>     read_counts, </span>
+<span id="cb28-25"><a href="merging-amplicon-and-metagenomic-data.html#cb28-25" tabindex="-1"></a>     genome_counts,</span>
+<span id="cb28-26"><a href="merging-amplicon-and-metagenomic-data.html#cb28-26" tabindex="-1"></a>     genome_counts_filt,</span>
+<span id="cb28-27"><a href="merging-amplicon-and-metagenomic-data.html#cb28-27" tabindex="-1"></a>     preprocess_info,</span>
+<span id="cb28-28"><a href="merging-amplicon-and-metagenomic-data.html#cb28-28" tabindex="-1"></a>     genome_tree, </span>
+<span id="cb28-29"><a href="merging-amplicon-and-metagenomic-data.html#cb28-29" tabindex="-1"></a>     genome_gifts,</span>
+<span id="cb28-30"><a href="merging-amplicon-and-metagenomic-data.html#cb28-30" tabindex="-1"></a>     phyloseq_metagenome_filtered,</span>
+<span id="cb28-31"><a href="merging-amplicon-and-metagenomic-data.html#cb28-31" tabindex="-1"></a>     phylum_colors,</span>
+<span id="cb28-32"><a href="merging-amplicon-and-metagenomic-data.html#cb28-32" tabindex="-1"></a>     <span class="at">file =</span> <span class="st">&quot;resources/metagenomics/data_filtered.Rdata&quot;</span>)</span></code></pre></div>
 </div>
-<div id="create-a-phyloseq-object" class="section level2 hasAnchor" number="3.2">
-<h2><span class="header-section-number">3.2</span> Create a phyloseq object<a href="amplicon.html#create-a-phyloseq-object" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb16-1"><a href="amplicon.html#cb16-1" tabindex="-1"></a><span class="co">#Phyloseq object</span></span>
-<span id="cb16-2"><a href="amplicon.html#cb16-2" tabindex="-1"></a>count_phy <span class="ot">&lt;-</span> <span class="fu">otu_table</span>(read_counts_row, <span class="at">taxa_are_rows=</span>T)</span>
-<span id="cb16-3"><a href="amplicon.html#cb16-3" tabindex="-1"></a>sample_info_tab_phy <span class="ot">&lt;-</span> <span class="fu">sample_data</span>(metadata)</span>
-<span id="cb16-4"><a href="amplicon.html#cb16-4" tabindex="-1"></a>asv_tax.m <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(taxonomy_table_row)</span>
-<span id="cb16-5"><a href="amplicon.html#cb16-5" tabindex="-1"></a>TAX <span class="ot">=</span> <span class="fu">tax_table</span>(asv_tax.m)</span>
-<span id="cb16-6"><a href="amplicon.html#cb16-6" tabindex="-1"></a>physeq.raw <span class="ot">=</span> <span class="fu">phyloseq</span>(count_phy, TAX, sample_info_tab_phy)</span>
-<span id="cb16-7"><a href="amplicon.html#cb16-7" tabindex="-1"></a>physeq.raw <span class="ot">&lt;-</span> <span class="fu">prune_taxa</span>(<span class="fu">taxa_sums</span>(physeq.raw)<span class="sc">&gt;</span><span class="dv">0</span>, physeq.raw)</span>
-<span id="cb16-8"><a href="amplicon.html#cb16-8" tabindex="-1"></a>physeq.raw <span class="ot">&lt;-</span> <span class="fu">prune_samples</span>(<span class="fu">sample_sums</span>(physeq.raw) <span class="sc">&gt;</span> <span class="dv">0</span>, physeq.raw)</span>
-<span id="cb16-9"><a href="amplicon.html#cb16-9" tabindex="-1"></a></span>
-<span id="cb16-10"><a href="amplicon.html#cb16-10" tabindex="-1"></a>physeq_sample <span class="ot">&lt;-</span> <span class="fu">subset_samples</span>(physeq.raw, Control <span class="sc">==</span> <span class="st">&quot;True sample&quot;</span>)</span>
-<span id="cb16-11"><a href="amplicon.html#cb16-11" tabindex="-1"></a>physeq_sample <span class="ot">&lt;-</span> <span class="fu">prune_taxa</span>(<span class="fu">taxa_sums</span>(physeq_sample)<span class="sc">&gt;</span><span class="dv">0</span>, physeq_sample)</span></code></pre></div>
+<div id="matching-the-16s-data-to-metagenomic-data" class="section level2 hasAnchor" number="4.2">
+<h2><span class="header-section-number">4.2</span> Matching the 16S data to metagenomic data<a href="merging-amplicon-and-metagenomic-data.html#matching-the-16s-data-to-metagenomic-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb29-1"><a href="merging-amplicon-and-metagenomic-data.html#cb29-1" tabindex="-1"></a>phylo_samples <span class="ot">&lt;-</span> sample_metadata_16S_filt <span class="sc">%&gt;%</span> </span>
+<span id="cb29-2"><a href="merging-amplicon-and-metagenomic-data.html#cb29-2" tabindex="-1"></a>  <span class="fu">remove_rownames</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb29-3"><a href="merging-amplicon-and-metagenomic-data.html#cb29-3" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(., <span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb29-4"><a href="merging-amplicon-and-metagenomic-data.html#cb29-4" tabindex="-1"></a>  <span class="fu">sample_data</span>() </span>
+<span id="cb29-5"><a href="merging-amplicon-and-metagenomic-data.html#cb29-5" tabindex="-1"></a></span>
+<span id="cb29-6"><a href="merging-amplicon-and-metagenomic-data.html#cb29-6" tabindex="-1"></a>phylo_counts <span class="ot">&lt;-</span> asv_16S_filt <span class="sc">%&gt;%</span> </span>
+<span id="cb29-7"><a href="merging-amplicon-and-metagenomic-data.html#cb29-7" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(., <span class="st">&quot;asv&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb29-8"><a href="merging-amplicon-and-metagenomic-data.html#cb29-8" tabindex="-1"></a>  <span class="fu">otu_table</span>(., <span class="at">taxa_are_rows =</span> <span class="cn">TRUE</span>) </span>
+<span id="cb29-9"><a href="merging-amplicon-and-metagenomic-data.html#cb29-9" tabindex="-1"></a></span>
+<span id="cb29-10"><a href="merging-amplicon-and-metagenomic-data.html#cb29-10" tabindex="-1"></a>phylo_taxonomy <span class="ot">&lt;-</span> genome_metadata_16S <span class="sc">%&gt;%</span> </span>
+<span id="cb29-11"><a href="merging-amplicon-and-metagenomic-data.html#cb29-11" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(., <span class="st">&quot;asv&quot;</span>)<span class="sc">%&gt;%</span> </span>
+<span id="cb29-12"><a href="merging-amplicon-and-metagenomic-data.html#cb29-12" tabindex="-1"></a>  <span class="fu">as.matrix</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb29-13"><a href="merging-amplicon-and-metagenomic-data.html#cb29-13" tabindex="-1"></a>  <span class="fu">tax_table</span>() </span>
+<span id="cb29-14"><a href="merging-amplicon-and-metagenomic-data.html#cb29-14" tabindex="-1"></a></span>
+<span id="cb29-15"><a href="merging-amplicon-and-metagenomic-data.html#cb29-15" tabindex="-1"></a>physeq_16S_filt <span class="ot">&lt;-</span> <span class="fu">phyloseq</span>(phylo_counts,  phylo_samples, phylo_taxonomy)</span>
+<span id="cb29-16"><a href="merging-amplicon-and-metagenomic-data.html#cb29-16" tabindex="-1"></a>phyloseq_16S_filtered <span class="ot">&lt;-</span> <span class="fu">prune_taxa</span>(<span class="fu">taxa_sums</span>(physeq_16S_filt)<span class="sc">&gt;</span><span class="dv">0</span>, physeq_16S_filt)</span>
+<span id="cb29-17"><a href="merging-amplicon-and-metagenomic-data.html#cb29-17" tabindex="-1"></a></span>
+<span id="cb29-18"><a href="merging-amplicon-and-metagenomic-data.html#cb29-18" tabindex="-1"></a>sample_metadata <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(phyloseq_16S_filtered<span class="sc">@</span>sam_data)<span class="sc">%&gt;%</span> </span>
+<span id="cb29-19"><a href="merging-amplicon-and-metagenomic-data.html#cb29-19" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(., <span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb29-20"><a href="merging-amplicon-and-metagenomic-data.html#cb29-20" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">species_name=</span>Species) <span class="sc">%&gt;%</span> </span>
+<span id="cb29-21"><a href="merging-amplicon-and-metagenomic-data.html#cb29-21" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">Species=</span>Sp) <span class="sc">%&gt;%</span></span>
+<span id="cb29-22"><a href="merging-amplicon-and-metagenomic-data.html#cb29-22" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Habitat =</span> <span class="fu">ifelse</span>(Habitat <span class="sc">==</span> <span class="st">&quot;Natural&quot;</span>, <span class="st">&quot;Nat&quot;</span>, Habitat)) <span class="sc">%&gt;%</span></span>
+<span id="cb29-23"><a href="merging-amplicon-and-metagenomic-data.html#cb29-23" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Habitat =</span> <span class="fu">ifelse</span>(Habitat <span class="sc">==</span> <span class="st">&quot;Anthropogenic&quot;</span>, <span class="st">&quot;Anth&quot;</span>, Habitat))</span>
+<span id="cb29-24"><a href="merging-amplicon-and-metagenomic-data.html#cb29-24" tabindex="-1"></a></span>
+<span id="cb29-25"><a href="merging-amplicon-and-metagenomic-data.html#cb29-25" tabindex="-1"></a>genome_metadata <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(phyloseq_16S_filtered<span class="sc">@</span>tax_table) <span class="sc">%&gt;%</span> </span>
+<span id="cb29-26"><a href="merging-amplicon-and-metagenomic-data.html#cb29-26" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(., <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb29-27"><a href="merging-amplicon-and-metagenomic-data.html#cb29-27" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Phylum =</span> <span class="fu">case_when</span>(</span>
+<span id="cb29-28"><a href="merging-amplicon-and-metagenomic-data.html#cb29-28" tabindex="-1"></a>        Phylum <span class="sc">==</span> <span class="st">&quot;Actinobacteriota&quot;</span> <span class="sc">~</span> <span class="st">&quot;Actinomycetota&quot;</span>,</span>
+<span id="cb29-29"><a href="merging-amplicon-and-metagenomic-data.html#cb29-29" tabindex="-1"></a>        Phylum <span class="sc">==</span> <span class="st">&quot;Firmicutes&quot;</span> <span class="sc">~</span> <span class="st">&quot;Bacillota&quot;</span>,</span>
+<span id="cb29-30"><a href="merging-amplicon-and-metagenomic-data.html#cb29-30" tabindex="-1"></a>        Phylum <span class="sc">==</span> <span class="st">&quot;Firmicutes_A&quot;</span> <span class="sc">~</span> <span class="st">&quot;Bacillota_A&quot;</span>,</span>
+<span id="cb29-31"><a href="merging-amplicon-and-metagenomic-data.html#cb29-31" tabindex="-1"></a>        Phylum <span class="sc">==</span> <span class="st">&quot;Firmicutes_C&quot;</span> <span class="sc">~</span> <span class="st">&quot;Bacillota_C&quot;</span>,</span>
+<span id="cb29-32"><a href="merging-amplicon-and-metagenomic-data.html#cb29-32" tabindex="-1"></a>        Phylum <span class="sc">==</span> <span class="st">&quot;Cyanobacteria&quot;</span> <span class="sc">~</span> <span class="st">&quot;Cyanobacteriota&quot;</span>,</span>
+<span id="cb29-33"><a href="merging-amplicon-and-metagenomic-data.html#cb29-33" tabindex="-1"></a>        Phylum <span class="sc">==</span> <span class="st">&quot;Proteobacteria&quot;</span> <span class="sc">~</span> <span class="st">&quot;Pseudomonadota&quot;</span>,</span>
+<span id="cb29-34"><a href="merging-amplicon-and-metagenomic-data.html#cb29-34" tabindex="-1"></a>        <span class="cn">TRUE</span> <span class="sc">~</span> Phylum))</span>
+<span id="cb29-35"><a href="merging-amplicon-and-metagenomic-data.html#cb29-35" tabindex="-1"></a></span>
+<span id="cb29-36"><a href="merging-amplicon-and-metagenomic-data.html#cb29-36" tabindex="-1"></a><span class="fu">colnames</span>(genome_metadata)<span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;genome&quot;</span>, <span class="st">&quot;domain&quot;</span>, <span class="st">&quot;phylum&quot;</span>, <span class="st">&quot;class&quot;</span>, <span class="st">&quot;order&quot;</span>, <span class="st">&quot;family&quot;</span>, <span class="st">&quot;genus&quot;</span>, <span class="st">&quot;species&quot;</span>)</span>
+<span id="cb29-37"><a href="merging-amplicon-and-metagenomic-data.html#cb29-37" tabindex="-1"></a>genome_counts_filt <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(phyloseq_16S_filtered<span class="sc">@</span>otu_table) <span class="sc">%&gt;%</span> </span>
+<span id="cb29-38"><a href="merging-amplicon-and-metagenomic-data.html#cb29-38" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(., <span class="st">&quot;genome&quot;</span>)</span>
+<span id="cb29-39"><a href="merging-amplicon-and-metagenomic-data.html#cb29-39" tabindex="-1"></a></span>
+<span id="cb29-40"><a href="merging-amplicon-and-metagenomic-data.html#cb29-40" tabindex="-1"></a><span class="do">## Prepare color scheme</span></span>
+<span id="cb29-41"><a href="merging-amplicon-and-metagenomic-data.html#cb29-41" tabindex="-1"></a>phylum_colors <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="st">&quot;https://raw.githubusercontent.com/earthhologenome/EHI_taxonomy_colour/main/ehi_phylum_colors.tsv&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb29-42"><a href="merging-amplicon-and-metagenomic-data.html#cb29-42" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="fu">vars</span>(phylum), <span class="sc">~</span> <span class="fu">str_replace</span>(., <span class="st">&quot;[dpcofgs]__&quot;</span>, <span class="st">&quot;&quot;</span>))<span class="sc">%&gt;%</span></span>
+<span id="cb29-43"><a href="merging-amplicon-and-metagenomic-data.html#cb29-43" tabindex="-1"></a>    <span class="fu">right_join</span>(genome_metadata, <span class="at">by=</span><span class="fu">join_by</span>(phylum <span class="sc">==</span> phylum)) <span class="sc">%&gt;%</span></span>
+<span id="cb29-44"><a href="merging-amplicon-and-metagenomic-data.html#cb29-44" tabindex="-1"></a>    <span class="fu">arrange</span>(<span class="fu">match</span>(genome, genome_metadata<span class="sc">$</span>genome)) <span class="sc">%&gt;%</span></span>
+<span id="cb29-45"><a href="merging-amplicon-and-metagenomic-data.html#cb29-45" tabindex="-1"></a>    <span class="fu">select</span>(phylum, colors) <span class="sc">%&gt;%</span> </span>
+<span id="cb29-46"><a href="merging-amplicon-and-metagenomic-data.html#cb29-46" tabindex="-1"></a>    <span class="fu">unique</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb29-47"><a href="merging-amplicon-and-metagenomic-data.html#cb29-47" tabindex="-1"></a>    <span class="fu">arrange</span>(phylum) <span class="sc">%&gt;%</span></span>
+<span id="cb29-48"><a href="merging-amplicon-and-metagenomic-data.html#cb29-48" tabindex="-1"></a>    <span class="fu">pull</span>(colors, <span class="at">name=</span>phylum)</span>
+<span id="cb29-49"><a href="merging-amplicon-and-metagenomic-data.html#cb29-49" tabindex="-1"></a></span>
+<span id="cb29-50"><a href="merging-amplicon-and-metagenomic-data.html#cb29-50" tabindex="-1"></a>taxonomy <span class="ot">&lt;-</span> genome_metadata <span class="sc">%&gt;%</span> </span>
+<span id="cb29-51"><a href="merging-amplicon-and-metagenomic-data.html#cb29-51" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb29-52"><a href="merging-amplicon-and-metagenomic-data.html#cb29-52" tabindex="-1"></a>  <span class="fu">as.matrix</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb29-53"><a href="merging-amplicon-and-metagenomic-data.html#cb29-53" tabindex="-1"></a>  <span class="fu">tax_table</span>()</span>
+<span id="cb29-54"><a href="merging-amplicon-and-metagenomic-data.html#cb29-54" tabindex="-1"></a>sample_data <span class="ot">&lt;-</span> sample_metadata <span class="sc">%&gt;%</span> </span>
+<span id="cb29-55"><a href="merging-amplicon-and-metagenomic-data.html#cb29-55" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb29-56"><a href="merging-amplicon-and-metagenomic-data.html#cb29-56" tabindex="-1"></a>  <span class="fu">sample_data</span>()</span>
+<span id="cb29-57"><a href="merging-amplicon-and-metagenomic-data.html#cb29-57" tabindex="-1"></a></span>
+<span id="cb29-58"><a href="merging-amplicon-and-metagenomic-data.html#cb29-58" tabindex="-1"></a><span class="fu">tax_table</span>(phyloseq_16S_filtered) <span class="ot">&lt;-</span> taxonomy</span>
+<span id="cb29-59"><a href="merging-amplicon-and-metagenomic-data.html#cb29-59" tabindex="-1"></a></span>
+<span id="cb29-60"><a href="merging-amplicon-and-metagenomic-data.html#cb29-60" tabindex="-1"></a><span class="fu">sample_data</span>(phyloseq_16S_filtered) <span class="ot">&lt;-</span> sample_data</span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb30-1"><a href="merging-amplicon-and-metagenomic-data.html#cb30-1" tabindex="-1"></a><span class="fu">save</span>(sample_metadata, </span>
+<span id="cb30-2"><a href="merging-amplicon-and-metagenomic-data.html#cb30-2" tabindex="-1"></a>     genome_metadata,</span>
+<span id="cb30-3"><a href="merging-amplicon-and-metagenomic-data.html#cb30-3" tabindex="-1"></a>     genome_counts_filt,</span>
+<span id="cb30-4"><a href="merging-amplicon-and-metagenomic-data.html#cb30-4" tabindex="-1"></a>     phyloseq_16S_filtered,</span>
+<span id="cb30-5"><a href="merging-amplicon-and-metagenomic-data.html#cb30-5" tabindex="-1"></a>     phylum_colors,</span>
+<span id="cb30-6"><a href="merging-amplicon-and-metagenomic-data.html#cb30-6" tabindex="-1"></a>     <span class="at">file =</span> <span class="st">&quot;resources/amplicon/data_nocopyfilt.Rdata&quot;</span>)</span></code></pre></div>
 </div>
-<div id="remove-contaminants" class="section level2 hasAnchor" number="3.3">
-<h2><span class="header-section-number">3.3</span> Remove contaminants<a href="amplicon.html#remove-contaminants" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb17-1"><a href="amplicon.html#cb17-1" tabindex="-1"></a><span class="fu">sample_data</span>(physeq.raw)<span class="sc">$</span>is.neg <span class="ot">&lt;-</span> <span class="fu">sample_data</span>(physeq.raw)<span class="sc">$</span>Control <span class="sc">==</span> <span class="st">&quot;Control sample&quot;</span></span>
-<span id="cb17-2"><a href="amplicon.html#cb17-2" tabindex="-1"></a>contamdf.prev <span class="ot">&lt;-</span> <span class="fu">isContaminant</span>(physeq.raw, <span class="at">method=</span><span class="st">&quot;prevalence&quot;</span>, <span class="at">neg=</span><span class="st">&quot;is.neg&quot;</span>)</span>
-<span id="cb17-3"><a href="amplicon.html#cb17-3" tabindex="-1"></a><span class="fu">table</span>(contamdf.prev<span class="sc">$</span>contaminant)</span>
-<span id="cb17-4"><a href="amplicon.html#cb17-4" tabindex="-1"></a>contam_asvs <span class="ot">&lt;-</span> <span class="fu">row.names</span>(contamdf.prev[contamdf.prev<span class="sc">$</span>contaminant <span class="sc">==</span> <span class="cn">TRUE</span>, ])</span>
-<span id="cb17-5"><a href="amplicon.html#cb17-5" tabindex="-1"></a>contaminants <span class="ot">&lt;-</span> asv_tax.m[<span class="fu">row.names</span>(asv_tax.m) <span class="sc">%in%</span> contam_asvs, ]</span></code></pre></div>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb18-1"><a href="amplicon.html#cb18-1" tabindex="-1"></a><span class="co"># making new phyloseq object without ASV contaminats</span></span>
-<span id="cb18-2"><a href="amplicon.html#cb18-2" tabindex="-1"></a>physeq <span class="ot">&lt;-</span> <span class="fu">subset_samples</span>(physeq.raw, Control <span class="sc">==</span> <span class="st">&quot;True sample&quot;</span>)</span>
-<span id="cb18-3"><a href="amplicon.html#cb18-3" tabindex="-1"></a>physeq <span class="ot">&lt;-</span> <span class="fu">prune_taxa</span>(<span class="fu">taxa_sums</span>(physeq)<span class="sc">&gt;</span><span class="dv">0</span>, physeq)</span>
-<span id="cb18-4"><a href="amplicon.html#cb18-4" tabindex="-1"></a>goodTaxa <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">taxa_names</span>(physeq), contam_asvs)</span>
-<span id="cb18-5"><a href="amplicon.html#cb18-5" tabindex="-1"></a>physeq.final <span class="ot">&lt;-</span> <span class="fu">prune_taxa</span>(goodTaxa, physeq)</span></code></pre></div>
-</div>
-<div id="basic-filtering" class="section level2 hasAnchor" number="3.4">
-<h2><span class="header-section-number">3.4</span> Basic filtering<a href="amplicon.html#basic-filtering" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb19-1"><a href="amplicon.html#cb19-1" tabindex="-1"></a>read_counts_final <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(physeq.final<span class="sc">@</span>otu_table) </span>
-<span id="cb19-2"><a href="amplicon.html#cb19-2" tabindex="-1"></a>count_filtdepth <span class="ot">&lt;-</span> read_counts_final[,<span class="fu">colSums</span>(read_counts_final)<span class="sc">&gt;</span><span class="dv">1000</span>]</span>
-<span id="cb19-3"><a href="amplicon.html#cb19-3" tabindex="-1"></a>count_phy_filt <span class="ot">&lt;-</span> <span class="fu">otu_table</span>(count_filtdepth, <span class="at">taxa_are_rows=</span>T)</span>
-<span id="cb19-4"><a href="amplicon.html#cb19-4" tabindex="-1"></a></span>
-<span id="cb19-5"><a href="amplicon.html#cb19-5" tabindex="-1"></a><span class="fu">otu_table</span>(physeq.final) <span class="ot">&lt;-</span> count_phy_filt</span>
-<span id="cb19-6"><a href="amplicon.html#cb19-6" tabindex="-1"></a></span>
-<span id="cb19-7"><a href="amplicon.html#cb19-7" tabindex="-1"></a><span class="co">#TAXONOMY filtering</span></span>
-<span id="cb19-8"><a href="amplicon.html#cb19-8" tabindex="-1"></a>physeq_bacteria <span class="ot">&lt;-</span> <span class="fu">subset_taxa</span>(physeq.final, Kingdom <span class="sc">==</span> <span class="st">&quot;Bacteria&quot;</span>)</span>
-<span id="cb19-9"><a href="amplicon.html#cb19-9" tabindex="-1"></a>physeq_others <span class="ot">&lt;-</span> <span class="fu">subset_taxa</span>(physeq.final, Kingdom <span class="sc">!=</span> <span class="st">&quot;Bacteria&quot;</span>)</span>
-<span id="cb19-10"><a href="amplicon.html#cb19-10" tabindex="-1"></a>physeq_archaea <span class="ot">&lt;-</span> <span class="fu">subset_taxa</span>(physeq.final, Kingdom <span class="sc">==</span> <span class="st">&quot;Archaea&quot;</span>)</span>
-<span id="cb19-11"><a href="amplicon.html#cb19-11" tabindex="-1"></a>physeq_phylum <span class="ot">&lt;-</span> <span class="fu">subset_taxa</span>(physeq_bacteria, <span class="sc">!</span><span class="fu">is.na</span>(Phylum))</span>
-<span id="cb19-12"><a href="amplicon.html#cb19-12" tabindex="-1"></a>physeq_phylumNA <span class="ot">&lt;-</span> <span class="fu">subset_taxa</span>(physeq_bacteria, <span class="fu">is.na</span>(Phylum))</span>
-<span id="cb19-13"><a href="amplicon.html#cb19-13" tabindex="-1"></a>physeq_class <span class="ot">&lt;-</span> <span class="fu">subset_taxa</span>(physeq_phylum, <span class="sc">!</span><span class="fu">is.na</span>(Class))</span>
-<span id="cb19-14"><a href="amplicon.html#cb19-14" tabindex="-1"></a>physeq_classNA <span class="ot">&lt;-</span> <span class="fu">subset_taxa</span>(physeq_phylum, <span class="fu">is.na</span>(Class))</span></code></pre></div>
-</div>
-<div id="removing-chloroplast-and-mitochondria" class="section level2 hasAnchor" number="3.5">
-<h2><span class="header-section-number">3.5</span> Removing chloroplast and mitochondria<a href="amplicon.html#removing-chloroplast-and-mitochondria" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb20-1"><a href="amplicon.html#cb20-1" tabindex="-1"></a>taxonomy <span class="ot">&lt;-</span> physeq.final<span class="sc">@</span>tax_table</span>
-<span id="cb20-2"><a href="amplicon.html#cb20-2" tabindex="-1"></a>is.mitochondria <span class="ot">&lt;-</span> physeq.final<span class="sc">@</span>tax_table[,<span class="st">&quot;Family&quot;</span>] <span class="sc">%in%</span> <span class="st">&quot;Mitochondria&quot;</span></span>
-<span id="cb20-3"><a href="amplicon.html#cb20-3" tabindex="-1"></a>taxonomy <span class="ot">&lt;-</span> taxonomy[<span class="sc">!</span>is.mitochondria,]</span>
-<span id="cb20-4"><a href="amplicon.html#cb20-4" tabindex="-1"></a>is.chloroplast <span class="ot">&lt;-</span> taxonomy[,<span class="st">&quot;Order&quot;</span>] <span class="sc">%in%</span> <span class="st">&quot;Chloroplast&quot;</span></span>
-<span id="cb20-5"><a href="amplicon.html#cb20-5" tabindex="-1"></a>taxonomy <span class="ot">&lt;-</span> taxonomy[<span class="sc">!</span>is.chloroplast,]</span>
-<span id="cb20-6"><a href="amplicon.html#cb20-6" tabindex="-1"></a>taxonomy.m <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(taxonomy)</span>
-<span id="cb20-7"><a href="amplicon.html#cb20-7" tabindex="-1"></a><span class="fu">tax_table</span>(physeq.final) <span class="ot">&lt;-</span> taxonomy.m</span>
-<span id="cb20-8"><a href="amplicon.html#cb20-8" tabindex="-1"></a>physeq.final.filt <span class="ot">&lt;-</span> <span class="fu">prune_taxa</span>(<span class="fu">taxa_sums</span>(physeq.final)<span class="sc">&gt;</span><span class="dv">0</span>, physeq.final)</span></code></pre></div>
-</div>
-<div id="save" class="section level2 hasAnchor" number="3.6">
-<h2><span class="header-section-number">3.6</span> Save<a href="amplicon.html#save" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb21-1"><a href="amplicon.html#cb21-1" tabindex="-1"></a><span class="fu">saveRDS</span>(physeq.final.filt,<span class="st">&quot;resources/amplicon/physeq_final_nocopyfilter.RData&quot;</span>)</span></code></pre></div>
+<div id="create-master-table-for-amplicon-data" class="section level2 hasAnchor" number="4.3">
+<h2><span class="header-section-number">4.3</span> Create master table for amplicon data<a href="merging-amplicon-and-metagenomic-data.html#create-master-table-for-amplicon-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb31-1"><a href="merging-amplicon-and-metagenomic-data.html#cb31-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;resources/amplicon/data_nocopyfilt.Rdata&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb32-1"><a href="merging-amplicon-and-metagenomic-data.html#cb32-1" tabindex="-1"></a>threshold_table <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span> </span>
+<span id="cb32-2"><a href="merging-amplicon-and-metagenomic-data.html#cb32-2" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="fu">vars</span>(<span class="sc">-</span>genome), <span class="sc">~</span> .<span class="sc">/</span><span class="fu">sum</span>(.)) <span class="sc">%&gt;%</span></span>
+<span id="cb32-3"><a href="merging-amplicon-and-metagenomic-data.html#cb32-3" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">!</span>genome, <span class="at">names_to =</span> <span class="st">&quot;sample&quot;</span>,<span class="at">values_to =</span> <span class="st">&quot;t0&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb32-4"><a href="merging-amplicon-and-metagenomic-data.html#cb32-4" tabindex="-1"></a>  <span class="fu">left_join</span>(sample_metadata <span class="sc">%&gt;%</span> <span class="fu">select</span>(sample,Species), <span class="at">by=</span><span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb32-5"><a href="merging-amplicon-and-metagenomic-data.html#cb32-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">t1 =</span> <span class="fu">if_else</span>(t0 <span class="sc">&lt;</span> <span class="fl">0.0001</span>, <span class="dv">0</span>, t0),</span>
+<span id="cb32-6"><a href="merging-amplicon-and-metagenomic-data.html#cb32-6" tabindex="-1"></a>         <span class="at">t2 =</span> <span class="fu">if_else</span>(t0 <span class="sc">&lt;</span> <span class="fl">0.001</span>, <span class="dv">0</span>, t0),</span>
+<span id="cb32-7"><a href="merging-amplicon-and-metagenomic-data.html#cb32-7" tabindex="-1"></a>         <span class="at">t3 =</span> <span class="fu">if_else</span>(t0 <span class="sc">&lt;</span> <span class="fl">0.01</span>, <span class="dv">0</span>, t0),</span>
+<span id="cb32-8"><a href="merging-amplicon-and-metagenomic-data.html#cb32-8" tabindex="-1"></a>         <span class="at">t4 =</span> <span class="fu">if_else</span>(t0 <span class="sc">&lt;</span> <span class="fl">0.1</span>, <span class="dv">0</span>, t0)) <span class="sc">%&gt;%</span></span>
+<span id="cb32-9"><a href="merging-amplicon-and-metagenomic-data.html#cb32-9" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">!</span><span class="fu">c</span>(genome,sample,Species), <span class="at">names_to =</span> <span class="st">&quot;copy_threshold&quot;</span>,<span class="at">values_to =</span> <span class="st">&quot;value&quot;</span>) </span>
+<span id="cb32-10"><a href="merging-amplicon-and-metagenomic-data.html#cb32-10" tabindex="-1"></a></span>
+<span id="cb32-11"><a href="merging-amplicon-and-metagenomic-data.html#cb32-11" tabindex="-1"></a>prevalence_table <span class="ot">&lt;-</span> threshold_table <span class="sc">%&gt;%</span></span>
+<span id="cb32-12"><a href="merging-amplicon-and-metagenomic-data.html#cb32-12" tabindex="-1"></a>  <span class="fu">group_by</span>(Species,genome,copy_threshold) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-13"><a href="merging-amplicon-and-metagenomic-data.html#cb32-13" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">present =</span> <span class="fu">sum</span>(value <span class="sc">!=</span> <span class="dv">0</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb32-14"><a href="merging-amplicon-and-metagenomic-data.html#cb32-14" tabindex="-1"></a>            <span class="at">total =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-15"><a href="merging-amplicon-and-metagenomic-data.html#cb32-15" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prevalence=</span>present<span class="sc">/</span>total) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-16"><a href="merging-amplicon-and-metagenomic-data.html#cb32-16" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>present,<span class="sc">-</span>total)</span>
+<span id="cb32-17"><a href="merging-amplicon-and-metagenomic-data.html#cb32-17" tabindex="-1"></a></span>
+<span id="cb32-18"><a href="merging-amplicon-and-metagenomic-data.html#cb32-18" tabindex="-1"></a>master_table <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(threshold_table,prevalence_table,<span class="at">by=</span><span class="fu">join_by</span>(<span class="st">&quot;Species&quot;</span><span class="sc">==</span><span class="st">&quot;Species&quot;</span>,<span class="st">&quot;genome&quot;</span><span class="sc">==</span><span class="st">&quot;genome&quot;</span>,<span class="st">&quot;copy_threshold&quot;</span><span class="sc">==</span><span class="st">&quot;copy_threshold&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-19"><a href="merging-amplicon-and-metagenomic-data.html#cb32-19" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">p0=</span>value) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-20"><a href="merging-amplicon-and-metagenomic-data.html#cb32-20" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">p10 =</span> <span class="fu">if_else</span>(prevalence <span class="sc">&lt;</span> <span class="fl">0.1</span>, <span class="dv">0</span>, p0),</span>
+<span id="cb32-21"><a href="merging-amplicon-and-metagenomic-data.html#cb32-21" tabindex="-1"></a>         <span class="at">p20 =</span> <span class="fu">if_else</span>(prevalence <span class="sc">&lt;</span> <span class="fl">0.2</span>, <span class="dv">0</span>, p0),</span>
+<span id="cb32-22"><a href="merging-amplicon-and-metagenomic-data.html#cb32-22" tabindex="-1"></a>         <span class="at">p30 =</span> <span class="fu">if_else</span>(prevalence <span class="sc">&lt;</span> <span class="fl">0.3</span>, <span class="dv">0</span>, p0),</span>
+<span id="cb32-23"><a href="merging-amplicon-and-metagenomic-data.html#cb32-23" tabindex="-1"></a>         <span class="at">p40 =</span> <span class="fu">if_else</span>(prevalence <span class="sc">&lt;</span> <span class="fl">0.4</span>, <span class="dv">0</span>, p0)) <span class="sc">%&gt;%</span></span>
+<span id="cb32-24"><a href="merging-amplicon-and-metagenomic-data.html#cb32-24" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>prevalence) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-25"><a href="merging-amplicon-and-metagenomic-data.html#cb32-25" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">!</span><span class="fu">c</span>(genome,sample,Species,copy_threshold), <span class="at">names_to =</span> <span class="st">&quot;prevalence&quot;</span>,<span class="at">values_to =</span> <span class="st">&quot;value&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-26"><a href="merging-amplicon-and-metagenomic-data.html#cb32-26" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pa =</span> <span class="fu">if_else</span>(value <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb33-1"><a href="merging-amplicon-and-metagenomic-data.html#cb33-1" tabindex="-1"></a><span class="fu">save</span>(master_table,</span>
+<span id="cb33-2"><a href="merging-amplicon-and-metagenomic-data.html#cb33-2" tabindex="-1"></a>     <span class="at">file =</span> <span class="st">&quot;resources/amplicon/master_table.Rdata&quot;</span>)</span></code></pre></div>
+
 </div>
 </div>
             </section>
@@ -2215,8 +2324,8 @@ color: #a52929;
           </div>
         </div>
       </div>
-<a href="metagenomics.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="merging-amplicon-and-metagenomic-data.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="amplicon.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="community-composition.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script>/*! jQuery v3.6.0 | (c) OpenJS Foundation and other contributors | jquery.org/license */
