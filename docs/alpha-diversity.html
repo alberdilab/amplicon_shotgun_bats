@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 8 Alpha diversity | AlberdiLab | Aizpurua et al. 2025</title>
+  <title>Chapter 6 Alpha diversity | AlberdiLab | Aizpurua et al. 2025</title>
   <meta name="description" content="&lt;p&gt;Data analysis code for the study on the study of gut microbiomes of Pyrenean brook salamanders in high and low altitudes.&lt;/p&gt;" />
   <meta name="generator" content="bookdown 0.41 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 8 Alpha diversity | AlberdiLab | Aizpurua et al. 2025" />
+  <meta property="og:title" content="Chapter 6 Alpha diversity | AlberdiLab | Aizpurua et al. 2025" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="&lt;p&gt;Data analysis code for the study on the study of gut microbiomes of Pyrenean brook salamanders in high and low altitudes.&lt;/p&gt;" />
   <meta name="github-repo" content="alberdilab/amplicon_shotgun_bats" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 8 Alpha diversity | AlberdiLab | Aizpurua et al. 2025" />
+  <meta name="twitter:title" content="Chapter 6 Alpha diversity | AlberdiLab | Aizpurua et al. 2025" />
   
   <meta name="twitter:description" content="&lt;p&gt;Data analysis code for the study on the study of gut microbiomes of Pyrenean brook salamanders in high and low altitudes.&lt;/p&gt;" />
   
@@ -24,7 +24,7 @@
 <meta name="author" content="Antton Alberdi" />
 
 
-<meta name="date" content="2025-02-05" />
+<meta name="date" content="2025-02-24" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -1876,7 +1876,7 @@ a.anchor-section::before {content: '#';font-size: 80%;}
 
 <style type="text/css">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -1886,7 +1886,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
 { counter-reset: source-line 0; }
@@ -2052,62 +2052,63 @@ color: #a52929;
 <li class="chapter" data-level="3" data-path="amplicon.html"><a href="amplicon.html"><i class="fa fa-check"></i><b>3</b> Amplicon</a>
 <ul>
 <li class="chapter" data-level="3.1" data-path="amplicon.html"><a href="amplicon.html#load-data"><i class="fa fa-check"></i><b>3.1</b> Load data</a></li>
+<li class="chapter" data-level="3.2" data-path="amplicon.html"><a href="amplicon.html#create-a-phyloseq-object"><i class="fa fa-check"></i><b>3.2</b> Create a phyloseq object</a></li>
+<li class="chapter" data-level="3.3" data-path="amplicon.html"><a href="amplicon.html#remove-contaminants"><i class="fa fa-check"></i><b>3.3</b> Remove contaminants</a></li>
+<li class="chapter" data-level="3.4" data-path="amplicon.html"><a href="amplicon.html#basic-filtering"><i class="fa fa-check"></i><b>3.4</b> Basic filtering</a></li>
+<li class="chapter" data-level="3.5" data-path="amplicon.html"><a href="amplicon.html#removing-chloroplast-and-mitochondria"><i class="fa fa-check"></i><b>3.5</b> Removing chloroplast and mitochondria</a></li>
+<li class="chapter" data-level="3.6" data-path="amplicon.html"><a href="amplicon.html#save"><i class="fa fa-check"></i><b>3.6</b> Save</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="create-a-phyloseq-object.html"><a href="create-a-phyloseq-object.html"><i class="fa fa-check"></i><b>4</b> Create a phyloseq object</a></li>
-<li class="chapter" data-level="5" data-path="remove-contaminants.html"><a href="remove-contaminants.html"><i class="fa fa-check"></i><b>5</b> Remove contaminants</a>
+<li class="chapter" data-level="4" data-path="merging-amplicon-and-metagenomic-data.html"><a href="merging-amplicon-and-metagenomic-data.html"><i class="fa fa-check"></i><b>4</b> Merging amplicon and metagenomic data</a>
 <ul>
-<li class="chapter" data-level="5.1" data-path="remove-contaminants.html"><a href="remove-contaminants.html#basic-filtering"><i class="fa fa-check"></i><b>5.1</b> Basic filtering</a></li>
-<li class="chapter" data-level="5.2" data-path="remove-contaminants.html"><a href="remove-contaminants.html#removing-chloroplast-and-mitochondria"><i class="fa fa-check"></i><b>5.2</b> Removing chloroplast and mitochondria</a></li>
-<li class="chapter" data-level="5.3" data-path="remove-contaminants.html"><a href="remove-contaminants.html#save"><i class="fa fa-check"></i><b>5.3</b> Save</a></li>
+<li class="chapter" data-level="4.1" data-path="merging-amplicon-and-metagenomic-data.html"><a href="merging-amplicon-and-metagenomic-data.html#filtering-the-metagenomic-data-to-match-amplicon-data"><i class="fa fa-check"></i><b>4.1</b> Filtering the metagenomic data to match amplicon data</a></li>
+<li class="chapter" data-level="4.2" data-path="merging-amplicon-and-metagenomic-data.html"><a href="merging-amplicon-and-metagenomic-data.html#matching-the-16s-data-to-metagenomic-data"><i class="fa fa-check"></i><b>4.2</b> Matching the 16S data to metagenomic data</a></li>
+<li class="chapter" data-level="4.3" data-path="merging-amplicon-and-metagenomic-data.html"><a href="merging-amplicon-and-metagenomic-data.html#create-master-table-for-amplicon-data"><i class="fa fa-check"></i><b>4.3</b> Create master table for amplicon data</a></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="merging-amplicon-and-shotgun-data.html"><a href="merging-amplicon-and-shotgun-data.html"><i class="fa fa-check"></i><b>6</b> Merging amplicon and shotgun data</a>
+<li class="chapter" data-level="5" data-path="community-composition.html"><a href="community-composition.html"><i class="fa fa-check"></i><b>5</b> Community composition</a>
 <ul>
-<li class="chapter" data-level="6.1" data-path="merging-amplicon-and-shotgun-data.html"><a href="merging-amplicon-and-shotgun-data.html#prepare-the-metagenomic-data"><i class="fa fa-check"></i><b>6.1</b> Prepare the metagenomic data</a></li>
-<li class="chapter" data-level="6.2" data-path="merging-amplicon-and-shotgun-data.html"><a href="merging-amplicon-and-shotgun-data.html#prepare-the-16s-data"><i class="fa fa-check"></i><b>6.2</b> Prepare the 16S data</a></li>
-<li class="chapter" data-level="6.3" data-path="merging-amplicon-and-shotgun-data.html"><a href="merging-amplicon-and-shotgun-data.html#create-master-table-for-amplicon-data"><i class="fa fa-check"></i><b>6.3</b> Create master table for amplicon data</a></li>
+<li class="chapter" data-level="5.1" data-path="community-composition.html"><a href="community-composition.html#metagenomics-1"><i class="fa fa-check"></i><b>5.1</b> Metagenomics</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="community-composition.html"><a href="community-composition.html#taxonomy-overview"><i class="fa fa-check"></i><b>5.1.1</b> Taxonomy overview</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="community-composition.html"><a href="community-composition.html"><i class="fa fa-check"></i><b>7</b> Community composition</a>
+<li class="chapter" data-level="5.2" data-path="community-composition.html"><a href="community-composition.html#summary-table"><i class="fa fa-check"></i><b>5.2</b> Summary table</a></li>
+<li class="chapter" data-level="5.3" data-path="community-composition.html"><a href="community-composition.html#amplicon-1"><i class="fa fa-check"></i><b>5.3</b> Amplicon</a>
 <ul>
-<li class="chapter" data-level="7.1" data-path="community-composition.html"><a href="community-composition.html#metagenomics-1"><i class="fa fa-check"></i><b>7.1</b> Metagenomics</a>
-<ul>
-<li class="chapter" data-level="7.1.1" data-path="community-composition.html"><a href="community-composition.html#taxonomy-overview"><i class="fa fa-check"></i><b>7.1.1</b> Taxonomy overview</a></li>
+<li class="chapter" data-level="5.3.1" data-path="community-composition.html"><a href="community-composition.html#taxonomy-overview-1"><i class="fa fa-check"></i><b>5.3.1</b> Taxonomy overview</a></li>
 </ul></li>
-<li class="chapter" data-level="7.2" data-path="community-composition.html"><a href="community-composition.html#summary-table"><i class="fa fa-check"></i><b>7.2</b> Summary table</a></li>
-<li class="chapter" data-level="7.3" data-path="community-composition.html"><a href="community-composition.html#amplicon-1"><i class="fa fa-check"></i><b>7.3</b> Amplicon</a>
-<ul>
-<li class="chapter" data-level="7.3.1" data-path="community-composition.html"><a href="community-composition.html#taxonomy-overview-1"><i class="fa fa-check"></i><b>7.3.1</b> Taxonomy overview</a></li>
+<li class="chapter" data-level="5.4" data-path="community-composition.html"><a href="community-composition.html#summary-table-1"><i class="fa fa-check"></i><b>5.4</b> Summary table</a></li>
 </ul></li>
-<li class="chapter" data-level="7.4" data-path="community-composition.html"><a href="community-composition.html#summary-table-1"><i class="fa fa-check"></i><b>7.4</b> Summary table</a></li>
+<li class="chapter" data-level="6" data-path="alpha-diversity.html"><a href="alpha-diversity.html"><i class="fa fa-check"></i><b>6</b> Alpha diversity</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="alpha-diversity.html"><a href="alpha-diversity.html#metagenomics-2"><i class="fa fa-check"></i><b>6.1</b> Metagenomics</a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="alpha-diversity.html"><a href="alpha-diversity.html#mixed-models"><i class="fa fa-check"></i><b>6.1.1</b> Mixed models</a></li>
 </ul></li>
-<li class="chapter" data-level="8" data-path="alpha-diversity.html"><a href="alpha-diversity.html"><i class="fa fa-check"></i><b>8</b> Alpha diversity</a>
+<li class="chapter" data-level="6.2" data-path="alpha-diversity.html"><a href="alpha-diversity.html#amplicon-2"><i class="fa fa-check"></i><b>6.2</b> Amplicon</a>
 <ul>
-<li class="chapter" data-level="8.1" data-path="alpha-diversity.html"><a href="alpha-diversity.html#metagenomics-2"><i class="fa fa-check"></i><b>8.1</b> Metagenomics</a>
-<ul>
-<li class="chapter" data-level="8.1.1" data-path="alpha-diversity.html"><a href="alpha-diversity.html#mixed-models"><i class="fa fa-check"></i><b>8.1.1</b> Mixed models</a></li>
-</ul></li>
-<li class="chapter" data-level="8.2" data-path="alpha-diversity.html"><a href="alpha-diversity.html#amplicon-2"><i class="fa fa-check"></i><b>8.2</b> Amplicon</a></li>
-</ul></li>
-<li class="chapter" data-level="9" data-path="beta-diversity.html"><a href="beta-diversity.html"><i class="fa fa-check"></i><b>9</b> Beta diversity</a>
-<ul>
-<li class="chapter" data-level="9.1" data-path="beta-diversity.html"><a href="beta-diversity.html#metagenomics-3"><i class="fa fa-check"></i><b>9.1</b> Metagenomics</a>
-<ul>
-<li class="chapter" data-level="9.1.1" data-path="beta-diversity.html"><a href="beta-diversity.html#permanova"><i class="fa fa-check"></i><b>9.1.1</b> Permanova</a></li>
-<li class="chapter" data-level="9.1.2" data-path="beta-diversity.html"><a href="beta-diversity.html#nmds"><i class="fa fa-check"></i><b>9.1.2</b> NMDS</a></li>
-</ul></li>
-<li class="chapter" data-level="9.2" data-path="beta-diversity.html"><a href="beta-diversity.html#amplicon-3"><i class="fa fa-check"></i><b>9.2</b> Amplicon</a>
-<ul>
-<li class="chapter" data-level="9.2.1" data-path="beta-diversity.html"><a href="beta-diversity.html#permanova-1"><i class="fa fa-check"></i><b>9.2.1</b> Permanova</a></li>
-<li class="chapter" data-level="9.2.2" data-path="beta-diversity.html"><a href="beta-diversity.html#nmds-1"><i class="fa fa-check"></i><b>9.2.2</b> NMDS</a></li>
+<li class="chapter" data-level="6.2.1" data-path="alpha-diversity.html"><a href="alpha-diversity.html#mixed-models-1"><i class="fa fa-check"></i><b>6.2.1</b> Mixed models</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="10" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html"><i class="fa fa-check"></i><b>10</b> Copy filtering &amp; prevalence</a>
+<li class="chapter" data-level="7" data-path="beta-diversity.html"><a href="beta-diversity.html"><i class="fa fa-check"></i><b>7</b> Beta diversity</a>
 <ul>
-<li class="chapter" data-level="10.1" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#total-asvs"><i class="fa fa-check"></i><b>10.1</b> Total ASVs</a></li>
-<li class="chapter" data-level="10.2" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#single-to-individuals"><i class="fa fa-check"></i><b>10.2</b> Single to individuals</a></li>
-<li class="chapter" data-level="10.3" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#single-to-species"><i class="fa fa-check"></i><b>10.3</b> Single to species</a></li>
-<li class="chapter" data-level="10.4" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#alpha-diversity-1"><i class="fa fa-check"></i><b>10.4</b> Alpha Diversity</a>
+<li class="chapter" data-level="7.1" data-path="beta-diversity.html"><a href="beta-diversity.html#metagenomics-3"><i class="fa fa-check"></i><b>7.1</b> Metagenomics</a>
 <ul>
-<li class="chapter" data-level="10.4.1" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#comparison-alpha-diversity-amplicom-different-threshold-vs-metagenomics"><i class="fa fa-check"></i><b>10.4.1</b> Comparison alpha diversity: amplicom different threshold vs metagenomics</a></li>
+<li class="chapter" data-level="7.1.1" data-path="beta-diversity.html"><a href="beta-diversity.html#permanova"><i class="fa fa-check"></i><b>7.1.1</b> Permanova</a></li>
+<li class="chapter" data-level="7.1.2" data-path="beta-diversity.html"><a href="beta-diversity.html#nmds"><i class="fa fa-check"></i><b>7.1.2</b> NMDS</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="beta-diversity.html"><a href="beta-diversity.html#amplicon-3"><i class="fa fa-check"></i><b>7.2</b> Amplicon</a>
+<ul>
+<li class="chapter" data-level="7.2.1" data-path="beta-diversity.html"><a href="beta-diversity.html#permanova-1"><i class="fa fa-check"></i><b>7.2.1</b> Permanova</a></li>
+<li class="chapter" data-level="7.2.2" data-path="beta-diversity.html"><a href="beta-diversity.html#nmds-1"><i class="fa fa-check"></i><b>7.2.2</b> NMDS</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html"><i class="fa fa-check"></i><b>8</b> Copy filtering &amp; prevalence</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#total-asvs"><i class="fa fa-check"></i><b>8.1</b> Total ASVs</a></li>
+<li class="chapter" data-level="8.2" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#single-to-individuals"><i class="fa fa-check"></i><b>8.2</b> Single to individuals</a></li>
+<li class="chapter" data-level="8.3" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#single-to-species"><i class="fa fa-check"></i><b>8.3</b> Single to species</a></li>
+<li class="chapter" data-level="8.4" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#alpha-diversity-1"><i class="fa fa-check"></i><b>8.4</b> Alpha Diversity</a>
+<ul>
+<li class="chapter" data-level="8.4.1" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#comparison-alpha-diversity-amplicom-different-threshold-vs-metagenomics"><i class="fa fa-check"></i><b>8.4.1</b> Comparison alpha diversity: amplicom different threshold vs metagenomics</a></li>
 </ul></li>
 </ul></li>
 <li class="divider"></li>
@@ -2132,70 +2133,75 @@ color: #a52929;
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="alpha-diversity" class="section level1 hasAnchor" number="8">
-<h1><span class="header-section-number">Chapter 8</span> Alpha diversity<a href="alpha-diversity.html#alpha-diversity" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div id="metagenomics-2" class="section level2 hasAnchor" number="8.1">
-<h2><span class="header-section-number">8.1</span> Metagenomics<a href="alpha-diversity.html#metagenomics-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb95"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb95-1"><a href="alpha-diversity.html#cb95-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;resources/metagenomics/data_filtered.Rdata&quot;</span>)</span>
-<span id="cb95-2"><a href="alpha-diversity.html#cb95-2" tabindex="-1"></a>treatment_colors <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;#e5bd5b&quot;</span>, <span class="st">&quot;#6b7398&quot;</span>, <span class="st">&quot;#76b183&quot;</span>, <span class="st">&quot;#d57d2c&quot;</span>, <span class="st">&quot;#2a2d26&quot;</span>, <span class="st">&quot;#f9d4cc&quot;</span>, <span class="st">&quot;#3c634e&quot;</span>, <span class="st">&quot;#ea68c3&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb96"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb96-1"><a href="alpha-diversity.html#cb96-1" tabindex="-1"></a><span class="co"># Calculate Hill numbers</span></span>
-<span id="cb96-2"><a href="alpha-diversity.html#cb96-2" tabindex="-1"></a>richness <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
-<span id="cb96-3"><a href="alpha-diversity.html#cb96-3" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb96-4"><a href="alpha-diversity.html#cb96-4" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>(<span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb96-5"><a href="alpha-diversity.html#cb96-5" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb96-6"><a href="alpha-diversity.html#cb96-6" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb96-7"><a href="alpha-diversity.html#cb96-7" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb96-8"><a href="alpha-diversity.html#cb96-8" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">richness =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb96-9"><a href="alpha-diversity.html#cb96-9" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
-<span id="cb96-10"><a href="alpha-diversity.html#cb96-10" tabindex="-1"></a></span>
-<span id="cb96-11"><a href="alpha-diversity.html#cb96-11" tabindex="-1"></a>neutral <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
-<span id="cb96-12"><a href="alpha-diversity.html#cb96-12" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb96-13"><a href="alpha-diversity.html#cb96-13" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>(<span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb96-14"><a href="alpha-diversity.html#cb96-14" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb96-15"><a href="alpha-diversity.html#cb96-15" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb96-16"><a href="alpha-diversity.html#cb96-16" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb96-17"><a href="alpha-diversity.html#cb96-17" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">neutral =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb96-18"><a href="alpha-diversity.html#cb96-18" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
-<span id="cb96-19"><a href="alpha-diversity.html#cb96-19" tabindex="-1"></a></span>
-<span id="cb96-20"><a href="alpha-diversity.html#cb96-20" tabindex="-1"></a>phylogenetic <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
-<span id="cb96-21"><a href="alpha-diversity.html#cb96-21" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb96-22"><a href="alpha-diversity.html#cb96-22" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>(<span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb96-23"><a href="alpha-diversity.html#cb96-23" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">1</span>, <span class="at">tree =</span> genome_tree) <span class="sc">%&gt;%</span></span>
-<span id="cb96-24"><a href="alpha-diversity.html#cb96-24" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb96-25"><a href="alpha-diversity.html#cb96-25" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb96-26"><a href="alpha-diversity.html#cb96-26" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">phylogenetic =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb96-27"><a href="alpha-diversity.html#cb96-27" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
-<span id="cb96-28"><a href="alpha-diversity.html#cb96-28" tabindex="-1"></a></span>
-<span id="cb96-29"><a href="alpha-diversity.html#cb96-29" tabindex="-1"></a><span class="co"># Aggregate basal GIFT into elements</span></span>
-<span id="cb96-30"><a href="alpha-diversity.html#cb96-30" tabindex="-1"></a>dist <span class="ot">&lt;-</span> genome_gifts <span class="sc">%&gt;%</span></span>
-<span id="cb96-31"><a href="alpha-diversity.html#cb96-31" tabindex="-1"></a>  <span class="fu">to.elements</span>(., GIFT_db) <span class="sc">%&gt;%</span></span>
-<span id="cb96-32"><a href="alpha-diversity.html#cb96-32" tabindex="-1"></a>  <span class="fu">traits2dist</span>(., <span class="at">method =</span> <span class="st">&quot;gower&quot;</span>)</span>
-<span id="cb96-33"><a href="alpha-diversity.html#cb96-33" tabindex="-1"></a></span>
-<span id="cb96-34"><a href="alpha-diversity.html#cb96-34" tabindex="-1"></a>functional <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
-<span id="cb96-35"><a href="alpha-diversity.html#cb96-35" tabindex="-1"></a>  <span class="fu">filter</span>(genome <span class="sc">%in%</span> <span class="fu">rownames</span>(dist)) <span class="sc">%&gt;%</span> </span>
-<span id="cb96-36"><a href="alpha-diversity.html#cb96-36" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb96-37"><a href="alpha-diversity.html#cb96-37" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>(<span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb96-38"><a href="alpha-diversity.html#cb96-38" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">1</span>, <span class="at">dist =</span> dist) <span class="sc">%&gt;%</span></span>
-<span id="cb96-39"><a href="alpha-diversity.html#cb96-39" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb96-40"><a href="alpha-diversity.html#cb96-40" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb96-41"><a href="alpha-diversity.html#cb96-41" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">functional =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb96-42"><a href="alpha-diversity.html#cb96-42" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb96-43"><a href="alpha-diversity.html#cb96-43" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">functional =</span> <span class="fu">if_else</span>(<span class="fu">is.nan</span>(functional), <span class="dv">1</span>, functional))</span>
-<span id="cb96-44"><a href="alpha-diversity.html#cb96-44" tabindex="-1"></a></span>
-<span id="cb96-45"><a href="alpha-diversity.html#cb96-45" tabindex="-1"></a><span class="co"># Merge all metrics</span></span>
-<span id="cb96-46"><a href="alpha-diversity.html#cb96-46" tabindex="-1"></a>alpha_div <span class="ot">&lt;-</span> richness <span class="sc">%&gt;%</span></span>
-<span id="cb96-47"><a href="alpha-diversity.html#cb96-47" tabindex="-1"></a>  <span class="fu">full_join</span>(neutral, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample)) <span class="sc">%&gt;%</span></span>
-<span id="cb96-48"><a href="alpha-diversity.html#cb96-48" tabindex="-1"></a>  <span class="fu">full_join</span>(phylogenetic, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample)) <span class="sc">%&gt;%</span></span>
-<span id="cb96-49"><a href="alpha-diversity.html#cb96-49" tabindex="-1"></a>  <span class="fu">full_join</span>(functional, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample))</span></code></pre></div>
+<div id="alpha-diversity" class="section level1 hasAnchor" number="6">
+<h1><span class="header-section-number">Chapter 6</span> Alpha diversity<a href="alpha-diversity.html#alpha-diversity" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="metagenomics-2" class="section level2 hasAnchor" number="6.1">
+<h2><span class="header-section-number">6.1</span> Metagenomics<a href="alpha-diversity.html#metagenomics-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb87-1"><a href="alpha-diversity.html#cb87-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;resources/metagenomics/data_filtered.Rdata&quot;</span>)</span>
+<span id="cb87-2"><a href="alpha-diversity.html#cb87-2" tabindex="-1"></a>treatment_colors <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;#e5bd5b&quot;</span>, <span class="st">&quot;#6b7398&quot;</span>, <span class="st">&quot;#76b183&quot;</span>, <span class="st">&quot;#d57d2c&quot;</span>, <span class="st">&quot;#2a2d26&quot;</span>, <span class="st">&quot;#f9d4cc&quot;</span>, <span class="st">&quot;#3c634e&quot;</span>, <span class="st">&quot;#ea68c3&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb88"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb88-1"><a href="alpha-diversity.html#cb88-1" tabindex="-1"></a>richness <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
+<span id="cb88-2"><a href="alpha-diversity.html#cb88-2" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb88-3"><a href="alpha-diversity.html#cb88-3" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb88-4"><a href="alpha-diversity.html#cb88-4" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb88-5"><a href="alpha-diversity.html#cb88-5" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb88-6"><a href="alpha-diversity.html#cb88-6" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb88-7"><a href="alpha-diversity.html#cb88-7" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">richness =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb88-8"><a href="alpha-diversity.html#cb88-8" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
+<span id="cb88-9"><a href="alpha-diversity.html#cb88-9" tabindex="-1"></a></span>
+<span id="cb88-10"><a href="alpha-diversity.html#cb88-10" tabindex="-1"></a>neutral <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
+<span id="cb88-11"><a href="alpha-diversity.html#cb88-11" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb88-12"><a href="alpha-diversity.html#cb88-12" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb88-13"><a href="alpha-diversity.html#cb88-13" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb88-14"><a href="alpha-diversity.html#cb88-14" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb88-15"><a href="alpha-diversity.html#cb88-15" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb88-16"><a href="alpha-diversity.html#cb88-16" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">neutral =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb88-17"><a href="alpha-diversity.html#cb88-17" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
+<span id="cb88-18"><a href="alpha-diversity.html#cb88-18" tabindex="-1"></a></span>
+<span id="cb88-19"><a href="alpha-diversity.html#cb88-19" tabindex="-1"></a>phylogenetic <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
+<span id="cb88-20"><a href="alpha-diversity.html#cb88-20" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb88-21"><a href="alpha-diversity.html#cb88-21" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb88-22"><a href="alpha-diversity.html#cb88-22" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">1</span>, <span class="at">tree =</span> genome_tree) <span class="sc">%&gt;%</span></span>
+<span id="cb88-23"><a href="alpha-diversity.html#cb88-23" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb88-24"><a href="alpha-diversity.html#cb88-24" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb88-25"><a href="alpha-diversity.html#cb88-25" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">phylogenetic =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb88-26"><a href="alpha-diversity.html#cb88-26" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
+<span id="cb88-27"><a href="alpha-diversity.html#cb88-27" tabindex="-1"></a></span>
+<span id="cb88-28"><a href="alpha-diversity.html#cb88-28" tabindex="-1"></a>dist <span class="ot">&lt;-</span> genome_gifts <span class="sc">%&gt;%</span></span>
+<span id="cb88-29"><a href="alpha-diversity.html#cb88-29" tabindex="-1"></a>  <span class="fu">to.elements</span>(., GIFT_db) <span class="sc">%&gt;%</span></span>
+<span id="cb88-30"><a href="alpha-diversity.html#cb88-30" tabindex="-1"></a>  <span class="fu">traits2dist</span>(., <span class="at">method =</span> <span class="st">&quot;gower&quot;</span>)</span>
+<span id="cb88-31"><a href="alpha-diversity.html#cb88-31" tabindex="-1"></a></span>
+<span id="cb88-32"><a href="alpha-diversity.html#cb88-32" tabindex="-1"></a>functional <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
+<span id="cb88-33"><a href="alpha-diversity.html#cb88-33" tabindex="-1"></a>  <span class="fu">filter</span>(genome <span class="sc">%in%</span> <span class="fu">rownames</span>(dist)) <span class="sc">%&gt;%</span></span>
+<span id="cb88-34"><a href="alpha-diversity.html#cb88-34" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb88-35"><a href="alpha-diversity.html#cb88-35" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb88-36"><a href="alpha-diversity.html#cb88-36" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">1</span>, <span class="at">dist =</span> dist) <span class="sc">%&gt;%</span></span>
+<span id="cb88-37"><a href="alpha-diversity.html#cb88-37" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb88-38"><a href="alpha-diversity.html#cb88-38" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb88-39"><a href="alpha-diversity.html#cb88-39" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">functional =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb88-40"><a href="alpha-diversity.html#cb88-40" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb88-41"><a href="alpha-diversity.html#cb88-41" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">functional =</span> <span class="fu">if_else</span>(<span class="fu">is.nan</span>(functional), <span class="dv">1</span>, functional))</span>
+<span id="cb88-42"><a href="alpha-diversity.html#cb88-42" tabindex="-1"></a></span>
+<span id="cb88-43"><a href="alpha-diversity.html#cb88-43" tabindex="-1"></a><span class="co"># Merge all metrics</span></span>
+<span id="cb88-44"><a href="alpha-diversity.html#cb88-44" tabindex="-1"></a>alpha_div <span class="ot">&lt;-</span> richness <span class="sc">%&gt;%</span></span>
+<span id="cb88-45"><a href="alpha-diversity.html#cb88-45" tabindex="-1"></a>  <span class="fu">full_join</span>(neutral, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample)) <span class="sc">%&gt;%</span></span>
+<span id="cb88-46"><a href="alpha-diversity.html#cb88-46" tabindex="-1"></a>  <span class="fu">full_join</span>(phylogenetic, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample)) <span class="sc">%&gt;%</span></span>
+<span id="cb88-47"><a href="alpha-diversity.html#cb88-47" tabindex="-1"></a>  <span class="fu">full_join</span>(functional, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample))</span></code></pre></div>
 <!-- preamble start -->
 
     <script>
-      function styleCell_pj58c5x1t96u37frsohc(i, j, css_id) {
-        var table = document.getElementById("tinytable_pj58c5x1t96u37frsohc");
-        table.rows[i].cells[j].classList.add(css_id);
+
+      function styleCell_desz244zqiug8g1rwrjz(i, j, css_id) {
+          var table = document.getElementById("tinytable_desz244zqiug8g1rwrjz");
+          var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
+          if (cell) {
+              console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
+              cell.classList.add(css_id);
+          } else {
+              console.warn(`Cell at (${i}, ${j}) not found.`);
+          }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_pj58c5x1t96u37frsohc');
+        var table = document.getElementById('tinytable_desz244zqiug8g1rwrjz');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -2203,8 +2209,8 @@ color: #a52929;
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_pj58c5x1t96u37frsohc(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_pj58c5x1t96u37frsohc");
+      function spanCell_desz244zqiug8g1rwrjz(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_desz244zqiug8g1rwrjz");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -2230,18 +2236,30 @@ color: #a52929;
         targetCell.rowSpan = rowspan;
         targetCell.colSpan = colspan;
       }
-window.addEventListener('load', function () { styleCell_pj58c5x1t96u37frsohc(0, 0, 'tinytable_css_idgdc71gt9nhh4cic4jc1c') })
-window.addEventListener('load', function () { styleCell_pj58c5x1t96u37frsohc(0, 1, 'tinytable_css_idgdc71gt9nhh4cic4jc1c') })
-window.addEventListener('load', function () { styleCell_pj58c5x1t96u37frsohc(0, 2, 'tinytable_css_idgdc71gt9nhh4cic4jc1c') })
-window.addEventListener('load', function () { styleCell_pj58c5x1t96u37frsohc(0, 3, 'tinytable_css_idgdc71gt9nhh4cic4jc1c') })
-window.addEventListener('load', function () { styleCell_pj58c5x1t96u37frsohc(0, 4, 'tinytable_css_idgdc71gt9nhh4cic4jc1c') })
+      // tinytable span after
+      window.addEventListener('load', function () {
+          var cellsToStyle = [
+            // tinytable style arrays after
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 },  ], css_id: 'tinytable_css_er4jylxyt3gtqcb6bbiq',}, 
+          { positions: [ { i: 4, j: 0 }, { i: 4, j: 1 }, { i: 4, j: 2 }, { i: 4, j: 3 }, { i: 4, j: 4 },  ], css_id: 'tinytable_css_7vzw62q10fgi4rvec5wg',}, 
+          ];
+
+          // Loop over the arrays to style the cells
+          cellsToStyle.forEach(function (group) {
+              group.positions.forEach(function (cell) {
+                  styleCell_desz244zqiug8g1rwrjz(cell.i, cell.j, group.css_id);
+              });
+          });
+      });
     </script>
 
     <style>
-.table td.tinytable_css_idgdc71gt9nhh4cic4jc1c, .table th.tinytable_css_idgdc71gt9nhh4cic4jc1c { border-bottom: solid 0.1em #d3d8dc; }
+
+.table td.tinytable_css_er4jylxyt3gtqcb6bbiq, .table th.tinytable_css_er4jylxyt3gtqcb6bbiq { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_7vzw62q10fgi4rvec5wg, .table th.tinytable_css_7vzw62q10fgi4rvec5wg { border-bottom: solid #d3d8dc 0.1em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_pj58c5x1t96u37frsohc" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_desz244zqiug8g1rwrjz" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -2255,29 +2273,29 @@ window.addEventListener('load', function () { styleCell_pj58c5x1t96u37frsohc(0, 
         
         <tbody>
                 <tr>
-                  <td>richness    </td>
-                  <td>9±11.446   </td>
+                  <td>richness</td>
+                  <td>9±11.446</td>
                   <td>19.7±18.595</td>
                   <td>8.818±8.727</td>
                   <td>3.579±2.735</td>
                 </tr>
                 <tr>
-                  <td>neutral     </td>
+                  <td>neutral</td>
                   <td>4.417±5.064</td>
                   <td>7.326±6.867</td>
-                  <td>5.05±5.48  </td>
+                  <td>5.05±5.48</td>
                   <td>2.153±1.424</td>
                 </tr>
                 <tr>
                   <td>phylogenetic</td>
                   <td>2.287±1.527</td>
                   <td>3.049±2.331</td>
-                  <td>2.64±1.399 </td>
+                  <td>2.64±1.399</td>
                   <td>1.477±0.555</td>
                 </tr>
                 <tr>
-                  <td>functional  </td>
-                  <td>1.28±0.217 </td>
+                  <td>functional</td>
+                  <td>1.28±0.217</td>
                   <td>1.358±0.219</td>
                   <td>1.333±0.222</td>
                   <td>1.177±0.175</td>
@@ -2286,86 +2304,13 @@ window.addEventListener('load', function () { styleCell_pj58c5x1t96u37frsohc(0, 
       </table>
     </div>
 <!-- hack to avoid NA insertion in last line -->
-<div id="mixed-models" class="section level3 hasAnchor" number="8.1.1">
-<h3><span class="header-section-number">8.1.1</span> Mixed models<a href="alpha-diversity.html#mixed-models" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb97"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb97-1"><a href="alpha-diversity.html#cb97-1" tabindex="-1"></a>alpha_div_meta <span class="ot">&lt;-</span> alpha_div <span class="sc">%&gt;%</span></span>
-<span id="cb97-2"><a href="alpha-diversity.html#cb97-2" tabindex="-1"></a>  <span class="fu">left_join</span>(sample_metadata, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample))</span>
-<span id="cb97-3"><a href="alpha-diversity.html#cb97-3" tabindex="-1"></a></span>
-<span id="cb97-4"><a href="alpha-diversity.html#cb97-4" tabindex="-1"></a>Model_richness_random <span class="ot">&lt;-</span> <span class="fu">lme</span>(<span class="at">fixed =</span> richness <span class="sc">~</span> Species, <span class="at">data =</span> alpha_div_meta,</span>
-<span id="cb97-5"><a href="alpha-diversity.html#cb97-5" tabindex="-1"></a>               <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> Habitat)</span>
-<span id="cb97-6"><a href="alpha-diversity.html#cb97-6" tabindex="-1"></a><span class="fu">summary</span>(Model_richness_random)</span></code></pre></div>
-<pre class="script-output"><code>Linear mixed-effects model fit by REML
-  Data: alpha_div_meta 
-       AIC      BIC    logLik
-  376.0622 385.4182 -183.0311
-
-Random effects:
- Formula: ~1 | Habitat
-        (Intercept) Residual
-StdDev: 0.000387573 10.04781
-
-Fixed effects:  richness ~ Species 
-                Value Std.Error DF   t-value p-value
-(Intercept)  19.70000  3.177396 46  6.200046  0.0000
-SpeciesHa   -16.12105  3.925486 46 -4.106766  0.0002
-SpeciesPk   -10.88182  3.832083 46 -2.839661  0.0067
- Correlation: 
-          (Intr) SpecsH
-SpeciesHa -0.809       
-SpeciesPk -0.829  0.671
-
-Standardized Within-Group Residuals:
-       Min         Q1        Med         Q3        Max 
--1.8611026 -0.5790499 -0.2566677  0.2788106  3.4136803 
-
-Number of Observations: 51
-Number of Groups: 3 </code></pre>
-<div class="sourceCode" id="cb99"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb99-1"><a href="alpha-diversity.html#cb99-1" tabindex="-1"></a><span class="fu">anova</span>(Model_richness_random)</span></code></pre></div>
-<pre class="script-output"><code>            numDF denDF  F-value p-value
-(Intercept)     1    46 40.91783  &lt;.0001
-Species         2    46  8.43910   8e-04</code></pre>
-<div class="sourceCode" id="cb101"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb101-1"><a href="alpha-diversity.html#cb101-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_richness_random, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
-<pre class="script-output"><code>$emmeans
- Species emmean   SE df lower.CL upper.CL
- Eb       19.70 3.18  2    6.029     33.4
- Ha        3.58 2.31  2   -6.339     13.5
- Pk        8.82 2.14  2   -0.399     18.0
-
-Degrees-of-freedom method: containment 
-Confidence level used: 0.95 
-
-$contrasts
- contrast estimate   SE df t.ratio p.value
- Eb - Ha     16.12 3.93 46   4.107  0.0005
- Eb - Pk     10.88 3.83 46   2.840  0.0181
- Ha - Pk     -5.24 3.15 46  -1.665  0.2295
-
-Degrees-of-freedom method: containment 
-P value adjustment: tukey method for comparing a family of 3 estimates </code></pre>
-<div class="sourceCode" id="cb103"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb103-1"><a href="alpha-diversity.html#cb103-1" tabindex="-1"></a>Model_richness<span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> richness <span class="sc">~</span> Species<span class="sc">*</span>Habitat, <span class="at">data =</span> alpha_div_meta) </span>
-<span id="cb103-2"><a href="alpha-diversity.html#cb103-2" tabindex="-1"></a></span>
-<span id="cb103-3"><a href="alpha-diversity.html#cb103-3" tabindex="-1"></a>Model_richness<span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> richness <span class="sc">~</span> Species, <span class="at">data =</span> alpha_div_meta) </span>
-<span id="cb103-4"><a href="alpha-diversity.html#cb103-4" tabindex="-1"></a><span class="fu">summary</span>(Model_richness)</span></code></pre></div>
-<pre class="script-output"><code>
-Call:
-lm(formula = richness ~ Species, data = alpha_div_meta)
-
-Residuals:
-    Min      1Q  Median      3Q     Max 
--18.700  -5.818  -2.579   2.801  34.300 
-
-Coefficients:
-            Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)   19.700      3.177   6.200 1.24e-07 ***
-SpeciesHa    -16.121      3.925  -4.107 0.000155 ***
-SpeciesPk    -10.882      3.832  -2.840 0.006604 ** 
----
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-
-Residual standard error: 10.05 on 48 degrees of freedom
-Multiple R-squared:  0.2602,    Adjusted R-squared:  0.2293 
-F-statistic: 8.439 on 2 and 48 DF,  p-value: 0.0007235</code></pre>
-<div class="sourceCode" id="cb105"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb105-1"><a href="alpha-diversity.html#cb105-1" tabindex="-1"></a><span class="fu">anova</span>(Model_richness)</span></code></pre></div>
+<div id="mixed-models" class="section level3 hasAnchor" number="6.1.1">
+<h3><span class="header-section-number">6.1.1</span> Mixed models<a href="alpha-diversity.html#mixed-models" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb89"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb89-1"><a href="alpha-diversity.html#cb89-1" tabindex="-1"></a>alpha_div_meta <span class="ot">&lt;-</span> alpha_div <span class="sc">%&gt;%</span></span>
+<span id="cb89-2"><a href="alpha-diversity.html#cb89-2" tabindex="-1"></a>  <span class="fu">left_join</span>(sample_metadata, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample))</span></code></pre></div>
+<p><strong><em>Richness</em></strong></p>
+<div class="sourceCode" id="cb90"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb90-1"><a href="alpha-diversity.html#cb90-1" tabindex="-1"></a>Model_richness <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> richness <span class="sc">~</span> Species, <span class="at">data =</span> alpha_div_meta)</span>
+<span id="cb90-2"><a href="alpha-diversity.html#cb90-2" tabindex="-1"></a><span class="fu">anova</span>(Model_richness)</span></code></pre></div>
 <pre class="script-output"><code>Analysis of Variance Table
 
 Response: richness
@@ -2374,7 +2319,7 @@ Species    2   1704  852.00  8.4391 0.0007235 ***
 Residuals 48   4846  100.96                      
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<div class="sourceCode" id="cb107"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb107-1"><a href="alpha-diversity.html#cb107-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_richness, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
+<div class="sourceCode" id="cb92"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb92-1"><a href="alpha-diversity.html#cb92-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_richness, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
 <pre class="script-output"><code>$emmeans
  Species emmean   SE df lower.CL upper.CL
  Eb       19.70 3.18 48    13.31    26.09
@@ -2390,342 +2335,36 @@ $contrasts
  Ha - Pk     -5.24 3.15 48  -1.665  0.2291
 
 P value adjustment: tukey method for comparing a family of 3 estimates </code></pre>
-<div class="sourceCode" id="cb109"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb109-1"><a href="alpha-diversity.html#cb109-1" tabindex="-1"></a>Model_richness_river_random <span class="ot">&lt;-</span> <span class="fu">lme</span>(<span class="at">fixed =</span> richness <span class="sc">~</span> Habitat, <span class="at">data =</span> alpha_div_meta,</span>
-<span id="cb109-2"><a href="alpha-diversity.html#cb109-2" tabindex="-1"></a>               <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> Species)</span>
-<span id="cb109-3"><a href="alpha-diversity.html#cb109-3" tabindex="-1"></a><span class="fu">summary</span>(Model_richness_river_random)</span></code></pre></div>
-<pre class="script-output"><code>Linear mixed-effects model fit by REML
-  Data: alpha_div_meta 
-       AIC      BIC    logLik
-  381.6106 390.9666 -185.8053
-
-Random effects:
- Formula: ~1 | Species
-        (Intercept) Residual
-StdDev:    7.661252  10.2432
-
-Fixed effects:  richness ~ Habitat 
-                Value Std.Error DF    t-value p-value
-(Intercept) 10.689822  4.903078 46  2.1802268  0.0344
-HabitatMed  -2.175912  4.871350 46 -0.4466753  0.6572
-HabitatNat  -0.037512  3.677900 46 -0.0101992  0.9919
- Correlation: 
-           (Intr) HbttMd
-HabitatMed -0.113       
-HabitatNat -0.288  0.072
-
-Standardized Within-Group Residuals:
-       Min         Q1        Med         Q3        Max 
--1.6934470 -0.5787041 -0.2449668  0.2756573  3.4843774 
-
-Number of Observations: 51
-Number of Groups: 3 </code></pre>
-<div class="sourceCode" id="cb111"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb111-1"><a href="alpha-diversity.html#cb111-1" tabindex="-1"></a><span class="fu">anova</span>(Model_richness_river_random)</span></code></pre></div>
-<pre class="script-output"><code>            numDF denDF  F-value p-value
-(Intercept)     1    46 5.020207  0.0299
-Habitat         2    46 0.099997  0.9050</code></pre>
-<div class="sourceCode" id="cb113"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb113-1"><a href="alpha-diversity.html#cb113-1" tabindex="-1"></a><span class="co">#emmeans(Model_richness_river_random, pairwise ~ Habitat)</span></span></code></pre></div>
-<div class="sourceCode" id="cb114"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb114-1"><a href="alpha-diversity.html#cb114-1" tabindex="-1"></a>Model_neutral_random <span class="ot">&lt;-</span> <span class="fu">lme</span>(<span class="at">fixed =</span> neutral <span class="sc">~</span> Species, <span class="at">data =</span> alpha_div_meta,</span>
-<span id="cb114-2"><a href="alpha-diversity.html#cb114-2" tabindex="-1"></a>               <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> Habitat)</span>
-<span id="cb114-3"><a href="alpha-diversity.html#cb114-3" tabindex="-1"></a><span class="fu">summary</span>(Model_neutral_random)</span></code></pre></div>
-<pre class="script-output"><code>Linear mixed-effects model fit by REML
-  Data: alpha_div_meta 
-       AIC      BIC    logLik
-  304.5177 313.8737 -147.2589
-
-Random effects:
- Formula: ~1 | Habitat
-         (Intercept) Residual
-StdDev: 0.0005085479 4.768823
-
-Fixed effects:  neutral ~ Species 
-                Value Std.Error DF   t-value p-value
-(Intercept)  7.325822  1.508034 46  4.857861  0.0000
-SpeciesHa   -5.172815  1.863088 46 -2.776473  0.0079
-SpeciesPk   -2.275571  1.818758 46 -1.251168  0.2172
- Correlation: 
-          (Intr) SpecsH
-SpeciesHa -0.809       
-SpeciesPk -0.829  0.671
-
-Standardized Within-Group Residuals:
-        Min          Q1         Med          Q3         Max 
--1.32649543 -0.58630386 -0.24178015  0.08818466  2.72269748 
-
-Number of Observations: 51
-Number of Groups: 3 </code></pre>
-<div class="sourceCode" id="cb116"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb116-1"><a href="alpha-diversity.html#cb116-1" tabindex="-1"></a><span class="fu">anova</span>(Model_neutral_random)</span></code></pre></div>
-<pre class="script-output"><code>            numDF denDF  F-value p-value
-(Intercept)     1    46 43.75396  &lt;.0001
-Species         2    46  4.19543  0.0212</code></pre>
-<div class="sourceCode" id="cb118"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb118-1"><a href="alpha-diversity.html#cb118-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_neutral_random, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
-<pre class="script-output"><code>$emmeans
- Species emmean   SE df lower.CL upper.CL
- Eb        7.33 1.51  2    0.837    13.81
- Ha        2.15 1.09  2   -2.554     6.86
- Pk        5.05 1.02  2    0.676     9.42
-
-Degrees-of-freedom method: containment 
-Confidence level used: 0.95 
-
-$contrasts
- contrast estimate   SE df t.ratio p.value
- Eb - Ha      5.17 1.86 46   2.776  0.0212
- Eb - Pk      2.28 1.82 46   1.251  0.4298
- Ha - Pk     -2.90 1.49 46  -1.940  0.1391
-
-Degrees-of-freedom method: containment 
-P value adjustment: tukey method for comparing a family of 3 estimates </code></pre>
-<div class="sourceCode" id="cb120"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb120-1"><a href="alpha-diversity.html#cb120-1" tabindex="-1"></a>Model_neutral<span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> neutral <span class="sc">~</span> Species<span class="sc">*</span>Habitat, <span class="at">data =</span> alpha_div_meta) </span>
-<span id="cb120-2"><a href="alpha-diversity.html#cb120-2" tabindex="-1"></a><span class="fu">summary</span>(Model_neutral)</span></code></pre></div>
-<pre class="script-output"><code>
-Call:
-lm(formula = neutral ~ Species * Habitat, data = alpha_div_meta)
-
-Residuals:
-   Min     1Q Median     3Q    Max 
--7.037 -2.930 -1.121  1.061 12.273 
-
-Coefficients: (2 not defined because of singularities)
-                     Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)             8.037      1.988   4.043 0.000209 ***
-SpeciesHa              -5.814      2.811  -2.068 0.044519 *  
-SpeciesPk              -2.123      2.352  -0.902 0.371706    
-HabitatMed             -2.351      2.352  -1.000 0.322994    
-HabitatNat             -1.779      3.143  -0.566 0.574252    
-SpeciesHa:HabitatMed       NA         NA      NA       NA    
-SpeciesPk:HabitatMed       NA         NA      NA       NA    
-SpeciesHa:HabitatNat    1.676      3.956   0.424 0.673829    
-SpeciesPk:HabitatNat   -3.136      5.930  -0.529 0.599595    
----
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-
-Residual standard error: 4.869 on 44 degrees of freedom
-Multiple R-squared:  0.1866,    Adjusted R-squared:  0.07571 
-F-statistic: 1.683 on 6 and 44 DF,  p-value: 0.1479</code></pre>
-<div class="sourceCode" id="cb122"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb122-1"><a href="alpha-diversity.html#cb122-1" tabindex="-1"></a><span class="fu">anova</span>(Model_neutral)</span></code></pre></div>
-<pre class="script-output"><code>Analysis of Variance Table
-
-Response: neutral
-                Df  Sum Sq Mean Sq F value  Pr(&gt;F)  
-Species          2  190.82  95.411  4.0247 0.02482 *
-Habitat          2   29.84  14.921  0.6294 0.53765  
-Species:Habitat  2   18.67   9.334  0.3937 0.67689  
-Residuals       44 1043.09  23.707                  
----
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<div class="sourceCode" id="cb124"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb124-1"><a href="alpha-diversity.html#cb124-1" tabindex="-1"></a>Model_neutral<span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> neutral <span class="sc">~</span> Species<span class="sc">+</span>Habitat, <span class="at">data =</span> alpha_div_meta) </span>
-<span id="cb124-2"><a href="alpha-diversity.html#cb124-2" tabindex="-1"></a><span class="fu">summary</span>(Model_neutral)</span></code></pre></div>
-<pre class="script-output"><code>
-Call:
-lm(formula = neutral ~ Species + Habitat, data = alpha_div_meta)
-
-Residuals:
-    Min      1Q  Median      3Q     Max 
--6.8255 -2.9109 -0.7585  0.9929 12.4843 
-
-Coefficients:
-            Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)    7.826      1.675   4.673 2.61e-05 ***
-SpeciesHa     -4.818      1.943  -2.480   0.0169 *  
-SpeciesPk     -2.140      2.026  -1.056   0.2964    
-HabitatMed    -2.122      2.303  -0.921   0.3616    
-HabitatNat    -1.249      1.761  -0.709   0.4817    
----
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-
-Residual standard error: 4.804 on 46 degrees of freedom
-Multiple R-squared:  0.1721,    Adjusted R-squared:  0.1001 
-F-statistic:  2.39 on 4 and 46 DF,  p-value: 0.06444</code></pre>
-<div class="sourceCode" id="cb126"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb126-1"><a href="alpha-diversity.html#cb126-1" tabindex="-1"></a><span class="fu">anova</span>(Model_neutral)</span></code></pre></div>
+<p><strong><em>Neutral</em></strong></p>
+<div class="sourceCode" id="cb94"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb94-1"><a href="alpha-diversity.html#cb94-1" tabindex="-1"></a>Model_neutral <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> neutral <span class="sc">~</span> Species, <span class="at">data =</span> alpha_div_meta)</span>
+<span id="cb94-2"><a href="alpha-diversity.html#cb94-2" tabindex="-1"></a><span class="fu">anova</span>(Model_neutral)</span></code></pre></div>
 <pre class="script-output"><code>Analysis of Variance Table
 
 Response: neutral
           Df  Sum Sq Mean Sq F value  Pr(&gt;F)  
-Species    2  190.82  95.411  4.1336 0.02234 *
-Habitat    2   29.84  14.921  0.6464 0.52861  
-Residuals 46 1061.76  23.082                  
+Species    2  190.82  95.411  4.1954 0.02093 *
+Residuals 48 1091.60  22.742                  
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<div class="sourceCode" id="cb128"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb128-1"><a href="alpha-diversity.html#cb128-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_neutral, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
+<div class="sourceCode" id="cb96"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb96-1"><a href="alpha-diversity.html#cb96-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_neutral, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
 <pre class="script-output"><code>$emmeans
  Species emmean   SE df lower.CL upper.CL
- Eb        6.70 1.70 46     3.27    10.13
- Ha        1.88 1.46 46    -1.06     4.83
- Pk        4.56 1.15 46     2.24     6.89
+ Eb        7.33 1.51 48   4.2937    10.36
+ Ha        2.15 1.09 48  -0.0467     4.35
+ Pk        5.05 1.02 48   3.0060     7.09
 
-Results are averaged over the levels of: Habitat 
 Confidence level used: 0.95 
 
 $contrasts
  contrast estimate   SE df t.ratio p.value
- Eb - Ha      4.82 1.94 46   2.480  0.0437
- Eb - Pk      2.14 2.03 46   1.056  0.5457
- Ha - Pk     -2.68 1.96 46  -1.364  0.3681
+ Eb - Ha      5.17 1.86 48   2.776  0.0210
+ Eb - Pk      2.28 1.82 48   1.251  0.4295
+ Ha - Pk     -2.90 1.49 48  -1.940  0.1386
 
-Results are averaged over the levels of: Habitat 
 P value adjustment: tukey method for comparing a family of 3 estimates </code></pre>
-<div class="sourceCode" id="cb130"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb130-1"><a href="alpha-diversity.html#cb130-1" tabindex="-1"></a>Model_neutral_river_random <span class="ot">&lt;-</span> <span class="fu">lme</span>(<span class="at">fixed =</span> neutral <span class="sc">~</span> Habitat, <span class="at">data =</span> alpha_div_meta,</span>
-<span id="cb130-2"><a href="alpha-diversity.html#cb130-2" tabindex="-1"></a>               <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> Species)</span>
-<span id="cb130-3"><a href="alpha-diversity.html#cb130-3" tabindex="-1"></a><span class="fu">summary</span>(Model_neutral_river_random)</span></code></pre></div>
-<pre class="script-output"><code>Linear mixed-effects model fit by REML
-  Data: alpha_div_meta 
-       AIC      BIC    logLik
-  307.0823 316.4383 -148.5412
-
-Random effects:
- Formula: ~1 | Species
-        (Intercept) Residual
-StdDev:    2.006524 4.803003
-
-Fixed effects:  neutral ~ Habitat 
-                Value Std.Error DF   t-value p-value
-(Intercept)  5.518864  1.515311 46  3.642067  0.0007
-HabitatMed  -2.096718  2.257895 46 -0.928617  0.3579
-HabitatNat  -1.660903  1.669514 46 -0.994842  0.3250
- Correlation: 
-           (Intr) HbttMd
-HabitatMed -0.191       
-HabitatNat -0.425  0.109
-
-Standardized Within-Group Residuals:
-       Min         Q1        Med         Q3        Max 
--1.2679511 -0.5878946 -0.2384058  0.2184124  2.7524260 
-
-Number of Observations: 51
-Number of Groups: 3 </code></pre>
-<div class="sourceCode" id="cb132"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb132-1"><a href="alpha-diversity.html#cb132-1" tabindex="-1"></a><span class="fu">anova</span>(Model_neutral_river_random)</span></code></pre></div>
-<pre class="script-output"><code>            numDF denDF   F-value p-value
-(Intercept)     1    46 12.033901  0.0011
-Habitat         2    46  0.835044  0.4403</code></pre>
-<div class="sourceCode" id="cb134"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb134-1"><a href="alpha-diversity.html#cb134-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_neutral_river_random, pairwise <span class="sc">~</span> Habitat)</span></code></pre></div>
-<pre class="script-output"><code>$emmeans
- Habitat emmean   SE df lower.CL upper.CL
- Anth      5.52 1.52  2    -1.00     12.0
- Med       3.42 2.47  2    -7.19     14.0
- Nat       3.86 1.71  2    -3.51     11.2
-
-Degrees-of-freedom method: containment 
-Confidence level used: 0.95 
-
-$contrasts
- contrast   estimate   SE df t.ratio p.value
- Anth - Med    2.097 2.26 46   0.929  0.6252
- Anth - Nat    1.661 1.67 46   0.995  0.5838
- Med - Nat    -0.436 2.66 46  -0.164  0.9853
-
-Degrees-of-freedom method: containment 
-P value adjustment: tukey method for comparing a family of 3 estimates </code></pre>
-<div class="sourceCode" id="cb136"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb136-1"><a href="alpha-diversity.html#cb136-1" tabindex="-1"></a>Model_phylogenetic_random <span class="ot">&lt;-</span> <span class="fu">lme</span>(<span class="at">fixed =</span> phylogenetic <span class="sc">~</span> Species, <span class="at">data =</span> alpha_div_meta,</span>
-<span id="cb136-2"><a href="alpha-diversity.html#cb136-2" tabindex="-1"></a>               <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> Habitat)</span>
-<span id="cb136-3"><a href="alpha-diversity.html#cb136-3" tabindex="-1"></a><span class="fu">summary</span>(Model_phylogenetic_random)</span></code></pre></div>
-<pre class="script-output"><code>Linear mixed-effects model fit by REML
-  Data: alpha_div_meta 
-       AIC      BIC    logLik
-  187.5991 196.9551 -88.79953
-
-Random effects:
- Formula: ~1 | Habitat
-         (Intercept) Residual
-StdDev: 4.757509e-05 1.410856
-
-Fixed effects:  phylogenetic ~ Species 
-                 Value Std.Error DF   t-value p-value
-(Intercept)  3.0487852 0.4461519 46  6.833514  0.0000
-SpeciesHa   -1.5719549 0.5511946 46 -2.851905  0.0065
-SpeciesPk   -0.4090825 0.5380795 46 -0.760264  0.4510
- Correlation: 
-          (Intr) SpecsH
-SpeciesHa -0.809       
-SpeciesPk -0.829  0.671
-
-Standardized Within-Group Residuals:
-       Min         Q1        Med         Q3        Max 
--1.4521573 -0.5120973 -0.2030471  0.3967416  3.9444726 
-
-Number of Observations: 51
-Number of Groups: 3 </code></pre>
-<div class="sourceCode" id="cb138"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb138-1"><a href="alpha-diversity.html#cb138-1" tabindex="-1"></a><span class="fu">anova</span>(Model_phylogenetic_random)</span></code></pre></div>
-<pre class="script-output"><code>            numDF denDF  F-value p-value
-(Intercept)     1    46 133.9734  &lt;.0001
-Species         2    46   5.2778  0.0086</code></pre>
-<div class="sourceCode" id="cb140"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb140-1"><a href="alpha-diversity.html#cb140-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_phylogenetic_random, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
-<pre class="script-output"><code>$emmeans
- Species emmean    SE df lower.CL upper.CL
- Eb        3.05 0.446  2   1.1291     4.97
- Ha        1.48 0.324  2   0.0842     2.87
- Pk        2.64 0.301  2   1.3455     3.93
-
-Degrees-of-freedom method: containment 
-Confidence level used: 0.95 
-
-$contrasts
- contrast estimate    SE df t.ratio p.value
- Eb - Ha     1.572 0.551 46   2.852  0.0175
- Eb - Pk     0.409 0.538 46   0.760  0.7290
- Ha - Pk    -1.163 0.442 46  -2.632  0.0304
-
-Degrees-of-freedom method: containment 
-P value adjustment: tukey method for comparing a family of 3 estimates </code></pre>
-<div class="sourceCode" id="cb142"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb142-1"><a href="alpha-diversity.html#cb142-1" tabindex="-1"></a>Model_phylogenetic<span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> phylogenetic <span class="sc">~</span> Species<span class="sc">*</span>Habitat, <span class="at">data =</span> alpha_div_meta) </span>
-<span id="cb142-2"><a href="alpha-diversity.html#cb142-2" tabindex="-1"></a><span class="fu">summary</span>(Model_phylogenetic)</span></code></pre></div>
-<pre class="script-output"><code>
-Call:
-lm(formula = phylogenetic ~ Species * Habitat, data = alpha_div_meta)
-
-Residuals:
-    Min      1Q  Median      3Q     Max 
--2.3225 -0.7981 -0.1672  0.5270  5.2914 
-
-Coefficients: (2 not defined because of singularities)
-                     Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)           3.32250    0.58889   5.642 1.13e-06 ***
-SpeciesHa            -1.92117    0.83281  -2.307   0.0258 *  
-SpeciesPk            -0.61200    0.69678  -0.878   0.3845    
-HabitatMed            0.02549    0.69678   0.037   0.9710    
-HabitatNat           -0.68428    0.93111  -0.735   0.4663    
-SpeciesHa:HabitatMed       NA         NA      NA       NA    
-SpeciesPk:HabitatMed       NA         NA      NA       NA    
-SpeciesHa:HabitatNat  0.79464    1.17209   0.678   0.5013    
-SpeciesPk:HabitatNat -1.02621    1.75681  -0.584   0.5621    
----
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-
-Residual standard error: 1.442 on 44 degrees of freedom
-Multiple R-squared:  0.2145,    Adjusted R-squared:  0.1074 
-F-statistic: 2.003 on 6 and 44 DF,  p-value: 0.08561</code></pre>
-<div class="sourceCode" id="cb144"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb144-1"><a href="alpha-diversity.html#cb144-1" tabindex="-1"></a><span class="fu">anova</span>(Model_phylogenetic)</span></code></pre></div>
-<pre class="script-output"><code>Analysis of Variance Table
-
-Response: phylogenetic
-                Df Sum Sq Mean Sq F value  Pr(&gt;F)  
-Species          2 21.011 10.5055  5.0490 0.01062 *
-Habitat          2  1.125  0.5623  0.2702 0.76447  
-Species:Habitat  2  2.869  1.4344  0.6894 0.50724  
-Residuals       44 91.552  2.0807                  
----
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<div class="sourceCode" id="cb146"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb146-1"><a href="alpha-diversity.html#cb146-1" tabindex="-1"></a>Model_phylogenetic<span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> phylogenetic <span class="sc">~</span> Species, <span class="at">data =</span> alpha_div_meta) </span>
-<span id="cb146-2"><a href="alpha-diversity.html#cb146-2" tabindex="-1"></a><span class="fu">summary</span>(Model_phylogenetic)</span></code></pre></div>
-<pre class="script-output"><code>
-Call:
-lm(formula = phylogenetic ~ Species, data = alpha_div_meta)
-
-Residuals:
-    Min      1Q  Median      3Q     Max 
--2.0488 -0.7225 -0.2865  0.5597  5.5651 
-
-Coefficients:
-            Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)   3.0488     0.4462   6.834 1.32e-08 ***
-SpeciesHa    -1.5720     0.5512  -2.852  0.00639 ** 
-SpeciesPk    -0.4091     0.5381  -0.760  0.45082    
----
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-
-Residual standard error: 1.411 on 48 degrees of freedom
-Multiple R-squared:  0.1803,    Adjusted R-squared:  0.1461 
-F-statistic: 5.278 on 2 and 48 DF,  p-value: 0.008475</code></pre>
-<div class="sourceCode" id="cb148"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb148-1"><a href="alpha-diversity.html#cb148-1" tabindex="-1"></a><span class="fu">anova</span>(Model_phylogenetic)</span></code></pre></div>
+<p><strong><em>Phylogenetic</em></strong></p>
+<div class="sourceCode" id="cb98"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb98-1"><a href="alpha-diversity.html#cb98-1" tabindex="-1"></a>Model_phylogenetic <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> phylogenetic <span class="sc">~</span> Species, <span class="at">data =</span> alpha_div_meta)</span>
+<span id="cb98-2"><a href="alpha-diversity.html#cb98-2" tabindex="-1"></a><span class="fu">anova</span>(Model_phylogenetic)</span></code></pre></div>
 <pre class="script-output"><code>Analysis of Variance Table
 
 Response: phylogenetic
@@ -2734,7 +2373,7 @@ Species    2 21.011 10.5055  5.2778 0.008475 **
 Residuals 48 95.545  1.9905                    
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<div class="sourceCode" id="cb150"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb150-1"><a href="alpha-diversity.html#cb150-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_phylogenetic, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
+<div class="sourceCode" id="cb100"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb100-1"><a href="alpha-diversity.html#cb100-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_phylogenetic, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
 <pre class="script-output"><code>$emmeans
  Species emmean    SE df lower.CL upper.CL
  Eb        3.05 0.446 48    2.152     3.95
@@ -2750,168 +2389,9 @@ $contrasts
  Ha - Pk    -1.163 0.442 48  -2.632  0.0301
 
 P value adjustment: tukey method for comparing a family of 3 estimates </code></pre>
-<div class="sourceCode" id="cb152"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb152-1"><a href="alpha-diversity.html#cb152-1" tabindex="-1"></a>Model_phylogenetic_river_random <span class="ot">&lt;-</span> <span class="fu">lme</span>(<span class="at">fixed =</span> phylogenetic <span class="sc">~</span> Habitat, <span class="at">data =</span> alpha_div_meta,</span>
-<span id="cb152-2"><a href="alpha-diversity.html#cb152-2" tabindex="-1"></a>               <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> Species)</span>
-<span id="cb152-3"><a href="alpha-diversity.html#cb152-3" tabindex="-1"></a><span class="fu">summary</span>(Model_phylogenetic_river_random)</span></code></pre></div>
-<pre class="script-output"><code>Linear mixed-effects model fit by REML
-  Data: alpha_div_meta 
-       AIC      BIC    logLik
-  191.0292 200.3852 -90.51459
-
-Random effects:
- Formula: ~1 | Species
-        (Intercept) Residual
-StdDev:   0.6216728 1.432282
-
-Fixed effects:  phylogenetic ~ Habitat 
-                 Value Std.Error DF   t-value p-value
-(Intercept)  2.5289760 0.4624892 46  5.468184  0.0000
-HabitatMed   0.1272296 0.6739811 46  0.188773  0.8511
-HabitatNat  -0.5062640 0.4992765 46 -1.013995  0.3159
- Correlation: 
-           (Intr) HbttMd
-HabitatMed -0.185       
-HabitatNat -0.416  0.106
-
-Standardized Within-Group Residuals:
-       Min         Q1        Med         Q3        Max 
--1.3969527 -0.6718188 -0.2098204  0.3962845  3.9189496 
-
-Number of Observations: 51
-Number of Groups: 3 </code></pre>
-<div class="sourceCode" id="cb154"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb154-1"><a href="alpha-diversity.html#cb154-1" tabindex="-1"></a><span class="fu">anova</span>(Model_phylogenetic_river_random)</span></code></pre></div>
-<pre class="script-output"><code>            numDF denDF  F-value p-value
-(Intercept)     1    46 32.10516  &lt;.0001
-Habitat         2    46  0.55846  0.5759</code></pre>
-<div class="sourceCode" id="cb156"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb156-1"><a href="alpha-diversity.html#cb156-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_phylogenetic_river_random, pairwise <span class="sc">~</span> Habitat)</span></code></pre></div>
-<pre class="script-output"><code>$emmeans
- Habitat emmean    SE df lower.CL upper.CL
- Anth      2.53 0.462  2    0.539     4.52
- Med       2.66 0.743  2   -0.542     5.85
- Nat       2.02 0.520  2   -0.217     4.26
-
-Degrees-of-freedom method: containment 
-Confidence level used: 0.95 
-
-$contrasts
- contrast   estimate    SE df t.ratio p.value
- Anth - Med   -0.127 0.674 46  -0.189  0.9806
- Anth - Nat    0.506 0.499 46   1.014  0.5719
- Med - Nat     0.633 0.795 46   0.797  0.7069
-
-Degrees-of-freedom method: containment 
-P value adjustment: tukey method for comparing a family of 3 estimates </code></pre>
-<div class="sourceCode" id="cb158"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb158-1"><a href="alpha-diversity.html#cb158-1" tabindex="-1"></a>Model_functional_random <span class="ot">&lt;-</span> <span class="fu">lme</span>(<span class="at">fixed =</span> functional <span class="sc">~</span> Species, <span class="at">data =</span> alpha_div_meta,</span>
-<span id="cb158-2"><a href="alpha-diversity.html#cb158-2" tabindex="-1"></a>               <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> Habitat)</span>
-<span id="cb158-3"><a href="alpha-diversity.html#cb158-3" tabindex="-1"></a><span class="fu">summary</span>(Model_functional_random)</span></code></pre></div>
-<pre class="script-output"><code>Linear mixed-effects model fit by REML
-  Data: alpha_div_meta 
-      AIC      BIC  logLik
-  2.48054 11.83654 3.75973
-
-Random effects:
- Formula: ~1 | Habitat
-        (Intercept)  Residual
-StdDev:  0.03290678 0.2040392
-
-Fixed effects:  functional ~ Species 
-                 Value  Std.Error DF   t-value p-value
-(Intercept)  1.3675380 0.06846759 46 19.973507  0.0000
-SpeciesHa   -0.1839105 0.08048094 46 -2.285144  0.0270
-SpeciesPk   -0.0301268 0.07901368 46 -0.381286  0.7047
- Correlation: 
-          (Intr) SpecsH
-SpeciesHa -0.762       
-SpeciesPk -0.788  0.639
-
-Standardized Within-Group Residuals:
-       Min         Q1        Med         Q3        Max 
--1.7374535 -0.8157247  0.0842103  0.7710483  2.5947667 
-
-Number of Observations: 51
-Number of Groups: 3 </code></pre>
-<div class="sourceCode" id="cb160"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb160-1"><a href="alpha-diversity.html#cb160-1" tabindex="-1"></a><span class="fu">anova</span>(Model_functional_random)</span></code></pre></div>
-<pre class="script-output"><code>            numDF denDF   F-value p-value
-(Intercept)     1    46 1323.0814  &lt;.0001
-Species         2    46    3.5926  0.0355</code></pre>
-<div class="sourceCode" id="cb162"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb162-1"><a href="alpha-diversity.html#cb162-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_functional_random, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
-<pre class="script-output"><code>$emmeans
- Species emmean     SE df lower.CL upper.CL
- Eb        1.37 0.0685  2    1.073     1.66
- Ha        1.18 0.0526  2    0.957     1.41
- Pk        1.34 0.0491  2    1.126     1.55
-
-Degrees-of-freedom method: containment 
-Confidence level used: 0.95 
-
-$contrasts
- contrast estimate     SE df t.ratio p.value
- Eb - Ha    0.1839 0.0805 46   2.285  0.0680
- Eb - Pk    0.0301 0.0790 46   0.381  0.9231
- Ha - Pk   -0.1538 0.0678 46  -2.268  0.0706
-
-Degrees-of-freedom method: containment 
-P value adjustment: tukey method for comparing a family of 3 estimates </code></pre>
-<div class="sourceCode" id="cb164"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb164-1"><a href="alpha-diversity.html#cb164-1" tabindex="-1"></a>Model_functional<span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> functional <span class="sc">~</span> Species<span class="sc">*</span>Habitat, <span class="at">data =</span> alpha_div_meta) </span>
-<span id="cb164-2"><a href="alpha-diversity.html#cb164-2" tabindex="-1"></a><span class="fu">summary</span>(Model_functional)</span></code></pre></div>
-<pre class="script-output"><code>
-Call:
-lm(formula = functional ~ Species * Habitat, data = alpha_div_meta)
-
-Residuals:
-     Min       1Q   Median       3Q      Max 
--0.42687 -0.16654  0.01457  0.12376  0.42028 
-
-Coefficients: (2 not defined because of singularities)
-                      Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)           1.296263   0.081011  16.001   &lt;2e-16 ***
-SpeciesHa            -0.097317   0.114566  -0.849   0.4002    
-SpeciesPk             0.006682   0.095853   0.070   0.9447    
-HabitatMed            0.160659   0.095853   1.676   0.1008    
-HabitatNat            0.154637   0.128089   1.207   0.2338    
-SpeciesHa:HabitatMed        NA         NA      NA       NA    
-SpeciesPk:HabitatMed        NA         NA      NA       NA    
-SpeciesHa:HabitatNat -0.187045   0.161240  -1.160   0.2523    
-SpeciesPk:HabitatNat -0.457583   0.241678  -1.893   0.0649 .  
----
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-
-Residual standard error: 0.1984 on 44 degrees of freedom
-Multiple R-squared:  0.2616,    Adjusted R-squared:  0.1609 
-F-statistic: 2.598 on 6 and 44 DF,  p-value: 0.03048</code></pre>
-<div class="sourceCode" id="cb166"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb166-1"><a href="alpha-diversity.html#cb166-1" tabindex="-1"></a><span class="fu">anova</span>(Model_functional)</span></code></pre></div>
-<pre class="script-output"><code>Analysis of Variance Table
-
-Response: functional
-                Df  Sum Sq  Mean Sq F value  Pr(&gt;F)  
-Species          2 0.32526 0.162631  4.1302 0.02271 *
-Habitat          2 0.14103 0.070513  1.7908 0.17878  
-Species:Habitat  2 0.14746 0.073729  1.8724 0.16580  
-Residuals       44 1.73256 0.039376                  
----
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<div class="sourceCode" id="cb168"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb168-1"><a href="alpha-diversity.html#cb168-1" tabindex="-1"></a>Model_functional<span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> functional <span class="sc">~</span> Species, <span class="at">data =</span> alpha_div_meta) </span>
-<span id="cb168-2"><a href="alpha-diversity.html#cb168-2" tabindex="-1"></a><span class="fu">summary</span>(Model_functional)</span></code></pre></div>
-<pre class="script-output"><code>
-Call:
-lm(formula = functional ~ Species, data = alpha_div_meta)
-
-Residuals:
-     Min       1Q   Median       3Q      Max 
--0.35812 -0.17383  0.00857  0.15667  0.55089 
-
-Coefficients:
-            Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)  1.35812    0.06489  20.930   &lt;2e-16 ***
-SpeciesHa   -0.18135    0.08017  -2.262   0.0283 *  
-SpeciesPk   -0.02513    0.07826  -0.321   0.7495    
----
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-
-Residual standard error: 0.2052 on 48 degrees of freedom
-Multiple R-squared:  0.1386,    Adjusted R-squared:  0.1027 
-F-statistic: 3.863 on 2 and 48 DF,  p-value: 0.02783</code></pre>
-<div class="sourceCode" id="cb170"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb170-1"><a href="alpha-diversity.html#cb170-1" tabindex="-1"></a><span class="fu">anova</span>(Model_functional)</span></code></pre></div>
+<p><strong><em>Functional</em></strong></p>
+<div class="sourceCode" id="cb102"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb102-1"><a href="alpha-diversity.html#cb102-1" tabindex="-1"></a>Model_functional <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> functional <span class="sc">~</span> Species, <span class="at">data =</span> alpha_div_meta)</span>
+<span id="cb102-2"><a href="alpha-diversity.html#cb102-2" tabindex="-1"></a><span class="fu">anova</span>(Model_functional)</span></code></pre></div>
 <pre class="script-output"><code>Analysis of Variance Table
 
 Response: functional
@@ -2920,7 +2400,7 @@ Species    2 0.32526 0.162631  3.8625 0.02783 *
 Residuals 48 2.02104 0.042105                  
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<div class="sourceCode" id="cb172"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb172-1"><a href="alpha-diversity.html#cb172-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_functional, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
+<div class="sourceCode" id="cb104"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb104-1"><a href="alpha-diversity.html#cb104-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_functional, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
 <pre class="script-output"><code>$emmeans
  Species emmean     SE df lower.CL upper.CL
  Eb        1.36 0.0649 48     1.23     1.49
@@ -2936,94 +2416,50 @@ $contrasts
  Ha - Pk   -0.1562 0.0643 48  -2.431  0.0486
 
 P value adjustment: tukey method for comparing a family of 3 estimates </code></pre>
-<div class="sourceCode" id="cb174"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb174-1"><a href="alpha-diversity.html#cb174-1" tabindex="-1"></a>Model_functional_river_random <span class="ot">&lt;-</span> <span class="fu">lme</span>(<span class="at">fixed =</span> functional <span class="sc">~</span> Habitat, <span class="at">data =</span> alpha_div_meta,</span>
-<span id="cb174-2"><a href="alpha-diversity.html#cb174-2" tabindex="-1"></a>               <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> Species)</span>
-<span id="cb174-3"><a href="alpha-diversity.html#cb174-3" tabindex="-1"></a><span class="fu">summary</span>(Model_functional_river_random)</span></code></pre></div>
-<pre class="script-output"><code>Linear mixed-effects model fit by REML
-  Data: alpha_div_meta 
-       AIC      BIC   logLik
-  2.465301 11.82131 3.767349
-
-Random effects:
- Formula: ~1 | Species
-        (Intercept)  Residual
-StdDev:   0.0703315 0.2020894
-
-Fixed effects:  functional ~ Habitat 
-                 Value  Std.Error DF   t-value p-value
-(Intercept)  1.2762890 0.05757849 46 22.166070  0.0000
-HabitatMed   0.1811338 0.09452337 46  1.916285  0.0616
-HabitatNat  -0.0263883 0.06921279 46 -0.381264  0.7048
- Correlation: 
-           (Intr) HbttMd
-HabitatMed -0.221       
-HabitatNat -0.465  0.127
-
-Standardized Within-Group Residuals:
-       Min         Q1        Med         Q3        Max 
--2.1122756 -0.9555906  0.1178097  0.7524579  2.0796542 
-
-Number of Observations: 51
-Number of Groups: 3 </code></pre>
-<div class="sourceCode" id="cb176"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb176-1"><a href="alpha-diversity.html#cb176-1" tabindex="-1"></a><span class="fu">anova</span>(Model_functional_river_random)</span></code></pre></div>
-<pre class="script-output"><code>            numDF denDF  F-value p-value
-(Intercept)     1    46 658.0125  &lt;.0001
-Habitat         2    46   2.0339  0.1424</code></pre>
-<div class="sourceCode" id="cb178"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb178-1"><a href="alpha-diversity.html#cb178-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_functional_river_random, pairwise <span class="sc">~</span> Habitat)</span></code></pre></div>
-<pre class="script-output"><code>$emmeans
- Habitat emmean     SE df lower.CL upper.CL
- Anth      1.28 0.0576  2    1.029     1.52
- Med       1.46 0.0992  2    1.031     1.88
- Nat       1.25 0.0663  2    0.965     1.54
-
-Degrees-of-freedom method: containment 
-Confidence level used: 0.95 
-
-$contrasts
- contrast   estimate     SE df t.ratio p.value
- Anth - Med  -0.1811 0.0945 46  -1.916  0.1456
- Anth - Nat   0.0264 0.0692 46   0.381  0.9231
- Med - Nat    0.2075 0.1100 46   1.889  0.1533
-
-Degrees-of-freedom method: containment 
-P value adjustment: tukey method for comparing a family of 3 estimates </code></pre>
-<div class="sourceCode" id="cb180"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb180-1"><a href="alpha-diversity.html#cb180-1" tabindex="-1"></a>alpha_div_meta <span class="ot">&lt;-</span> alpha_div <span class="sc">%&gt;%</span> </span>
-<span id="cb180-2"><a href="alpha-diversity.html#cb180-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">method=</span><span class="st">&quot;shotgun&quot;</span>)</span>
-<span id="cb180-3"><a href="alpha-diversity.html#cb180-3" tabindex="-1"></a><span class="fu">saveRDS</span>(alpha_div_meta, <span class="st">&quot;resources/metagenomics/metagenome_alpha_div.rds&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb106"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb106-1"><a href="alpha-diversity.html#cb106-1" tabindex="-1"></a>alpha_div_meta <span class="ot">&lt;-</span> alpha_div <span class="sc">%&gt;%</span> </span>
+<span id="cb106-2"><a href="alpha-diversity.html#cb106-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">method=</span><span class="st">&quot;shotgun&quot;</span>)</span>
+<span id="cb106-3"><a href="alpha-diversity.html#cb106-3" tabindex="-1"></a><span class="fu">saveRDS</span>(alpha_div_meta, <span class="st">&quot;resources/metagenomics/metagenome_alpha_div.rds&quot;</span>)</span></code></pre></div>
 </div>
 </div>
-<div id="amplicon-2" class="section level2 hasAnchor" number="8.2">
-<h2><span class="header-section-number">8.2</span> Amplicon<a href="alpha-diversity.html#amplicon-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb181"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb181-1"><a href="alpha-diversity.html#cb181-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;resources/amplicon/data_nocopyfilt.Rdata&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb182"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb182-1"><a href="alpha-diversity.html#cb182-1" tabindex="-1"></a>richness <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
-<span id="cb182-2"><a href="alpha-diversity.html#cb182-2" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb182-3"><a href="alpha-diversity.html#cb182-3" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>(<span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb182-4"><a href="alpha-diversity.html#cb182-4" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb182-5"><a href="alpha-diversity.html#cb182-5" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb182-6"><a href="alpha-diversity.html#cb182-6" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb182-7"><a href="alpha-diversity.html#cb182-7" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">richness =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb182-8"><a href="alpha-diversity.html#cb182-8" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
-<span id="cb182-9"><a href="alpha-diversity.html#cb182-9" tabindex="-1"></a></span>
-<span id="cb182-10"><a href="alpha-diversity.html#cb182-10" tabindex="-1"></a>neutral <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
-<span id="cb182-11"><a href="alpha-diversity.html#cb182-11" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb182-12"><a href="alpha-diversity.html#cb182-12" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>(<span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb182-13"><a href="alpha-diversity.html#cb182-13" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb182-14"><a href="alpha-diversity.html#cb182-14" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb182-15"><a href="alpha-diversity.html#cb182-15" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb182-16"><a href="alpha-diversity.html#cb182-16" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">neutral =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb182-17"><a href="alpha-diversity.html#cb182-17" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
-<span id="cb182-18"><a href="alpha-diversity.html#cb182-18" tabindex="-1"></a></span>
-<span id="cb182-19"><a href="alpha-diversity.html#cb182-19" tabindex="-1"></a>alpha_div <span class="ot">&lt;-</span> richness <span class="sc">%&gt;%</span></span>
-<span id="cb182-20"><a href="alpha-diversity.html#cb182-20" tabindex="-1"></a>  <span class="fu">full_join</span>(neutral, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample)) </span></code></pre></div>
+<div id="amplicon-2" class="section level2 hasAnchor" number="6.2">
+<h2><span class="header-section-number">6.2</span> Amplicon<a href="alpha-diversity.html#amplicon-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb107"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb107-1"><a href="alpha-diversity.html#cb107-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;resources/amplicon/data_nocopyfilt.Rdata&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb108"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb108-1"><a href="alpha-diversity.html#cb108-1" tabindex="-1"></a>richness <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
+<span id="cb108-2"><a href="alpha-diversity.html#cb108-2" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb108-3"><a href="alpha-diversity.html#cb108-3" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb108-4"><a href="alpha-diversity.html#cb108-4" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb108-5"><a href="alpha-diversity.html#cb108-5" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb108-6"><a href="alpha-diversity.html#cb108-6" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb108-7"><a href="alpha-diversity.html#cb108-7" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">richness =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb108-8"><a href="alpha-diversity.html#cb108-8" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
+<span id="cb108-9"><a href="alpha-diversity.html#cb108-9" tabindex="-1"></a></span>
+<span id="cb108-10"><a href="alpha-diversity.html#cb108-10" tabindex="-1"></a>neutral <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
+<span id="cb108-11"><a href="alpha-diversity.html#cb108-11" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb108-12"><a href="alpha-diversity.html#cb108-12" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb108-13"><a href="alpha-diversity.html#cb108-13" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb108-14"><a href="alpha-diversity.html#cb108-14" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb108-15"><a href="alpha-diversity.html#cb108-15" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb108-16"><a href="alpha-diversity.html#cb108-16" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">neutral =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb108-17"><a href="alpha-diversity.html#cb108-17" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
+<span id="cb108-18"><a href="alpha-diversity.html#cb108-18" tabindex="-1"></a></span>
+<span id="cb108-19"><a href="alpha-diversity.html#cb108-19" tabindex="-1"></a>alpha_div <span class="ot">&lt;-</span> richness <span class="sc">%&gt;%</span></span>
+<span id="cb108-20"><a href="alpha-diversity.html#cb108-20" tabindex="-1"></a>  <span class="fu">full_join</span>(neutral, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample)) </span></code></pre></div>
 <!-- preamble start -->
 
     <script>
-      function styleCell_0uhtre8vfguwjmtvkxhx(i, j, css_id) {
-        var table = document.getElementById("tinytable_0uhtre8vfguwjmtvkxhx");
-        table.rows[i].cells[j].classList.add(css_id);
+
+      function styleCell_imanvajt6bktu9qtqwox(i, j, css_id) {
+          var table = document.getElementById("tinytable_imanvajt6bktu9qtqwox");
+          var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
+          if (cell) {
+              console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
+              cell.classList.add(css_id);
+          } else {
+              console.warn(`Cell at (${i}, ${j}) not found.`);
+          }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_0uhtre8vfguwjmtvkxhx');
+        var table = document.getElementById('tinytable_imanvajt6bktu9qtqwox');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -3031,8 +2467,8 @@ P value adjustment: tukey method for comparing a family of 3 estimates </code></
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_0uhtre8vfguwjmtvkxhx(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_0uhtre8vfguwjmtvkxhx");
+      function spanCell_imanvajt6bktu9qtqwox(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_imanvajt6bktu9qtqwox");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -3058,18 +2494,30 @@ P value adjustment: tukey method for comparing a family of 3 estimates </code></
         targetCell.rowSpan = rowspan;
         targetCell.colSpan = colspan;
       }
-window.addEventListener('load', function () { styleCell_0uhtre8vfguwjmtvkxhx(0, 0, 'tinytable_css_id89mu26n9vl14xzbhsrz5') })
-window.addEventListener('load', function () { styleCell_0uhtre8vfguwjmtvkxhx(0, 1, 'tinytable_css_id89mu26n9vl14xzbhsrz5') })
-window.addEventListener('load', function () { styleCell_0uhtre8vfguwjmtvkxhx(0, 2, 'tinytable_css_id89mu26n9vl14xzbhsrz5') })
-window.addEventListener('load', function () { styleCell_0uhtre8vfguwjmtvkxhx(0, 3, 'tinytable_css_id89mu26n9vl14xzbhsrz5') })
-window.addEventListener('load', function () { styleCell_0uhtre8vfguwjmtvkxhx(0, 4, 'tinytable_css_id89mu26n9vl14xzbhsrz5') })
+      // tinytable span after
+      window.addEventListener('load', function () {
+          var cellsToStyle = [
+            // tinytable style arrays after
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 },  ], css_id: 'tinytable_css_wtlarykyfi86wnea6dic',}, 
+          { positions: [ { i: 2, j: 0 }, { i: 2, j: 1 }, { i: 2, j: 2 }, { i: 2, j: 3 }, { i: 2, j: 4 },  ], css_id: 'tinytable_css_tn2btlxxjkvlsn1z71e4',}, 
+          ];
+
+          // Loop over the arrays to style the cells
+          cellsToStyle.forEach(function (group) {
+              group.positions.forEach(function (cell) {
+                  styleCell_imanvajt6bktu9qtqwox(cell.i, cell.j, group.css_id);
+              });
+          });
+      });
     </script>
 
     <style>
-.table td.tinytable_css_id89mu26n9vl14xzbhsrz5, .table th.tinytable_css_id89mu26n9vl14xzbhsrz5 { border-bottom: solid 0.1em #d3d8dc; }
+
+.table td.tinytable_css_wtlarykyfi86wnea6dic, .table th.tinytable_css_wtlarykyfi86wnea6dic { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_tn2btlxxjkvlsn1z71e4, .table th.tinytable_css_tn2btlxxjkvlsn1z71e4 { border-bottom: solid #d3d8dc 0.1em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_0uhtre8vfguwjmtvkxhx" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_imanvajt6bktu9qtqwox" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -3090,17 +2538,74 @@ window.addEventListener('load', function () { styleCell_0uhtre8vfguwjmtvkxhx(0, 
                   <td>107.421±56.01</td>
                 </tr>
                 <tr>
-                  <td>neutral </td>
-                  <td>20.651±20.617  </td>
-                  <td>31.16±35.431 </td>
-                  <td>18.002±17.721 </td>
+                  <td>neutral</td>
+                  <td>20.651±20.617</td>
+                  <td>31.16±35.431</td>
+                  <td>18.002±17.721</td>
                   <td>18.187±10.505</td>
                 </tr>
         </tbody>
       </table>
     </div>
 <!-- hack to avoid NA insertion in last line -->
+<div id="mixed-models-1" class="section level3 hasAnchor" number="6.2.1">
+<h3><span class="header-section-number">6.2.1</span> Mixed models<a href="alpha-diversity.html#mixed-models-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb109"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb109-1"><a href="alpha-diversity.html#cb109-1" tabindex="-1"></a>alpha_div_meta <span class="ot">&lt;-</span> alpha_div <span class="sc">%&gt;%</span></span>
+<span id="cb109-2"><a href="alpha-diversity.html#cb109-2" tabindex="-1"></a>  <span class="fu">left_join</span>(sample_metadata, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample))</span></code></pre></div>
+<p><strong><em>Richness</em></strong></p>
+<div class="sourceCode" id="cb110"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb110-1"><a href="alpha-diversity.html#cb110-1" tabindex="-1"></a>Model_richness <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> richness <span class="sc">~</span> Species, <span class="at">data =</span> alpha_div_meta)</span>
+<span id="cb110-2"><a href="alpha-diversity.html#cb110-2" tabindex="-1"></a><span class="fu">anova</span>(Model_richness)</span></code></pre></div>
+<pre class="script-output"><code>Analysis of Variance Table
 
+Response: richness
+          Df Sum Sq Mean Sq F value  Pr(&gt;F)  
+Species    2  57147   28573  2.4318 0.09864 .
+Residuals 48 564002   11750                  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div class="sourceCode" id="cb112"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb112-1"><a href="alpha-diversity.html#cb112-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_richness, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
+<pre class="script-output"><code>$emmeans
+ Species emmean   SE df lower.CL upper.CL
+ Eb       186.1 34.3 48    117.2      255
+ Ha       107.4 24.9 48     57.4      157
+ Pk        98.1 23.1 48     51.7      145
+
+Confidence level used: 0.95 
+
+$contrasts
+ contrast estimate   SE df t.ratio p.value
+ Eb - Ha     78.68 42.3 48   1.858  0.1621
+ Eb - Pk     87.96 41.3 48   2.128  0.0949
+ Ha - Pk      9.28 33.9 48   0.273  0.9596
+
+P value adjustment: tukey method for comparing a family of 3 estimates </code></pre>
+<p><strong><em>Neutral</em></strong></p>
+<div class="sourceCode" id="cb114"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb114-1"><a href="alpha-diversity.html#cb114-1" tabindex="-1"></a>Model_neutral <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> neutral <span class="sc">~</span> Species, <span class="at">data =</span> alpha_div_meta)</span>
+<span id="cb114-2"><a href="alpha-diversity.html#cb114-2" tabindex="-1"></a><span class="fu">anova</span>(Model_neutral)</span></code></pre></div>
+<pre class="script-output"><code>Analysis of Variance Table
+
+Response: neutral
+          Df  Sum Sq Mean Sq F value Pr(&gt;F)
+Species    2  1374.1  687.06  1.6589 0.2011
+Residuals 48 19879.6  414.16               </code></pre>
+<div class="sourceCode" id="cb116"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb116-1"><a href="alpha-diversity.html#cb116-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_neutral, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
+<pre class="script-output"><code>$emmeans
+ Species emmean   SE df lower.CL upper.CL
+ Eb        31.2 6.44 48    18.22     44.1
+ Ha        18.2 4.67 48     8.80     27.6
+ Pk        18.0 4.34 48     9.28     26.7
+
+Confidence level used: 0.95 
+
+$contrasts
+ contrast estimate   SE df t.ratio p.value
+ Eb - Ha    12.973 7.95 48   1.632  0.2424
+ Eb - Pk    13.158 7.76 48   1.695  0.2174
+ Ha - Pk     0.185 6.37 48   0.029  0.9995
+
+P value adjustment: tukey method for comparing a family of 3 estimates </code></pre>
+
+</div>
 </div>
 </div>
             </section>
