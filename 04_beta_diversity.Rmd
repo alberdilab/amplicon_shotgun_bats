@@ -1,6 +1,6 @@
 # Beta diversity
 
-```{r knitr_options, include=FALSE}
+```{r knitr_options_beta, include=FALSE}
 knitr::opts_chunk$set(fig.width=10, fig.height=7, fig.fullwidth=TRUE,
 fig.path='Figures/', warning=FALSE,
 message=FALSE)
@@ -124,7 +124,7 @@ pairwise.adonis(beta_q1p$S, sample_metadata$Species, perm = 999)
 ```{r permanova_func, comment="", message=FALSE, warning=FALSE}
 betadisper(beta_q1f$S, sample_metadata$Species) %>% permutest(.)
 adonis2(
-  beta_q1f$S ~ Species + Species:Habitat,
+  beta_q1f$S ~ Species,
   by = "terms",
   data = sample_metadata %>% arrange(match(sample, labels(beta_q1f$S))),
   permutations = 999
@@ -176,7 +176,7 @@ beta_q0n$S %>%
     legend.position = "right",
     legend.box = "vertical"
   ) +
-  labs(color = "Species", shape = "Habitat")
+  labs(color = "Species")
 ```
 
 ***Neutral***

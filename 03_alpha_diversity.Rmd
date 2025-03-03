@@ -2,7 +2,7 @@
 
 ## Metagenomics
 
-```{r load_data_alpha}
+```{r load_data_alpha_metagenomics}
 load("resources/metagenomics/data_filtered.Rdata")
 treatment_colors <- c("#e5bd5b", "#6b7398", "#76b183", "#d57d2c", "#2a2d26", "#f9d4cc", "#3c634e", "#ea68c3")
 ```
@@ -87,7 +87,7 @@ alpha_div %>%
 
 ### Mixed models
 
-```{r meta, comment="", message=FALSE, warning=FALSE}
+```{r meta_mix, comment="", message=FALSE, warning=FALSE}
 alpha_div_meta <- alpha_div %>%
   left_join(sample_metadata, by = join_by(sample == sample))
 ```
@@ -100,7 +100,7 @@ emmeans(Model_richness, pairwise ~ Species)
 ```
 
 ***Neutral***
-```{r neutral_MM, comment="", message=FALSE, warning=FALSE}
+```{r neutral_MM_species, comment="", message=FALSE, warning=FALSE}
 Model_neutral <- lm(formula = neutral ~ Species, data = alpha_div_meta)
 anova(Model_neutral)
 emmeans(Model_neutral, pairwise ~ Species)
@@ -183,7 +183,7 @@ alpha_div %>%
 
 ### Mixed models
 
-```{r meta_ampli, comment="", message=FALSE, warning=FALSE}
+```{r meta_ampli_mm, comment="", message=FALSE, warning=FALSE}
 alpha_div_meta <- alpha_div %>%
   left_join(sample_metadata, by = join_by(sample == sample))
 ```
