@@ -146,42 +146,45 @@ genome_data <- phyloseq(phylo_counts, phylo_taxonomy, phylo_samples, tree)
 
 ## Prepare color scheme
 ```{r get_ehi_colors_skin, warning=FALSE, comments="", message=FALSE, eval=FALSE}
-phylum_colors <- read_tsv("https://raw.githubusercontent.com/earthhologenome/EHI_taxonomy_colour/main/ehi_phylum_colors.tsv") %>%
-  mutate_at(vars(phylum), ~ str_replace(., "[dpcofgs]__", ""))%>%
-    right_join(genome_metadata, by=join_by(phylum == phylum)) %>%
-    arrange(match(genome, genome_tree$tip.label)) %>%
-    select(phylum, colors) %>% 
-    unique() %>%
-    arrange(phylum) %>%
-    pull(colors, name=phylum)
+phylum_colors <- read_tsv(
+  "https://raw.githubusercontent.com/earthhologenome/EHI_taxonomy_colour/main/ehi_phylum_colors.tsv"
+) %>%
+  mutate_at(vars(phylum), ~ str_replace(., "[dpcofgs]__", "")) %>%
+  right_join(genome_metadata, by = join_by(phylum == phylum)) %>%
+  arrange(match(genome, genome_tree$tip.label)) %>%
+  select(phylum, colors) %>%
+  unique() %>%
+  arrange(phylum) %>%
+  pull(colors, name = phylum)
 ```
 
 ```{r savedata, comment="", message=FALSE, warning=FALSE, eval=FALSE}
-save(sample_metadata, 
-     genome_metadata, 
-     read_counts, 
-     genome_counts,
-     genome_counts_filt,
-     preprocess_info,
-     genome_tree, 
-     genome_gifts,
-     genome_data,
-     phylum_colors,
-     file = "resources/metagenomics/data.Rdata")
+save(
+  sample_metadata,
+  genome_metadata,
+  read_counts,
+  genome_counts,
+  genome_counts_filt,
+  preprocess_info,
+  genome_tree,
+  genome_gifts,
+  genome_data,
+  phylum_colors,
+  file = "resources/metagenomics/data.Rdata"
+)
 ```
 
 # Amplicon
 ## Load data
 ```{r ampli, comment="", message=FALSE, warning=FALSE, eval=FALSE}
-read_counts <- read_tsv("resources/amplicon/ASVs_count_overlap10_nochim0.tsv") %>% dplyr::rename(asv = 1) %>% 
+read_counts <- read_tsv("resources/amplicon/ASVs_count_overlap10_nochim0.tsv") %>% dplyr::rename(asv = 1) %>%
   as.data.frame()
-#asvs <- read_counts$asv
 taxonomy_sp <- read_tsv("resources/amplicon/taxonomy_species_tax_overlap10_nochim0.tsv") %>%
   dplyr::rename(asv = 1) %>%
   as.data.frame()
 hierarchy <- read_csv("resources/amplicon/metadata.csv")
 samples <- read_counts %>% select(-asv) %>% colnames()
-hierarchy <- hierarchy[hierarchy$Sample %in% samples,]
+hierarchy <- hierarchy[hierarchy$Sample %in% samples, ]
 metadata <- tibble::column_to_rownames(hierarchy, "Sample")
 read_counts_row <- column_to_rownames(read_counts, "asv")
 taxonomy_table_row <- column_to_rownames(taxonomy_sp, "asv")
@@ -189,41 +192,39 @@ taxonomy_table_row <- column_to_rownames(taxonomy_sp, "asv")
 
 ## Create a phyloseq object
 ```{r amplidata, comment="", message=FALSE, warning=FALSE, eval=FALSE}
-#Phyloseq object
-count_phy <- otu_table(read_counts_row, taxa_are_rows=T)
+count_phy <- otu_table(read_counts_row, taxa_are_rows = T)
 sample_info_tab_phy <- sample_data(metadata)
 asv_tax.m <- as.matrix(taxonomy_table_row)
 TAX = tax_table(asv_tax.m)
 physeq.raw = phyloseq(count_phy, TAX, sample_info_tab_phy)
-physeq.raw <- prune_taxa(taxa_sums(physeq.raw)>0, physeq.raw)
+physeq.raw <- prune_taxa(taxa_sums(physeq.raw) > 0, physeq.raw)
 physeq.raw <- prune_samples(sample_sums(physeq.raw) > 0, physeq.raw)
 
 physeq_sample <- subset_samples(physeq.raw, Control == "True sample")
-physeq_sample <- prune_taxa(taxa_sums(physeq_sample)>0, physeq_sample)
+physeq_sample <- prune_taxa(taxa_sums(physeq_sample) > 0, physeq_sample)
 ```
 
 ## Remove contaminants
 ```{r decotam, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 sample_data(physeq.raw)$is.neg <- sample_data(physeq.raw)$Control == "Control sample"
-contamdf.prev <- isContaminant(physeq.raw, method="prevalence", neg="is.neg")
+contamdf.prev <- isContaminant(physeq.raw, method = "prevalence", neg = "is.neg")
 table(contamdf.prev$contaminant)
 contam_asvs <- row.names(contamdf.prev[contamdf.prev$contaminant == TRUE, ])
 contaminants <- asv_tax.m[row.names(asv_tax.m) %in% contam_asvs, ]
 ```
 
 ```{r phylodec, comment="", message=FALSE, warning=FALSE, eval=FALSE}
-# making new phyloseq object without ASV contaminats
 physeq <- subset_samples(physeq.raw, Control == "True sample")
-physeq <- prune_taxa(taxa_sums(physeq)>0, physeq)
+physeq <- prune_taxa(taxa_sums(physeq) > 0, physeq)
 goodTaxa <- setdiff(taxa_names(physeq), contam_asvs)
 physeq.final <- prune_taxa(goodTaxa, physeq)
 ```
 
 ## Basic filtering
 ```{r basicfilt, comment="", message=FALSE, warning=FALSE, eval=FALSE}
-read_counts_final <- data.frame(physeq.final@otu_table) 
-count_filtdepth <- read_counts_final[,colSums(read_counts_final)>1000]
-count_phy_filt <- otu_table(count_filtdepth, taxa_are_rows=T)
+read_counts_final <- data.frame(physeq.final@otu_table)
+count_filtdepth <- read_counts_final[, colSums(read_counts_final) > 1000]
+count_phy_filt <- otu_table(count_filtdepth, taxa_are_rows = T)
 
 otu_table(physeq.final) <- count_phy_filt
 
@@ -240,13 +241,13 @@ physeq_classNA <- subset_taxa(physeq_phylum, is.na(Class))
 ## Removing chloroplast and mitochondria
 ```{r chlormito, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 taxonomy <- physeq.final@tax_table
-is.mitochondria <- physeq.final@tax_table[,"Family"] %in% "Mitochondria"
-taxonomy <- taxonomy[!is.mitochondria,]
-is.chloroplast <- taxonomy[,"Order"] %in% "Chloroplast"
-taxonomy <- taxonomy[!is.chloroplast,]
+is.mitochondria <- physeq.final@tax_table[, "Family"] %in% "Mitochondria"
+taxonomy <- taxonomy[!is.mitochondria, ]
+is.chloroplast <- taxonomy[, "Order"] %in% "Chloroplast"
+taxonomy <- taxonomy[!is.chloroplast, ]
 taxonomy.m <- as.matrix(taxonomy)
 tax_table(physeq.final) <- taxonomy.m
-physeq.final.filt <- prune_taxa(taxa_sums(physeq.final)>0, physeq.final)
+physeq.final.filt <- prune_taxa(taxa_sums(physeq.final) > 0, physeq.final)
 ```
 
 ## Save
@@ -306,7 +307,6 @@ genome_metadata_16S <-  data.frame(physeq_16S@tax_table) %>%
 
 ```{r save_16S, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 save(sample_metadata_16S, 
-     asv_16S_filt, 
      genome_metadata_16S,
      file = "resources/amplicon/data_withoutcopy.Rdata")
 ```
@@ -444,24 +444,28 @@ threshold_table <- genome_counts_filt %>%
          t2 = if_else(t0 < 0.001, 0, t0),
          t3 = if_else(t0 < 0.01, 0, t0),
          t4 = if_else(t0 < 0.1, 0, t0)) %>%
-  pivot_longer(!c(genome,sample,Species), names_to = "copy_threshold",values_to = "value") 
+  pivot_longer(!c(genome,sample,Species), names_to = "copy_threshold",values_to = "raw_value") %>%
+  ungroup()
 
 prevalence_table <- threshold_table %>%
   group_by(Species,genome,copy_threshold) %>% 
-  summarise(present = sum(value != 0, na.rm = TRUE),
+  summarise(present = sum(raw_value != 0, na.rm = TRUE),
             total = n()) %>% 
   mutate(prevalence=present/total) %>% 
   select(-present,-total)
 
 master_table <- inner_join(threshold_table,prevalence_table,by=join_by("Species"=="Species","genome"=="genome","copy_threshold"=="copy_threshold")) %>% 
-  rename(p0=value) %>% 
+  rename(p0=raw_value) %>% 
   mutate(p10 = if_else(prevalence < 0.1, 0, p0),
          p20 = if_else(prevalence < 0.2, 0, p0),
          p30 = if_else(prevalence < 0.3, 0, p0),
          p40 = if_else(prevalence < 0.4, 0, p0)) %>%
   select(-prevalence) %>% 
   pivot_longer(!c(genome,sample,Species,copy_threshold), names_to = "prevalence",values_to = "value") %>% 
-  mutate(pa = if_else(value > 0, 1, 0))
+  mutate(pa = if_else(value > 0, 1, 0)) %>%
+  group_by(Species, sample, copy_threshold,prevalence) %>%
+  mutate(value = value / sum(value))%>%
+  ungroup()
 ```
 
 ```{r save_master_table, comment="", message=FALSE, warning=FALSE, eval=FALSE}

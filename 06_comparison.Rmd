@@ -1,0 +1,957 @@
+# Amplicon t3_p10 filtering vs genome resolved metagenomics
+
+```{r knitr_options_comp, include=FALSE}
+knitr::opts_chunk$set(fig.width=10, fig.height=7, fig.fullwidth=TRUE,
+fig.path='Figures/', warning=FALSE,
+message=FALSE)
+set.seed(24022025)
+```
+
+```{r load_data_comp}
+load("resources/amplicon/selected_filtering.Rdata")
+load("resources/metagenomics/data_filtered.Rdata")
+#load("resources/amplicon/second_filtering_t0_p30.Rdata")
+```
+
+## Taxonomy
+
+
+***Number of MAGs in metagenomic data***
+```{r}
+nrow(genome_metadata)
+```
+
+***Number of ASVs in amplicon data***
+```{r}
+nrow(genome_metadata_amplicon)
+```
+
+
+### Phylum
+***Number of phyla in metagenomic data***
+```{r}
+genome_metadata %>% 
+  distinct(domain,phylum) %>% 
+  count()
+```
+***Number of phyla in amplicon data***
+```{r}
+genome_metadata_amplicon %>% 
+  distinct(domain,phylum) %>% 
+  count()
+```
+
+***Shared phyla***
+```{r}
+meta_phylum <- genome_metadata %>% 
+  distinct(domain,phylum)
+
+genome_metadata_amplicon %>% 
+  distinct(domain,phylum) %>% 
+  filter(phylum %in% meta_phylum$phylum)
+
+```
+
+***Only in metagenomic data***
+```{r}
+ampli_phylum <- genome_metadata_amplicon %>% 
+  distinct(domain,phylum)
+genome_metadata %>% 
+  distinct(domain,phylum) %>% 
+  filter(!phylum %in% genome_metadata_amplicon$phylum)
+```
+
+***Only in amplicon data***
+```{r}
+genome_metadata_amplicon %>% 
+  distinct(domain,phylum) %>% 
+  filter(!phylum %in% meta_phylum$phylum)
+```
+
+### Family
+***Number of families in metagenomic data***
+```{r}
+genome_metadata %>% 
+  distinct(domain,phylum, family) %>% 
+  count()
+```
+
+***Number of families in amplicon data***
+```{r}
+genome_metadata_amplicon %>% 
+  distinct(domain,phylum, family) %>% 
+  count()
+```
+***Shared families***
+```{r}
+meta_family <- genome_metadata %>% 
+  distinct(domain,phylum, family)
+
+genome_metadata_amplicon %>% 
+  distinct(domain,phylum, family) %>% 
+  filter(family %in% meta_family$family)
+```
+
+***Only in metagenomic data***
+```{r}
+ampli_family <- genome_metadata_amplicon %>% 
+  distinct(domain,phylum,family)
+genome_metadata %>% 
+  distinct(domain,phylum,family) %>% 
+  filter(!family %in% ampli_family$family)
+```
+
+***Only in amplicon data***
+```{r}
+genome_metadata_amplicon %>% 
+  distinct(domain,phylum,family) %>% 
+  filter(!family %in% meta_family$family)
+```
+
+## Alpha Diversity
+
+### Calculate for the selected amplicon data
+
+```{r alpha_cal, comment="", message=FALSE, warning=FALSE}
+richness <- genome_counts_filt_amplicon %>%
+  column_to_rownames(var = "genome") %>%
+  dplyr::select(where( ~ !all(. == 0))) %>%
+  hilldiv(., q = 0) %>%
+  t() %>%
+  as.data.frame() %>%
+  dplyr::rename(richness = 1) %>%
+  rownames_to_column(var = "sample")
+
+neutral <- genome_counts_filt_amplicon %>%
+  column_to_rownames(var = "genome") %>%
+  dplyr::select(where( ~ !all(. == 0))) %>%
+  hilldiv(., q = 1) %>%
+  t() %>%
+  as.data.frame() %>%
+  dplyr::rename(neutral = 1) %>%
+  rownames_to_column(var = "sample")
+
+amplicon_alpha_div <- richness %>%
+  full_join(neutral, by = join_by(sample == sample)) %>% 
+  mutate(method="amplicon")
+```
+
+```{r load_data_alpha_meta}
+metagenome_alpha_div <- readRDS("resources/metagenomics/metagenome_alpha_div.rds") %>% 
+  select(sample, richness, neutral, method)
+
+join_alpha <- rbind(metagenome_alpha_div,amplicon_alpha_div) %>%
+  left_join(sample_metadata, by = join_by(sample == sample))
+```
+
+### Species differences
+#### Metagenomic data
+
+```{r meta, comment="", message=FALSE, warning=FALSE}
+alpha_div_meta <- metagenome_alpha_div %>%
+  left_join(sample_metadata, by = join_by(sample == sample))
+```
+
+***Richness***
+```{r rich_MM_species, comment="", message=FALSE, warning=FALSE}
+Model_richness <- lm(formula = richness ~ Species, data = alpha_div_meta)
+anova(Model_richness)
+emmeans(Model_richness, pairwise ~ Species)
+```
+
+***Neutral***
+```{r neutral_MM, comment="", message=FALSE, warning=FALSE}
+Model_neutral <- lm(formula = neutral ~ Species, data = alpha_div_meta)
+anova(Model_neutral)
+emmeans(Model_neutral, pairwise ~ Species)
+```
+
+### Amplicon data
+
+```{r meta_ampli, comment="", message=FALSE, warning=FALSE}
+alpha_div_ampli <- amplicon_alpha_div %>%
+  left_join(sample_metadata, by = join_by(sample == sample))
+```
+
+***Richness***
+```{r rich_MM_ampli_species, comment="", message=FALSE, warning=FALSE}
+Model_richness <- lm(formula = richness ~ Species, data = alpha_div_ampli)
+anova(Model_richness)
+emmeans(Model_richness, pairwise ~ Species)
+```
+
+***Neutral***
+```{r neutral_MM_ampli_species, comment="", message=FALSE, warning=FALSE}
+Model_neutral <- lm(formula = neutral ~ Species, data = alpha_div_ampli)
+anova(Model_neutral)
+emmeans(Model_neutral, pairwise ~ Species)
+```
+
+### Differences between methods in each species
+```{r}
+join_alpha %>%
+  group_by(sample) %>%
+  filter(all(c("shotgun", "amplicon") %in% method))
+```
+
+#### Richness
+***Eptesicus***
+```{r}
+join_richness_eb <- join_alpha %>% 
+  filter(Species=="Eb") %>% 
+  select(sample,method,richness) 
+
+
+ggboxplot(join_richness_eb, x = "method", y = "richness", 
+          color = "method", palette = c("#00AFBB", "#E7B800"),
+          order = c("amplicon", "shotgun"),
+          ylab = "richness", xlab = "method")
+```
+```{r}
+shapiro.test(join_richness_eb$richness)
+
+eb_result <- join_richness_eb %>%
+  filter(method %in% c("shotgun", "amplicon")) %>%
+  pivot_wider(names_from = method, values_from = richness) %>%
+  drop_na() %>%  # Ensure no missing pairs
+  summarize(wilcox_result = list(wilcox.test(shotgun, amplicon, paired = TRUE, exact = FALSE)))
+
+print(eb_result$wilcox_result[[1]])
+```
+
+***Hypsugo***
+```{r}
+join_richness_ha <- join_alpha %>% 
+  filter(Species=="Ha") %>% 
+  select(sample,method,richness)
+
+ggboxplot(join_richness_ha, x = "method", y = "richness", 
+          color = "method", palette = c("#00AFBB", "#E7B800"),
+          order = c("amplicon", "shotgun"),
+          ylab = "richness", xlab = "method")
+```
+```{r}
+shapiro.test(join_richness_ha$richness)
+
+ha_result <- join_richness_ha %>%
+  filter(method %in% c("shotgun", "amplicon")) %>%
+  pivot_wider(names_from = method, values_from = richness) %>%
+  drop_na() %>%  # Ensure no missing pairs
+  summarize(wilcox_result = list(wilcox.test(shotgun, amplicon, paired = TRUE, exact = FALSE)))
+
+print(ha_result$wilcox_result[[1]])
+```
+
+***Pipistrellus***
+```{r}
+join_richness_pk <- join_alpha %>% 
+  filter(Species=="Pk") %>% 
+  select(sample,method,richness)
+
+ggboxplot(join_richness_pk, x = "method", y = "richness", 
+          color = "method", palette = c("#00AFBB", "#E7B800"),
+          order = c("amplicon", "shotgun"),
+          ylab = "richness", xlab = "method")
+```
+```{r}
+shapiro.test(join_richness_pk$richness)
+
+pk_result <- join_richness_pk %>%
+  filter(method %in% c("shotgun", "amplicon")) %>%
+  pivot_wider(names_from = method, values_from = richness) %>%
+  drop_na() %>%  # Ensure no missing pairs
+  summarize(wilcox_result = list(wilcox.test(shotgun, amplicon, paired = TRUE, exact = FALSE)))
+
+print(pk_result$wilcox_result[[1]])
+```
+
+#### Neutral
+***Eptesicus***
+```{r}
+join_neutral_eb <- join_alpha %>% 
+  filter(Species=="Eb") %>% 
+  select(sample,method,neutral)
+
+ggboxplot(join_neutral_eb, x = "method", y = "neutral", 
+          color = "method", palette = c("#00AFBB", "#E7B800"),
+          order = c("amplicon", "shotgun"),
+          ylab = "neutral", xlab = "method")
+```
+```{r}
+shapiro.test(join_neutral_eb$neutral)
+
+eb_result <- join_neutral_eb %>%
+  filter(method %in% c("shotgun", "amplicon")) %>%
+  pivot_wider(names_from = method, values_from = neutral) %>%
+  drop_na() %>%  # Ensure no missing pairs
+  summarize(wilcox_result = list(wilcox.test(shotgun, amplicon, paired = TRUE, exact = FALSE)))
+
+print(eb_result$wilcox_result[[1]])
+```
+
+***Hypsugo***
+```{r}
+join_neutral_ha <- join_alpha %>% 
+  filter(Species=="Ha") %>% 
+  select(sample,method,neutral)
+
+ggboxplot(join_neutral_ha, x = "method", y = "neutral", 
+          color = "method", palette = c("#00AFBB", "#E7B800"),
+          order = c("amplicon", "shotgun"),
+          ylab = "neutral", xlab = "method")
+```
+```{r}
+shapiro.test(join_neutral_ha$neutral)
+
+ha_result <- join_neutral_ha %>%
+  filter(method %in% c("shotgun", "amplicon")) %>%
+  pivot_wider(names_from = method, values_from = neutral) %>%
+  drop_na() %>%
+  summarize(wilcox_result = list(wilcox.test(shotgun, amplicon, paired = TRUE, exact = FALSE)))
+
+print(ha_result$wilcox_result[[1]])
+```
+
+***Pipistrellus***
+```{r}
+join_neutral_pk <- join_alpha %>% 
+  filter(Species=="Pk") %>% 
+  select(sample,method,neutral)
+
+ggboxplot(join_neutral_pk, x = "method", y = "neutral", 
+          color = "method", palette = c("#00AFBB", "#E7B800"),
+          order = c("amplicon", "shotgun"),
+          ylab = "neutral", xlab = "method")
+```
+```{r}
+shapiro.test(join_neutral_pk$neutral)
+
+pk_result <- join_neutral_pk %>%
+  filter(method %in% c("shotgun", "amplicon")) %>%
+  pivot_wider(names_from = method, values_from = neutral) %>%
+  drop_na() %>%
+  summarize(wilcox_result = list(wilcox.test(shotgun, amplicon, paired = TRUE, exact = FALSE)))
+
+print(pk_result$wilcox_result[[1]])
+```
+
+## Beta diversity
+
+### Amplicon
+```{r}
+load("resources/amplicon/selected_filtering.Rdata")
+```
+
+```{r beta_div_ampli_comparison, comment="", message=FALSE, warning=FALSE}
+beta_q0n_ampli <- genome_counts_filt_amplicon %>%
+  column_to_rownames(., "genome") %>%
+  filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
+  select_if( ~ !all(. == 0)) %>%
+  hillpair(., q = 0)
+
+beta_q1n_ampli <- genome_counts_filt_amplicon %>%
+  column_to_rownames(., "genome") %>%
+  filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
+  select_if( ~ !all(. == 0)) %>%
+  hillpair(., q = 1)
+```
+
+***Check for outliers in amplicon data***
+```{r}
+beta_q1n_ampli$S %>%
+  vegan::metaMDS(.,
+                 trymax = 500,
+                 k = 2,
+                 trace = 0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(sample_metadata_amplicon, by = join_by(sample == sample)) %>%
+  group_by(Species) %>%
+  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
+  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
+  ungroup() %>%
+  ggplot(aes(x = NMDS1, y = NMDS2, color = Species)) +
+  geom_point(size = 4) +
+  geom_segment(
+    aes(
+      x = x_cen,
+      y = y_cen,
+      xend = NMDS1,
+      yend = NMDS2
+    ),
+    alpha = 0.9,
+    show.legend = FALSE
+  ) +
+  theme(
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    panel.background = element_blank(),
+    axis.line = element_line(
+      size = 0.5,
+      linetype = "solid",
+      colour = "black"
+    ),
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.position = "right",
+    legend.box = "vertical"
+  ) +
+  labs(color = "Species")+geom_text_repel(aes(label = sample), size=3)
+
+```
+
+***E31 has been considered an outlier, so it has been removed***
+```{r beta_div_ampli_new_comparison, comment="", message=FALSE, warning=FALSE}
+beta_q0n_ampli <- genome_counts_filt_amplicon %>%
+    select(-E31) %>% 
+  column_to_rownames(., "genome") %>%
+  filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
+  select_if( ~ !all(. == 0)) %>%
+  hillpair(., q = 0)
+
+beta_q1n_ampli <- genome_counts_filt_amplicon %>%
+    select(-E31) %>% 
+  column_to_rownames(., "genome") %>%
+  filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
+  select_if( ~ !all(. == 0)) %>%
+  hillpair(., q = 1)
+```
+
+```{r beta_div_nmds_richness_plot_ampli_comparison, comment="", message=FALSE, warning=FALSE}
+sample_metadata_amplicon <- sample_metadata_amplicon %>% 
+  mutate(method="amplicon")
+
+rich_beta_amplicon <- beta_q0n_ampli$S %>%
+  vegan::metaMDS(.,
+                 trymax = 500,
+                 k = 2,
+                 trace = 0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(sample_metadata_amplicon, by = join_by(sample == sample)) %>% 
+  mutate(individual=sample)%>%
+  mutate(sample = paste0(sample, "_ampli")) %>% 
+  select(sample,NMDS1,NMDS2,Species,method, individual) 
+
+
+neutral_beta_amplicon <- beta_q1n_ampli$S %>%
+  vegan::metaMDS(.,
+                 trymax = 500,
+                 k = 2,
+                 trace = 0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(sample_metadata_amplicon, by = join_by(sample == sample)) %>%  
+  mutate(individual=sample)%>%
+  mutate(sample = paste0(sample, "_ampli")) %>% 
+  select(sample,NMDS1,NMDS2,Species,method,individual)
+```
+
+### Metagenomics
+```{r}
+load("resources/metagenomics/data_filtered.Rdata")
+load("resources/metagenomics/beta_filtered.Rdata")
+sample_metadata <- sample_metadata %>%
+  filter(!sample %in% c("H06", "H20"))
+```
+
+```{r beta_meta, comment="", message=FALSE, warning=FALSE}
+sample_metadata <- sample_metadata %>% 
+  mutate(method="shotgun")
+
+rich_beta_meta <- beta_q0n$S %>%
+  vegan::metaMDS(.,
+                 trymax = 500,
+                 k = 2,
+                 trace = 0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(sample_metadata, by = join_by(sample == sample))%>% 
+  mutate(individual=sample)%>% 
+  select(sample,NMDS1,NMDS2,Species,method, individual)
+
+
+neutral_beta_meta <- beta_q1n$S %>%
+  vegan::metaMDS(.,
+                 trymax = 500,
+                 k = 2,
+                 trace = 0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(sample_metadata, by = join_by(sample == sample)) %>% 
+  mutate(individual=sample)%>% 
+  select(sample,NMDS1,NMDS2,Species,method, individual)
+```
+
+### Comparison
+
+#### Richness
+```{r nmds_rich, fig.height=10, fig.width=16, fig.fullwidth=TRUE}
+beta_richness_together <- rbind(rich_beta_amplicon,rich_beta_meta)%>%
+  mutate(id = paste(Species, method, sep = "_"))
+beta_colors <- c("#e5bd5b","#d57d2c","#6b7398","#ea68c3","#76b183","#3c634e")
+beta_richness_together %>%
+  group_by(id) %>%
+  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
+  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
+  ungroup() %>% 
+  ggplot(aes(x = NMDS1, y = NMDS2, color = id)) +
+  geom_point(size = 4) +
+  geom_segment(
+    aes(
+      x = x_cen,
+      y = y_cen,
+      xend = NMDS1,
+      yend = NMDS2
+    ),
+    alpha = 0.9,
+    show.legend = FALSE
+  ) +
+  theme(
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    panel.background = element_blank(),
+    axis.line = element_line(
+      size = 0.5,
+      linetype = "solid",
+      colour = "black"
+    ),
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.position = "right",
+    legend.box = "vertical"
+  ) +
+  labs(color = "Species & Method")
+
+```
+
+***Differences between species and methods***
+```{r}
+metadata_both <- beta_richness_together %>% 
+  select(sample, Species, method,individual, id)
+dist_matrix <- dist(beta_richness_together %>% select(NMDS1, NMDS2), method = "euclidean")
+dist_matrix <- as.matrix(dist_matrix)
+rownames(dist_matrix) <- beta_richness_together$sample
+colnames(dist_matrix) <- beta_richness_together$sample
+
+adonis2(dist_matrix ~ id,
+        data = metadata_both %>% arrange(match(sample,labels(dist_matrix))),
+        permutations = 999) %>%
+        broom::tidy() %>%
+        tt()
+
+pairwise.adonis(dist_matrix, metadata_both$id, perm = 999) %>% 
+  filter(p.adjusted<0.05)
+```
+
+***Differences between methods in each species***
+
+Eptesicus
+```{r}
+metadata_species <- metadata_both %>% 
+  filter(Species=="Eb")
+
+beta_sp <- beta_richness_together%>% 
+  filter(Species=="Eb")
+
+dist_matrix <- dist(beta_sp %>% select(NMDS1, NMDS2), method = "euclidean")
+dist_matrix <- as.matrix(dist_matrix)
+rownames(dist_matrix) <- beta_sp$sample
+colnames(dist_matrix) <- beta_sp$sample
+
+adonis2(dist_matrix ~ method,
+        data = metadata_species %>% arrange(match(sample,labels(dist_matrix))),
+        permutations = 999, strata = metadata_species %>% arrange(match(sample,labels(dist_matrix))) %>% pull(individual)) %>%
+        broom::tidy() %>%
+        tt()
+```
+
+Pipistrellus
+```{r}
+metadata_species <- metadata_both %>% 
+  filter(Species=="Pk")
+
+beta_sp <- beta_richness_together%>% 
+  filter(Species=="Pk")
+
+dist_matrix <- dist(beta_sp %>% select(NMDS1, NMDS2), method = "euclidean")
+dist_matrix <- as.matrix(dist_matrix)
+rownames(dist_matrix) <- beta_sp$sample
+colnames(dist_matrix) <- beta_sp$sample
+
+adonis2(dist_matrix ~ method,
+        data = metadata_species %>% arrange(match(sample,labels(dist_matrix))),
+        permutations = 999, strata = metadata_species %>% arrange(match(sample,labels(dist_matrix))) %>% pull(individual)) %>%
+        broom::tidy() %>%
+        tt()
+```
+
+Hypsugo
+```{r}
+metadata_species <- metadata_both %>% 
+  filter(Species=="Ha")
+
+beta_sp <- beta_richness_together%>% 
+  filter(Species=="Ha")
+
+dist_matrix <- dist(beta_sp %>% select(NMDS1, NMDS2), method = "euclidean")
+dist_matrix <- as.matrix(dist_matrix)
+rownames(dist_matrix) <- beta_sp$sample
+colnames(dist_matrix) <- beta_sp$sample
+
+adonis2(dist_matrix ~ method,
+        data = metadata_species %>% arrange(match(sample,labels(dist_matrix))),
+        permutations = 999, strata = metadata_species %>% arrange(match(sample,labels(dist_matrix))) %>% pull(individual)) %>%
+        broom::tidy() %>%
+        tt()
+```
+
+#### Neutral
+```{r nmds_neu, fig.height=10, fig.width=16, fig.fullwidth=TRUE}
+beta_neutral_together <- rbind(neutral_beta_amplicon,neutral_beta_meta) %>%
+  mutate(id = paste(Species, method, sep = "_"))
+beta_colors <- c("#e5bd5b","#d57d2c","#6b7398","#ea68c3","#76b183","#3c634e")
+
+beta_neutral_together %>%
+  filter(sample!="E31_ampli") %>%
+  group_by(id) %>%
+  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
+  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
+  ungroup() %>% 
+  ggplot(aes(x = NMDS1, y = NMDS2, color = id)) +
+  geom_point(size = 4) +
+  scale_color_manual(values = beta_colors)+
+  geom_segment(
+    aes(
+      x = x_cen,
+      y = y_cen,
+      xend = NMDS1,
+      yend = NMDS2
+    ),
+    alpha = 0.9,
+    show.legend = FALSE
+  ) +
+  theme(
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    panel.background = element_blank(),
+    axis.line = element_line(
+      size = 0.5,
+      linetype = "solid",
+      colour = "black"
+    ),
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.position = "right",
+    legend.box = "vertical"
+  ) +
+  labs(color = "Species")
+
+```
+
+***Differences between species and methods***
+```{r}
+metadata_both <- beta_neutral_together %>% 
+  select(sample, Species, method,individual, id)
+dist_matrix <- dist(beta_neutral_together %>% select(NMDS1, NMDS2), method = "euclidean")
+dist_matrix <- as.matrix(dist_matrix)
+rownames(dist_matrix) <- beta_neutral_together$sample
+colnames(dist_matrix) <- beta_neutral_together$sample
+
+adonis2(dist_matrix ~ id,
+        data = metadata_both %>% arrange(match(sample,labels(dist_matrix))),
+        permutations = 999) %>%
+        broom::tidy() %>%
+        tt()
+
+pairwise.adonis(dist_matrix, metadata_both$id, perm = 999) %>% 
+  filter(p.adjusted<0.05)
+```
+
+***Differences between methods in each species***
+
+Eptesicus
+```{r}
+metadata_species <- metadata_both %>% 
+  filter(Species=="Eb")
+
+beta_sp <- beta_neutral_together%>% 
+  filter(Species=="Eb")
+
+dist_matrix <- dist(beta_sp %>% select(NMDS1, NMDS2), method = "euclidean")
+dist_matrix <- as.matrix(dist_matrix)
+rownames(dist_matrix) <- beta_sp$sample
+colnames(dist_matrix) <- beta_sp$sample
+
+adonis2(dist_matrix ~ method,
+        data = metadata_species %>% arrange(match(sample,labels(dist_matrix))),
+        permutations = 999, strata = metadata_species %>% arrange(match(sample,labels(dist_matrix))) %>% pull(individual)) %>%
+        broom::tidy() %>%
+        tt()
+```
+
+Pipistrellus
+```{r}
+metadata_species <- metadata_both %>% 
+  filter(Species=="Pk")
+
+beta_sp <- beta_neutral_together%>% 
+  filter(Species=="Pk")
+
+dist_matrix <- dist(beta_sp %>% select(NMDS1, NMDS2), method = "euclidean")
+dist_matrix <- as.matrix(dist_matrix)
+rownames(dist_matrix) <- beta_sp$sample
+colnames(dist_matrix) <- beta_sp$sample
+
+adonis2(dist_matrix ~ method,
+        data = metadata_species %>% arrange(match(sample,labels(dist_matrix))),
+        permutations = 999, strata = metadata_species %>% arrange(match(sample,labels(dist_matrix))) %>% pull(individual)) %>%
+        broom::tidy() %>%
+        tt()
+```
+
+Hypsugo
+```{r}
+metadata_species <- metadata_both %>% 
+  filter(Species=="Ha")
+
+beta_sp <- beta_neutral_together%>% 
+  filter(Species=="Ha")
+
+dist_matrix <- dist(beta_sp %>% select(NMDS1, NMDS2), method = "euclidean")
+dist_matrix <- as.matrix(dist_matrix)
+rownames(dist_matrix) <- beta_sp$sample
+colnames(dist_matrix) <- beta_sp$sample
+
+adonis2(dist_matrix ~ method,
+        data = metadata_species %>% arrange(match(sample,labels(dist_matrix))),
+        permutations = 999, strata = metadata_species %>% arrange(match(sample,labels(dist_matrix))) %>% pull(individual)) %>%
+        broom::tidy() %>%
+        tt()
+```
+
+## Differential abundace analysis
+
+```{r}
+phylo_samples <- sample_metadata %>% 
+  mutate(individual=sample)%>%
+  column_to_rownames("sample") %>% 
+  select(1,8,9) %>%
+  mutate(method="shotgun") %>% 
+  sample_data()
+phylo_genome <- genome_counts_filt %>% 
+  select(one_of(c("genome",rownames(phylo_samples)))) %>%
+  filter(rowSums(across(where(is.numeric), ~ . != 0)) > 0) %>%
+  select(genome, where(~ is.numeric(.) && sum(.) > 0)) %>%
+  column_to_rownames("genome") %>% 
+  otu_table(., taxa_are_rows = TRUE)
+phylo_taxonomy <- genome_metadata %>% 
+  filter(genome %in% rownames(phylo_genome)) %>% 
+  column_to_rownames("genome") %>% 
+  dplyr::select(domain,phylum,class,order,family,genus,species) %>% 
+  as.matrix() %>% 
+  tax_table()
+
+physeq_genome_filtered <- phyloseq(phylo_genome, phylo_taxonomy, phylo_samples)
+physeq_genome_filtered_phylum <- tax_glom(physeq_genome_filtered, "phylum")
+```
+
+```{r}
+phylo_samples <- sample_metadata_amplicon %>% 
+  mutate(individual=sample)%>%
+  mutate(sample = paste0(sample, "_ampli"))%>%
+  column_to_rownames("sample")  %>% 
+  select(12,15,16) %>%
+  mutate(method="amplicon")%>% 
+  sample_data()
+phylo_genome <- genome_counts_filt_amplicon %>%
+  column_to_rownames("genome") %>%
+  rename_with(~ paste0(., "_ampli")) %>%
+  rownames_to_column("genome")%>% 
+  select(one_of(c("genome",rownames(phylo_samples)))) %>%
+  filter(rowSums(across(where(is.numeric), ~ . != 0)) > 0) %>%
+  select(genome, where(~ is.numeric(.) && sum(.) > 0)) %>%
+  column_to_rownames("genome") %>% 
+  otu_table(., taxa_are_rows = TRUE)
+phylo_taxonomy <- genome_metadata_amplicon %>% 
+  filter(genome %in% rownames(phylo_genome)) %>% 
+  column_to_rownames("genome") %>% 
+  dplyr::select(domain,phylum,class,order,family,genus,species) %>% 
+  as.matrix() %>% 
+  tax_table()
+
+physeq_genome_filtered_ampl <- phyloseq(phylo_genome, phylo_taxonomy, phylo_samples)
+physeq_genome_filtered_ampl_phylum <- tax_glom(physeq_genome_filtered_ampl, "phylum")
+
+merge_phylo <- merge_phyloseq(physeq_genome_filtered_ampl_phylum,physeq_genome_filtered_phylum)
+```
+
+```{r}
+#create the merge phyloseq object at phylum level
+otu1 <- as.data.frame(otu_table(physeq_genome_filtered_phylum))
+tax1 <- as.data.frame(tax_table(physeq_genome_filtered_phylum)) %>% select(phylum)
+otu1$phylum <- tax1$phylum
+
+otu2 <- as.data.frame(otu_table(physeq_genome_filtered_ampl_phylum))
+tax2 <- as.data.frame(tax_table(physeq_genome_filtered_ampl_phylum)) %>% select(phylum)
+otu2$phylum <- tax2$phylum
+
+merged_otu <- full_join(otu1, otu2, by = "phylum") %>%
+  mutate(across(everything(), ~replace_na(., 0)))%>%
+  group_by(phylum) %>%
+  summarise(across(everything(), sum, na.rm = TRUE))
+merged_otu_mat <- as.matrix(merged_otu %>% select(-phylum))
+rownames(merged_otu_mat) <- merged_otu$phylum
+otu_table_merged <- otu_table(merged_otu_mat, taxa_are_rows = TRUE)
+
+merged_physeq_phylum <- phyloseq(otu_table_merged, sample_data(merge_phylo))
+
+```
+
+### Eptesicus
+```{r}
+physeq_eb <- subset_samples(merged_physeq_phylum, Species == "Eb")
+physeq_eb <- prune_taxa(taxa_sums(physeq_eb)>0, physeq_eb)
+```
+
+```{r}
+ancom_rand_output_struc_eb = ancombc2(data = physeq_eb, 
+                  assay_name = "counts", 
+                  tax_level = NULL,
+                  fix_formula = "method",
+                  rand_formula = "(1|individual)",
+                  p_adj_method = "holm", 
+                  pseudo_sens = TRUE,
+                  prv_cut =0, 
+                  lib_cut = 0, 
+                  s0_perc = 0.05,
+                  group = "method", 
+                  struc_zero = TRUE, 
+                  neg_lb = FALSE,
+                  alpha = 0.05, 
+                  n_cl = 2, 
+                  verbose = TRUE,
+                  global = FALSE, 
+                  pairwise = FALSE, 
+                  dunnet = FALSE, 
+                  trend = FALSE,
+                  iter_control = list(tol = 1e-5, max_iter = 20, verbose = FALSE),
+                  em_control = list(tol = 1e-5, max_iter = 100),
+                  lme_control = lme4::lmerControl(),
+                  mdfdr_control = list(fwer_ctrl_method = "holm", B = 100), 
+                  trend_control = NULL)
+```
+
+***Structural zeros***
+```{r}
+structural_zeros_eb <- ancom_rand_output_struc_eb$zero_ind %>% 
+  as.data.frame() %>% 
+  column_to_rownames(., "taxon")
+
+rownames(structural_zeros_eb)[apply(structural_zeros_eb, 1, any)]
+```
+
+***Phyla differentially abundant***
+```{r}
+ancom_rand_output_struc_eb$res %>% 
+  filter(p_methodshotgun<0.05)
+```
+
+### Pipistrellus
+```{r}
+physeq_pk <- subset_samples(merged_physeq_phylum, Species == "Pk")
+physeq_pk <- prune_taxa(taxa_sums(physeq_pk)>0, physeq_pk)
+```
+
+```{r}
+ancom_rand_output_struc_pk = ancombc2(data = physeq_pk, 
+                  assay_name = "counts", 
+                  tax_level = NULL,
+                  fix_formula = "method",
+                  rand_formula = "(1|individual)",
+                  p_adj_method = "holm", 
+                  pseudo_sens = TRUE,
+                  prv_cut =0, 
+                  lib_cut = 0, 
+                  s0_perc = 0.05,
+                  group = "method", 
+                  struc_zero = TRUE, 
+                  neg_lb = FALSE,
+                  alpha = 0.05, 
+                  n_cl = 2, 
+                  verbose = TRUE,
+                  global = FALSE, 
+                  pairwise = FALSE, 
+                  dunnet = FALSE, 
+                  trend = FALSE,
+                  iter_control = list(tol = 1e-5, max_iter = 20, verbose = FALSE),
+                  em_control = list(tol = 1e-5, max_iter = 100),
+                  lme_control = lme4::lmerControl(),
+                  mdfdr_control = list(fwer_ctrl_method = "holm", B = 100), 
+                  trend_control = NULL)
+```
+
+***Structural zeros***
+```{r}
+structural_zeros_pk <- ancom_rand_output_struc_pk$zero_ind %>% 
+  as.data.frame() %>% 
+  column_to_rownames(., "taxon")
+
+rownames(structural_zeros_pk)[apply(structural_zeros_pk, 1, any)]
+```
+
+***Phyla differentially abundant***
+```{r}
+ancom_rand_output_struc_pk$res %>% 
+  filter(p_methodshotgun<0.05)
+```
+
+
+### Hypsugo
+```{r}
+physeq_ha <- subset_samples(merged_physeq_phylum, Species == "Ha")
+physeq_ha <- prune_taxa(taxa_sums(physeq_ha)>0, physeq_ha)
+```
+
+```{r}
+ancom_rand_output_struc_ha = ancombc2(data = physeq_ha, 
+                  assay_name = "counts", 
+                  tax_level = NULL,
+                  fix_formula = "method",
+#                  rand_formula = "(1|individual)",
+                  p_adj_method = "holm", 
+                  pseudo_sens = TRUE,
+                  prv_cut =0, 
+                  lib_cut = 0, 
+                  s0_perc = 0.05,
+                  group = "method", 
+                  struc_zero = TRUE, 
+                  neg_lb = FALSE,
+                  alpha = 0.05, 
+                  n_cl = 2, 
+                  verbose = TRUE,
+                  global = FALSE, 
+                  pairwise = FALSE, 
+                  dunnet = FALSE, 
+                  trend = FALSE,
+                  iter_control = list(tol = 1e-5, max_iter = 20, verbose = FALSE),
+                  em_control = list(tol = 1e-5, max_iter = 100),
+ #                 lme_control = lme4::lmerControl(),
+                  mdfdr_control = list(fwer_ctrl_method = "holm", B = 100), 
+                  trend_control = NULL)
+```
+
+***Structural zeros***
+```{r}
+structural_zeros_ha <- ancom_rand_output_struc_ha$zero_ind %>% 
+  as.data.frame() %>% 
+  column_to_rownames(., "taxon")
+
+rownames(structural_zeros_ha)[apply(structural_zeros_ha, 1, any)]
+```
+
+***Phyla differentially abundant***
+```{r}
+ancom_rand_output_struc_ha$res %>% 
+  filter(p_methodshotgun<0.05)
+```
