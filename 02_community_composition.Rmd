@@ -33,25 +33,25 @@ genome_metadata %>%
 #### Phylum level
 ```{r taxonomy_barplot, fig.height=6, fig.width=10, fig.fullwidth=TRUE}
 genome_counts_filt %>%
-  mutate_at(vars(-genome),  ~ . / sum(.)) %>% #apply TSS nornalisation
-  pivot_longer(-genome, names_to = "sample", values_to = "count") %>% #reduce to minimum number of columns
-  left_join(., genome_metadata, by = join_by(genome == genome)) %>% #append genome metadata
-  left_join(., sample_metadata, by = join_by(sample == sample)) %>% #append sample metadata
+  mutate_at(vars(-genome),  ~ . / sum(.)) %>% 
+  pivot_longer(-genome, names_to = "sample", values_to = "count") %>% 
+  left_join(., genome_metadata, by = join_by(genome == genome)) %>% 
+  left_join(., sample_metadata, by = join_by(sample == sample)) %>% 
   filter(count > 0) %>% #filter 0 counts
   ggplot(., aes(
     x = sample,
     y = count,
     fill = phylum,
     group = phylum
-  )) + #grouping enables keeping the same sorting of taxonomic units
+  )) + 
   geom_bar(stat = "identity",
            colour = "white",
-           linewidth = 0.1) + #plot stacked bars with white borders
+           linewidth = 0.1) + 
   scale_fill_manual(values = phylum_colors) +
   facet_nested( ~ factor(
     Species,
     labels = c("Eb" = "Eptesicus", "Ha" = "Hypsugo", "Pk" = "Pipistrellus")
-  ), scales = "free") + #facet per day and treatment
+  ), scales = "free") + 
   guides(fill = guide_legend(ncol = 1)) +
   theme(
     axis.text.x = element_blank(),
@@ -120,10 +120,10 @@ phylum_summary %>%
 ***Percentange of families in each group***
 ```{r taxonomy_family_summary, warning=FALSE, comments="", message=FALSE}
 family_summary <- genome_counts_filt %>%
-  mutate_at(vars(-genome),~./sum(.)) %>% #apply TSS nornalisation
-  pivot_longer(-genome, names_to = "sample", values_to = "count") %>% #reduce to minimum number of columns
-  left_join(sample_metadata, by = join_by(sample == sample)) %>% #append sample metadata
-  left_join(., genome_metadata, by = join_by(genome == genome)) %>% #append genome metadata
+  mutate_at(vars(-genome),~./sum(.)) %>% 
+  pivot_longer(-genome, names_to = "sample", values_to = "count") %>% 
+  left_join(sample_metadata, by = join_by(sample == sample)) %>% 
+  left_join(., genome_metadata, by = join_by(genome == genome)) %>% 
   group_by(sample,family, Species) %>%
   summarise(relabun=sum(count))
 ```
@@ -435,7 +435,7 @@ genome_metadata %>%
   tt()
 ```
 
-
+### Summary table
 ```{r single_sp_meta, comment="", message=FALSE, warning=FALSE}
 bats = c("Eb", "Pk", "Ha")
 
@@ -471,7 +471,6 @@ for (bat in bats) {
   
   single_sp <- rbind(single_sp, data.frame(Bat = bat, Single_species = unique))
 }
-
 ```
 
 ```{r single_ind_meta, comment="", message=FALSE, warning=FALSE}
@@ -494,14 +493,14 @@ freq_table <- genome_counts_filt %>%
 
 singleton_filt <- freq_table %>%
   rowwise() %>%
-  mutate(row_sum = sum(c_across(-asv))) %>% # Calculate row sum for specific columns
+  mutate(row_sum = sum(c_across(-asv))) %>% 
   filter(row_sum == 1) %>%
   column_to_rownames(var = "asv")  %>%
   filter(row_sum == 1)
 
 single_ind <- rbind(single_ind, data.frame(
   Bat = "Total",
-  Single_individual = nrow(singleton_filt) # Aggregate sum of column sums
+  Single_individual = nrow(singleton_filt) 
 ))
 
 for (bat in bats) {
@@ -515,19 +514,20 @@ for (bat in bats) {
   
   single_ind <- rbind(single_ind, data.frame(
     Bat = bat,
-    Single_individual = nrow(singleton_filt) # Aggregate sum of column sums
+    Single_individual = nrow(singleton_filt)
   ))
 }
 
 ```
 
-## Summary table
+
 ```{r}
 summary_table <- total_mags %>%
   left_join(., no_annotation, by = "Bat") %>%
   left_join(., single_ind, by = "Bat") %>%
   left_join(., single_sp, by = "Bat")
-summary_table
+summary_table %>% 
+  tt()
 ```
 
 ```{r}
@@ -596,6 +596,7 @@ genome_counts_filt %>%
     panel.border = element_blank(),
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(),
+    legend.text = element_text(size = 6),
     strip.background = element_rect(fill = "white"),
     strip.text = element_text(
       size = 12,
@@ -608,7 +609,8 @@ genome_counts_filt %>%
       colour = "black"
     )
   ) +
-  labs(fill = "Phylum", y = "Relative abundance", x = "Samples")
+  labs(fill = "Phylum", y = "Relative abundance", x = "Samples")+
+  guides(fill = guide_legend(ncol = 2))
 ```
 
 
@@ -649,13 +651,13 @@ phylum_summary %>%
 
 #### Family level
 
-***Percentange of families in each group***
+***Percentage of families in each group***
 ```{r taxonomy_family_summary_ampli, warning=FALSE, comments="", message=FALSE}
 family_summary <- genome_counts_filt %>%
-  mutate_at(vars(-genome),  ~ . / sum(.)) %>% #apply TSS nornalisation
-  pivot_longer(-genome, names_to = "sample", values_to = "count") %>% #reduce to minimum number of columns
-  left_join(sample_metadata, by = join_by(sample == sample)) %>% #append sample metadata
-  left_join(., genome_metadata, by = join_by(genome == genome)) %>% #append genome metadata
+  mutate_at(vars(-genome),  ~ . / sum(.)) %>% 
+  pivot_longer(-genome, names_to = "sample", values_to = "count") %>% 
+  left_join(sample_metadata, by = join_by(sample == sample)) %>% 
+  left_join(., genome_metadata, by = join_by(genome == genome)) %>% 
   group_by(sample, family, Species) %>%
   summarise(relabun = sum(count))
 ```
@@ -710,7 +712,7 @@ family_summary %>%
 
 #### Genus level
 
-***Percetange of genera in each group***
+***Percetage of genera in each group***
 
 ```{r taxonomy_genus_summary_ampli, warning=FALSE, comments="", message=FALSE}
 genus_summary <- genome_counts_filt %>%
@@ -972,11 +974,11 @@ genome_metadata %>%
   tt()
 ```
 
-***ASVs in single species***
+### Summary table
+
 ```{r single_sp_ampli, comment="", message=FALSE, warning=FALSE}
 bats = c("Eb", "Pk", "Ha")
 
-# Initialize an empty results data frame
 single_sp <- data.frame(Bat = character(), Single_species = numeric())
 
 table_upset_analysis <- genome_counts_filt %>%
@@ -1012,7 +1014,6 @@ for (bat in bats) {
 
 ```
 
-***ASVs in a single individual***
 ```{r single_ind_ampli, comment="", message=FALSE, warning=FALSE}
 single_ind <- data.frame(Bat = character(), Single_individual = numeric())
 
@@ -1039,12 +1040,12 @@ for (bat in bats) {
   
   single_ind <- rbind(single_ind, data.frame(
     Bat = bat,
-    Single_individual = nrow(singleton_filt) # Aggregate sum of column sums
+    Single_individual = nrow(singleton_filt) 
   ))
 }
 ```
 
-## Summary table
+
 ```{r merge_ampli, comment="", message=FALSE, warning=FALSE}
 summary_table <- total_mags %>%
   left_join(., no_annotation, by = "Bat") %>%

@@ -10,35 +10,36 @@ set.seed(24022025)
 ```{r load_data_comp}
 load("resources/amplicon/selected_filtering.Rdata")
 load("resources/metagenomics/data_filtered.Rdata")
-#load("resources/amplicon/second_filtering_t0_p30.Rdata")
 ```
 
 ## Taxonomy
 
-
 ***Number of MAGs in metagenomic data***
 ```{r}
-nrow(genome_metadata)
+cat(nrow(genome_metadata))
 ```
 
 ***Number of ASVs in amplicon data***
 ```{r}
-nrow(genome_metadata_amplicon)
+cat(nrow(genome_metadata_amplicon))
 ```
 
 
 ### Phylum
 ***Number of phyla in metagenomic data***
 ```{r}
-genome_metadata %>% 
+cat(genome_metadata %>% 
   distinct(domain,phylum) %>% 
-  count()
+  count() %>% 
+    pull())
 ```
+
 ***Number of phyla in amplicon data***
 ```{r}
-genome_metadata_amplicon %>% 
+cat(genome_metadata_amplicon %>% 
   distinct(domain,phylum) %>% 
-  count()
+  count()%>% 
+    pull())
 ```
 
 ***Shared phyla***
@@ -49,7 +50,6 @@ meta_phylum <- genome_metadata %>%
 genome_metadata_amplicon %>% 
   distinct(domain,phylum) %>% 
   filter(phylum %in% meta_phylum$phylum)
-
 ```
 
 ***Only in metagenomic data***
@@ -71,22 +71,24 @@ genome_metadata_amplicon %>%
 ### Family
 ***Number of families in metagenomic data***
 ```{r}
-genome_metadata %>% 
-  distinct(domain,phylum, family) %>% 
-  count()
+cat(genome_metadata %>%
+      distinct(domain, phylum, family) %>%
+      count() %>%
+      pull())
 ```
 
 ***Number of families in amplicon data***
 ```{r}
-genome_metadata_amplicon %>% 
-  distinct(domain,phylum, family) %>% 
-  count()
+cat(genome_metadata_amplicon %>%
+      distinct(domain, phylum, family) %>%
+      count() %>%
+      pull())
 ```
+
 ***Shared families***
 ```{r}
 meta_family <- genome_metadata %>% 
   distinct(domain,phylum, family)
-
 genome_metadata_amplicon %>% 
   distinct(domain,phylum, family) %>% 
   filter(family %in% meta_family$family)
@@ -534,77 +536,13 @@ dist_matrix <- as.matrix(dist_matrix)
 rownames(dist_matrix) <- beta_richness_together$sample
 colnames(dist_matrix) <- beta_richness_together$sample
 
-adonis2(dist_matrix ~ id,
+adonis2(dist_matrix ~ method*Species,
         data = metadata_both %>% arrange(match(sample,labels(dist_matrix))),
-        permutations = 999) %>%
-        broom::tidy() %>%
-        tt()
-
-pairwise.adonis(dist_matrix, metadata_both$id, perm = 999) %>% 
-  filter(p.adjusted<0.05)
-```
-
-***Differences between methods in each species***
-
-Eptesicus
-```{r}
-metadata_species <- metadata_both %>% 
-  filter(Species=="Eb")
-
-beta_sp <- beta_richness_together%>% 
-  filter(Species=="Eb")
-
-dist_matrix <- dist(beta_sp %>% select(NMDS1, NMDS2), method = "euclidean")
-dist_matrix <- as.matrix(dist_matrix)
-rownames(dist_matrix) <- beta_sp$sample
-colnames(dist_matrix) <- beta_sp$sample
-
-adonis2(dist_matrix ~ method,
-        data = metadata_species %>% arrange(match(sample,labels(dist_matrix))),
-        permutations = 999, strata = metadata_species %>% arrange(match(sample,labels(dist_matrix))) %>% pull(individual)) %>%
+        permutations = 999, by="terms") %>%
         broom::tidy() %>%
         tt()
 ```
 
-Pipistrellus
-```{r}
-metadata_species <- metadata_both %>% 
-  filter(Species=="Pk")
-
-beta_sp <- beta_richness_together%>% 
-  filter(Species=="Pk")
-
-dist_matrix <- dist(beta_sp %>% select(NMDS1, NMDS2), method = "euclidean")
-dist_matrix <- as.matrix(dist_matrix)
-rownames(dist_matrix) <- beta_sp$sample
-colnames(dist_matrix) <- beta_sp$sample
-
-adonis2(dist_matrix ~ method,
-        data = metadata_species %>% arrange(match(sample,labels(dist_matrix))),
-        permutations = 999, strata = metadata_species %>% arrange(match(sample,labels(dist_matrix))) %>% pull(individual)) %>%
-        broom::tidy() %>%
-        tt()
-```
-
-Hypsugo
-```{r}
-metadata_species <- metadata_both %>% 
-  filter(Species=="Ha")
-
-beta_sp <- beta_richness_together%>% 
-  filter(Species=="Ha")
-
-dist_matrix <- dist(beta_sp %>% select(NMDS1, NMDS2), method = "euclidean")
-dist_matrix <- as.matrix(dist_matrix)
-rownames(dist_matrix) <- beta_sp$sample
-colnames(dist_matrix) <- beta_sp$sample
-
-adonis2(dist_matrix ~ method,
-        data = metadata_species %>% arrange(match(sample,labels(dist_matrix))),
-        permutations = 999, strata = metadata_species %>% arrange(match(sample,labels(dist_matrix))) %>% pull(individual)) %>%
-        broom::tidy() %>%
-        tt()
-```
 
 #### Neutral
 ```{r nmds_neu, fig.height=10, fig.width=16, fig.fullwidth=TRUE}
@@ -658,80 +596,16 @@ dist_matrix <- as.matrix(dist_matrix)
 rownames(dist_matrix) <- beta_neutral_together$sample
 colnames(dist_matrix) <- beta_neutral_together$sample
 
-adonis2(dist_matrix ~ id,
+adonis2(dist_matrix ~ method*Species,
         data = metadata_both %>% arrange(match(sample,labels(dist_matrix))),
-        permutations = 999) %>%
-        broom::tidy() %>%
-        tt()
-
-pairwise.adonis(dist_matrix, metadata_both$id, perm = 999) %>% 
-  filter(p.adjusted<0.05)
-```
-
-***Differences between methods in each species***
-
-Eptesicus
-```{r}
-metadata_species <- metadata_both %>% 
-  filter(Species=="Eb")
-
-beta_sp <- beta_neutral_together%>% 
-  filter(Species=="Eb")
-
-dist_matrix <- dist(beta_sp %>% select(NMDS1, NMDS2), method = "euclidean")
-dist_matrix <- as.matrix(dist_matrix)
-rownames(dist_matrix) <- beta_sp$sample
-colnames(dist_matrix) <- beta_sp$sample
-
-adonis2(dist_matrix ~ method,
-        data = metadata_species %>% arrange(match(sample,labels(dist_matrix))),
-        permutations = 999, strata = metadata_species %>% arrange(match(sample,labels(dist_matrix))) %>% pull(individual)) %>%
+        permutations = 999, by="terms") %>%
         broom::tidy() %>%
         tt()
 ```
 
-Pipistrellus
-```{r}
-metadata_species <- metadata_both %>% 
-  filter(Species=="Pk")
-
-beta_sp <- beta_neutral_together%>% 
-  filter(Species=="Pk")
-
-dist_matrix <- dist(beta_sp %>% select(NMDS1, NMDS2), method = "euclidean")
-dist_matrix <- as.matrix(dist_matrix)
-rownames(dist_matrix) <- beta_sp$sample
-colnames(dist_matrix) <- beta_sp$sample
-
-adonis2(dist_matrix ~ method,
-        data = metadata_species %>% arrange(match(sample,labels(dist_matrix))),
-        permutations = 999, strata = metadata_species %>% arrange(match(sample,labels(dist_matrix))) %>% pull(individual)) %>%
-        broom::tidy() %>%
-        tt()
-```
-
-Hypsugo
-```{r}
-metadata_species <- metadata_both %>% 
-  filter(Species=="Ha")
-
-beta_sp <- beta_neutral_together%>% 
-  filter(Species=="Ha")
-
-dist_matrix <- dist(beta_sp %>% select(NMDS1, NMDS2), method = "euclidean")
-dist_matrix <- as.matrix(dist_matrix)
-rownames(dist_matrix) <- beta_sp$sample
-colnames(dist_matrix) <- beta_sp$sample
-
-adonis2(dist_matrix ~ method,
-        data = metadata_species %>% arrange(match(sample,labels(dist_matrix))),
-        permutations = 999, strata = metadata_species %>% arrange(match(sample,labels(dist_matrix))) %>% pull(individual)) %>%
-        broom::tidy() %>%
-        tt()
-```
 
 ## Differential abundace analysis
-
+### Phylum
 ```{r}
 phylo_samples <- sample_metadata %>% 
   mutate(individual=sample)%>%
@@ -755,6 +629,26 @@ phylo_taxonomy <- genome_metadata %>%
 physeq_genome_filtered <- phyloseq(phylo_genome, phylo_taxonomy, phylo_samples)
 physeq_genome_filtered_phylum <- tax_glom(physeq_genome_filtered, "phylum")
 ```
+```{r load_data_raw_ampli, comment="", message=FALSE, warning=FALSE}
+load("resources/amplicon/data_nocopyfilt.Rdata")
+
+genome_counts_selected <- genome_counts_filt %>%
+    select(all_of(colnames(genome_counts_filt_amplicon))) %>% 
+  filter(genome %in% genome_counts_filt_amplicon$genome) %>%   
+  arrange(genome) %>% 
+  column_to_rownames("genome")
+
+table <- genome_counts_filt_amplicon %>%
+  select(genome, all_of(colnames(genome_counts_selected))) %>%
+  mutate(across(all_of(colnames(genome_counts_selected)), ~ ifelse(. > 0, 1, 0)))%>%   
+  arrange(genome)%>% 
+  column_to_rownames("genome")
+
+
+genome_counts_amplicon_selected <- table * genome_counts_selected
+  
+
+```
 
 ```{r}
 phylo_samples <- sample_metadata_amplicon %>% 
@@ -764,8 +658,7 @@ phylo_samples <- sample_metadata_amplicon %>%
   select(12,15,16) %>%
   mutate(method="amplicon")%>% 
   sample_data()
-phylo_genome <- genome_counts_filt_amplicon %>%
-  column_to_rownames("genome") %>%
+phylo_genome <- genome_counts_amplicon_selected %>%
   rename_with(~ paste0(., "_ampli")) %>%
   rownames_to_column("genome")%>% 
   select(one_of(c("genome",rownames(phylo_samples)))) %>%
@@ -808,7 +701,7 @@ merged_physeq_phylum <- phyloseq(otu_table_merged, sample_data(merge_phylo))
 
 ```
 
-### Eptesicus
+#### Eptesicus
 ```{r}
 physeq_eb <- subset_samples(merged_physeq_phylum, Species == "Eb")
 physeq_eb <- prune_taxa(taxa_sums(physeq_eb)>0, physeq_eb)
@@ -857,7 +750,7 @@ ancom_rand_output_struc_eb$res %>%
   filter(p_methodshotgun<0.05)
 ```
 
-### Pipistrellus
+#### Pipistrellus
 ```{r}
 physeq_pk <- subset_samples(merged_physeq_phylum, Species == "Pk")
 physeq_pk <- prune_taxa(taxa_sums(physeq_pk)>0, physeq_pk)
@@ -907,14 +800,14 @@ ancom_rand_output_struc_pk$res %>%
 ```
 
 
-### Hypsugo
+#### Hypsugo (not working random effect)
 ```{r}
 physeq_ha <- subset_samples(merged_physeq_phylum, Species == "Ha")
 physeq_ha <- prune_taxa(taxa_sums(physeq_ha)>0, physeq_ha)
 ```
 
 ```{r}
-ancom_rand_output_struc_ha = ancombc2(data = physeq_ha, 
+ancom_rand_output_struc_ha = ancombc2(data = physeq_genome_filtered_ampl1, 
                   assay_name = "counts", 
                   tax_level = NULL,
                   fix_formula = "method",
