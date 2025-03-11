@@ -1,5 +1,6 @@
-# Metagenomics
-## Load raw data
+# Prepare data
+## Metagenomics
+### Load raw data
 ```{r loaddata, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 counts_raw <- read_tsv("resources/metagenomics/all_species_unfiltered_count_table.txt") %>% 
   rename(genome=1)
@@ -8,10 +9,10 @@ genomes_length <- counts_raw[,c(1,4)] %>%
   rename(length=2)
 ```
 
-## Read counts
+### Read counts
 ```{r melt, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 ## Melt dataframe
-counts_raw1 <- counts_raw                  # Duplicate data
+counts_raw1 <- counts_raw                  
 colnames(counts_raw1) <- gsub("\\.", " ", colnames(counts_raw1))
 
 molten_table <- counts_raw1 %>%
@@ -31,10 +32,10 @@ read_counts <- molten_table %>%
   rownames_to_column(., "genome")
 ```
 
-## Genome counts
+### Genome counts
 ```{r coverage, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 genome_counts_filt <- molten_table %>%
-  mutate(read_count = if_else(covered_fraction < 0.3, 0, read_count)) %>% #normalise by read/MAG length
+  mutate(read_count = if_else(covered_fraction < 0.3, 0, read_count)) %>%
   mutate(read_count = read_count*150/MAG_length) %>%
   select(genome, sample, read_count) %>%
   pivot_wider(names_from = sample, values_from = read_count) %>%
@@ -54,7 +55,7 @@ genome_counts <- read_counts %>%
   rownames_to_column(., "genome")
 ```
 
-## Sample metadata
+### Sample metadata
 ```{r loadmetadata, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 sample_metadata <- read_tsv("resources/metagenomics/metadata.tsv") %>%
   rename(sample=1)
@@ -63,11 +64,11 @@ genome_counts_filt_r <- genome_counts_filt %>%
 sample_metadata <- sample_metadata[match(colnames(genome_counts_filt_r), sample_metadata$sample), ]
 ```
 
-## Genome metadata
+### Genome metadata
 ```{r loadgenomedata, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 genome_metadata <- read_tsv("resources/metagenomics/all_together_gtdbtk.tsv") %>%
     rename(genome=1)%>%
-  mutate(genome = str_replace(genome, "\\.fa$", ""))%>%#mutate(genome = gsub(".fa","",genome))
+  mutate(genome = str_replace(genome, "\\.fa$", ""))%>%
   semi_join(., genome_counts_filt, by = "genome") %>% 
   arrange(match(genome,genome_counts_filt$genome))%>% 
   mutate(classification = str_replace_all(classification, ".__", "")) %>%
@@ -83,14 +84,14 @@ genome_metadata <- read_tsv("resources/metagenomics/all_together_gtdbtk.tsv") %>
         TRUE ~ phylum))
 ```
 
-## Genome tree
+### Genome tree
 ```{r loadtree, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 genome_tree <- read_tree("resources/metagenomics/coassembly_species_gtdbtk_full.tree")
-genome_tree$tip.label <- gsub(".fa","",genome_tree$tip.label) #remove .fa extension
-genome_tree <- keep.tip(genome_tree, tip=genome_metadata$genome) # keep only MAG tips
+genome_tree$tip.label <- gsub(".fa","",genome_tree$tip.label) 
+genome_tree <- keep.tip(genome_tree, tip=genome_metadata$genome) 
 ```
 
-## Preprocessing info
+### Preprocessing info
 ```{r prepro, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 unmapped <- read_tsv("resources/metagenomics/all_species_mapping_rate.txt")
 mapping <- unmapped[c(1),] %>% 
@@ -109,12 +110,12 @@ preprocess_info <- read_tsv("resources/metagenomics/preprocessing_report.tsv") %
 preprocess_info <- preprocess_info[match(sample_metadata$sample, preprocess_info$sample), ]
 ```
 
-## Genome annotations
+### Genome annotations
 ```{r annotation, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 genome_annotations <- read_tsv("resources/metagenomics/all_annotations.tsv.xz")
 ```
 
-## Genome functions distillation
+#### Genome functions distillation
 ```{r distillation, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 genome_gifts <- distill(genome_annotations,GIFT_db,genomecol=2,annotcol=c(9,10,19), verbosity=F)
 genome_gifts <- genome_gifts[rownames(genome_gifts) %in% genome_counts_filt$genome,]
@@ -122,16 +123,16 @@ genome_counts_filt$genome %in% rownames(genome_gifts)
 rownames(genome_gifts) %in% genome_counts_filt$genome
 ```
 
-## Phyloseq object
+### Phyloseq object
 ```{r nozero_phylo, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 #phyloseq object without structural zeros
 phylo_samples <- sample_metadata %>% 
   column_to_rownames("sample") %>% 
-  sample_data() #convert to phyloseq sample_data object
+  sample_data() 
 
 phylo_counts <- genome_counts_filt %>% 
   column_to_rownames("genome") %>% 
-  otu_table(., taxa_are_rows = TRUE) #convert to phyloseq otu_table object
+  otu_table(., taxa_are_rows = TRUE) 
 
 phylo_taxonomy <- genome_metadata %>% 
   dplyr::select(domain,phylum,class,order,family,genus,species,genome,length) %>%
@@ -144,7 +145,7 @@ tree <- phy_tree(genome_tree)
 genome_data <- phyloseq(phylo_counts, phylo_taxonomy, phylo_samples, tree)
 ```
 
-## Prepare color scheme
+### Prepare color scheme
 ```{r get_ehi_colors_skin, warning=FALSE, comments="", message=FALSE, eval=FALSE}
 phylum_colors <- read_tsv(
   "https://raw.githubusercontent.com/earthhologenome/EHI_taxonomy_colour/main/ehi_phylum_colors.tsv"
@@ -174,8 +175,8 @@ save(
 )
 ```
 
-# Amplicon
-## Load data
+## Amplicon
+### Load data
 ```{r ampli, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 read_counts <- read_tsv("resources/amplicon/ASVs_count_overlap10_nochim0.tsv") %>% dplyr::rename(asv = 1) %>%
   as.data.frame()
@@ -190,7 +191,7 @@ read_counts_row <- column_to_rownames(read_counts, "asv")
 taxonomy_table_row <- column_to_rownames(taxonomy_sp, "asv")
 ```
 
-## Create a phyloseq object
+### Create a phyloseq object
 ```{r amplidata, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 count_phy <- otu_table(read_counts_row, taxa_are_rows = T)
 sample_info_tab_phy <- sample_data(metadata)
@@ -204,7 +205,7 @@ physeq_sample <- subset_samples(physeq.raw, Control == "True sample")
 physeq_sample <- prune_taxa(taxa_sums(physeq_sample) > 0, physeq_sample)
 ```
 
-## Remove contaminants
+### Remove contaminants
 ```{r decotam, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 sample_data(physeq.raw)$is.neg <- sample_data(physeq.raw)$Control == "Control sample"
 contamdf.prev <- isContaminant(physeq.raw, method = "prevalence", neg = "is.neg")
@@ -220,7 +221,7 @@ goodTaxa <- setdiff(taxa_names(physeq), contam_asvs)
 physeq.final <- prune_taxa(goodTaxa, physeq)
 ```
 
-## Basic filtering
+### Basic filtering
 ```{r basicfilt, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 read_counts_final <- data.frame(physeq.final@otu_table)
 count_filtdepth <- read_counts_final[, colSums(read_counts_final) > 1000]
@@ -238,7 +239,7 @@ physeq_class <- subset_taxa(physeq_phylum, !is.na(Class))
 physeq_classNA <- subset_taxa(physeq_phylum, is.na(Class))
 ```
 
-## Removing chloroplast and mitochondria
+### Removing chloroplast and mitochondria
 ```{r chlormito, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 taxonomy <- physeq.final@tax_table
 is.mitochondria <- physeq.final@tax_table[, "Family"] %in% "Mitochondria"
@@ -250,13 +251,12 @@ tax_table(physeq.final) <- taxonomy.m
 physeq.final.filt <- prune_taxa(taxa_sums(physeq.final) > 0, physeq.final)
 ```
 
-## Save
+### Save
 ```{r save16S, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 saveRDS(physeq.final.filt,"resources/amplicon/physeq_final_nocopyfilter.RData")
 ```
 
-# Merging amplicon and metagenomic data
-
+## Merging amplicon and metagenomic data
 ```{r load16Sdata, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 physeq_16S <- readRDS("resources/amplicon/physeq_final_nocopyfilter.RData")
 physeq_16S <- prune_taxa(taxa_sums(physeq_16S)>0, physeq_16S)
@@ -319,7 +319,7 @@ sample_metadata_16S_filt <- sample_metadata_16S[sample_metadata_16S$sample %in% 
 sample_metagenomic_filt <- sample_metadata[sample_metadata$sample %in% sample_metadata_16S$sample,]
 ```
 
-## Filtering the metagenomic data to match amplicon data
+### Filtering the metagenomic data to match amplicon data
 ```{r metagenomicdata, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 phyloM_samples <- sample_metagenomic_filt %>%
   column_to_rownames(., "sample") %>% 
@@ -355,7 +355,7 @@ save(sample_metadata,
      file = "resources/metagenomics/data_filtered.Rdata")
 ```
 
-## Matching the 16S data to metagenomic data
+### Matching the 16S data to metagenomic data
 ```{r 16Sdata, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 
 phylo_samples <- sample_metadata_16S_filt %>% 
@@ -429,9 +429,9 @@ save(sample_metadata,
      file = "resources/amplicon/data_nocopyfilt.Rdata")
 ```
 
-## Create master table for amplicon data
+### Create master table for amplicon data
 
-```{r load_data, comment="", message=FALSE, warning=FALSE, eval=FALSE}
+```{r load_data_amplicon_no_filtered, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 load("resources/amplicon/data_nocopyfilt.Rdata")
 ```
 

@@ -12,7 +12,7 @@ load("resources/amplicon/master_table.Rdata")
 ```
 
 ## Total ASVs
-```{r totalasv, message=FALSE, fig.height=10, fig.width=16, fig.fullwidth=TRUE}
+```{r totalasv, message=FALSE, fig.height=16, fig.width=18, fig.fullwidth=TRUE}
 asv_total <- master_table %>%
   group_by(copy_threshold, prevalence, genome) %>%
   summarise(asv_count = sum(value != 0, na.rm = TRUE)) %>%
@@ -39,9 +39,35 @@ master_table %>%
   )) +
   geom_line(size = 1) +
   geom_point(size = 2) +
-  facet_wrap(~ copy_threshold, scales = "free_y") +
+  facet_wrap( ~ factor(
+    copy_threshold,
+    labels = c(
+      "t0" = "No cut-off",
+      "t1" = "Cut-off 0.0001",
+      "t2" = "Cut-off 0.001",
+      "t3" = "Cut-off 0.01",
+      "t4" = "Cut-off 0.1"
+    )
+  ), scales = "free_y") +
   labs(x = "Prevalence threshold (%)", y = "Total ASVs", color = "Bat species") +
-  theme_minimal()
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 20, face = "bold"),
+    axis.text = element_text(face = "bold", size = 18),
+    panel.background = element_blank(),
+    axis.line = element_line(
+      size = 0.5,
+      linetype = "solid",
+      colour = "black"
+    ),
+    strip.text = element_text(size = 20),
+    legend.text = element_text(size = 16),
+    legend.title = element_text(size = 18),
+    legend.position = "bottom",
+    legend.box = "horizontal"
+  )
 ```
 
 ## Single to individuals
@@ -109,7 +135,7 @@ master_table %>%
 ```
 
 ## Single to species
-```{r single_sp, message=FALSE, fig.height=10, fig.width=16, fig.fullwidth=TRUE}
+```{r single_sp, message=FALSE, fig.height=16, fig.width=18, fig.fullwidth=TRUE}
 master_table %>%
   group_by(Species, copy_threshold, prevalence, genome) %>%
   summarise(freq = sum(pa, na.rm = TRUE), .groups = "drop") %>%
@@ -130,9 +156,35 @@ master_table %>%
   )) +
   geom_line(size = 1) +
   geom_point(size = 2) +
-  facet_wrap(~ copy_threshold, scales = "free_y") +
+  facet_wrap( ~ factor(
+    copy_threshold,
+    labels = c(
+      "t0" = "No cut-off",
+      "t1" = "Cut-off 0.0001",
+      "t2" = "Cut-off 0.001",
+      "t3" = "Cut-off 0.01",
+      "t4" = "Cut-off 0.1"
+    )
+  ), scales = "free_y") +
   labs(x = "Prevalence threshold (%)", y = " Single to species", color = "Bat species") +
-  theme_minimal()
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 20, face = "bold"),
+    axis.text = element_text(face = "bold", size = 18),
+    panel.background = element_blank(),
+    axis.line = element_line(
+      size = 0.5,
+      linetype = "solid",
+      colour = "black"
+    ),
+    strip.text = element_text(size = 20),
+    legend.text = element_text(size = 16),
+    legend.title = element_text(size = 18),
+    legend.position = "bottom",
+    legend.box = "horizontal"
+  )
 ```
 
 ## Alpha Diversity
@@ -219,7 +271,7 @@ results <- results %>%
 ```
 
 
-```{r richness_thres, message=FALSE, fig.height=10, fig.width=16, fig.fullwidth=TRUE}
+```{r richness_thres, message=FALSE, fig.height=16, fig.width=18, fig.fullwidth=TRUE}
 results %>%
   pivot_longer(!c(alpha, Prevalence, Copy_threshold),
                names_to = "Species",
@@ -234,7 +286,15 @@ results %>%
          )) +
   geom_line(size = 1) +
   geom_point(size = 2) +
-  facet_wrap( ~ Copy_threshold, scales = "free_y") +
+  facet_wrap( ~ factor(
+    Copy_threshold,
+    labels = c(
+      "t0" = "No cut-off",
+      "t1" = "Cut-off 0.0001",
+      "t2" = "Cut-off 0.001",
+      "t3" = "Cut-off 0.01",
+      "t4" = "Cut-off 0.1"
+    )), scales = "free_y") +
   labs(
     title = "Alpha Diversity Across Copy filtering and Prevalence Thresholds",
     x = "Prevalence Threshold",
@@ -243,13 +303,25 @@ results %>%
   ) +
   theme_minimal() +
   theme(
-    strip.text = element_text(size = 12, face = "bold"),
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    legend.position = "bottom"
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 20, face = "bold"),
+    axis.text = element_text(face = "bold", size = 18),
+    panel.background = element_blank(),
+    axis.line = element_line(
+      size = 0.5,
+      linetype = "solid",
+      colour = "black"
+    ),
+    strip.text = element_text(size = 20),
+    legend.text = element_text(size = 16),
+    legend.title = element_text(size = 18),
+    legend.position = "bottom",
+    legend.box = "horizontal"
   )
 ```
 
-```{r neutral_threshol, message=FALSE, fig.height=10, fig.width=16, fig.fullwidth=TRUE}
+```{r neutral_threshol, message=FALSE, fig.height=16, fig.width=18, fig.fullwidth=TRUE}
 results %>%
   pivot_longer(!c(alpha, Prevalence, Copy_threshold),
                names_to = "Species",
@@ -264,7 +336,16 @@ results %>%
          )) +
   geom_line(size = 1) +
   geom_point(size = 2) +
-  facet_wrap( ~ Copy_threshold, scales = "free_y") +
+  facet_wrap( ~ factor(
+    Copy_threshold,
+    labels = c(
+      "t0" = "No cut-off",
+      "t1" = "Cut-off 0.0001",
+      "t2" = "Cut-off 0.001",
+      "t3" = "Cut-off 0.01",
+      "t4" = "Cut-off 0.1"
+    )
+  ), scales = "free_y") +
   labs(
     title = "Alpha Diversity Across Copy filtering and Prevalence Thresholds",
     x = "Prevalence Threshold",
@@ -273,9 +354,21 @@ results %>%
   ) +
   theme_minimal() +
   theme(
-    strip.text = element_text(size = 12, face = "bold"),
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    legend.position = "bottom"
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 20, face = "bold"),
+    axis.text = element_text(face = "bold", size = 18),
+    panel.background = element_blank(),
+    axis.line = element_line(
+      size = 0.5,
+      linetype = "solid",
+      colour = "black"
+    ),
+    strip.text = element_text(size = 20),
+    legend.text = element_text(size = 16),
+    legend.title = element_text(size = 18),
+    legend.position = "bottom",
+    legend.box = "horizontal"
   )
 ```
 
@@ -488,8 +581,17 @@ pca_df <- as.data.frame(pca_result$x) %>%
   left_join(diversity_average,by="filter")
 
 ggplot(pca_df, aes(x = PC1, y = PC2, color = copy, shape=prevalence, size=mean_diversity, label=filter)) +
-  geom_point() +
+  geom_point(size=5) +
   theme_minimal() +
+    theme(
+      axis.text.x = element_text(size = 12),
+      axis.text.y = element_text(size = 12),
+      axis.title = element_text(size = 20, face = "bold"),
+      panel.background = element_blank(),
+      axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"),
+      legend.text = element_text(size = 16),
+      legend.title = element_text(size = 18)
+    )+
   labs(title = "PCA of Diversity Data",
        x = paste0("PC1 (", round(summary(pca_result)$importance[2,1] * 100, 2), "% variance)"),
        y = paste0("PC2 (", round(summary(pca_result)$importance[2,2] * 100, 2), "% variance)"))
@@ -502,18 +604,21 @@ weighted_distances <- apply(pca_result$x, 1, function(row) {
   sum(((row - reference_row)^2) * variance_explained)
 })
 
-closest_to_metagenomics <- tibble(filter=diversity_master$filter,distance=weighted_distances) %>% 
-  arrange(distance)
-
-
+tibble(filter=diversity_master$filter,distance=weighted_distances) %>% 
+  arrange(distance) %>% 
+  tt()
+```
+```{r}
 diversity_master %>% 
   filter(filter %in% c("metagenomics_metagenomics","t3_p10")) %>%
   pivot_longer(!filter, names_to = "sample", values_to = "diversity") %>% 
   ggplot(aes(x=filter,y=diversity, group=filter)) +
     geom_boxplot() + 
     geom_jitter() +
-    geom_line(aes(group = sample), linetype = "dashed", size = 1)
+    geom_line(aes(group = sample), linetype = "dashed", size = 1)+
+  theme_minimal()
 ```
+
 
 ***Save the table with selected filtering thresholds***
 
