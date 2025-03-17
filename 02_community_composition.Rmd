@@ -951,7 +951,7 @@ genome_metadata %>%
 **Total percentage of MAGs without species-level annotation**
 ```{r sp_percet_ampli, comment="", message=FALSE, warning=FALSE}
 nonspecies <- genome_metadata %>%
-  filter(species == "") %>%
+   filter(is.na(species)) %>%
   summarize(Mag_nospecies = n()) %>%
   pull()
 perct <- nonspecies * 100 / nmags
@@ -1014,8 +1014,24 @@ for (bat in bats) {
 
 ```
 
+
 ```{r single_ind_ampli, comment="", message=FALSE, warning=FALSE}
 single_ind <- data.frame(Bat = character(), Single_individual = numeric())
+
+freq_table <- genome_counts_filt %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  column_to_rownames("genome") %>%
+  mutate(across(everything(), ~ as.integer(. > 0))) %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("sample") %>%
+  left_join(sample_metadata[c("sample", "Species")], by = "sample") %>%
+  group_by(Species) %>%
+  summarize(across(-sample, sum), .groups = "drop") %>%
+  column_to_rownames("Species") %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("asv")
 
 singleton_filt <- freq_table %>%
   rowwise() %>%
