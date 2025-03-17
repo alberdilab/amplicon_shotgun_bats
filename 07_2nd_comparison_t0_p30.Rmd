@@ -798,7 +798,7 @@ physeq_ha <- prune_taxa(taxa_sums(physeq_ha)>0, physeq_ha)
 ```
 
 ```{r}
-ancom_rand_output_struc_ha = ancombc2(data = physeq_genome_filtered_ampl1, 
+ancom_rand_output_struc_ha = ancombc2(data = physeq_ha, 
                   assay_name = "counts", 
                   tax_level = NULL,
                   fix_formula = "method",

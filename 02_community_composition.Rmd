@@ -526,8 +526,7 @@ summary_table <- total_mags %>%
   left_join(., no_annotation, by = "Bat") %>%
   left_join(., single_ind, by = "Bat") %>%
   left_join(., single_sp, by = "Bat")
-summary_table %>% 
-  tt()
+summary_table
 ```
 
 ```{r}
@@ -1067,8 +1066,7 @@ summary_table <- total_mags %>%
   left_join(., no_annotation, by = "Bat") %>%
   left_join(., single_ind, by = "Bat") %>%
   left_join(., single_sp, by = "Bat")
-summary_table %>% 
-  tt()
+summary_table
 ```
 
 
@@ -1081,6 +1079,5 @@ summary_table %>%
   mutate(Single_individual_perc=Single_individual*100/MAGs)%>% 
   mutate(Single_species_perc=Single_species*100/MAGs) %>% 
   mutate(Single_individual_per_unique=Single_individual*100/Single_species) %>% 
-  select(1,6:11) %>% 
-  tt()
+  select(1,6:11)
 ```
