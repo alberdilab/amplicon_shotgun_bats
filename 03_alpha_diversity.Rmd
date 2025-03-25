@@ -1,4 +1,10 @@
 # Alpha diversity
+```{r knitr_options_wild, include=FALSE}
+knitr::opts_chunk$set(fig.width=10, fig.height=7, fig.fullwidth=TRUE,
+fig.path='Figures/', warning=FALSE,
+message=FALSE)
+set.seed(1703)
+```
 
 ## Metagenomics
 
@@ -129,7 +135,7 @@ saveRDS(alpha_div_meta, "resources/metagenomics/metagenome_alpha_div.rds")
 ## Amplicon
 
 ```{r div_load_data, comment="", message=FALSE, warning=FALSE}
-load("resources/amplicon/data_nocopyfilt.Rdata")
+load("resources/amplicon/data_standard_filt.Rdata")
 ```
 
 ```{r filter_copy2, comment="", message=FALSE, warning=FALSE}
@@ -192,14 +198,12 @@ alpha_div_meta <- alpha_div %>%
 ```{r rich_MM_ampli, comment="", message=FALSE, warning=FALSE}
 Model_richness <- lm(formula = richness ~ Species, data = alpha_div_meta)
 anova(Model_richness)
-emmeans(Model_richness, pairwise ~ Species)
 ```
 
 ***Neutral***
 ```{r neutral_MM_ampli, comment="", message=FALSE, warning=FALSE}
 Model_neutral <- lm(formula = neutral ~ Species, data = alpha_div_meta)
 anova(Model_neutral)
-emmeans(Model_neutral, pairwise ~ Species)
 ```
 
 

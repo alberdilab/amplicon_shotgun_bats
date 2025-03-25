@@ -495,8 +495,7 @@ singleton_filt <- freq_table %>%
   rowwise() %>%
   mutate(row_sum = sum(c_across(-asv))) %>% 
   filter(row_sum == 1) %>%
-  column_to_rownames(var = "asv")  %>%
-  filter(row_sum == 1)
+  column_to_rownames(var = "asv")
 
 single_ind <- rbind(single_ind, data.frame(
   Bat = "Total",
@@ -504,17 +503,13 @@ single_ind <- rbind(single_ind, data.frame(
 ))
 
 for (bat in bats) {
-  singleton_filt <- freq_table %>%
-    rowwise() %>%
-    mutate(row_sum = sum(c_across(-asv))) %>%
-    filter(row_sum == 1) %>%
-    column_to_rownames(var = "asv")  %>%
+  single_filt <- singleton_filt %>%
     select(bat) %>%
     filter(. == 1)
   
   single_ind <- rbind(single_ind, data.frame(
     Bat = bat,
-    Single_individual = nrow(singleton_filt)
+    Single_individual = nrow(single_filt)
   ))
 }
 
@@ -525,7 +520,8 @@ for (bat in bats) {
 summary_table <- total_mags %>%
   left_join(., no_annotation, by = "Bat") %>%
   left_join(., single_ind, by = "Bat") %>%
-  left_join(., single_sp, by = "Bat")
+  left_join(., single_sp, by = "Bat") %>% 
+  mutate(MAGs_noSingleSpecies=MAGs-Single_individual)
 summary_table
 ```
 
@@ -533,38 +529,127 @@ summary_table
 summary_table %>%
   select(-Phylum, -Family, -Genus) %>%
   rowwise() %>%
+  mutate(Mag_perc=MAGs*100/135)%>%
+  mutate(MAGs_noSingleSp_perc=MAGs_noSingleSpecies*100/MAGs)%>% 
   mutate(No_genus_perc = No_genus * 100 / MAGs) %>%
   mutate(No_species_perc = No_species * 100 / MAGs) %>%
   mutate(Single_individual_perc = Single_individual * 100 / MAGs) %>%
   mutate(Single_species_perc = Single_species * 100 / MAGs) %>%
   mutate(Single_individual_per_Single_species = Single_individual * 100 /
            Single_species) %>%
-  select(1, 6:11)
+  select(1,8:14)
 ```
 
 ## Amplicon
 ### Taxonomy overview 
 ```{r div_load_data_ampli, comment="", message=FALSE, warning=FALSE}
-load("resources/amplicon/data_nocopyfilt.Rdata")
+load("resources/amplicon/data_standard_filt.Rdata")
 ```
 
-```{r filter_copy_ampli, comment="", message=FALSE, warning=FALSE}
-genome_metadata <- genome_metadata %>%
-  filter(!is.na(phylum))
-
-genome_counts_filt <- genome_counts_filt %>%
-  filter(genome %in% genome_metadata$genome) %>%
-  mutate_at(vars(-genome),  ~ . / sum(.)) %>%
-  column_to_rownames(., "genome") %>%
-  .[, colSums(.) > 0.00005] %>%
-  filter(rowSums(across(everything())) != 0) %>%
-  rownames_to_column(., "genome")
-
-genome_metadata <- genome_metadata %>%
-  filter(genome %in% genome_counts_filt$genome)
+#### Archaea
+```{r}
+genome_metadata %>% 
+  filter(domain == "Archaea")%>%
+  dplyr::select(phylum) %>%
+  unique() %>%
+  pull() %>%
+  length()%>% 
+  cat()
+```
+```{r}
+genome_metadata %>% 
+  filter(domain == "Archaea")%>%
+  dplyr::select(phylum) %>%
+  unique() %>%
+  pull() 
 ```
 
-#### Phylum level
+```{r}
+archaea_taxa <- taxa_names(phyloseq_16S_stand)[tax_table(phyloseq_16S_stand)[, "domain"] == "Archaea"]
+phyloseq_16S_archaea <- prune_taxa(archaea_taxa, phyloseq_16S_stand)
+phyloseq_16S_archaea <- prune_taxa(taxa_sums(phyloseq_16S_archaea)>0, phyloseq_16S_archaea)
+
+#phyloseq_16S_archaea_pa <- transform_sample_counts(phyloseq_16S_archaea, function(x) as.integer(x > 0))
+
+# Extract OTU table as a matrix
+otu_pa <- otu_table(phyloseq_16S_archaea)
+
+# Convert to presence-absence (1 if present, 0 if absent)
+otu_pa[otu_pa > 0] <- 1
+
+# Assign back to the phyloseq object, preserving taxa orientation
+otu_table(phyloseq_16S_archaea) <- otu_table(otu_pa, taxa_are_rows = taxa_are_rows(phyloseq_16S_archaea))
+phyloseq_16S_archaea <- prune_taxa(taxa_sums(phyloseq_16S_archaea)>0, phyloseq_16S_archaea)
+
+otu_table(phyloseq_16S_archaea) %>% 
+  rowSums()%>% 
+  as.data.frame()  %>% 
+  rename(count=1) %>% 
+  rownames_to_column(., "genome") %>% 
+  left_join(., genome_metadata, by="genome") %>% 
+  group_by(phylum, genome) %>% 
+  summarise(total_count=sum(count)) %>% 
+  filter(total_count>1)
+
+otu_table(phyloseq_16S_archaea) %>% 
+  rowSums()%>% 
+  as.data.frame()  %>% 
+  rename(count=1) %>% 
+  rownames_to_column(., "genome") %>% 
+  left_join(., genome_metadata, by="genome") %>% 
+  group_by(phylum, genus) %>% 
+  summarise(total_count=sum(count)) %>% 
+  filter(total_count>1) %>% 
+  arrange(-total_count)
+  
+sample_sums(phyloseq_16S_archaea) %>% 
+  as.data.frame() %>% 
+  rename(count=1) %>% 
+  filter(count>0) %>% 
+  arrange(-count)
+
+#filtering
+sample_sums(phyloseq_16S_archaea) %>% 
+  as.data.frame() %>% 
+  rename(count=1) %>% 
+  filter(count>0) %>% 
+  arrange(-count) %>% 
+  summarise(mean=mean(count),sd=sd(count))
+
+#without filtering
+sample_sums(phyloseq_16S_archaea) %>% 
+  as.data.frame() %>% 
+  rename(count=1) %>% 
+  arrange(-count) %>% 
+  summarise(mean=mean(count),sd=sd(count))
+```
+```{r}
+sample_sums(phyloseq_16S_archaea) %>% 
+  as.data.frame() %>% 
+  rename(count=1) %>% 
+  filter(count>0) %>% 
+  arrange(-count) %>%
+  mutate(across(everything(), ~ as.integer(. > 0)))%>% 
+  rownames_to_column(., "sample") %>% 
+  left_join(., sample_metadata, by="sample")%>% 
+  group_by(Species) %>% 
+  summarise(n_individuals=sum(count))
+```
+
+```{r}
+sample_sums(phyloseq_16S_archaea) %>% 
+  as.data.frame() %>% 
+  rename(count=1) %>% 
+  filter(count>0) %>% 
+  arrange(-count) %>% 
+  rownames_to_column(., "sample") %>% 
+  left_join(., sample_metadata, by="sample")%>% 
+  group_by(Species) %>% 
+  summarise(total_count=sum(count))
+```
+
+
+#### Bacteria phylum level
 ```{r taxonomy_barplot_ampli, fig.height=6, fig.width=10, fig.fullwidth=TRUE}
 genome_counts_filt %>%
   mutate_at(vars(-genome),  ~ . / sum(.)) %>% 
@@ -1062,22 +1147,26 @@ for (bat in bats) {
 
 
 ```{r merge_ampli, comment="", message=FALSE, warning=FALSE}
-summary_table <- total_mags %>%
+summary_table_ampli <- total_mags %>%
   left_join(., no_annotation, by = "Bat") %>%
   left_join(., single_ind, by = "Bat") %>%
-  left_join(., single_sp, by = "Bat")
-summary_table
+  left_join(., single_sp, by = "Bat") %>% 
+  mutate(MAGs_noSingleSpecies=MAGs-Single_individual)
+  
+summary_table_ampli
 ```
 
 
 ```{r summary_table_ampli, comment="", message=FALSE, warning=FALSE}
-summary_table %>% 
+summary_table_ampli %>% 
   select(-Phylum,-Family, -Genus) %>% 
   rowwise() %>% 
+  mutate(Mag_perc=MAGs*100/3834)%>% 
+  mutate(MAGs_noSingleSp_perc=MAGs_noSingleSpecies*100/MAGs)%>% 
   mutate(No_genus_perc=No_genus*100/MAGs)%>% 
   mutate(No_species_perc=No_species*100/MAGs) %>% 
   mutate(Single_individual_perc=Single_individual*100/MAGs)%>% 
   mutate(Single_species_perc=Single_species*100/MAGs) %>% 
   mutate(Single_individual_per_unique=Single_individual*100/Single_species) %>% 
-  select(1,6:11)
+  select(1,8:14)
 ```
