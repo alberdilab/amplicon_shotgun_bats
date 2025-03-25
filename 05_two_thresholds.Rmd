@@ -70,6 +70,68 @@ master_table %>%
   )
 ```
 
+## Total archaeal ASVs
+```{r totalasv_arch, message=FALSE, fig.height=16, fig.width=18, fig.fullwidth=TRUE}
+archaea_total <- master_table %>%
+  left_join(., genome_metadata, by="genome")   %>% 
+  filter(domain=="Archaea") %>%
+  group_by(copy_threshold, prevalence, genome) %>%
+  summarise(asv_count = sum(value != 0, na.rm = TRUE)) %>%
+  group_by(copy_threshold, prevalence) %>%
+  summarise(Total = sum(asv_count != 0, na.rm = TRUE))
+master_table %>%
+  left_join(., genome_metadata, by="genome")   %>% 
+  filter(domain=="Archaea") %>%
+  group_by(Species, copy_threshold, prevalence) %>% 
+  summarise(asv_count = sum(value != 0, na.rm = TRUE)) %>%
+  pivot_wider(names_from = Species, values_from = c(asv_count)) %>%
+  left_join(.,
+            archaea_total,
+            by = join_by(
+              "prevalence" == "prevalence",
+              "copy_threshold" == "copy_threshold"
+            )) %>%
+  pivot_longer(!c(copy_threshold, prevalence),
+               names_to = "Species",
+               values_to = "ASVs") %>%
+  ggplot(aes(
+    x = prevalence,
+    y = ASVs,
+    group = Species,
+    color = Species
+  )) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  facet_wrap( ~ factor(
+    copy_threshold,
+    labels = c(
+      "t0" = "No cut-off",
+      "t1" = "Cut-off 0.0001",
+      "t2" = "Cut-off 0.001",
+      "t3" = "Cut-off 0.01",
+      "t4" = "Cut-off 0.1"
+    )
+  ), scales = "free_y") +
+  labs(x = "Prevalence threshold (%)", y = "Total ASVs", color = "Bat species") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 20, face = "bold"),
+    axis.text = element_text(face = "bold", size = 18),
+    panel.background = element_blank(),
+    axis.line = element_line(
+      size = 0.5,
+      linetype = "solid",
+      colour = "black"
+    ),
+    strip.text = element_text(size = 20),
+    legend.text = element_text(size = 16),
+    legend.title = element_text(size = 18),
+    legend.position = "bottom",
+    legend.box = "horizontal"
+  )
+```
 ## Single to individuals
 ```{r single_ind_thres, comment="", message=FALSE, warning=FALSE}
 total_single <- master_table %>%
@@ -127,7 +189,8 @@ master_table %>%
   rename(
     `Copy threshold` = copy_threshold,
     `No prevalence` = p0,
-    `Prevalence 10%` = p10
+    `Prevalence 10%` = p10,
+    
   ) %>%
   arrange(Species) %>%
   tt()
@@ -506,7 +569,7 @@ wilcox_results_table %>%
     `Copy threshold` = Copy_threshold,
     `Prevalence` = Prevalence,
     `W statistic` = W_statistic,
-    `P value` = P_value
+    `P_value` = P_value
   ) %>%
   tt()
 ```
@@ -535,6 +598,39 @@ wilcox_results_table %>%
     )
   ) %>%
   filter(P_value<0.05) %>% 
+  rename(
+    `Copy threshold` = Copy_threshold,
+    `Prevalence` = Prevalence,
+    `W statistic` = W_statistic,
+    `P value` = P_value
+  ) %>%
+  tt()
+```
+
+***Non-Significant p values***
+```{r wilco_results_sig, comment="", message=FALSE, warning=FALSE}
+wilcox_results_table %>%
+  mutate(
+    Copy_threshold = case_when(
+      Copy_threshold == "t0" ~ " no cut-off",
+      Copy_threshold == "t1" ~ "cut-off 0.0001",
+      Copy_threshold == "t2" ~ "cut-off 0.001",
+      Copy_threshold == "t3" ~ "cut-off 0.01",
+      Copy_threshold == "t4" ~ "cut-off 0.1",
+      TRUE ~ Copy_threshold
+    )
+  ) %>%
+  mutate(
+    Prevalence = case_when(
+      Prevalence == "p0" ~ "No prevalence",
+      Prevalence == "p10" ~ "Prevalence 10%",
+      Prevalence == "p20" ~ "Prevalence 20%",
+      Prevalence == "p30" ~ "Prevalence 30%",
+      Prevalence == "p40" ~ "Prevalence 40%",
+      TRUE ~ Prevalence
+    )
+  ) %>%
+  filter(P_value>0.05) %>% 
   rename(
     `Copy threshold` = Copy_threshold,
     `Prevalence` = Prevalence,
@@ -622,8 +718,10 @@ diversity_master %>%
 
 ***Save the table with selected filtering thresholds***
 
-```{r selected_table, comment="", message=FALSE, warning=FALSE}
+```{r selected_table, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 load("resources/amplicon/data_nocopyfilt.Rdata")
+load("resources/amplicon/master_table.Rdata")
+
 
 genome_counts_filt_amplicon <- master_table %>%
   mutate(filter = str_c(copy_threshold, "_", prevalence)) %>%
@@ -643,7 +741,7 @@ genome_metadata_amplicon <- genome_metadata %>%
 save(sample_metadata_amplicon, genome_metadata_amplicon, genome_counts_filt_amplicon, file = "resources/amplicon/selected_filtering.Rdata")
 ```
 
-```{r selected_table1, comment="", message=FALSE, warning=FALSE}
+```{r selected_table1, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 load("resources/amplicon/data_nocopyfilt.Rdata")
 
 genome_counts_filt_amplicon_t0_p30 <- master_table %>%
@@ -656,10 +754,10 @@ genome_counts_filt_amplicon_t0_p30 <- master_table %>%
   filter(rowSums(across(-genome, ~ . != 0)) > 0)
 
 sample_metadata_amplicon_t0_p30 <- sample_metadata %>%
-  filter(sample %in% colnames(genome_counts_filt_amplicon))
+  filter(sample %in% colnames(genome_counts_filt_amplicon_t0_p30))
 
 genome_metadata_amplicon_t0_p30 <- genome_metadata %>%
-  filter(genome %in% genome_counts_filt_amplicon$genome)
+  filter(genome %in% genome_counts_filt_amplicon_t0_p30$genome)
 
 save(sample_metadata_amplicon_t0_p30, genome_metadata_amplicon_t0_p30, genome_counts_filt_amplicon_t0_p30, file = "resources/amplicon/second_filtering_t0_p30.Rdata")
 ```

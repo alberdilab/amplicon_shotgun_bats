@@ -429,6 +429,48 @@ save(sample_metadata,
      file = "resources/amplicon/data_nocopyfilt.Rdata")
 ```
 
+### Standard data filtering criteria
+```{r div_load_data_standard, comment="", message=FALSE, warning=FALSE}
+load("resources/amplicon/data_nocopyfilt.Rdata")
+```
+
+```{r filter_standard, comment="", message=FALSE, warning=FALSE}
+genome_metadata <- genome_metadata %>%
+  filter(!is.na(phylum))
+
+genome_counts_filt <- genome_counts_filt %>%
+  filter(genome %in% genome_metadata$genome) %>%
+  mutate_at(vars(-genome),  ~ . / sum(.)) %>%
+  column_to_rownames(., "genome") %>%
+  .[, colSums(.) > 0.00005] %>%
+  filter(rowSums(across(everything())) != 0) %>%
+  rownames_to_column(., "genome")
+
+genome_metadata <- genome_metadata %>%
+  filter(genome %in% genome_counts_filt$genome)
+
+phylum_colors <- read_tsv("https://raw.githubusercontent.com/earthhologenome/EHI_taxonomy_colour/main/ehi_phylum_colors.tsv") %>%
+  mutate_at(vars(phylum), ~ str_replace(., "[dpcofgs]__", ""))%>%
+    right_join(genome_metadata, by=join_by(phylum == phylum)) %>%
+    arrange(match(genome, genome_metadata$genome)) %>%
+    select(phylum, colors) %>% 
+    unique() %>%
+    arrange(phylum) %>%
+    pull(colors, name=phylum)
+
+phyloseq_16S_stand <- prune_taxa(taxa_names(phyloseq_16S_filtered) %in% genome_counts_filt$genome, phyloseq_16S_filtered)
+
+```
+
+```{r save_ampli, comment="", message=FALSE, warning=FALSE, eval=FALSE}
+save(sample_metadata, 
+     genome_metadata,
+     genome_counts_filt,
+     phylum_colors,
+     phyloseq_16S_stand,
+     file = "resources/amplicon/data_standard_filt.Rdata")
+```
+
 ### Create master table for amplicon data
 
 ```{r load_data_amplicon_no_filtered, comment="", message=FALSE, warning=FALSE, eval=FALSE}

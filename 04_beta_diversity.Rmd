@@ -11,28 +11,87 @@ set.seed(24022025)
 ```{r load_data_beta}
 load("resources/metagenomics/data_filtered.Rdata")
 species_color <- c("#e5bd5b", "#6b7398", "#76b183")
+```
+
+***Identifying outliers***
+```{r beta_div_nmds_neutral_plot, comment="", message=FALSE, warning=FALSE, fig.height=5, fig.width=10, fig.fullwidth=TRUE}
+
+beta_q1n <- genome_counts_filt %>%
+  column_to_rownames(., "genome") %>%
+  filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
+  select_if( ~ !all(. == 0)) %>%
+  hillpair(., q = 1)
+
+beta_q1n$S %>%
+  vegan::metaMDS(.,
+                 trymax = 500,
+                 k = 2,
+                 trace = 0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(sample_metadata, by = join_by(sample == sample)) %>%
+  group_by(Species) %>%
+  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
+  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
+  ungroup() %>%
+  ggplot(aes(
+    x = NMDS1,
+    y = NMDS2,
+    color = Species
+  )) +
+  geom_point(size = 4) +
+  scale_color_manual(values = species_color) +
+  geom_segment(
+    aes(
+      x = x_cen,
+      y = y_cen,
+      xend = NMDS1,
+      yend = NMDS2
+    ),
+    alpha = 0.9,
+    show.legend = FALSE
+  ) +
+  theme(
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    panel.background = element_blank(),
+    axis.line = element_line(
+      size = 0.5,
+      linetype = "solid",
+      colour = "black"
+    ),
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.position = "right",
+    legend.box = "vertical"
+  ) +
+  labs(color = "Species")+geom_text_repel(aes(label = sample), size=3)
+```
+
+```{r}
 load("resources/metagenomics/beta_filtered.Rdata")
 sample_metadata <- sample_metadata %>%
   filter(!sample %in% c("H06", "H20"))
+genome_counts_filt <- genome_counts_filt %>%
+  select(-H06, -H20) %>%
+  filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
+  select_if( ~ !all(. == 0))
 ```
 
 ```{r beta_div, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 beta_q0n <- genome_counts_filt %>%
-  select(-H06, -H20) %>%
   column_to_rownames(., "genome") %>%
   filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
   select_if( ~ !all(. == 0)) %>%
   hillpair(., q = 0)
 
 beta_q1n <- genome_counts_filt %>%
-  select(-H06, -H20) %>%
   column_to_rownames(., "genome") %>%
   filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
   select_if( ~ !all(. == 0)) %>%
   hillpair(., q = 1)
 
 genome_counts_filt_beta <- genome_counts_filt %>%
-  select(-H06, -H20) %>%
   column_to_rownames(., "genome") %>%
   filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
   select_if( ~ !all(. == 0)) %>%
@@ -40,7 +99,6 @@ genome_counts_filt_beta <- genome_counts_filt %>%
 
 genome_tree <- keep.tip(genome_tree, tip = genome_counts_filt_beta$genome)
 beta_q1p <- genome_counts_filt %>%
-  select(-H06, -H20) %>%
   column_to_rownames(., "genome") %>%
   filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
   select_if( ~ !all(. == 0)) %>%
@@ -54,7 +112,6 @@ dist <- genome_gifts1 %>%
   traits2dist(., method = "gower")
 
 beta_q1f <- genome_counts_filt %>%
-  select(-H06, -H20) %>%
   column_to_rownames(., "genome") %>%
   filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
   select_if( ~ !all(. == 0)) %>%
@@ -136,7 +193,7 @@ adonis2(
 ### NMDS
 
 ***Richness***
-```{r beta_div_nmds_richness_plot, comment="", message=FALSE, warning=FALSE, fig.height=7, fig.width=10, fig.fullwidth=TRUE}
+```{r beta_div_nmds_richness_plot, comment="", message=FALSE, warning=FALSE, fig.height=5, fig.width=10, fig.fullwidth=TRUE}
 beta_q0n$S %>%
   vegan::metaMDS(.,
                  trymax = 500,
@@ -180,7 +237,7 @@ beta_q0n$S %>%
 ```
 
 ***Neutral***
-```{r beta_div_nmds_neutral_plot, comment="", message=FALSE, warning=FALSE, fig.height=7, fig.width=12, fig.fullwidth=TRUE}
+```{r beta_div_nmds_neutral_plot, comment="", message=FALSE, warning=FALSE, fig.height=5, fig.width=10, fig.fullwidth=TRUE}
 beta_q1n$S %>%
   vegan::metaMDS(.,
                  trymax = 500,
@@ -320,35 +377,19 @@ beta_q1f$S %>%
 ## Amplicon
 
 ```{r div_load_data_ampli2, comment="", message=FALSE, warning=FALSE}
-load("resources/amplicon/data_nocopyfilt.Rdata")
+load("resources/amplicon/data_standard_filt.Rdata")
 ```
 
-```{r filter_copy3, comment="", message=FALSE, warning=FALSE}
-genome_metadata <- genome_metadata %>%
-  filter(!is.na(phylum))
-
-genome_counts_filt <- genome_counts_filt %>%
-  filter(genome %in% genome_metadata$genome) %>%
-  mutate_at(vars(-genome),  ~ . / sum(.)) %>%
-  column_to_rownames(., "genome") %>%
-  .[, colSums(.) > 0.00005] %>%
-  filter(rowSums(across(everything())) != 0) %>%
-  rownames_to_column(., "genome")
-
-genome_metadata <- genome_metadata %>%
-  filter(genome %in% genome_counts_filt$genome)
-```
-
-```{r beta_div_ampli, comment="", message=FALSE, warning=FALSE, eval=FALSE}
+```{r beta_div_ampli, comment="", message=FALSE, warning=FALSE}
 beta_q0n <- genome_counts_filt %>%
-  #  select(-H06, -H20) %>%
+#  select(-H06, -H20) %>%
   column_to_rownames(., "genome") %>%
   filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
   select_if( ~ !all(. == 0)) %>%
   hillpair(., q = 0)
 
 beta_q1n <- genome_counts_filt %>%
-  #    select(-H06, -H20) %>%
+#  select(-H06, -H20) %>%
   column_to_rownames(., "genome") %>%
   filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
   select_if( ~ !all(. == 0)) %>%
@@ -427,7 +468,7 @@ pairwise.adonis(
 ### NMDS
 
 ***Richness***
-```{r beta_div_nmds_richness_plot_ampli, comment="", message=FALSE, warning=FALSE, fig.height=7, fig.width=10, fig.fullwidth=TRUE}
+```{r beta_div_nmds_richness_plot_ampli, comment="", message=FALSE, warning=FALSE, fig.height=5, fig.width=10, fig.fullwidth=TRUE}
 beta_q0n$S %>%
   vegan::metaMDS(.,
                  trymax = 500,
@@ -471,7 +512,7 @@ beta_q0n$S %>%
 ```
 
 ***Neutral***
-```{r beta_div_nmds_neutral_plot_ampli, comment="", message=FALSE, warning=FALSE, fig.height=7, fig.width=10, fig.fullwidth=TRUE}
+```{r beta_div_nmds_neutral_plot_ampli, comment="", message=FALSE, warning=FALSE, fig.height=5, fig.width=8, fig.fullwidth=TRUE}
 beta_q1n$S %>%
   vegan::metaMDS(.,
                  trymax = 500,
@@ -512,4 +553,128 @@ beta_q1n$S %>%
     legend.box = "vertical"
   ) +
   labs(color = "Species")
+```
+
+
+## Different abundance analysis
+```{r}
+load("resources/metagenomics/data_filtered.Rdata")
+phyloseq_metagenome_filtered <- subset_samples(phyloseq_metagenome_filtered, !sample_names(phyloseq_metagenome_filtered) %in% c("H06", "H20"))
+phyloseq_metagenome_filtered <- prune_taxa(taxa_sums(phyloseq_metagenome_filtered)>0, phyloseq_metagenome_filtered)
+sample_data(phyloseq_metagenome_filtered)$method <- "shotgun"
+sample_data(phyloseq_metagenome_filtered)$sample_ID <- rownames(sample_data(phyloseq_metagenome_filtered))
+
+otu_table(phyloseq_metagenome_filtered) <- otu_table(
+  apply(otu_table(phyloseq_metagenome_filtered), 2, as.integer), 
+  taxa_are_rows = taxa_are_rows(phyloseq_metagenome_filtered)  # Preserve original orientation
+)
+
+phyloseq_metagenome_filtered_phylum <- tax_glom(phyloseq_metagenome_filtered, "phylum")
+
+load("resources/amplicon/data_standard_filt.Rdata")
+sample_names(phyloseq_16S_stand) <- paste0(sample_names(phyloseq_16S_stand), "_ampli")
+sample_data(phyloseq_16S_stand)$method <- "amplicon"
+sample_data(phyloseq_metagenome_filtered)$sample_ID <- rownames(sample_data(phyloseq_metagenome_filtered))
+
+phyloseq_16S_stand_phylum <- tax_glom(phyloseq_16S_stand, "phylum")
+
+merge_phylo <- merge_phyloseq(phyloseq_16S_stand_phylum,phyloseq_metagenome_filtered_phylum)
+
+```
+
+```{r}
+otu1 <- as.data.frame(otu_table(phyloseq_metagenome_filtered_phylum)) %>%
+  mutate_all(as.integer)
+tax1 <- as.data.frame(tax_table(phyloseq_metagenome_filtered_phylum)) %>% 
+  select(phylum)
+otu1$phylum <- tax1$phylum
+
+otu2 <- as.data.frame(otu_table(phyloseq_16S_stand_phylum))
+tax2 <- as.data.frame(tax_table(phyloseq_16S_stand_phylum)) %>% select(phylum)
+otu2$phylum <- tax2$phylum
+
+merged_otu <- full_join(otu1, otu2, by = "phylum") %>%
+  mutate(across(everything(), ~replace_na(., 0)))%>%
+  group_by(phylum) %>%
+  summarise(across(everything(), sum, na.rm = TRUE))
+merged_otu_mat <- as.matrix(merged_otu %>% select(-phylum))
+rownames(merged_otu_mat) <- merged_otu$phylum
+otu_table_merged <- otu_table(merged_otu_mat, taxa_are_rows = TRUE)
+
+merged_physeq_phylum <- phyloseq(otu_table_merged, sample_data(merge_phylo))
+merged_physeq_phylum <- prune_taxa(taxa_sums(merged_physeq_phylum)>0, merged_physeq_phylum)
+
+```
+
+```{r}
+ancom_rand_output_struc = ancombc2(data = merged_physeq_phylum, 
+                  assay_name = "counts", 
+                  tax_level = NULL,
+                  fix_formula = "method",
+  #                rand_formula = "(1|sample_ID)",
+                  p_adj_method = "holm", 
+                  pseudo_sens = TRUE,
+                  prv_cut =0, 
+                  lib_cut = 0, 
+                  s0_perc = 0.05,
+                  group = "method", 
+                  struc_zero = TRUE, 
+                  neg_lb = FALSE,
+                  alpha = 0.05, 
+                  n_cl = 2, 
+                  verbose = TRUE,
+                  global = FALSE, 
+                  pairwise = FALSE, 
+                  dunnet = FALSE, 
+                  trend = FALSE,
+                  iter_control = list(tol = 1e-5, max_iter = 20, verbose = FALSE),
+                  em_control = list(tol = 1e-5, max_iter = 100),
+  #                lme_control = lme4::lmerControl(),
+                  mdfdr_control = list(fwer_ctrl_method = "holm", B = 100), 
+                  trend_control = NULL)
+```
+
+***Total number of structural zeros***
+```{r}
+structural_zeros <- ancom_rand_output_struc$zero_ind
+structural_zeros_df <- as.data.frame(structural_zeros) %>% 
+  column_to_rownames(., "taxon")
+structural_zero_taxa <- rownames(structural_zeros_df)[apply(structural_zeros_df, 1, any)]
+structural_zero_groups <- structural_zeros_df[structural_zero_taxa, , drop = FALSE] %>% 
+  rename("Amplicon"=1) %>% 
+  rename("Shotgun"=2)
+nrow(structural_zero_groups)
+```
+
+***Structural zeros in Amplicon***
+```{r}
+structural_zero_groups %>% 
+  filter(Amplicon==TRUE) %>% 
+  nrow() %>% 
+  cat()
+
+structural_zero_groups %>% 
+  filter(Amplicon==TRUE)
+```
+
+***Structural zeros in Shotgun***
+```{r}
+structural_zero_groups %>% 
+  filter(Shotgun==TRUE) %>% 
+  nrow() %>% 
+  cat()
+
+structural_zero_groups %>% 
+  filter(Shotgun==TRUE)
+```
+
+***Phyla differentially abundant***
+```{r}
+ancom_rand_output_struc$res %>% 
+  filter(p_methodshotgun>0.05)
+```
+
+```{r}
+ancom_rand_output_struc$res %>% 
+  filter(p_methodshotgun<0.05)
 ```
