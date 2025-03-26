@@ -608,7 +608,7 @@ wilcox_results_table %>%
 ```
 
 ***Non-Significant p values***
-```{r wilco_results_sig, comment="", message=FALSE, warning=FALSE}
+```{r wilco_results_nonsig, comment="", message=FALSE, warning=FALSE}
 wilcox_results_table %>%
   mutate(
     Copy_threshold = case_when(
@@ -744,7 +744,7 @@ save(sample_metadata_amplicon, genome_metadata_amplicon, genome_counts_filt_ampl
 ```{r selected_table1, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 load("resources/amplicon/data_nocopyfilt.Rdata")
 
-genome_counts_filt_amplicon_t0_p30 <- master_table %>%
+genome_counts_filt_amplicon <- master_table %>%
   mutate(filter = str_c(copy_threshold, "_", prevalence)) %>%
   filter(filter == "t0_p30") %>%
   select(-copy_threshold, -prevalence, -filter, -pa, -Species) %>%
@@ -753,12 +753,12 @@ genome_counts_filt_amplicon_t0_p30 <- master_table %>%
   select(genome, where( ~ is.numeric(.) && sum(.) > 0)) %>%
   filter(rowSums(across(-genome, ~ . != 0)) > 0)
 
-sample_metadata_amplicon_t0_p30 <- sample_metadata %>%
+sample_metadata_amplicon <- sample_metadata %>%
   filter(sample %in% colnames(genome_counts_filt_amplicon_t0_p30))
 
-genome_metadata_amplicon_t0_p30 <- genome_metadata %>%
+genome_metadata_amplicon <- genome_metadata %>%
   filter(genome %in% genome_counts_filt_amplicon_t0_p30$genome)
 
-save(sample_metadata_amplicon_t0_p30, genome_metadata_amplicon_t0_p30, genome_counts_filt_amplicon_t0_p30, file = "resources/amplicon/second_filtering_t0_p30.Rdata")
+save(sample_metadata_amplicon, genome_metadata_amplicon, genome_counts_filt_amplicon,file = "resources/amplicon/second_filtering_t0_p30.Rdata")
 ```
 

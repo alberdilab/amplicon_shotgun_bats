@@ -24,7 +24,7 @@
 <meta name="author" content="Antton Alberdi" />
 
 
-<meta name="date" content="2025-03-17" />
+<meta name="date" content="2025-03-26" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -2086,7 +2086,8 @@ color: #a52929;
 <ul>
 <li class="chapter" data-level="2.3.1" data-path="prepare-data.html"><a href="prepare-data.html#filtering-the-metagenomic-data-to-match-amplicon-data"><i class="fa fa-check"></i><b>2.3.1</b> Filtering the metagenomic data to match amplicon data</a></li>
 <li class="chapter" data-level="2.3.2" data-path="prepare-data.html"><a href="prepare-data.html#matching-the-16s-data-to-metagenomic-data"><i class="fa fa-check"></i><b>2.3.2</b> Matching the 16S data to metagenomic data</a></li>
-<li class="chapter" data-level="2.3.3" data-path="prepare-data.html"><a href="prepare-data.html#create-master-table-for-amplicon-data"><i class="fa fa-check"></i><b>2.3.3</b> Create master table for amplicon data</a></li>
+<li class="chapter" data-level="2.3.3" data-path="prepare-data.html"><a href="prepare-data.html#standard-data-filtering-criteria"><i class="fa fa-check"></i><b>2.3.3</b> Standard data filtering criteria</a></li>
+<li class="chapter" data-level="2.3.4" data-path="prepare-data.html"><a href="prepare-data.html#create-master-table-for-amplicon-data"><i class="fa fa-check"></i><b>2.3.4</b> Create master table for amplicon data</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="community-composition.html"><a href="community-composition.html"><i class="fa fa-check"></i><b>3</b> Community composition</a>
@@ -2125,11 +2126,12 @@ color: #a52929;
 <li class="chapter" data-level="5.2.1" data-path="beta-diversity.html"><a href="beta-diversity.html#permanova-1"><i class="fa fa-check"></i><b>5.2.1</b> Permanova</a></li>
 <li class="chapter" data-level="5.2.2" data-path="beta-diversity.html"><a href="beta-diversity.html#nmds-1"><i class="fa fa-check"></i><b>5.2.2</b> NMDS</a></li>
 </ul></li>
+<li class="chapter" data-level="5.3" data-path="beta-diversity.html"><a href="beta-diversity.html#different-abundance-analysis"><i class="fa fa-check"></i><b>5.3</b> Different abundance analysis</a></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html"><i class="fa fa-check"></i><b>6</b> Copy filtering &amp; prevalence</a>
 <ul>
 <li class="chapter" data-level="6.1" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#total-asvs"><i class="fa fa-check"></i><b>6.1</b> Total ASVs</a></li>
-<li class="chapter" data-level="6.2" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#single-to-individuals"><i class="fa fa-check"></i><b>6.2</b> Single to individuals</a></li>
+<li class="chapter" data-level="6.2" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#total-archaeal-asvs"><i class="fa fa-check"></i><b>6.2</b> Total archaeal ASVs</a></li>
 <li class="chapter" data-level="6.3" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#single-to-species"><i class="fa fa-check"></i><b>6.3</b> Single to species</a></li>
 <li class="chapter" data-level="6.4" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#alpha-diversity-1"><i class="fa fa-check"></i><b>6.4</b> Alpha Diversity</a>
 <ul>
@@ -2213,61 +2215,61 @@ color: #a52929;
 <h1><span class="header-section-number">Chapter 4</span> Alpha diversity<a href="alpha-diversity.html#alpha-diversity" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <div id="metagenomics-2" class="section level2 hasAnchor" number="4.1">
 <h2><span class="header-section-number">4.1</span> Metagenomics<a href="alpha-diversity.html#metagenomics-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb89"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb89-1"><a href="alpha-diversity.html#cb89-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;resources/metagenomics/data_filtered.Rdata&quot;</span>)</span>
-<span id="cb89-2"><a href="alpha-diversity.html#cb89-2" tabindex="-1"></a>treatment_colors <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;#e5bd5b&quot;</span>, <span class="st">&quot;#6b7398&quot;</span>, <span class="st">&quot;#76b183&quot;</span>, <span class="st">&quot;#d57d2c&quot;</span>, <span class="st">&quot;#2a2d26&quot;</span>, <span class="st">&quot;#f9d4cc&quot;</span>, <span class="st">&quot;#3c634e&quot;</span>, <span class="st">&quot;#ea68c3&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb90"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb90-1"><a href="alpha-diversity.html#cb90-1" tabindex="-1"></a>richness <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
-<span id="cb90-2"><a href="alpha-diversity.html#cb90-2" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb90-3"><a href="alpha-diversity.html#cb90-3" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb90-4"><a href="alpha-diversity.html#cb90-4" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb90-5"><a href="alpha-diversity.html#cb90-5" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb90-6"><a href="alpha-diversity.html#cb90-6" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb90-7"><a href="alpha-diversity.html#cb90-7" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">richness =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb90-8"><a href="alpha-diversity.html#cb90-8" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
-<span id="cb90-9"><a href="alpha-diversity.html#cb90-9" tabindex="-1"></a></span>
-<span id="cb90-10"><a href="alpha-diversity.html#cb90-10" tabindex="-1"></a>neutral <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
-<span id="cb90-11"><a href="alpha-diversity.html#cb90-11" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb90-12"><a href="alpha-diversity.html#cb90-12" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb90-13"><a href="alpha-diversity.html#cb90-13" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb90-14"><a href="alpha-diversity.html#cb90-14" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb90-15"><a href="alpha-diversity.html#cb90-15" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb90-16"><a href="alpha-diversity.html#cb90-16" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">neutral =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb90-17"><a href="alpha-diversity.html#cb90-17" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
-<span id="cb90-18"><a href="alpha-diversity.html#cb90-18" tabindex="-1"></a></span>
-<span id="cb90-19"><a href="alpha-diversity.html#cb90-19" tabindex="-1"></a>phylogenetic <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
-<span id="cb90-20"><a href="alpha-diversity.html#cb90-20" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb90-21"><a href="alpha-diversity.html#cb90-21" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb90-22"><a href="alpha-diversity.html#cb90-22" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">1</span>, <span class="at">tree =</span> genome_tree) <span class="sc">%&gt;%</span></span>
-<span id="cb90-23"><a href="alpha-diversity.html#cb90-23" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb90-24"><a href="alpha-diversity.html#cb90-24" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb90-25"><a href="alpha-diversity.html#cb90-25" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">phylogenetic =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb90-26"><a href="alpha-diversity.html#cb90-26" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
-<span id="cb90-27"><a href="alpha-diversity.html#cb90-27" tabindex="-1"></a></span>
-<span id="cb90-28"><a href="alpha-diversity.html#cb90-28" tabindex="-1"></a>dist <span class="ot">&lt;-</span> genome_gifts <span class="sc">%&gt;%</span></span>
-<span id="cb90-29"><a href="alpha-diversity.html#cb90-29" tabindex="-1"></a>  <span class="fu">to.elements</span>(., GIFT_db) <span class="sc">%&gt;%</span></span>
-<span id="cb90-30"><a href="alpha-diversity.html#cb90-30" tabindex="-1"></a>  <span class="fu">traits2dist</span>(., <span class="at">method =</span> <span class="st">&quot;gower&quot;</span>)</span>
-<span id="cb90-31"><a href="alpha-diversity.html#cb90-31" tabindex="-1"></a></span>
-<span id="cb90-32"><a href="alpha-diversity.html#cb90-32" tabindex="-1"></a>functional <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
-<span id="cb90-33"><a href="alpha-diversity.html#cb90-33" tabindex="-1"></a>  <span class="fu">filter</span>(genome <span class="sc">%in%</span> <span class="fu">rownames</span>(dist)) <span class="sc">%&gt;%</span></span>
-<span id="cb90-34"><a href="alpha-diversity.html#cb90-34" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb90-35"><a href="alpha-diversity.html#cb90-35" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb90-36"><a href="alpha-diversity.html#cb90-36" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">1</span>, <span class="at">dist =</span> dist) <span class="sc">%&gt;%</span></span>
-<span id="cb90-37"><a href="alpha-diversity.html#cb90-37" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb90-38"><a href="alpha-diversity.html#cb90-38" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb90-39"><a href="alpha-diversity.html#cb90-39" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">functional =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb90-40"><a href="alpha-diversity.html#cb90-40" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb90-41"><a href="alpha-diversity.html#cb90-41" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">functional =</span> <span class="fu">if_else</span>(<span class="fu">is.nan</span>(functional), <span class="dv">1</span>, functional))</span>
-<span id="cb90-42"><a href="alpha-diversity.html#cb90-42" tabindex="-1"></a></span>
-<span id="cb90-43"><a href="alpha-diversity.html#cb90-43" tabindex="-1"></a><span class="co"># Merge all metrics</span></span>
-<span id="cb90-44"><a href="alpha-diversity.html#cb90-44" tabindex="-1"></a>alpha_div <span class="ot">&lt;-</span> richness <span class="sc">%&gt;%</span></span>
-<span id="cb90-45"><a href="alpha-diversity.html#cb90-45" tabindex="-1"></a>  <span class="fu">full_join</span>(neutral, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample)) <span class="sc">%&gt;%</span></span>
-<span id="cb90-46"><a href="alpha-diversity.html#cb90-46" tabindex="-1"></a>  <span class="fu">full_join</span>(phylogenetic, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample)) <span class="sc">%&gt;%</span></span>
-<span id="cb90-47"><a href="alpha-diversity.html#cb90-47" tabindex="-1"></a>  <span class="fu">full_join</span>(functional, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample))</span></code></pre></div>
+<div class="sourceCode" id="cb111"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb111-1"><a href="alpha-diversity.html#cb111-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;resources/metagenomics/data_filtered.Rdata&quot;</span>)</span>
+<span id="cb111-2"><a href="alpha-diversity.html#cb111-2" tabindex="-1"></a>treatment_colors <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;#e5bd5b&quot;</span>, <span class="st">&quot;#6b7398&quot;</span>, <span class="st">&quot;#76b183&quot;</span>, <span class="st">&quot;#d57d2c&quot;</span>, <span class="st">&quot;#2a2d26&quot;</span>, <span class="st">&quot;#f9d4cc&quot;</span>, <span class="st">&quot;#3c634e&quot;</span>, <span class="st">&quot;#ea68c3&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb112"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb112-1"><a href="alpha-diversity.html#cb112-1" tabindex="-1"></a>richness <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
+<span id="cb112-2"><a href="alpha-diversity.html#cb112-2" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb112-3"><a href="alpha-diversity.html#cb112-3" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb112-4"><a href="alpha-diversity.html#cb112-4" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb112-5"><a href="alpha-diversity.html#cb112-5" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb112-6"><a href="alpha-diversity.html#cb112-6" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb112-7"><a href="alpha-diversity.html#cb112-7" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">richness =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb112-8"><a href="alpha-diversity.html#cb112-8" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
+<span id="cb112-9"><a href="alpha-diversity.html#cb112-9" tabindex="-1"></a></span>
+<span id="cb112-10"><a href="alpha-diversity.html#cb112-10" tabindex="-1"></a>neutral <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
+<span id="cb112-11"><a href="alpha-diversity.html#cb112-11" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb112-12"><a href="alpha-diversity.html#cb112-12" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb112-13"><a href="alpha-diversity.html#cb112-13" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb112-14"><a href="alpha-diversity.html#cb112-14" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb112-15"><a href="alpha-diversity.html#cb112-15" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb112-16"><a href="alpha-diversity.html#cb112-16" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">neutral =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb112-17"><a href="alpha-diversity.html#cb112-17" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
+<span id="cb112-18"><a href="alpha-diversity.html#cb112-18" tabindex="-1"></a></span>
+<span id="cb112-19"><a href="alpha-diversity.html#cb112-19" tabindex="-1"></a>phylogenetic <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
+<span id="cb112-20"><a href="alpha-diversity.html#cb112-20" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb112-21"><a href="alpha-diversity.html#cb112-21" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb112-22"><a href="alpha-diversity.html#cb112-22" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">1</span>, <span class="at">tree =</span> genome_tree) <span class="sc">%&gt;%</span></span>
+<span id="cb112-23"><a href="alpha-diversity.html#cb112-23" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb112-24"><a href="alpha-diversity.html#cb112-24" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb112-25"><a href="alpha-diversity.html#cb112-25" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">phylogenetic =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb112-26"><a href="alpha-diversity.html#cb112-26" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
+<span id="cb112-27"><a href="alpha-diversity.html#cb112-27" tabindex="-1"></a></span>
+<span id="cb112-28"><a href="alpha-diversity.html#cb112-28" tabindex="-1"></a>dist <span class="ot">&lt;-</span> genome_gifts <span class="sc">%&gt;%</span></span>
+<span id="cb112-29"><a href="alpha-diversity.html#cb112-29" tabindex="-1"></a>  <span class="fu">to.elements</span>(., GIFT_db) <span class="sc">%&gt;%</span></span>
+<span id="cb112-30"><a href="alpha-diversity.html#cb112-30" tabindex="-1"></a>  <span class="fu">traits2dist</span>(., <span class="at">method =</span> <span class="st">&quot;gower&quot;</span>)</span>
+<span id="cb112-31"><a href="alpha-diversity.html#cb112-31" tabindex="-1"></a></span>
+<span id="cb112-32"><a href="alpha-diversity.html#cb112-32" tabindex="-1"></a>functional <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
+<span id="cb112-33"><a href="alpha-diversity.html#cb112-33" tabindex="-1"></a>  <span class="fu">filter</span>(genome <span class="sc">%in%</span> <span class="fu">rownames</span>(dist)) <span class="sc">%&gt;%</span></span>
+<span id="cb112-34"><a href="alpha-diversity.html#cb112-34" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb112-35"><a href="alpha-diversity.html#cb112-35" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb112-36"><a href="alpha-diversity.html#cb112-36" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">1</span>, <span class="at">dist =</span> dist) <span class="sc">%&gt;%</span></span>
+<span id="cb112-37"><a href="alpha-diversity.html#cb112-37" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb112-38"><a href="alpha-diversity.html#cb112-38" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb112-39"><a href="alpha-diversity.html#cb112-39" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">functional =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb112-40"><a href="alpha-diversity.html#cb112-40" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb112-41"><a href="alpha-diversity.html#cb112-41" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">functional =</span> <span class="fu">if_else</span>(<span class="fu">is.nan</span>(functional), <span class="dv">1</span>, functional))</span>
+<span id="cb112-42"><a href="alpha-diversity.html#cb112-42" tabindex="-1"></a></span>
+<span id="cb112-43"><a href="alpha-diversity.html#cb112-43" tabindex="-1"></a><span class="co"># Merge all metrics</span></span>
+<span id="cb112-44"><a href="alpha-diversity.html#cb112-44" tabindex="-1"></a>alpha_div <span class="ot">&lt;-</span> richness <span class="sc">%&gt;%</span></span>
+<span id="cb112-45"><a href="alpha-diversity.html#cb112-45" tabindex="-1"></a>  <span class="fu">full_join</span>(neutral, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample)) <span class="sc">%&gt;%</span></span>
+<span id="cb112-46"><a href="alpha-diversity.html#cb112-46" tabindex="-1"></a>  <span class="fu">full_join</span>(phylogenetic, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample)) <span class="sc">%&gt;%</span></span>
+<span id="cb112-47"><a href="alpha-diversity.html#cb112-47" tabindex="-1"></a>  <span class="fu">full_join</span>(functional, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample))</span></code></pre></div>
 <!-- preamble start -->
 
     <script>
 
-      function styleCell_61bf05xiu8d31r0qisw7(i, j, css_id) {
-          var table = document.getElementById("tinytable_61bf05xiu8d31r0qisw7");
+      function styleCell_ysb9tynsnneyo1a03eq5(i, j, css_id) {
+          var table = document.getElementById("tinytable_ysb9tynsnneyo1a03eq5");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -2277,7 +2279,7 @@ color: #a52929;
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_61bf05xiu8d31r0qisw7');
+        var table = document.getElementById('tinytable_ysb9tynsnneyo1a03eq5');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -2285,8 +2287,8 @@ color: #a52929;
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_61bf05xiu8d31r0qisw7(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_61bf05xiu8d31r0qisw7");
+      function spanCell_ysb9tynsnneyo1a03eq5(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_ysb9tynsnneyo1a03eq5");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -2316,14 +2318,14 @@ color: #a52929;
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 },  ], css_id: 'tinytable_css_rns57toaxi8y4qcmfa1x',}, 
-          { positions: [ { i: 4, j: 0 }, { i: 4, j: 1 }, { i: 4, j: 2 }, { i: 4, j: 3 }, { i: 4, j: 4 },  ], css_id: 'tinytable_css_7pw1r1s10e70sgphpjis',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 },  ], css_id: 'tinytable_css_znuo81kv1lkrxdjyq9ll',}, 
+          { positions: [ { i: 4, j: 0 }, { i: 4, j: 1 }, { i: 4, j: 2 }, { i: 4, j: 3 }, { i: 4, j: 4 },  ], css_id: 'tinytable_css_e1qdk5m81chbirqo8xes',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_61bf05xiu8d31r0qisw7(cell.i, cell.j, group.css_id);
+                  styleCell_ysb9tynsnneyo1a03eq5(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -2331,11 +2333,11 @@ color: #a52929;
 
     <style>
 
-.table td.tinytable_css_rns57toaxi8y4qcmfa1x, .table th.tinytable_css_rns57toaxi8y4qcmfa1x { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
-.table td.tinytable_css_7pw1r1s10e70sgphpjis, .table th.tinytable_css_7pw1r1s10e70sgphpjis { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_znuo81kv1lkrxdjyq9ll, .table th.tinytable_css_znuo81kv1lkrxdjyq9ll { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_e1qdk5m81chbirqo8xes, .table th.tinytable_css_e1qdk5m81chbirqo8xes { border-bottom: solid #d3d8dc 0.1em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_61bf05xiu8d31r0qisw7" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_ysb9tynsnneyo1a03eq5" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -2382,11 +2384,11 @@ color: #a52929;
 <!-- hack to avoid NA insertion in last line -->
 <div id="mixed-models" class="section level3 hasAnchor" number="4.1.1">
 <h3><span class="header-section-number">4.1.1</span> Mixed models<a href="alpha-diversity.html#mixed-models" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb91"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb91-1"><a href="alpha-diversity.html#cb91-1" tabindex="-1"></a>alpha_div_meta <span class="ot">&lt;-</span> alpha_div <span class="sc">%&gt;%</span></span>
-<span id="cb91-2"><a href="alpha-diversity.html#cb91-2" tabindex="-1"></a>  <span class="fu">left_join</span>(sample_metadata, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample))</span></code></pre></div>
+<div class="sourceCode" id="cb113"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb113-1"><a href="alpha-diversity.html#cb113-1" tabindex="-1"></a>alpha_div_meta <span class="ot">&lt;-</span> alpha_div <span class="sc">%&gt;%</span></span>
+<span id="cb113-2"><a href="alpha-diversity.html#cb113-2" tabindex="-1"></a>  <span class="fu">left_join</span>(sample_metadata, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample))</span></code></pre></div>
 <p><strong><em>Richness</em></strong></p>
-<div class="sourceCode" id="cb92"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb92-1"><a href="alpha-diversity.html#cb92-1" tabindex="-1"></a>Model_richness <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> richness <span class="sc">~</span> Species, <span class="at">data =</span> alpha_div_meta)</span>
-<span id="cb92-2"><a href="alpha-diversity.html#cb92-2" tabindex="-1"></a><span class="fu">anova</span>(Model_richness)</span></code></pre></div>
+<div class="sourceCode" id="cb114"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb114-1"><a href="alpha-diversity.html#cb114-1" tabindex="-1"></a>Model_richness <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> richness <span class="sc">~</span> Species, <span class="at">data =</span> alpha_div_meta)</span>
+<span id="cb114-2"><a href="alpha-diversity.html#cb114-2" tabindex="-1"></a><span class="fu">anova</span>(Model_richness)</span></code></pre></div>
 <pre class="script-output"><code>Analysis of Variance Table
 
 Response: richness
@@ -2395,7 +2397,7 @@ Species    2   1704  852.00  8.4391 0.0007235 ***
 Residuals 48   4846  100.96                      
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<div class="sourceCode" id="cb94"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb94-1"><a href="alpha-diversity.html#cb94-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_richness, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
+<div class="sourceCode" id="cb116"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb116-1"><a href="alpha-diversity.html#cb116-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_richness, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
 <pre class="script-output"><code>$emmeans
  Species emmean   SE df lower.CL upper.CL
  Eb       19.70 3.18 48    13.31    26.09
@@ -2412,8 +2414,8 @@ $contrasts
 
 P value adjustment: tukey method for comparing a family of 3 estimates </code></pre>
 <p><strong><em>Neutral</em></strong></p>
-<div class="sourceCode" id="cb96"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb96-1"><a href="alpha-diversity.html#cb96-1" tabindex="-1"></a>Model_neutral <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> neutral <span class="sc">~</span> Species, <span class="at">data =</span> alpha_div_meta)</span>
-<span id="cb96-2"><a href="alpha-diversity.html#cb96-2" tabindex="-1"></a><span class="fu">anova</span>(Model_neutral)</span></code></pre></div>
+<div class="sourceCode" id="cb118"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb118-1"><a href="alpha-diversity.html#cb118-1" tabindex="-1"></a>Model_neutral <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> neutral <span class="sc">~</span> Species, <span class="at">data =</span> alpha_div_meta)</span>
+<span id="cb118-2"><a href="alpha-diversity.html#cb118-2" tabindex="-1"></a><span class="fu">anova</span>(Model_neutral)</span></code></pre></div>
 <pre class="script-output"><code>Analysis of Variance Table
 
 Response: neutral
@@ -2422,7 +2424,7 @@ Species    2  190.82  95.411  4.1954 0.02093 *
 Residuals 48 1091.60  22.742                  
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<div class="sourceCode" id="cb98"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb98-1"><a href="alpha-diversity.html#cb98-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_neutral, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
+<div class="sourceCode" id="cb120"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb120-1"><a href="alpha-diversity.html#cb120-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_neutral, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
 <pre class="script-output"><code>$emmeans
  Species emmean   SE df lower.CL upper.CL
  Eb        7.33 1.51 48   4.2937    10.36
@@ -2439,8 +2441,8 @@ $contrasts
 
 P value adjustment: tukey method for comparing a family of 3 estimates </code></pre>
 <p><strong><em>Phylogenetic</em></strong></p>
-<div class="sourceCode" id="cb100"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb100-1"><a href="alpha-diversity.html#cb100-1" tabindex="-1"></a>Model_phylogenetic <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> phylogenetic <span class="sc">~</span> Species, <span class="at">data =</span> alpha_div_meta)</span>
-<span id="cb100-2"><a href="alpha-diversity.html#cb100-2" tabindex="-1"></a><span class="fu">anova</span>(Model_phylogenetic)</span></code></pre></div>
+<div class="sourceCode" id="cb122"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb122-1"><a href="alpha-diversity.html#cb122-1" tabindex="-1"></a>Model_phylogenetic <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> phylogenetic <span class="sc">~</span> Species, <span class="at">data =</span> alpha_div_meta)</span>
+<span id="cb122-2"><a href="alpha-diversity.html#cb122-2" tabindex="-1"></a><span class="fu">anova</span>(Model_phylogenetic)</span></code></pre></div>
 <pre class="script-output"><code>Analysis of Variance Table
 
 Response: phylogenetic
@@ -2449,7 +2451,7 @@ Species    2 21.011 10.5055  5.2778 0.008475 **
 Residuals 48 95.545  1.9905                    
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<div class="sourceCode" id="cb102"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb102-1"><a href="alpha-diversity.html#cb102-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_phylogenetic, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
+<div class="sourceCode" id="cb124"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb124-1"><a href="alpha-diversity.html#cb124-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_phylogenetic, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
 <pre class="script-output"><code>$emmeans
  Species emmean    SE df lower.CL upper.CL
  Eb        3.05 0.446 48    2.152     3.95
@@ -2466,8 +2468,8 @@ $contrasts
 
 P value adjustment: tukey method for comparing a family of 3 estimates </code></pre>
 <p><strong><em>Functional</em></strong></p>
-<div class="sourceCode" id="cb104"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb104-1"><a href="alpha-diversity.html#cb104-1" tabindex="-1"></a>Model_functional <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> functional <span class="sc">~</span> Species, <span class="at">data =</span> alpha_div_meta)</span>
-<span id="cb104-2"><a href="alpha-diversity.html#cb104-2" tabindex="-1"></a><span class="fu">anova</span>(Model_functional)</span></code></pre></div>
+<div class="sourceCode" id="cb126"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb126-1"><a href="alpha-diversity.html#cb126-1" tabindex="-1"></a>Model_functional <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> functional <span class="sc">~</span> Species, <span class="at">data =</span> alpha_div_meta)</span>
+<span id="cb126-2"><a href="alpha-diversity.html#cb126-2" tabindex="-1"></a><span class="fu">anova</span>(Model_functional)</span></code></pre></div>
 <pre class="script-output"><code>Analysis of Variance Table
 
 Response: functional
@@ -2476,7 +2478,7 @@ Species    2 0.32526 0.162631  3.8625 0.02783 *
 Residuals 48 2.02104 0.042105                  
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<div class="sourceCode" id="cb106"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb106-1"><a href="alpha-diversity.html#cb106-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_functional, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
+<div class="sourceCode" id="cb128"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb128-1"><a href="alpha-diversity.html#cb128-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_functional, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
 <pre class="script-output"><code>$emmeans
  Species emmean     SE df lower.CL upper.CL
  Eb        1.36 0.0649 48     1.23     1.49
@@ -2492,40 +2494,40 @@ $contrasts
  Ha - Pk   -0.1562 0.0643 48  -2.431  0.0486
 
 P value adjustment: tukey method for comparing a family of 3 estimates </code></pre>
-<div class="sourceCode" id="cb108"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb108-1"><a href="alpha-diversity.html#cb108-1" tabindex="-1"></a>alpha_div_meta <span class="ot">&lt;-</span> alpha_div <span class="sc">%&gt;%</span> </span>
-<span id="cb108-2"><a href="alpha-diversity.html#cb108-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">method=</span><span class="st">&quot;shotgun&quot;</span>)</span>
-<span id="cb108-3"><a href="alpha-diversity.html#cb108-3" tabindex="-1"></a><span class="fu">saveRDS</span>(alpha_div_meta, <span class="st">&quot;resources/metagenomics/metagenome_alpha_div.rds&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb130"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb130-1"><a href="alpha-diversity.html#cb130-1" tabindex="-1"></a>alpha_div_meta <span class="ot">&lt;-</span> alpha_div <span class="sc">%&gt;%</span> </span>
+<span id="cb130-2"><a href="alpha-diversity.html#cb130-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">method=</span><span class="st">&quot;shotgun&quot;</span>)</span>
+<span id="cb130-3"><a href="alpha-diversity.html#cb130-3" tabindex="-1"></a><span class="fu">saveRDS</span>(alpha_div_meta, <span class="st">&quot;resources/metagenomics/metagenome_alpha_div.rds&quot;</span>)</span></code></pre></div>
 </div>
 </div>
 <div id="amplicon-2" class="section level2 hasAnchor" number="4.2">
 <h2><span class="header-section-number">4.2</span> Amplicon<a href="alpha-diversity.html#amplicon-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb109"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb109-1"><a href="alpha-diversity.html#cb109-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;resources/amplicon/data_nocopyfilt.Rdata&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb110"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb110-1"><a href="alpha-diversity.html#cb110-1" tabindex="-1"></a>richness <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
-<span id="cb110-2"><a href="alpha-diversity.html#cb110-2" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb110-3"><a href="alpha-diversity.html#cb110-3" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb110-4"><a href="alpha-diversity.html#cb110-4" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb110-5"><a href="alpha-diversity.html#cb110-5" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb110-6"><a href="alpha-diversity.html#cb110-6" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb110-7"><a href="alpha-diversity.html#cb110-7" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">richness =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb110-8"><a href="alpha-diversity.html#cb110-8" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
-<span id="cb110-9"><a href="alpha-diversity.html#cb110-9" tabindex="-1"></a></span>
-<span id="cb110-10"><a href="alpha-diversity.html#cb110-10" tabindex="-1"></a>neutral <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
-<span id="cb110-11"><a href="alpha-diversity.html#cb110-11" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb110-12"><a href="alpha-diversity.html#cb110-12" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb110-13"><a href="alpha-diversity.html#cb110-13" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb110-14"><a href="alpha-diversity.html#cb110-14" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb110-15"><a href="alpha-diversity.html#cb110-15" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb110-16"><a href="alpha-diversity.html#cb110-16" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">neutral =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb110-17"><a href="alpha-diversity.html#cb110-17" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
-<span id="cb110-18"><a href="alpha-diversity.html#cb110-18" tabindex="-1"></a></span>
-<span id="cb110-19"><a href="alpha-diversity.html#cb110-19" tabindex="-1"></a>alpha_div <span class="ot">&lt;-</span> richness <span class="sc">%&gt;%</span></span>
-<span id="cb110-20"><a href="alpha-diversity.html#cb110-20" tabindex="-1"></a>  <span class="fu">full_join</span>(neutral, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample)) </span></code></pre></div>
+<div class="sourceCode" id="cb131"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb131-1"><a href="alpha-diversity.html#cb131-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;resources/amplicon/data_standard_filt.Rdata&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb132"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb132-1"><a href="alpha-diversity.html#cb132-1" tabindex="-1"></a>richness <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
+<span id="cb132-2"><a href="alpha-diversity.html#cb132-2" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb132-3"><a href="alpha-diversity.html#cb132-3" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb132-4"><a href="alpha-diversity.html#cb132-4" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb132-5"><a href="alpha-diversity.html#cb132-5" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb132-6"><a href="alpha-diversity.html#cb132-6" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb132-7"><a href="alpha-diversity.html#cb132-7" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">richness =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb132-8"><a href="alpha-diversity.html#cb132-8" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
+<span id="cb132-9"><a href="alpha-diversity.html#cb132-9" tabindex="-1"></a></span>
+<span id="cb132-10"><a href="alpha-diversity.html#cb132-10" tabindex="-1"></a>neutral <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
+<span id="cb132-11"><a href="alpha-diversity.html#cb132-11" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb132-12"><a href="alpha-diversity.html#cb132-12" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb132-13"><a href="alpha-diversity.html#cb132-13" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb132-14"><a href="alpha-diversity.html#cb132-14" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb132-15"><a href="alpha-diversity.html#cb132-15" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb132-16"><a href="alpha-diversity.html#cb132-16" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">neutral =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb132-17"><a href="alpha-diversity.html#cb132-17" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
+<span id="cb132-18"><a href="alpha-diversity.html#cb132-18" tabindex="-1"></a></span>
+<span id="cb132-19"><a href="alpha-diversity.html#cb132-19" tabindex="-1"></a>alpha_div <span class="ot">&lt;-</span> richness <span class="sc">%&gt;%</span></span>
+<span id="cb132-20"><a href="alpha-diversity.html#cb132-20" tabindex="-1"></a>  <span class="fu">full_join</span>(neutral, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample)) </span></code></pre></div>
 <!-- preamble start -->
 
     <script>
 
-      function styleCell_vwiwjwrgdjsemngimo88(i, j, css_id) {
-          var table = document.getElementById("tinytable_vwiwjwrgdjsemngimo88");
+      function styleCell_jxl5pbxmihp73by609q4(i, j, css_id) {
+          var table = document.getElementById("tinytable_jxl5pbxmihp73by609q4");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -2535,7 +2537,7 @@ P value adjustment: tukey method for comparing a family of 3 estimates </code></
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_vwiwjwrgdjsemngimo88');
+        var table = document.getElementById('tinytable_jxl5pbxmihp73by609q4');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -2543,8 +2545,8 @@ P value adjustment: tukey method for comparing a family of 3 estimates </code></
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_vwiwjwrgdjsemngimo88(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_vwiwjwrgdjsemngimo88");
+      function spanCell_jxl5pbxmihp73by609q4(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_jxl5pbxmihp73by609q4");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -2574,14 +2576,14 @@ P value adjustment: tukey method for comparing a family of 3 estimates </code></
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 2, j: 0 }, { i: 2, j: 1 }, { i: 2, j: 2 }, { i: 2, j: 3 }, { i: 2, j: 4 },  ], css_id: 'tinytable_css_z2rcropnu2bbz0sqp4q4',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 },  ], css_id: 'tinytable_css_7e7xihvfhbuewvjpr86a',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 },  ], css_id: 'tinytable_css_s6r8pzl5kvu4q2ih9yhm',}, 
+          { positions: [ { i: 2, j: 0 }, { i: 2, j: 1 }, { i: 2, j: 2 }, { i: 2, j: 3 }, { i: 2, j: 4 },  ], css_id: 'tinytable_css_ojbfw8c3wah8ipw5753o',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_vwiwjwrgdjsemngimo88(cell.i, cell.j, group.css_id);
+                  styleCell_jxl5pbxmihp73by609q4(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -2589,11 +2591,11 @@ P value adjustment: tukey method for comparing a family of 3 estimates </code></
 
     <style>
 
-.table td.tinytable_css_z2rcropnu2bbz0sqp4q4, .table th.tinytable_css_z2rcropnu2bbz0sqp4q4 { border-bottom: solid #d3d8dc 0.1em; }
-.table td.tinytable_css_7e7xihvfhbuewvjpr86a, .table th.tinytable_css_7e7xihvfhbuewvjpr86a { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_s6r8pzl5kvu4q2ih9yhm, .table th.tinytable_css_s6r8pzl5kvu4q2ih9yhm { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_ojbfw8c3wah8ipw5753o, .table th.tinytable_css_ojbfw8c3wah8ipw5753o { border-bottom: solid #d3d8dc 0.1em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_vwiwjwrgdjsemngimo88" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_jxl5pbxmihp73by609q4" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -2608,17 +2610,17 @@ P value adjustment: tukey method for comparing a family of 3 estimates </code></
         <tbody>
                 <tr>
                   <td>richness</td>
-                  <td>118.843±111.458</td>
-                  <td>186.1±181.768</td>
-                  <td>98.136±100.042</td>
-                  <td>107.421±56.01</td>
+                  <td>118.451±111.27</td>
+                  <td>185.7±181.293</td>
+                  <td>97.909±99.867</td>
+                  <td>106.842±56.145</td>
                 </tr>
                 <tr>
                   <td>neutral</td>
-                  <td>20.651±20.617</td>
-                  <td>31.16±35.431</td>
-                  <td>18.002±17.721</td>
-                  <td>18.187±10.505</td>
+                  <td>20.637±20.614</td>
+                  <td>31.156±35.423</td>
+                  <td>17.995±17.71</td>
+                  <td>18.16±10.514</td>
                 </tr>
         </tbody>
       </table>
@@ -2626,60 +2628,28 @@ P value adjustment: tukey method for comparing a family of 3 estimates </code></
 <!-- hack to avoid NA insertion in last line -->
 <div id="mixed-models-1" class="section level3 hasAnchor" number="4.2.1">
 <h3><span class="header-section-number">4.2.1</span> Mixed models<a href="alpha-diversity.html#mixed-models-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb111"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb111-1"><a href="alpha-diversity.html#cb111-1" tabindex="-1"></a>alpha_div_meta <span class="ot">&lt;-</span> alpha_div <span class="sc">%&gt;%</span></span>
-<span id="cb111-2"><a href="alpha-diversity.html#cb111-2" tabindex="-1"></a>  <span class="fu">left_join</span>(sample_metadata, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample))</span></code></pre></div>
+<div class="sourceCode" id="cb133"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb133-1"><a href="alpha-diversity.html#cb133-1" tabindex="-1"></a>alpha_div_meta <span class="ot">&lt;-</span> alpha_div <span class="sc">%&gt;%</span></span>
+<span id="cb133-2"><a href="alpha-diversity.html#cb133-2" tabindex="-1"></a>  <span class="fu">left_join</span>(sample_metadata, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample))</span></code></pre></div>
 <p><strong><em>Richness</em></strong></p>
-<div class="sourceCode" id="cb112"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb112-1"><a href="alpha-diversity.html#cb112-1" tabindex="-1"></a>Model_richness <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> richness <span class="sc">~</span> Species, <span class="at">data =</span> alpha_div_meta)</span>
-<span id="cb112-2"><a href="alpha-diversity.html#cb112-2" tabindex="-1"></a><span class="fu">anova</span>(Model_richness)</span></code></pre></div>
+<div class="sourceCode" id="cb134"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb134-1"><a href="alpha-diversity.html#cb134-1" tabindex="-1"></a>Model_richness <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> richness <span class="sc">~</span> Species, <span class="at">data =</span> alpha_div_meta)</span>
+<span id="cb134-2"><a href="alpha-diversity.html#cb134-2" tabindex="-1"></a><span class="fu">anova</span>(Model_richness)</span></code></pre></div>
 <pre class="script-output"><code>Analysis of Variance Table
 
 Response: richness
           Df Sum Sq Mean Sq F value  Pr(&gt;F)  
-Species    2  57147   28573  2.4318 0.09864 .
-Residuals 48 564002   11750                  
+Species    2  57068   28534  2.4371 0.09816 .
+Residuals 48 561986   11708                  
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<div class="sourceCode" id="cb114"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb114-1"><a href="alpha-diversity.html#cb114-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_richness, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
-<pre class="script-output"><code>$emmeans
- Species emmean   SE df lower.CL upper.CL
- Eb       186.1 34.3 48    117.2      255
- Ha       107.4 24.9 48     57.4      157
- Pk        98.1 23.1 48     51.7      145
-
-Confidence level used: 0.95 
-
-$contrasts
- contrast estimate   SE df t.ratio p.value
- Eb - Ha     78.68 42.3 48   1.858  0.1621
- Eb - Pk     87.96 41.3 48   2.128  0.0949
- Ha - Pk      9.28 33.9 48   0.273  0.9596
-
-P value adjustment: tukey method for comparing a family of 3 estimates </code></pre>
 <p><strong><em>Neutral</em></strong></p>
-<div class="sourceCode" id="cb116"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb116-1"><a href="alpha-diversity.html#cb116-1" tabindex="-1"></a>Model_neutral <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> neutral <span class="sc">~</span> Species, <span class="at">data =</span> alpha_div_meta)</span>
-<span id="cb116-2"><a href="alpha-diversity.html#cb116-2" tabindex="-1"></a><span class="fu">anova</span>(Model_neutral)</span></code></pre></div>
+<div class="sourceCode" id="cb136"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb136-1"><a href="alpha-diversity.html#cb136-1" tabindex="-1"></a>Model_neutral <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> neutral <span class="sc">~</span> Species, <span class="at">data =</span> alpha_div_meta)</span>
+<span id="cb136-2"><a href="alpha-diversity.html#cb136-2" tabindex="-1"></a><span class="fu">anova</span>(Model_neutral)</span></code></pre></div>
 <pre class="script-output"><code>Analysis of Variance Table
 
 Response: neutral
           Df  Sum Sq Mean Sq F value Pr(&gt;F)
-Species    2  1374.1  687.06  1.6589 0.2011
-Residuals 48 19879.6  414.16               </code></pre>
-<div class="sourceCode" id="cb118"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb118-1"><a href="alpha-diversity.html#cb118-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_neutral, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
-<pre class="script-output"><code>$emmeans
- Species emmean   SE df lower.CL upper.CL
- Eb        31.2 6.44 48    18.22     44.1
- Ha        18.2 4.67 48     8.80     27.6
- Pk        18.0 4.34 48     9.28     26.7
-
-Confidence level used: 0.95 
-
-$contrasts
- contrast estimate   SE df t.ratio p.value
- Eb - Ha    12.973 7.95 48   1.632  0.2424
- Eb - Pk    13.158 7.76 48   1.695  0.2174
- Ha - Pk     0.185 6.37 48   0.029  0.9995
-
-P value adjustment: tukey method for comparing a family of 3 estimates </code></pre>
+Species    2  1376.8  688.39   1.663 0.2003
+Residuals 48 19869.3  413.94               </code></pre>
 
 </div>
 </div>

@@ -25,6 +25,7 @@ save
 merging-amplicon-and-metagenomic-data
 filtering-the-metagenomic-data-to-match-amplicon-data
 matching-the-16s-data-to-metagenomic-data
+standard-data-filtering-criteria
 create-master-table-for-amplicon-data
 community-composition
 metagenomics-1
@@ -35,7 +36,8 @@ genus-level
 summary-table
 amplicon-1
 taxonomy-overview-1
-phylum-level-1
+archaea
+bacteria-phylum-level
 family-level-1
 genus-level-1
 summary-table-1
@@ -52,9 +54,10 @@ phylogenetic-diversity
 amplicon-3
 permanova-1
 nmds-1
+different-abundance-analysis
 copy-filtering-prevalence
 total-asvs
-single-to-individuals
+total-archaeal-asvs
 single-to-species
 alpha-diversity-1
 comparison-alpha-diversity-amplicom-different-threshold-vs-metagenomics

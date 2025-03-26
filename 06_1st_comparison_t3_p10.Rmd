@@ -610,8 +610,8 @@ adonis2(dist_matrix ~ method*Species,
 phylo_samples <- sample_metadata %>% 
   mutate(individual=sample)%>%
   column_to_rownames("sample") %>% 
+  mutate(method="shotgun") %>%
   select(1,8,9) %>%
-  mutate(method="shotgun") %>% 
   sample_data()
 phylo_genome <- genome_counts_filt %>% 
   select(one_of(c("genome",rownames(phylo_samples)))) %>%
@@ -629,42 +629,22 @@ phylo_taxonomy <- genome_metadata %>%
 physeq_genome_filtered <- phyloseq(phylo_genome, phylo_taxonomy, phylo_samples)
 physeq_genome_filtered_phylum <- tax_glom(physeq_genome_filtered, "phylum")
 ```
-```{r load_data_raw_ampli, comment="", message=FALSE, warning=FALSE}
-load("resources/amplicon/data_nocopyfilt.Rdata")
 
-genome_counts_selected <- genome_counts_filt %>%
-    select(all_of(colnames(genome_counts_filt_amplicon))) %>% 
-  filter(genome %in% genome_counts_filt_amplicon$genome) %>%   
-  arrange(genome) %>% 
-  column_to_rownames("genome")
-
-table <- genome_counts_filt_amplicon %>%
-  select(genome, all_of(colnames(genome_counts_selected))) %>%
-  mutate(across(all_of(colnames(genome_counts_selected)), ~ ifelse(. > 0, 1, 0)))%>%   
-  arrange(genome)%>% 
-  column_to_rownames("genome")
-
-
-genome_counts_amplicon_selected <- table * genome_counts_selected
-  
-
-```
 
 ```{r}
 phylo_samples <- sample_metadata_amplicon %>% 
   mutate(individual=sample)%>%
   mutate(sample = paste0(sample, "_ampli"))%>%
   column_to_rownames("sample")  %>% 
-  select(12,15,16) %>%
   mutate(method="amplicon")%>% 
+  select(12,15,16) %>%
   sample_data()
-phylo_genome <- genome_counts_amplicon_selected %>%
+phylo_genome <- genome_counts_filt_amplicon%>%
   rename_with(~ paste0(., "_ampli")) %>%
-  rownames_to_column("genome")%>% 
-  select(one_of(c("genome",rownames(phylo_samples)))) %>%
+  select(one_of(c("genome_ampli",rownames(phylo_samples)))) %>%
   filter(rowSums(across(where(is.numeric), ~ . != 0)) > 0) %>%
-  select(genome, where(~ is.numeric(.) && sum(.) > 0)) %>%
-  column_to_rownames("genome") %>% 
+  select(genome_ampli, where(~ is.numeric(.) && sum(.) > 0)) %>%
+  column_to_rownames("genome_ampli") %>% 
   otu_table(., taxa_are_rows = TRUE)
 phylo_taxonomy <- genome_metadata_amplicon %>% 
   filter(genome %in% rownames(phylo_genome)) %>% 
@@ -735,13 +715,45 @@ ancom_rand_output_struc_eb = ancombc2(data = physeq_eb,
                   trend_control = NULL)
 ```
 
-***Structural zeros***
+***Total structural zeros***
 ```{r}
-structural_zeros_eb <- ancom_rand_output_struc_eb$zero_ind %>% 
-  as.data.frame() %>% 
+structural_zeros <- ancom_rand_output_struc_eb$zero_ind
+
+structural_zeros_df <- as.data.frame(structural_zeros) %>% 
   column_to_rownames(., "taxon")
 
-rownames(structural_zeros_eb)[apply(structural_zeros_eb, 1, any)]
+structural_zero_taxa <- rownames(structural_zeros_df)[apply(structural_zeros_df, 1, any)]
+
+structural_zero_groups <- structural_zeros_df[structural_zero_taxa, , drop = FALSE] %>% 
+  rename("amplicon"=1) %>% 
+  rename("shotgun"=2)
+
+nrow(structural_zero_groups)
+
+```
+
+***Structural zeros in amplicon***
+```{r}
+structural_zero_groups %>% 
+  filter(amplicon==TRUE) %>% 
+  nrow()
+
+structural_zero_groups %>% 
+  filter(amplicon==TRUE) %>% 
+  rownames_to_column(., "phylum") %>% 
+  left_join(., data.frame(physeq_eb@tax_table) %>% rownames_to_column(., "phylum"), by="phylum") %>% 
+  select(phylum) %>% 
+  pull()
+```
+
+***Structural zeros in shotgun***
+```{r}
+structural_zero_groups %>% 
+  filter(shotgun==TRUE) %>% 
+  rownames_to_column(., "phylum") %>% 
+  left_join(., data.frame(physeq_eb@tax_table) %>% rownames_to_column(., "phylum"), by="phylum") %>% 
+  select(phylum) %>% 
+  pull()
 ```
 
 ***Phyla differentially abundant***
@@ -784,13 +796,45 @@ ancom_rand_output_struc_pk = ancombc2(data = physeq_pk,
                   trend_control = NULL)
 ```
 
-***Structural zeros***
+***Total structural zeros***
 ```{r}
-structural_zeros_pk <- ancom_rand_output_struc_pk$zero_ind %>% 
-  as.data.frame() %>% 
+structural_zeros <- ancom_rand_output_struc_pk$zero_ind
+
+structural_zeros_df <- as.data.frame(structural_zeros) %>% 
   column_to_rownames(., "taxon")
 
-rownames(structural_zeros_pk)[apply(structural_zeros_pk, 1, any)]
+structural_zero_taxa <- rownames(structural_zeros_df)[apply(structural_zeros_df, 1, any)]
+
+structural_zero_groups <- structural_zeros_df[structural_zero_taxa, , drop = FALSE] %>% 
+  rename("amplicon"=1) %>% 
+  rename("shotgun"=2)
+
+nrow(structural_zero_groups)
+
+```
+
+***Structural zeros in amplicon***
+```{r}
+structural_zero_groups %>% 
+  filter(amplicon==TRUE) %>% 
+  nrow()
+
+structural_zero_groups %>% 
+  filter(amplicon==TRUE) %>% 
+  rownames_to_column(., "phylum") %>% 
+  left_join(., data.frame(physeq_eb@tax_table) %>% rownames_to_column(., "phylum"), by="phylum") %>% 
+  select(phylum) %>% 
+  pull()
+```
+
+***Structural zeros in shotgun***
+```{r}
+structural_zero_groups %>% 
+  filter(shotgun==TRUE) %>% 
+  rownames_to_column(., "phylum") %>% 
+  left_join(., data.frame(physeq_eb@tax_table) %>% rownames_to_column(., "phylum"), by="phylum") %>% 
+  select(phylum) %>% 
+  pull()
 ```
 
 ***Phyla differentially abundant***
@@ -834,13 +878,52 @@ ancom_rand_output_struc_ha = ancombc2(data = physeq_ha,
                   trend_control = NULL)
 ```
 
-***Structural zeros***
+***Total structural zeros***
 ```{r}
-structural_zeros_ha <- ancom_rand_output_struc_ha$zero_ind %>% 
-  as.data.frame() %>% 
+structural_zeros <- ancom_rand_output_struc_ha$zero_ind
+
+structural_zeros_df <- as.data.frame(structural_zeros) %>% 
   column_to_rownames(., "taxon")
 
-rownames(structural_zeros_ha)[apply(structural_zeros_ha, 1, any)]
+structural_zero_taxa <- rownames(structural_zeros_df)[apply(structural_zeros_df, 1, any)]
+
+structural_zero_groups <- structural_zeros_df[structural_zero_taxa, , drop = FALSE] %>% 
+  rename("amplicon"=1) %>% 
+  rename("shotgun"=2)
+
+nrow(structural_zero_groups)
+
+```
+
+***Structural zeros in amplicon***
+```{r}
+
+structural_zero_groups %>% 
+  filter(amplicon==TRUE) %>% 
+  nrow()
+
+structural_zero_groups %>% 
+  filter(amplicon==TRUE) %>% 
+  rownames_to_column(., "phylum") %>% 
+  left_join(., data.frame(physeq_eb@tax_table) %>% rownames_to_column(., "phylum"), by="phylum") %>% 
+  select(phylum) %>% 
+  pull()
+```
+
+***Structural zeros in shotgun***
+```{r}
+structural_zero_groups %>% 
+  filter(shotgun==TRUE) %>% 
+  rownames_to_column(., "phylum") %>% 
+  left_join(., data.frame(physeq_eb@tax_table) %>% rownames_to_column(., "phylum"), by="phylum") %>% 
+  select(phylum) %>% 
+  pull()
+```
+
+***Phyla differentially abundant***
+```{r}
+ancom_rand_output_struc_pk$res %>% 
+  filter(p_methodshotgun<0.05)
 ```
 
 ***Phyla differentially abundant***
