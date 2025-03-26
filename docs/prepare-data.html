@@ -24,7 +24,7 @@
 <meta name="author" content="Antton Alberdi" />
 
 
-<meta name="date" content="2025-03-17" />
+<meta name="date" content="2025-03-26" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -2086,7 +2086,8 @@ color: #a52929;
 <ul>
 <li class="chapter" data-level="2.3.1" data-path="prepare-data.html"><a href="prepare-data.html#filtering-the-metagenomic-data-to-match-amplicon-data"><i class="fa fa-check"></i><b>2.3.1</b> Filtering the metagenomic data to match amplicon data</a></li>
 <li class="chapter" data-level="2.3.2" data-path="prepare-data.html"><a href="prepare-data.html#matching-the-16s-data-to-metagenomic-data"><i class="fa fa-check"></i><b>2.3.2</b> Matching the 16S data to metagenomic data</a></li>
-<li class="chapter" data-level="2.3.3" data-path="prepare-data.html"><a href="prepare-data.html#create-master-table-for-amplicon-data"><i class="fa fa-check"></i><b>2.3.3</b> Create master table for amplicon data</a></li>
+<li class="chapter" data-level="2.3.3" data-path="prepare-data.html"><a href="prepare-data.html#standard-data-filtering-criteria"><i class="fa fa-check"></i><b>2.3.3</b> Standard data filtering criteria</a></li>
+<li class="chapter" data-level="2.3.4" data-path="prepare-data.html"><a href="prepare-data.html#create-master-table-for-amplicon-data"><i class="fa fa-check"></i><b>2.3.4</b> Create master table for amplicon data</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="community-composition.html"><a href="community-composition.html"><i class="fa fa-check"></i><b>3</b> Community composition</a>
@@ -2125,11 +2126,12 @@ color: #a52929;
 <li class="chapter" data-level="5.2.1" data-path="beta-diversity.html"><a href="beta-diversity.html#permanova-1"><i class="fa fa-check"></i><b>5.2.1</b> Permanova</a></li>
 <li class="chapter" data-level="5.2.2" data-path="beta-diversity.html"><a href="beta-diversity.html#nmds-1"><i class="fa fa-check"></i><b>5.2.2</b> NMDS</a></li>
 </ul></li>
+<li class="chapter" data-level="5.3" data-path="beta-diversity.html"><a href="beta-diversity.html#different-abundance-analysis"><i class="fa fa-check"></i><b>5.3</b> Different abundance analysis</a></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html"><i class="fa fa-check"></i><b>6</b> Copy filtering &amp; prevalence</a>
 <ul>
 <li class="chapter" data-level="6.1" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#total-asvs"><i class="fa fa-check"></i><b>6.1</b> Total ASVs</a></li>
-<li class="chapter" data-level="6.2" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#single-to-individuals"><i class="fa fa-check"></i><b>6.2</b> Single to individuals</a></li>
+<li class="chapter" data-level="6.2" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#total-archaeal-asvs"><i class="fa fa-check"></i><b>6.2</b> Total archaeal ASVs</a></li>
 <li class="chapter" data-level="6.3" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#single-to-species"><i class="fa fa-check"></i><b>6.3</b> Single to species</a></li>
 <li class="chapter" data-level="6.4" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#alpha-diversity-1"><i class="fa fa-check"></i><b>6.4</b> Alpha Diversity</a>
 <ul>
@@ -2600,41 +2602,75 @@ color: #a52929;
 <span id="cb30-5"><a href="prepare-data.html#cb30-5" tabindex="-1"></a>     phylum_colors,</span>
 <span id="cb30-6"><a href="prepare-data.html#cb30-6" tabindex="-1"></a>     <span class="at">file =</span> <span class="st">&quot;resources/amplicon/data_nocopyfilt.Rdata&quot;</span>)</span></code></pre></div>
 </div>
-<div id="create-master-table-for-amplicon-data" class="section level3 hasAnchor" number="2.3.3">
-<h3><span class="header-section-number">2.3.3</span> Create master table for amplicon data<a href="prepare-data.html#create-master-table-for-amplicon-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="standard-data-filtering-criteria" class="section level3 hasAnchor" number="2.3.3">
+<h3><span class="header-section-number">2.3.3</span> Standard data filtering criteria<a href="prepare-data.html#standard-data-filtering-criteria" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <div class="sourceCode" id="cb31"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb31-1"><a href="prepare-data.html#cb31-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;resources/amplicon/data_nocopyfilt.Rdata&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb32-1"><a href="prepare-data.html#cb32-1" tabindex="-1"></a>threshold_table <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span> </span>
-<span id="cb32-2"><a href="prepare-data.html#cb32-2" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="fu">vars</span>(<span class="sc">-</span>genome), <span class="sc">~</span> .<span class="sc">/</span><span class="fu">sum</span>(.)) <span class="sc">%&gt;%</span></span>
-<span id="cb32-3"><a href="prepare-data.html#cb32-3" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">!</span>genome, <span class="at">names_to =</span> <span class="st">&quot;sample&quot;</span>,<span class="at">values_to =</span> <span class="st">&quot;t0&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb32-4"><a href="prepare-data.html#cb32-4" tabindex="-1"></a>  <span class="fu">left_join</span>(sample_metadata <span class="sc">%&gt;%</span> <span class="fu">select</span>(sample,Species), <span class="at">by=</span><span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb32-5"><a href="prepare-data.html#cb32-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">t1 =</span> <span class="fu">if_else</span>(t0 <span class="sc">&lt;</span> <span class="fl">0.0001</span>, <span class="dv">0</span>, t0),</span>
-<span id="cb32-6"><a href="prepare-data.html#cb32-6" tabindex="-1"></a>         <span class="at">t2 =</span> <span class="fu">if_else</span>(t0 <span class="sc">&lt;</span> <span class="fl">0.001</span>, <span class="dv">0</span>, t0),</span>
-<span id="cb32-7"><a href="prepare-data.html#cb32-7" tabindex="-1"></a>         <span class="at">t3 =</span> <span class="fu">if_else</span>(t0 <span class="sc">&lt;</span> <span class="fl">0.01</span>, <span class="dv">0</span>, t0),</span>
-<span id="cb32-8"><a href="prepare-data.html#cb32-8" tabindex="-1"></a>         <span class="at">t4 =</span> <span class="fu">if_else</span>(t0 <span class="sc">&lt;</span> <span class="fl">0.1</span>, <span class="dv">0</span>, t0)) <span class="sc">%&gt;%</span></span>
-<span id="cb32-9"><a href="prepare-data.html#cb32-9" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">!</span><span class="fu">c</span>(genome,sample,Species), <span class="at">names_to =</span> <span class="st">&quot;copy_threshold&quot;</span>,<span class="at">values_to =</span> <span class="st">&quot;raw_value&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb32-10"><a href="prepare-data.html#cb32-10" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb32-1"><a href="prepare-data.html#cb32-1" tabindex="-1"></a>genome_metadata <span class="ot">&lt;-</span> genome_metadata <span class="sc">%&gt;%</span></span>
+<span id="cb32-2"><a href="prepare-data.html#cb32-2" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(phylum))</span>
+<span id="cb32-3"><a href="prepare-data.html#cb32-3" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="prepare-data.html#cb32-4" tabindex="-1"></a>genome_counts_filt <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
+<span id="cb32-5"><a href="prepare-data.html#cb32-5" tabindex="-1"></a>  <span class="fu">filter</span>(genome <span class="sc">%in%</span> genome_metadata<span class="sc">$</span>genome) <span class="sc">%&gt;%</span></span>
+<span id="cb32-6"><a href="prepare-data.html#cb32-6" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="fu">vars</span>(<span class="sc">-</span>genome),  <span class="sc">~</span> . <span class="sc">/</span> <span class="fu">sum</span>(.)) <span class="sc">%&gt;%</span></span>
+<span id="cb32-7"><a href="prepare-data.html#cb32-7" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(., <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb32-8"><a href="prepare-data.html#cb32-8" tabindex="-1"></a>  .[, <span class="fu">colSums</span>(.) <span class="sc">&gt;</span> <span class="fl">0.00005</span>] <span class="sc">%&gt;%</span></span>
+<span id="cb32-9"><a href="prepare-data.html#cb32-9" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">rowSums</span>(<span class="fu">across</span>(<span class="fu">everything</span>())) <span class="sc">!=</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb32-10"><a href="prepare-data.html#cb32-10" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(., <span class="st">&quot;genome&quot;</span>)</span>
 <span id="cb32-11"><a href="prepare-data.html#cb32-11" tabindex="-1"></a></span>
-<span id="cb32-12"><a href="prepare-data.html#cb32-12" tabindex="-1"></a>prevalence_table <span class="ot">&lt;-</span> threshold_table <span class="sc">%&gt;%</span></span>
-<span id="cb32-13"><a href="prepare-data.html#cb32-13" tabindex="-1"></a>  <span class="fu">group_by</span>(Species,genome,copy_threshold) <span class="sc">%&gt;%</span> </span>
-<span id="cb32-14"><a href="prepare-data.html#cb32-14" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">present =</span> <span class="fu">sum</span>(raw_value <span class="sc">!=</span> <span class="dv">0</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb32-15"><a href="prepare-data.html#cb32-15" tabindex="-1"></a>            <span class="at">total =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span> </span>
-<span id="cb32-16"><a href="prepare-data.html#cb32-16" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prevalence=</span>present<span class="sc">/</span>total) <span class="sc">%&gt;%</span> </span>
-<span id="cb32-17"><a href="prepare-data.html#cb32-17" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>present,<span class="sc">-</span>total)</span>
-<span id="cb32-18"><a href="prepare-data.html#cb32-18" tabindex="-1"></a></span>
-<span id="cb32-19"><a href="prepare-data.html#cb32-19" tabindex="-1"></a>master_table <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(threshold_table,prevalence_table,<span class="at">by=</span><span class="fu">join_by</span>(<span class="st">&quot;Species&quot;</span><span class="sc">==</span><span class="st">&quot;Species&quot;</span>,<span class="st">&quot;genome&quot;</span><span class="sc">==</span><span class="st">&quot;genome&quot;</span>,<span class="st">&quot;copy_threshold&quot;</span><span class="sc">==</span><span class="st">&quot;copy_threshold&quot;</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb32-20"><a href="prepare-data.html#cb32-20" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">p0=</span>raw_value) <span class="sc">%&gt;%</span> </span>
-<span id="cb32-21"><a href="prepare-data.html#cb32-21" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">p10 =</span> <span class="fu">if_else</span>(prevalence <span class="sc">&lt;</span> <span class="fl">0.1</span>, <span class="dv">0</span>, p0),</span>
-<span id="cb32-22"><a href="prepare-data.html#cb32-22" tabindex="-1"></a>         <span class="at">p20 =</span> <span class="fu">if_else</span>(prevalence <span class="sc">&lt;</span> <span class="fl">0.2</span>, <span class="dv">0</span>, p0),</span>
-<span id="cb32-23"><a href="prepare-data.html#cb32-23" tabindex="-1"></a>         <span class="at">p30 =</span> <span class="fu">if_else</span>(prevalence <span class="sc">&lt;</span> <span class="fl">0.3</span>, <span class="dv">0</span>, p0),</span>
-<span id="cb32-24"><a href="prepare-data.html#cb32-24" tabindex="-1"></a>         <span class="at">p40 =</span> <span class="fu">if_else</span>(prevalence <span class="sc">&lt;</span> <span class="fl">0.4</span>, <span class="dv">0</span>, p0)) <span class="sc">%&gt;%</span></span>
-<span id="cb32-25"><a href="prepare-data.html#cb32-25" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>prevalence) <span class="sc">%&gt;%</span> </span>
-<span id="cb32-26"><a href="prepare-data.html#cb32-26" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">!</span><span class="fu">c</span>(genome,sample,Species,copy_threshold), <span class="at">names_to =</span> <span class="st">&quot;prevalence&quot;</span>,<span class="at">values_to =</span> <span class="st">&quot;value&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb32-27"><a href="prepare-data.html#cb32-27" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pa =</span> <span class="fu">if_else</span>(value <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb32-28"><a href="prepare-data.html#cb32-28" tabindex="-1"></a>  <span class="fu">group_by</span>(Species, sample, copy_threshold,prevalence) <span class="sc">%&gt;%</span></span>
-<span id="cb32-29"><a href="prepare-data.html#cb32-29" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">value =</span> value <span class="sc">/</span> <span class="fu">sum</span>(value))<span class="sc">%&gt;%</span></span>
-<span id="cb32-30"><a href="prepare-data.html#cb32-30" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code></pre></div>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb33-1"><a href="prepare-data.html#cb33-1" tabindex="-1"></a><span class="fu">save</span>(master_table,</span>
-<span id="cb33-2"><a href="prepare-data.html#cb33-2" tabindex="-1"></a>     <span class="at">file =</span> <span class="st">&quot;resources/amplicon/master_table.Rdata&quot;</span>)</span></code></pre></div>
+<span id="cb32-12"><a href="prepare-data.html#cb32-12" tabindex="-1"></a>genome_metadata <span class="ot">&lt;-</span> genome_metadata <span class="sc">%&gt;%</span></span>
+<span id="cb32-13"><a href="prepare-data.html#cb32-13" tabindex="-1"></a>  <span class="fu">filter</span>(genome <span class="sc">%in%</span> genome_counts_filt<span class="sc">$</span>genome)</span>
+<span id="cb32-14"><a href="prepare-data.html#cb32-14" tabindex="-1"></a></span>
+<span id="cb32-15"><a href="prepare-data.html#cb32-15" tabindex="-1"></a>phylum_colors <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="st">&quot;https://raw.githubusercontent.com/earthhologenome/EHI_taxonomy_colour/main/ehi_phylum_colors.tsv&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb32-16"><a href="prepare-data.html#cb32-16" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="fu">vars</span>(phylum), <span class="sc">~</span> <span class="fu">str_replace</span>(., <span class="st">&quot;[dpcofgs]__&quot;</span>, <span class="st">&quot;&quot;</span>))<span class="sc">%&gt;%</span></span>
+<span id="cb32-17"><a href="prepare-data.html#cb32-17" tabindex="-1"></a>    <span class="fu">right_join</span>(genome_metadata, <span class="at">by=</span><span class="fu">join_by</span>(phylum <span class="sc">==</span> phylum)) <span class="sc">%&gt;%</span></span>
+<span id="cb32-18"><a href="prepare-data.html#cb32-18" tabindex="-1"></a>    <span class="fu">arrange</span>(<span class="fu">match</span>(genome, genome_metadata<span class="sc">$</span>genome)) <span class="sc">%&gt;%</span></span>
+<span id="cb32-19"><a href="prepare-data.html#cb32-19" tabindex="-1"></a>    <span class="fu">select</span>(phylum, colors) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-20"><a href="prepare-data.html#cb32-20" tabindex="-1"></a>    <span class="fu">unique</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb32-21"><a href="prepare-data.html#cb32-21" tabindex="-1"></a>    <span class="fu">arrange</span>(phylum) <span class="sc">%&gt;%</span></span>
+<span id="cb32-22"><a href="prepare-data.html#cb32-22" tabindex="-1"></a>    <span class="fu">pull</span>(colors, <span class="at">name=</span>phylum)</span>
+<span id="cb32-23"><a href="prepare-data.html#cb32-23" tabindex="-1"></a></span>
+<span id="cb32-24"><a href="prepare-data.html#cb32-24" tabindex="-1"></a>phyloseq_16S_stand <span class="ot">&lt;-</span> <span class="fu">prune_taxa</span>(<span class="fu">taxa_names</span>(phyloseq_16S_filtered) <span class="sc">%in%</span> genome_counts_filt<span class="sc">$</span>genome, phyloseq_16S_filtered)</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb33-1"><a href="prepare-data.html#cb33-1" tabindex="-1"></a><span class="fu">save</span>(sample_metadata, </span>
+<span id="cb33-2"><a href="prepare-data.html#cb33-2" tabindex="-1"></a>     genome_metadata,</span>
+<span id="cb33-3"><a href="prepare-data.html#cb33-3" tabindex="-1"></a>     genome_counts_filt,</span>
+<span id="cb33-4"><a href="prepare-data.html#cb33-4" tabindex="-1"></a>     phylum_colors,</span>
+<span id="cb33-5"><a href="prepare-data.html#cb33-5" tabindex="-1"></a>     phyloseq_16S_stand,</span>
+<span id="cb33-6"><a href="prepare-data.html#cb33-6" tabindex="-1"></a>     <span class="at">file =</span> <span class="st">&quot;resources/amplicon/data_standard_filt.Rdata&quot;</span>)</span></code></pre></div>
+</div>
+<div id="create-master-table-for-amplicon-data" class="section level3 hasAnchor" number="2.3.4">
+<h3><span class="header-section-number">2.3.4</span> Create master table for amplicon data<a href="prepare-data.html#create-master-table-for-amplicon-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb34-1"><a href="prepare-data.html#cb34-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;resources/amplicon/data_nocopyfilt.Rdata&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb35-1"><a href="prepare-data.html#cb35-1" tabindex="-1"></a>threshold_table <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span> </span>
+<span id="cb35-2"><a href="prepare-data.html#cb35-2" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="fu">vars</span>(<span class="sc">-</span>genome), <span class="sc">~</span> .<span class="sc">/</span><span class="fu">sum</span>(.)) <span class="sc">%&gt;%</span></span>
+<span id="cb35-3"><a href="prepare-data.html#cb35-3" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">!</span>genome, <span class="at">names_to =</span> <span class="st">&quot;sample&quot;</span>,<span class="at">values_to =</span> <span class="st">&quot;t0&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb35-4"><a href="prepare-data.html#cb35-4" tabindex="-1"></a>  <span class="fu">left_join</span>(sample_metadata <span class="sc">%&gt;%</span> <span class="fu">select</span>(sample,Species), <span class="at">by=</span><span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb35-5"><a href="prepare-data.html#cb35-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">t1 =</span> <span class="fu">if_else</span>(t0 <span class="sc">&lt;</span> <span class="fl">0.0001</span>, <span class="dv">0</span>, t0),</span>
+<span id="cb35-6"><a href="prepare-data.html#cb35-6" tabindex="-1"></a>         <span class="at">t2 =</span> <span class="fu">if_else</span>(t0 <span class="sc">&lt;</span> <span class="fl">0.001</span>, <span class="dv">0</span>, t0),</span>
+<span id="cb35-7"><a href="prepare-data.html#cb35-7" tabindex="-1"></a>         <span class="at">t3 =</span> <span class="fu">if_else</span>(t0 <span class="sc">&lt;</span> <span class="fl">0.01</span>, <span class="dv">0</span>, t0),</span>
+<span id="cb35-8"><a href="prepare-data.html#cb35-8" tabindex="-1"></a>         <span class="at">t4 =</span> <span class="fu">if_else</span>(t0 <span class="sc">&lt;</span> <span class="fl">0.1</span>, <span class="dv">0</span>, t0)) <span class="sc">%&gt;%</span></span>
+<span id="cb35-9"><a href="prepare-data.html#cb35-9" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">!</span><span class="fu">c</span>(genome,sample,Species), <span class="at">names_to =</span> <span class="st">&quot;copy_threshold&quot;</span>,<span class="at">values_to =</span> <span class="st">&quot;raw_value&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb35-10"><a href="prepare-data.html#cb35-10" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb35-11"><a href="prepare-data.html#cb35-11" tabindex="-1"></a></span>
+<span id="cb35-12"><a href="prepare-data.html#cb35-12" tabindex="-1"></a>prevalence_table <span class="ot">&lt;-</span> threshold_table <span class="sc">%&gt;%</span></span>
+<span id="cb35-13"><a href="prepare-data.html#cb35-13" tabindex="-1"></a>  <span class="fu">group_by</span>(Species,genome,copy_threshold) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-14"><a href="prepare-data.html#cb35-14" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">present =</span> <span class="fu">sum</span>(raw_value <span class="sc">!=</span> <span class="dv">0</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb35-15"><a href="prepare-data.html#cb35-15" tabindex="-1"></a>            <span class="at">total =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-16"><a href="prepare-data.html#cb35-16" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prevalence=</span>present<span class="sc">/</span>total) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-17"><a href="prepare-data.html#cb35-17" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>present,<span class="sc">-</span>total)</span>
+<span id="cb35-18"><a href="prepare-data.html#cb35-18" tabindex="-1"></a></span>
+<span id="cb35-19"><a href="prepare-data.html#cb35-19" tabindex="-1"></a>master_table <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(threshold_table,prevalence_table,<span class="at">by=</span><span class="fu">join_by</span>(<span class="st">&quot;Species&quot;</span><span class="sc">==</span><span class="st">&quot;Species&quot;</span>,<span class="st">&quot;genome&quot;</span><span class="sc">==</span><span class="st">&quot;genome&quot;</span>,<span class="st">&quot;copy_threshold&quot;</span><span class="sc">==</span><span class="st">&quot;copy_threshold&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-20"><a href="prepare-data.html#cb35-20" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">p0=</span>raw_value) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-21"><a href="prepare-data.html#cb35-21" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">p10 =</span> <span class="fu">if_else</span>(prevalence <span class="sc">&lt;</span> <span class="fl">0.1</span>, <span class="dv">0</span>, p0),</span>
+<span id="cb35-22"><a href="prepare-data.html#cb35-22" tabindex="-1"></a>         <span class="at">p20 =</span> <span class="fu">if_else</span>(prevalence <span class="sc">&lt;</span> <span class="fl">0.2</span>, <span class="dv">0</span>, p0),</span>
+<span id="cb35-23"><a href="prepare-data.html#cb35-23" tabindex="-1"></a>         <span class="at">p30 =</span> <span class="fu">if_else</span>(prevalence <span class="sc">&lt;</span> <span class="fl">0.3</span>, <span class="dv">0</span>, p0),</span>
+<span id="cb35-24"><a href="prepare-data.html#cb35-24" tabindex="-1"></a>         <span class="at">p40 =</span> <span class="fu">if_else</span>(prevalence <span class="sc">&lt;</span> <span class="fl">0.4</span>, <span class="dv">0</span>, p0)) <span class="sc">%&gt;%</span></span>
+<span id="cb35-25"><a href="prepare-data.html#cb35-25" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>prevalence) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-26"><a href="prepare-data.html#cb35-26" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">!</span><span class="fu">c</span>(genome,sample,Species,copy_threshold), <span class="at">names_to =</span> <span class="st">&quot;prevalence&quot;</span>,<span class="at">values_to =</span> <span class="st">&quot;value&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-27"><a href="prepare-data.html#cb35-27" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pa =</span> <span class="fu">if_else</span>(value <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb35-28"><a href="prepare-data.html#cb35-28" tabindex="-1"></a>  <span class="fu">group_by</span>(Species, sample, copy_threshold,prevalence) <span class="sc">%&gt;%</span></span>
+<span id="cb35-29"><a href="prepare-data.html#cb35-29" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">value =</span> value <span class="sc">/</span> <span class="fu">sum</span>(value))<span class="sc">%&gt;%</span></span>
+<span id="cb35-30"><a href="prepare-data.html#cb35-30" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb36-1"><a href="prepare-data.html#cb36-1" tabindex="-1"></a><span class="fu">save</span>(master_table,</span>
+<span id="cb36-2"><a href="prepare-data.html#cb36-2" tabindex="-1"></a>     <span class="at">file =</span> <span class="st">&quot;resources/amplicon/master_table.Rdata&quot;</span>)</span></code></pre></div>
 
 </div>
 </div>

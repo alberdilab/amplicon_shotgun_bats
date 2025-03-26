@@ -420,7 +420,7 @@ tax_table(phyloseq_16S_filtered) <- taxonomy
 sample_data(phyloseq_16S_filtered) <- sample_data
 
 ```
-```{r save_ampli, comment="", message=FALSE, warning=FALSE, eval=FALSE}
+```{r save_ampli_nocopy, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 save(sample_metadata, 
      genome_metadata,
      genome_counts_filt,

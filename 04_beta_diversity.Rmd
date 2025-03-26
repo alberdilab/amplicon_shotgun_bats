@@ -14,7 +14,7 @@ species_color <- c("#e5bd5b", "#6b7398", "#76b183")
 ```
 
 ***Identifying outliers***
-```{r beta_div_nmds_neutral_plot, comment="", message=FALSE, warning=FALSE, fig.height=5, fig.width=10, fig.fullwidth=TRUE}
+```{r beta_div_nmds_neutral_plot_out, comment="", message=FALSE, warning=FALSE, fig.height=5, fig.width=10, fig.fullwidth=TRUE}
 
 beta_q1n <- genome_counts_filt %>%
   column_to_rownames(., "genome") %>%
@@ -557,24 +557,24 @@ beta_q1n$S %>%
 
 
 ## Different abundance analysis
-```{r}
+```{r merge_p, comment="", message=FALSE, warning=FALSE}
 load("resources/metagenomics/data_filtered.Rdata")
 phyloseq_metagenome_filtered <- subset_samples(phyloseq_metagenome_filtered, !sample_names(phyloseq_metagenome_filtered) %in% c("H06", "H20"))
 phyloseq_metagenome_filtered <- prune_taxa(taxa_sums(phyloseq_metagenome_filtered)>0, phyloseq_metagenome_filtered)
 sample_data(phyloseq_metagenome_filtered)$method <- "shotgun"
 sample_data(phyloseq_metagenome_filtered)$sample_ID <- rownames(sample_data(phyloseq_metagenome_filtered))
 
-otu_table(phyloseq_metagenome_filtered) <- otu_table(
-  apply(otu_table(phyloseq_metagenome_filtered), 2, as.integer), 
-  taxa_are_rows = taxa_are_rows(phyloseq_metagenome_filtered)  # Preserve original orientation
-)
+# otu_table(phyloseq_metagenome_filtered) <- otu_table(
+#   apply(otu_table(phyloseq_metagenome_filtered), 2, as.integer), 
+#   taxa_are_rows = taxa_are_rows(phyloseq_metagenome_filtered)  # Preserve original orientation
+# )
 
 phyloseq_metagenome_filtered_phylum <- tax_glom(phyloseq_metagenome_filtered, "phylum")
 
 load("resources/amplicon/data_standard_filt.Rdata")
+sample_data(phyloseq_16S_stand)$sample_ID <- rownames(sample_data(phyloseq_16S_stand))
 sample_names(phyloseq_16S_stand) <- paste0(sample_names(phyloseq_16S_stand), "_ampli")
 sample_data(phyloseq_16S_stand)$method <- "amplicon"
-sample_data(phyloseq_metagenome_filtered)$sample_ID <- rownames(sample_data(phyloseq_metagenome_filtered))
 
 phyloseq_16S_stand_phylum <- tax_glom(phyloseq_16S_stand, "phylum")
 
@@ -582,7 +582,7 @@ merge_phylo <- merge_phyloseq(phyloseq_16S_stand_phylum,phyloseq_metagenome_filt
 
 ```
 
-```{r}
+```{r merge_otu, comment="", message=FALSE, warning=FALSE}
 otu1 <- as.data.frame(otu_table(phyloseq_metagenome_filtered_phylum)) %>%
   mutate_all(as.integer)
 tax1 <- as.data.frame(tax_table(phyloseq_metagenome_filtered_phylum)) %>% 
@@ -611,7 +611,7 @@ ancom_rand_output_struc = ancombc2(data = merged_physeq_phylum,
                   assay_name = "counts", 
                   tax_level = NULL,
                   fix_formula = "method",
-  #                rand_formula = "(1|sample_ID)",
+                  rand_formula = "(1|sample_ID)",
                   p_adj_method = "holm", 
                   pseudo_sens = TRUE,
                   prv_cut =0, 
@@ -629,7 +629,7 @@ ancom_rand_output_struc = ancombc2(data = merged_physeq_phylum,
                   trend = FALSE,
                   iter_control = list(tol = 1e-5, max_iter = 20, verbose = FALSE),
                   em_control = list(tol = 1e-5, max_iter = 100),
-  #                lme_control = lme4::lmerControl(),
+                  lme_control = lme4::lmerControl(),
                   mdfdr_control = list(fwer_ctrl_method = "holm", B = 100), 
                   trend_control = NULL)
 ```
@@ -671,10 +671,12 @@ structural_zero_groups %>%
 ***Phyla differentially abundant***
 ```{r}
 ancom_rand_output_struc$res %>% 
+  filter(p_methodshotgun<0.05)
+```
+
+***Phyla not different***
+```{r}
+ancom_rand_output_struc$res %>% 
   filter(p_methodshotgun>0.05)
 ```
 
-```{r}
-ancom_rand_output_struc$res %>% 
-  filter(p_methodshotgun<0.05)
-```
