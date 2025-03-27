@@ -343,7 +343,7 @@ print(pk_result$wilcox_result[[1]])
 
 ### Amplicon
 ```{r}
-load("resources/amplicon/selected_filtering.Rdata")
+load("resources/amplicon/second_filtering_t0_p30.Rdata")
 ```
 
 ```{r beta_div_ampli_comparison_t0_p30, comment="", message=FALSE, warning=FALSE}
@@ -404,22 +404,7 @@ beta_q1n_ampli$S %>%
 
 ```
 
-***E31 has been considered an outlier, so it has been removed***
-```{r beta_div_ampli_new_comparison_t0_p30, comment="", message=FALSE, warning=FALSE}
-beta_q0n_ampli <- genome_counts_filt_amplicon %>%
-    select(-E31) %>% 
-  column_to_rownames(., "genome") %>%
-  filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
-  select_if( ~ !all(. == 0)) %>%
-  hillpair(., q = 0)
-
-beta_q1n_ampli <- genome_counts_filt_amplicon %>%
-    select(-E31) %>% 
-  column_to_rownames(., "genome") %>%
-  filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
-  select_if( ~ !all(. == 0)) %>%
-  hillpair(., q = 1)
-```
+E31 has been considered an outlier in the previous threshold but here it doesn't look like an outlier
 
 ```{r beta_div_nmds_richness_plot_ampli_comparison_t0_p30, comment="", message=FALSE, warning=FALSE}
 sample_metadata_amplicon <- sample_metadata_amplicon %>% 
@@ -488,7 +473,7 @@ neutral_beta_meta <- beta_q1n$S %>%
 ### Comparison
 
 #### Richness
-```{r nmds_rich_t0_p30, fig.height=10, fig.width=16, fig.fullwidth=TRUE}
+```{r nmds_rich_t0_p30, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
 beta_richness_together <- rbind(rich_beta_amplicon, rich_beta_meta) %>%
   mutate(id = paste(Species, method, sep = "_"))
 beta_colors <- c("#e5bd5b","#d57d2c","#6b7398","#ea68c3","#76b183","#3c634e")
