@@ -555,8 +555,189 @@ beta_q1n$S %>%
   labs(color = "Species")
 ```
 
+## Comparison 
 
-## Different abundance analysis
+```{r beta_div_nmds_richness_plot_ampli_comparison_general, comment="", message=FALSE, warning=FALSE}
+sample_metadata_amplicon <- sample_metadata %>% 
+  mutate(method="amplicon")
+
+rich_beta_amplicon <- beta_q0n$S %>%
+  vegan::metaMDS(.,
+                 trymax = 500,
+                 k = 2,
+                 trace = 0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(sample_metadata_amplicon, by = join_by(sample == sample)) %>% 
+  mutate(individual=sample)%>%
+  mutate(sample = paste0(sample, "_ampli")) %>% 
+  select(sample,NMDS1,NMDS2,Species,method, individual) 
+
+neutral_beta_amplicon <- beta_q1n$S %>%
+  vegan::metaMDS(.,
+                 trymax = 500,
+                 k = 2,
+                 trace = 0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(sample_metadata_amplicon, by = join_by(sample == sample)) %>%  
+  mutate(individual=sample)%>%
+  mutate(sample = paste0(sample, "_ampli")) %>% 
+  select(sample,NMDS1,NMDS2,Species,method,individual)
+```
+```{r}
+load("resources/metagenomics/data_filtered.Rdata")
+load("resources/metagenomics/beta_filtered.Rdata")
+sample_metadata <- sample_metadata %>%
+  filter(!sample %in% c("H06", "H20"))
+```
+
+```{r beta_meta_general, comment="", message=FALSE, warning=FALSE}
+sample_metadata <- sample_metadata %>% 
+  mutate(method="shotgun")
+
+rich_beta_meta <- beta_q0n$S %>%
+  vegan::metaMDS(.,
+                 trymax = 500,
+                 k = 2,
+                 trace = 0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(sample_metadata, by = join_by(sample == sample))%>% 
+  mutate(individual=sample)%>% 
+  select(sample,NMDS1,NMDS2,Species,method, individual)
+
+neutral_beta_meta <- beta_q1n$S %>%
+  vegan::metaMDS(.,
+                 trymax = 500,
+                 k = 2,
+                 trace = 0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(sample_metadata, by = join_by(sample == sample)) %>% 
+  mutate(individual=sample)%>% 
+  select(sample,NMDS1,NMDS2,Species,method, individual)
+```
+
+#### Richness
+```{r nmds_rich_general, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+beta_richness_together <- rbind(rich_beta_amplicon, rich_beta_meta) %>%
+  mutate(id = paste(Species, method, sep = "_"))
+beta_colors <- c("#e5bd5b","#d57d2c","#6b7398","#ea68c3","#76b183","#3c634e")
+beta_richness_together %>%
+  group_by(id) %>%
+  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
+  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
+  ungroup() %>%
+  ggplot(aes(x = NMDS1, y = NMDS2, color = id)) +
+  geom_point(size = 4) +
+  geom_segment(
+    aes(
+      x = x_cen,
+      y = y_cen,
+      xend = NMDS1,
+      yend = NMDS2
+    ),
+    alpha = 0.9,
+    show.legend = FALSE
+  ) +
+  theme(
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    panel.background = element_blank(),
+    axis.line = element_line(
+      size = 0.5,
+      linetype = "solid",
+      colour = "black"
+    ),
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.position = "right",
+    legend.box = "vertical"
+  ) +
+  labs(color = "Species & Method")
+
+```
+
+***Differences between species and methods***
+```{r}
+metadata_both <- beta_richness_together %>%
+  select(sample, Species, method, individual, id)
+dist_matrix <- dist(beta_richness_together %>% select(NMDS1, NMDS2), method = "euclidean")
+dist_matrix <- as.matrix(dist_matrix)
+rownames(dist_matrix) <- beta_richness_together$sample
+colnames(dist_matrix) <- beta_richness_together$sample
+
+adonis2(dist_matrix ~ method*Species,
+        data = metadata_both %>% arrange(match(sample,labels(dist_matrix))),
+        permutations = 999, by="terms") %>%
+        broom::tidy() %>%
+        tt()
+```
+
+#### Neutral
+```{r nmds_neu_general, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+beta_neutral_together <- rbind(neutral_beta_amplicon, neutral_beta_meta) %>%
+  mutate(id = paste(Species, method, sep = "_"))
+beta_colors <- c("#e5bd5b","#d57d2c","#6b7398","#ea68c3","#76b183","#3c634e")
+
+beta_neutral_together %>%
+  filter(sample != "E31_ampli") %>%
+  group_by(id) %>%
+  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
+  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
+  ungroup() %>%
+  ggplot(aes(x = NMDS1, y = NMDS2, color = id)) +
+  geom_point(size = 4) +
+  scale_color_manual(values = beta_colors) +
+  geom_segment(
+    aes(
+      x = x_cen,
+      y = y_cen,
+      xend = NMDS1,
+      yend = NMDS2
+    ),
+    alpha = 0.9,
+    show.legend = FALSE
+  ) +
+  theme(
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    panel.background = element_blank(),
+    axis.line = element_line(
+      size = 0.5,
+      linetype = "solid",
+      colour = "black"
+    ),
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.position = "right",
+    legend.box = "vertical"
+  ) +
+  labs(color = "Species")
+```
+
+***Differences between species and methods***
+```{r}
+metadata_both <- beta_neutral_together %>%
+  select(sample, Species, method, individual, id)
+dist_matrix <- dist(beta_neutral_together %>% select(NMDS1, NMDS2), method = "euclidean")
+dist_matrix <- as.matrix(dist_matrix)
+rownames(dist_matrix) <- beta_neutral_together$sample
+colnames(dist_matrix) <- beta_neutral_together$sample
+
+adonis2(dist_matrix ~ method*Species,
+        data = metadata_both %>% arrange(match(sample,labels(dist_matrix))),
+        permutations = 999, by="terms") %>%
+        broom::tidy() %>%
+        tt()
+```
+
+
+
+
+
+# Different abundance analysis
 ```{r merge_p, comment="", message=FALSE, warning=FALSE}
 load("resources/metagenomics/data_filtered.Rdata")
 phyloseq_metagenome_filtered <- subset_samples(phyloseq_metagenome_filtered, !sample_names(phyloseq_metagenome_filtered) %in% c("H06", "H20"))
