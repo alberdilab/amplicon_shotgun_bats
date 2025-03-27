@@ -85,6 +85,7 @@ cat(genome_metadata_amplicon %>%
       count() %>%
       pull())
 ```
+
 ***Shared families***
 ```{r}
 meta_family <- genome_metadata %>%
@@ -113,7 +114,7 @@ genome_metadata_amplicon %>%
 
 ## Alpha Diversity
 
-### Calculate for the selected amplicon data
+### Merge both data
 
 ```{r alpha_cal_t0_p30, comment="", message=FALSE, warning=FALSE}
 richness <- genome_counts_filt_amplicon %>%
@@ -147,9 +148,23 @@ join_alpha <- rbind(metagenome_alpha_div, amplicon_alpha_div) %>%
   left_join(sample_metadata, by = join_by(sample == sample))
 ```
 
-### Species differences
+### Comparison
 
-#### Metagenomic data
+#### Differences between methods and species
+
+***Richness***
+```{r rich_MM_com_t0_p30, comment="", message=FALSE, warning=FALSE}
+Model_richness <- lm(formula = richness ~ Species*method, data = join_alpha)
+anova(Model_richness)
+```
+
+***Neutral***
+```{r neutral_MM_com_t0_p30, comment="", message=FALSE, warning=FALSE}
+Model_neutral <- lm(formula = neutral ~ Species*method, data = join_alpha)
+anova(Model_neutral)
+```
+
+##### Metagenomic data
 
 ```{r meta_t0_p30, comment="", message=FALSE, warning=FALSE}
 alpha_div_meta <- metagenome_alpha_div %>%
@@ -170,7 +185,7 @@ anova(Model_neutral)
 emmeans(Model_neutral, pairwise ~ Species)
 ```
 
-### Amplicon data
+##### Amplicon data
 
 ```{r meta_ampli_t0_p30, comment="", message=FALSE, warning=FALSE}
 alpha_div_ampli <- amplicon_alpha_div %>%
@@ -191,160 +206,14 @@ anova(Model_neutral)
 emmeans(Model_neutral, pairwise ~ Species)
 ```
 
-### Differences between methods in each species
-```{r}
-join_alpha %>%
-  group_by(sample) %>%
-  filter(all(c("shotgun", "amplicon") %in% method))
-```
-
-#### Richness
-***Eptesicus***
-```{r}
-join_richness_eb <- join_alpha %>% 
-  filter(Species=="Eb") %>% 
-  select(sample,method,richness) 
-
-
-ggboxplot(join_richness_eb, x = "method", y = "richness", 
-          color = "method", palette = c("#00AFBB", "#E7B800"),
-          order = c("amplicon", "shotgun"),
-          ylab = "richness", xlab = "method")
-```
-```{r}
-shapiro.test(join_richness_eb$richness)
-
-eb_result <- join_richness_eb %>%
-  filter(method %in% c("shotgun", "amplicon")) %>%
-  pivot_wider(names_from = method, values_from = richness) %>%
-  drop_na() %>%  # Ensure no missing pairs
-  summarize(wilcox_result = list(wilcox.test(shotgun, amplicon, paired = TRUE, exact = FALSE)))
-
-print(eb_result$wilcox_result[[1]])
-```
-
-***Hypsugo***
-```{r}
-join_richness_ha <- join_alpha %>% 
-  filter(Species=="Ha") %>% 
-  select(sample,method,richness)
-
-ggboxplot(join_richness_ha, x = "method", y = "richness", 
-          color = "method", palette = c("#00AFBB", "#E7B800"),
-          order = c("amplicon", "shotgun"),
-          ylab = "richness", xlab = "method")
-```
-```{r}
-shapiro.test(join_richness_ha$richness)
-
-ha_result <- join_richness_ha %>%
-  filter(method %in% c("shotgun", "amplicon")) %>%
-  pivot_wider(names_from = method, values_from = richness) %>%
-  drop_na() %>%  # Ensure no missing pairs
-  summarize(wilcox_result = list(wilcox.test(shotgun, amplicon, paired = TRUE, exact = FALSE)))
-
-print(ha_result$wilcox_result[[1]])
-```
-
-***Pipistrellus***
-```{r}
-join_richness_pk <- join_alpha %>% 
-  filter(Species=="Pk") %>% 
-  select(sample,method,richness)
-
-ggboxplot(join_richness_pk, x = "method", y = "richness", 
-          color = "method", palette = c("#00AFBB", "#E7B800"),
-          order = c("amplicon", "shotgun"),
-          ylab = "richness", xlab = "method")
-```
-```{r}
-shapiro.test(join_richness_pk$richness)
-
-pk_result <- join_richness_pk %>%
-  filter(method %in% c("shotgun", "amplicon")) %>%
-  pivot_wider(names_from = method, values_from = richness) %>%
-  drop_na() %>%  # Ensure no missing pairs
-  summarize(wilcox_result = list(wilcox.test(shotgun, amplicon, paired = TRUE, exact = FALSE)))
-
-print(pk_result$wilcox_result[[1]])
-```
-
-#### Neutral
-***Eptesicus***
-```{r}
-join_neutral_eb <- join_alpha %>% 
-  filter(Species=="Eb") %>% 
-  select(sample,method,neutral)
-
-ggboxplot(join_neutral_eb, x = "method", y = "neutral", 
-          color = "method", palette = c("#00AFBB", "#E7B800"),
-          order = c("amplicon", "shotgun"),
-          ylab = "neutral", xlab = "method")
-```
-```{r}
-shapiro.test(join_neutral_eb$neutral)
-
-eb_result <- join_neutral_eb %>%
-  filter(method %in% c("shotgun", "amplicon")) %>%
-  pivot_wider(names_from = method, values_from = neutral) %>%
-  drop_na() %>%  # Ensure no missing pairs
-  summarize(wilcox_result = list(wilcox.test(shotgun, amplicon, paired = TRUE, exact = FALSE)))
-
-print(eb_result$wilcox_result[[1]])
-```
-
-***Hypsugo***
-```{r}
-join_neutral_ha <- join_alpha %>% 
-  filter(Species=="Ha") %>% 
-  select(sample,method,neutral)
-
-ggboxplot(join_neutral_ha, x = "method", y = "neutral", 
-          color = "method", palette = c("#00AFBB", "#E7B800"),
-          order = c("amplicon", "shotgun"),
-          ylab = "neutral", xlab = "method")
-```
-```{r}
-shapiro.test(join_neutral_ha$neutral)
-
-ha_result <- join_neutral_ha %>%
-  filter(method %in% c("shotgun", "amplicon")) %>%
-  pivot_wider(names_from = method, values_from = neutral) %>%
-  drop_na() %>%
-  summarize(wilcox_result = list(wilcox.test(shotgun, amplicon, paired = TRUE, exact = FALSE)))
-
-print(ha_result$wilcox_result[[1]])
-```
-
-***Pipistrellus***
-```{r}
-join_neutral_pk <- join_alpha %>% 
-  filter(Species=="Pk") %>% 
-  select(sample,method,neutral)
-
-ggboxplot(join_neutral_pk, x = "method", y = "neutral", 
-          color = "method", palette = c("#00AFBB", "#E7B800"),
-          order = c("amplicon", "shotgun"),
-          ylab = "neutral", xlab = "method")
-```
-```{r}
-shapiro.test(join_neutral_pk$neutral)
-
-pk_result <- join_neutral_pk %>%
-  filter(method %in% c("shotgun", "amplicon")) %>%
-  pivot_wider(names_from = method, values_from = neutral) %>%
-  drop_na() %>%
-  summarize(wilcox_result = list(wilcox.test(shotgun, amplicon, paired = TRUE, exact = FALSE)))
-
-print(pk_result$wilcox_result[[1]])
-```
-
 ## Beta diversity
 
-### Amplicon
+### Prepare the data
 ```{r}
 load("resources/amplicon/second_filtering_t0_p30.Rdata")
 ```
+
+***Calculate beta diversity in amplicon data***
 
 ```{r beta_div_ampli_comparison_t0_p30, comment="", message=FALSE, warning=FALSE}
 beta_q0n_ampli <- genome_counts_filt_amplicon %>%
@@ -435,7 +304,7 @@ neutral_beta_amplicon <- beta_q1n_ampli$S %>%
   select(sample,NMDS1,NMDS2,Species,method,individual)
 ```
 
-### Metagenomics
+***Calculate beta diversity in metagenomic data***
 ```{r}
 load("resources/metagenomics/data_filtered.Rdata")
 load("resources/metagenomics/beta_filtered.Rdata")
@@ -586,8 +455,8 @@ adonis2(dist_matrix ~ method*Species,
         tt()
 ```
 
-## Differential abundace analysis
-### Phylum
+## Differential abundace analysis at phylum level
+
 ```{r}
 phylo_samples <- sample_metadata %>% 
   mutate(individual=sample)%>%
@@ -664,7 +533,7 @@ merged_physeq_phylum <- phyloseq(otu_table_merged, sample_data(merge_phylo))
 
 ```
 
-#### Eptesicus
+### Eptesicus
 ```{r}
 physeq_eb <- subset_samples(merged_physeq_phylum, Species == "Eb")
 physeq_eb <- prune_taxa(taxa_sums(physeq_eb)>0, physeq_eb)
@@ -745,7 +614,7 @@ ancom_rand_output_struc_eb$res %>%
   filter(p_methodshotgun<0.05)
 ```
 
-#### Pipistrellus
+### Pipistrellus
 ```{r}
 physeq_pk <- subset_samples(merged_physeq_phylum, Species == "Pk")
 physeq_pk <- prune_taxa(taxa_sums(physeq_pk)>0, physeq_pk)
@@ -827,7 +696,7 @@ ancom_rand_output_struc_pk$res %>%
 ```
 
 
-#### Hypsugo (not working random effect)
+### Hypsugo (not working random effect)
 ```{r}
 physeq_ha <- subset_samples(merged_physeq_phylum, Species == "Ha")
 physeq_ha <- prune_taxa(taxa_sums(physeq_ha)>0, physeq_ha)
