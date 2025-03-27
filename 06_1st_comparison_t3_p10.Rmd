@@ -168,7 +168,7 @@ anova(Model_neutral)
 emmeans(Model_neutral, pairwise ~ Species)
 ```
 
-### Amplicon data
+#### Amplicon data
 
 ```{r meta_ampli, comment="", message=FALSE, warning=FALSE}
 alpha_div_ampli <- amplicon_alpha_div %>%
@@ -488,7 +488,7 @@ neutral_beta_meta <- beta_q1n$S %>%
 ### Comparison
 
 #### Richness
-```{r nmds_rich, fig.height=10, fig.width=16, fig.fullwidth=TRUE}
+```{r nmds_rich, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
 beta_richness_together <- rbind(rich_beta_amplicon,rich_beta_meta)%>%
   mutate(id = paste(Species, method, sep = "_"))
 beta_colors <- c("#e5bd5b","#d57d2c","#6b7398","#ea68c3","#76b183","#3c634e")
@@ -543,9 +543,8 @@ adonis2(dist_matrix ~ method*Species,
         tt()
 ```
 
-
 #### Neutral
-```{r nmds_neu, fig.height=10, fig.width=16, fig.fullwidth=TRUE}
+```{r nmds_neu, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
 beta_neutral_together <- rbind(neutral_beta_amplicon,neutral_beta_meta) %>%
   mutate(id = paste(Species, method, sep = "_"))
 beta_colors <- c("#e5bd5b","#d57d2c","#6b7398","#ea68c3","#76b183","#3c634e")
@@ -918,12 +917,6 @@ structural_zero_groups %>%
   left_join(., data.frame(physeq_eb@tax_table) %>% rownames_to_column(., "phylum"), by="phylum") %>% 
   select(phylum) %>% 
   pull()
-```
-
-***Phyla differentially abundant***
-```{r}
-ancom_rand_output_struc_pk$res %>% 
-  filter(p_methodshotgun<0.05)
 ```
 
 ***Phyla differentially abundant***
