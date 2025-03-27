@@ -76,6 +76,8 @@ shapiro.test(MCI$value)
 results_aov <- aov(value ~ Species, data=MCI)
 summary(results_aov)
 ```
+
+***Functional differences considering the three species***
 ```{r commun_wilcox_elem_acclim_wild_warm, comment="", message=FALSE, warning=FALSE}
 element_gift <- GIFTs_elements_community %>% 
   as.data.frame() %>% 
@@ -84,14 +86,24 @@ element_gift <- GIFTs_elements_community %>%
 
 uniqueGIFT_db<- unique(GIFT_db[c(2,4,5,6)]) %>% unite("Function",Function:Element, sep= "_", remove=FALSE)
 
-significant_elements <- element_gift %>%
+element_gift %>%
     pivot_longer(-c(sample,Species), names_to = "trait", values_to = "value") %>%
     group_by(trait) %>%
   summarise(p_value = summary(aov(value ~ Species))[[1]][["Pr(>F)"]][1]) %>%
   mutate(p_adjust = p.adjust(p_value, method = "BH")) %>%
   filter(p_adjust < 0.05) %>%
   left_join(.,uniqueGIFT_db[c(1,3)],by = join_by(trait == Code_element))
+
+element_gift %>%
+    pivot_longer(-c(sample,Species), names_to = "trait", values_to = "value") %>%
+    group_by(trait) %>%
+  summarise(p_value = summary(aov(value ~ Species))[[1]][["Pr(>F)"]][1]) %>%
+  filter(p_value < 0.05) %>%
+  left_join(.,uniqueGIFT_db[c(1,3)],by = join_by(trait == Code_element))
 ```
+
+
+***Functional differences between Pipistrellus and Eptesicus***
 
 ```{r commun_wilcox_elem_ha, comment="", message=FALSE, warning=FALSE}
 element_gift_f <- GIFTs_elements_community %>% 
@@ -102,13 +114,14 @@ element_gift_f <- GIFTs_elements_community %>%
 
 uniqueGIFT_db<- unique(GIFT_db[c(2,4,5,6)]) %>% unite("Function",Function:Element, sep= "_", remove=FALSE)
 
-significant_elements_f <- element_gift_f %>%
+element_gift_f %>%
     pivot_longer(-c(sample,Species), names_to = "trait", values_to = "value") %>%
     group_by(trait) %>%
   summarise(p_value = summary(aov(value ~ Species))[[1]][["Pr(>F)"]][1]) %>%
   mutate(p_adjust = p.adjust(p_value, method = "BH")) %>%
   filter(p_adjust < 0.05) %>%
   left_join(.,uniqueGIFT_db[c(1,3)],by = join_by(trait == Code_element))
+
 element_gift_f %>%
     pivot_longer(-c(sample,Species), names_to = "trait", values_to = "value") %>%
     group_by(trait) %>%
@@ -116,6 +129,9 @@ element_gift_f %>%
   filter(p_value < 0.05) %>%
   left_join(.,uniqueGIFT_db[c(1,3)],by = join_by(trait == Code_element))
 ```
+
+
+***Functional differences between Pipistrellus and Hypsugo***
 
 ```{r commun_wilcox_elem_eb, comment="", message=FALSE, warning=FALSE}
 element_gift_f <- GIFTs_elements_community %>% 
@@ -133,7 +149,18 @@ element_gift_f %>%
   mutate(p_adjust = p.adjust(p_value, method = "BH")) %>%
   filter(p_adjust < 0.05) %>%
   left_join(.,uniqueGIFT_db[c(1,3)],by = join_by(trait == Code_element))
+
+element_gift_f %>%
+    pivot_longer(-c(sample,Species), names_to = "trait", values_to = "value") %>%
+    group_by(trait) %>%
+  summarise(p_value = summary(aov(value ~ Species))[[1]][["Pr(>F)"]][1]) %>%
+  filter(p_value < 0.05) %>%
+  left_join(.,uniqueGIFT_db[c(1,3)],by = join_by(trait == Code_element))
 ```
+
+
+***Functional differences between Hypsugo and Eptesicus***
+
 ```{r commun_wilcox_elem_pk, comment="", message=FALSE, warning=FALSE}
 element_gift_f <- GIFTs_elements_community %>% 
   as.data.frame() %>% 
