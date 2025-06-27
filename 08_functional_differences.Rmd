@@ -222,5 +222,6 @@ element_gift %>%
   ) %>%
   unnest(tukey_results) %>% 
  filter(`p adj` < 0.05) %>% 
-         left_join(., uniqueGIFT_db[c(1,3)], by = join_by(trait == Code_element))
+         left_join(., uniqueGIFT_db[c(1,3)], by = join_by(trait == Code_element)) %>% 
+  tt()
 ```
