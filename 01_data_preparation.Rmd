@@ -160,8 +160,7 @@ phylum_colors <- read_tsv(
 ```
 
 ```{r savedata, comment="", message=FALSE, warning=FALSE, eval=FALSE}
-save(
-  sample_metadata,
+save(sample_metadata,
   genome_metadata,
   read_counts,
   genome_counts,
@@ -171,8 +170,7 @@ save(
   genome_gifts,
   genome_data,
   phylum_colors,
-  file = "resources/metagenomics/data.Rdata"
-)
+  file = "resources/metagenomics/data.Rdata")
 ```
 
 ## Amplicon
