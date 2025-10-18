@@ -113,7 +113,6 @@ no_archaea <- genome_counts_filt %>%
   left_join(genome_metadata[c(1,2)], by="genome") %>% 
   filter(domain!="Archaea") %>% 
   select(-domain)
-
 ```
 
 
