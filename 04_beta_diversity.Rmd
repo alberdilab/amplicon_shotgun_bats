@@ -23,10 +23,7 @@ beta_q1n <- genome_counts_filt %>%
   hillpair(., q = 1)
 
 beta_q1n$S %>%
-  vegan::metaMDS(.,
-                 trymax = 500,
-                 k = 2,
-                 trace = 0) %>%
+  vegan::metaMDS(., trymax = 500, k = 2, trace = 0) %>%
   vegan::scores() %>%
   as_tibble(., rownames = "sample") %>%
   dplyr::left_join(sample_metadata, by = join_by(sample == sample)) %>%
@@ -41,30 +38,18 @@ beta_q1n$S %>%
   )) +
   geom_point(size = 4) +
   scale_color_manual(values = species_color) +
-  geom_segment(
-    aes(
-      x = x_cen,
-      y = y_cen,
-      xend = NMDS1,
-      yend = NMDS2
-    ),
-    alpha = 0.9,
-    show.legend = FALSE
-  ) +
-  theme(
-    axis.title = element_text(size = 12, face = "bold"),
+  geom_segment(aes(x = x_cen, y = y_cen, xend = NMDS1, yend = NMDS2), alpha = 0.9, show.legend = FALSE) +
+  theme(axis.title = element_text(size = 12, face = "bold"),
     axis.text = element_text(size = 10),
     panel.background = element_blank(),
     axis.line = element_line(
       size = 0.5,
       linetype = "solid",
-      colour = "black"
-    ),
+      colour = "black"),
     legend.text = element_text(size = 10),
     legend.title = element_text(size = 12),
     legend.position = "right",
-    legend.box = "vertical"
-  ) +
+    legend.box = "vertical") +
   labs(color = "Species")+geom_text_repel(aes(label = sample), size=3)
 ```
 
