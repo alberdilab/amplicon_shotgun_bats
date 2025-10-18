@@ -5,26 +5,26 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 4 Alpha diversity | AlberdiLab | Aizpurua et al. 2025</title>
-  <meta name="description" content="&lt;p&gt;Data analysis code for the study on the study of gut microbiomes of Pyrenean brook salamanders in high and low altitudes.&lt;/p&gt;" />
+  <meta name="description" content="&lt;p&gt;Data analysis code for the manuscript titled: Comparing 16S metabarcoding and genome-resolved metagenomics to reveal functional insights into bat microbiomes.&lt;/p&gt;" />
   <meta name="generator" content="bookdown 0.42 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 4 Alpha diversity | AlberdiLab | Aizpurua et al. 2025" />
   <meta property="og:type" content="book" />
   
-  <meta property="og:description" content="&lt;p&gt;Data analysis code for the study on the study of gut microbiomes of Pyrenean brook salamanders in high and low altitudes.&lt;/p&gt;" />
+  <meta property="og:description" content="&lt;p&gt;Data analysis code for the manuscript titled: Comparing 16S metabarcoding and genome-resolved metagenomics to reveal functional insights into bat microbiomes.&lt;/p&gt;" />
   <meta name="github-repo" content="alberdilab/amplicon_shotgun_bats" />
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Chapter 4 Alpha diversity | AlberdiLab | Aizpurua et al. 2025" />
   
-  <meta name="twitter:description" content="&lt;p&gt;Data analysis code for the study on the study of gut microbiomes of Pyrenean brook salamanders in high and low altitudes.&lt;/p&gt;" />
+  <meta name="twitter:description" content="&lt;p&gt;Data analysis code for the manuscript titled: Comparing 16S metabarcoding and genome-resolved metagenomics to reveal functional insights into bat microbiomes.&lt;/p&gt;" />
   
 
 <meta name="author" content="Ostaizka Aizpurua" />
 <meta name="author" content="Antton Alberdi" />
 
 
-<meta name="date" content="2025-03-28" />
+<meta name="date" content="2025-10-18" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -2122,72 +2122,49 @@ color: #a52929;
 <li class="chapter" data-level="5.2.1" data-path="beta-diversity.html"><a href="beta-diversity.html#permanova-1"><i class="fa fa-check"></i><b>5.2.1</b> Permanova</a></li>
 <li class="chapter" data-level="5.2.2" data-path="beta-diversity.html"><a href="beta-diversity.html#nmds-1"><i class="fa fa-check"></i><b>5.2.2</b> NMDS</a></li>
 </ul></li>
-<li class="chapter" data-level="5.3" data-path="beta-diversity.html"><a href="beta-diversity.html#comparison-1"><i class="fa fa-check"></i><b>5.3</b> Comparison</a></li>
-</ul></li>
-<li class="chapter" data-level="6" data-path="different-abundance-analysis.html"><a href="different-abundance-analysis.html"><i class="fa fa-check"></i><b>6</b> Different abundance analysis</a></li>
-<li class="chapter" data-level="7" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html"><i class="fa fa-check"></i><b>7</b> Copy filtering &amp; prevalence</a>
+<li class="chapter" data-level="5.3" data-path="beta-diversity.html"><a href="beta-diversity.html#comparison-1"><i class="fa fa-check"></i><b>5.3</b> Comparison</a>
 <ul>
-<li class="chapter" data-level="7.1" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#total-asvs"><i class="fa fa-check"></i><b>7.1</b> Total ASVs</a></li>
-<li class="chapter" data-level="7.2" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#total-archaeal-asvs"><i class="fa fa-check"></i><b>7.2</b> Total archaeal ASVs</a></li>
-<li class="chapter" data-level="7.3" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#single-to-species"><i class="fa fa-check"></i><b>7.3</b> Single to species</a></li>
-<li class="chapter" data-level="7.4" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#alpha-diversity-1"><i class="fa fa-check"></i><b>7.4</b> Alpha Diversity</a>
-<ul>
-<li class="chapter" data-level="7.4.1" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#comparison-alpha-diversity-amplicom-different-threshold-vs-metagenomics"><i class="fa fa-check"></i><b>7.4.1</b> Comparison alpha diversity: amplicom different threshold vs metagenomics</a></li>
-<li class="chapter" data-level="7.4.2" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#finding-the-threshold-that-gives-results-most-similar-to-metagenomics"><i class="fa fa-check"></i><b>7.4.2</b> Finding the threshold that gives results most similar to metagenomics</a></li>
+<li class="chapter" data-level="5.3.1" data-path="beta-diversity.html"><a href="beta-diversity.html#aggregate-counts-at-family-level-in-both-datasets"><i class="fa fa-check"></i><b>5.3.1</b> Aggregate counts at family level in both datasets</a></li>
+<li class="chapter" data-level="5.3.2" data-path="beta-diversity.html"><a href="beta-diversity.html#calculate-the-beta-diversities"><i class="fa fa-check"></i><b>5.3.2</b> Calculate the beta diversities</a></li>
+<li class="chapter" data-level="5.3.3" data-path="beta-diversity.html"><a href="beta-diversity.html#each-data-set-individually"><i class="fa fa-check"></i><b>5.3.3</b> Each data set individually</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="8" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><i class="fa fa-check"></i><b>8</b> Amplicon t3_p10 filtering vs genome resolved metagenomics</a>
+<li class="chapter" data-level="6" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html"><i class="fa fa-check"></i><b>6</b> Copy filtering &amp; prevalence</a>
 <ul>
-<li class="chapter" data-level="8.1" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html#taxonomy"><i class="fa fa-check"></i><b>8.1</b> Taxonomy</a>
+<li class="chapter" data-level="6.1" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#total-asvs"><i class="fa fa-check"></i><b>6.1</b> Total ASVs</a></li>
+<li class="chapter" data-level="6.2" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#total-archaeal-asvs"><i class="fa fa-check"></i><b>6.2</b> Total archaeal ASVs</a></li>
+<li class="chapter" data-level="6.3" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#single-to-individuals"><i class="fa fa-check"></i><b>6.3</b> Single to individuals</a></li>
+<li class="chapter" data-level="6.4" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#single-to-species"><i class="fa fa-check"></i><b>6.4</b> Single to species</a></li>
+<li class="chapter" data-level="6.5" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#alpha-diversity-1"><i class="fa fa-check"></i><b>6.5</b> Alpha Diversity</a>
 <ul>
-<li class="chapter" data-level="8.1.1" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html#phylum"><i class="fa fa-check"></i><b>8.1.1</b> Phylum</a></li>
-<li class="chapter" data-level="8.1.2" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html#family"><i class="fa fa-check"></i><b>8.1.2</b> Family</a></li>
-</ul></li>
-<li class="chapter" data-level="8.2" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html#alpha-diversity-2"><i class="fa fa-check"></i><b>8.2</b> Alpha Diversity</a>
-<ul>
-<li class="chapter" data-level="8.2.1" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html#merge-both-data"><i class="fa fa-check"></i><b>8.2.1</b> Merge both data</a></li>
-<li class="chapter" data-level="8.2.2" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html#comparison-2"><i class="fa fa-check"></i><b>8.2.2</b> Comparison</a></li>
-</ul></li>
-<li class="chapter" data-level="8.3" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html#beta-diversity-1"><i class="fa fa-check"></i><b>8.3</b> Beta diversity</a>
-<ul>
-<li class="chapter" data-level="8.3.1" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html#prepare-the-data"><i class="fa fa-check"></i><b>8.3.1</b> Prepare the data</a></li>
-<li class="chapter" data-level="8.3.2" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html#comparison-3"><i class="fa fa-check"></i><b>8.3.2</b> Comparison</a></li>
-</ul></li>
-<li class="chapter" data-level="8.4" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html#differential-abundace-analysis-at-phylum-level"><i class="fa fa-check"></i><b>8.4</b> Differential abundace analysis at phylum level</a>
-<ul>
-<li class="chapter" data-level="8.4.1" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html#eptesicus"><i class="fa fa-check"></i><b>8.4.1</b> Eptesicus</a></li>
-<li class="chapter" data-level="8.4.2" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html#pipistrellus"><i class="fa fa-check"></i><b>8.4.2</b> Pipistrellus</a></li>
-<li class="chapter" data-level="8.4.3" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html#hypsugo-not-working-random-effect"><i class="fa fa-check"></i><b>8.4.3</b> Hypsugo (not working random effect)</a></li>
+<li class="chapter" data-level="6.5.1" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#comparison-alpha-diversity-amplicom-different-threshold-vs-metagenomics"><i class="fa fa-check"></i><b>6.5.1</b> Comparison alpha diversity: amplicom different threshold vs metagenomics</a></li>
+<li class="chapter" data-level="6.5.2" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#finding-the-threshold-that-gives-results-most-similar-to-metagenomics"><i class="fa fa-check"></i><b>6.5.2</b> Finding the threshold that gives results most similar to metagenomics</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="9" data-path="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html"><i class="fa fa-check"></i><b>9</b> Amplicon t0_p30 filtering vs genome resolved metagenomics</a>
+<li class="chapter" data-level="7" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><i class="fa fa-check"></i><b>7</b> Amplicon t3_p10 filtering vs genome resolved metagenomics</a>
 <ul>
-<li class="chapter" data-level="9.1" data-path="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html#taxonomy-1"><i class="fa fa-check"></i><b>9.1</b> Taxonomy</a>
+<li class="chapter" data-level="7.1" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html#taxonomy"><i class="fa fa-check"></i><b>7.1</b> Taxonomy</a>
 <ul>
-<li class="chapter" data-level="9.1.1" data-path="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html#phylum-1"><i class="fa fa-check"></i><b>9.1.1</b> Phylum</a></li>
-<li class="chapter" data-level="9.1.2" data-path="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html#family-1"><i class="fa fa-check"></i><b>9.1.2</b> Family</a></li>
+<li class="chapter" data-level="7.1.1" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html#differences-at-phylum-level"><i class="fa fa-check"></i><b>7.1.1</b> Differences at phylum level</a></li>
+<li class="chapter" data-level="7.1.2" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html#differences-at-family-level"><i class="fa fa-check"></i><b>7.1.2</b> Differences at family level</a></li>
+<li class="chapter" data-level="7.1.3" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html#differences-in-top-asvs-and-mags"><i class="fa fa-check"></i><b>7.1.3</b> Differences in top ASVs and MAGs</a></li>
 </ul></li>
-<li class="chapter" data-level="9.2" data-path="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html#alpha-diversity-3"><i class="fa fa-check"></i><b>9.2</b> Alpha Diversity</a>
+<li class="chapter" data-level="7.2" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html#alpha-diversity-2"><i class="fa fa-check"></i><b>7.2</b> Alpha Diversity</a>
 <ul>
-<li class="chapter" data-level="9.2.1" data-path="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html#merge-both-data-1"><i class="fa fa-check"></i><b>9.2.1</b> Merge both data</a></li>
-<li class="chapter" data-level="9.2.2" data-path="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html#comparison-4"><i class="fa fa-check"></i><b>9.2.2</b> Comparison</a></li>
+<li class="chapter" data-level="7.2.1" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html#merge-both-data"><i class="fa fa-check"></i><b>7.2.1</b> Merge both data</a></li>
+<li class="chapter" data-level="7.2.2" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html#comparison-2"><i class="fa fa-check"></i><b>7.2.2</b> Comparison</a></li>
 </ul></li>
-<li class="chapter" data-level="9.3" data-path="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html#beta-diversity-2"><i class="fa fa-check"></i><b>9.3</b> Beta diversity</a>
+<li class="chapter" data-level="7.3" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html#beta-diversity-1"><i class="fa fa-check"></i><b>7.3</b> Beta diversity</a>
 <ul>
-<li class="chapter" data-level="9.3.1" data-path="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html#prepare-the-data-1"><i class="fa fa-check"></i><b>9.3.1</b> Prepare the data</a></li>
-<li class="chapter" data-level="9.3.2" data-path="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html#comparison-5"><i class="fa fa-check"></i><b>9.3.2</b> Comparison</a></li>
+<li class="chapter" data-level="7.3.1" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html#prepare-the-data"><i class="fa fa-check"></i><b>7.3.1</b> Prepare the data</a></li>
+<li class="chapter" data-level="7.3.2" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html#comparison-3"><i class="fa fa-check"></i><b>7.3.2</b> Comparison</a></li>
 </ul></li>
-<li class="chapter" data-level="9.4" data-path="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html#differential-abundace-analysis-at-phylum-level-1"><i class="fa fa-check"></i><b>9.4</b> Differential abundace analysis at phylum level</a>
+<li class="chapter" data-level="7.4" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html#differential-abundace-analysis-at-phylum-level"><i class="fa fa-check"></i><b>7.4</b> Differential abundace analysis at phylum level</a>
 <ul>
-<li class="chapter" data-level="9.4.1" data-path="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html#eptesicus-1"><i class="fa fa-check"></i><b>9.4.1</b> Eptesicus</a></li>
-<li class="chapter" data-level="9.4.2" data-path="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html#pipistrellus-1"><i class="fa fa-check"></i><b>9.4.2</b> Pipistrellus</a></li>
-<li class="chapter" data-level="9.4.3" data-path="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t0_p30-filtering-vs-genome-resolved-metagenomics.html#hypsugo-not-working-random-effect-1"><i class="fa fa-check"></i><b>9.4.3</b> Hypsugo (not working random effect)</a></li>
+<li class="chapter" data-level="7.4.1" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html#eptesicus"><i class="fa fa-check"></i><b>7.4.1</b> Eptesicus</a></li>
+<li class="chapter" data-level="7.4.2" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html#pipistrellus"><i class="fa fa-check"></i><b>7.4.2</b> Pipistrellus</a></li>
+<li class="chapter" data-level="7.4.3" data-path="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html"><a href="amplicon-t3_p10-filtering-vs-genome-resolved-metagenomics.html#hypsugo-not-working-random-effect"><i class="fa fa-check"></i><b>7.4.3</b> Hypsugo (not working random effect)</a></li>
 </ul></li>
-</ul></li>
-<li class="chapter" data-level="10" data-path="functional-differences.html"><a href="functional-differences.html"><i class="fa fa-check"></i><b>10</b> Functional differences</a>
-<ul>
-<li class="chapter" data-level="10.1" data-path="functional-differences.html"><a href="functional-differences.html#functional-capacity-of-the-mags"><i class="fa fa-check"></i><b>10.1</b> Functional capacity of the MAGs</a></li>
-<li class="chapter" data-level="10.2" data-path="functional-differences.html"><a href="functional-differences.html#mci"><i class="fa fa-check"></i><b>10.2</b> MCI</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://www.alberdilab.dk" target="blank"><b>www.alberdilab.dk</b></a></li>
@@ -2213,64 +2190,64 @@ color: #a52929;
             <section class="normal" id="section-">
 <div id="alpha-diversity" class="section level1 hasAnchor" number="4">
 <h1><span class="header-section-number">Chapter 4</span> Alpha diversity<a href="alpha-diversity.html#alpha-diversity" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div class="sourceCode" id="cb109"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb109-1"><a href="alpha-diversity.html#cb109-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;resources/metagenomics/data_filtered.Rdata&quot;</span>)</span>
-<span id="cb109-2"><a href="alpha-diversity.html#cb109-2" tabindex="-1"></a>treatment_colors <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;#e5bd5b&quot;</span>, <span class="st">&quot;#6b7398&quot;</span>, <span class="st">&quot;#76b183&quot;</span>, <span class="st">&quot;#d57d2c&quot;</span>, <span class="st">&quot;#2a2d26&quot;</span>, <span class="st">&quot;#f9d4cc&quot;</span>, <span class="st">&quot;#3c634e&quot;</span>, <span class="st">&quot;#ea68c3&quot;</span>)</span>
-<span id="cb109-3"><a href="alpha-diversity.html#cb109-3" tabindex="-1"></a></span>
-<span id="cb109-4"><a href="alpha-diversity.html#cb109-4" tabindex="-1"></a>sample_metadata <span class="ot">&lt;-</span> sample_metadata <span class="sc">%&gt;%</span> </span>
-<span id="cb109-5"><a href="alpha-diversity.html#cb109-5" tabindex="-1"></a>  <span class="fu">select</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">7</span>,<span class="dv">8</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb109-6"><a href="alpha-diversity.html#cb109-6" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">method=</span><span class="st">&quot;shotgun&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb110"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb110-1"><a href="alpha-diversity.html#cb110-1" tabindex="-1"></a>richness <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
-<span id="cb110-2"><a href="alpha-diversity.html#cb110-2" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb110-3"><a href="alpha-diversity.html#cb110-3" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb110-4"><a href="alpha-diversity.html#cb110-4" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb110-5"><a href="alpha-diversity.html#cb110-5" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb110-6"><a href="alpha-diversity.html#cb110-6" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb110-7"><a href="alpha-diversity.html#cb110-7" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">richness =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb110-8"><a href="alpha-diversity.html#cb110-8" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
-<span id="cb110-9"><a href="alpha-diversity.html#cb110-9" tabindex="-1"></a></span>
-<span id="cb110-10"><a href="alpha-diversity.html#cb110-10" tabindex="-1"></a>neutral <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
-<span id="cb110-11"><a href="alpha-diversity.html#cb110-11" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb110-12"><a href="alpha-diversity.html#cb110-12" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb110-13"><a href="alpha-diversity.html#cb110-13" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb110-14"><a href="alpha-diversity.html#cb110-14" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb110-15"><a href="alpha-diversity.html#cb110-15" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb110-16"><a href="alpha-diversity.html#cb110-16" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">neutral =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb110-17"><a href="alpha-diversity.html#cb110-17" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
-<span id="cb110-18"><a href="alpha-diversity.html#cb110-18" tabindex="-1"></a></span>
-<span id="cb110-19"><a href="alpha-diversity.html#cb110-19" tabindex="-1"></a>phylogenetic <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
-<span id="cb110-20"><a href="alpha-diversity.html#cb110-20" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb110-21"><a href="alpha-diversity.html#cb110-21" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb110-22"><a href="alpha-diversity.html#cb110-22" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">1</span>, <span class="at">tree =</span> genome_tree) <span class="sc">%&gt;%</span></span>
-<span id="cb110-23"><a href="alpha-diversity.html#cb110-23" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb110-24"><a href="alpha-diversity.html#cb110-24" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb110-25"><a href="alpha-diversity.html#cb110-25" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">phylogenetic =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb110-26"><a href="alpha-diversity.html#cb110-26" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
-<span id="cb110-27"><a href="alpha-diversity.html#cb110-27" tabindex="-1"></a></span>
-<span id="cb110-28"><a href="alpha-diversity.html#cb110-28" tabindex="-1"></a>dist <span class="ot">&lt;-</span> genome_gifts <span class="sc">%&gt;%</span></span>
-<span id="cb110-29"><a href="alpha-diversity.html#cb110-29" tabindex="-1"></a>  <span class="fu">to.elements</span>(., GIFT_db) <span class="sc">%&gt;%</span></span>
-<span id="cb110-30"><a href="alpha-diversity.html#cb110-30" tabindex="-1"></a>  <span class="fu">traits2dist</span>(., <span class="at">method =</span> <span class="st">&quot;gower&quot;</span>)</span>
-<span id="cb110-31"><a href="alpha-diversity.html#cb110-31" tabindex="-1"></a></span>
-<span id="cb110-32"><a href="alpha-diversity.html#cb110-32" tabindex="-1"></a>functional <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
-<span id="cb110-33"><a href="alpha-diversity.html#cb110-33" tabindex="-1"></a>  <span class="fu">filter</span>(genome <span class="sc">%in%</span> <span class="fu">rownames</span>(dist)) <span class="sc">%&gt;%</span></span>
-<span id="cb110-34"><a href="alpha-diversity.html#cb110-34" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb110-35"><a href="alpha-diversity.html#cb110-35" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb110-36"><a href="alpha-diversity.html#cb110-36" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">1</span>, <span class="at">dist =</span> dist) <span class="sc">%&gt;%</span></span>
-<span id="cb110-37"><a href="alpha-diversity.html#cb110-37" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb110-38"><a href="alpha-diversity.html#cb110-38" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb110-39"><a href="alpha-diversity.html#cb110-39" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">functional =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb110-40"><a href="alpha-diversity.html#cb110-40" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb110-41"><a href="alpha-diversity.html#cb110-41" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">functional =</span> <span class="fu">if_else</span>(<span class="fu">is.nan</span>(functional), <span class="dv">1</span>, functional))</span>
-<span id="cb110-42"><a href="alpha-diversity.html#cb110-42" tabindex="-1"></a></span>
-<span id="cb110-43"><a href="alpha-diversity.html#cb110-43" tabindex="-1"></a><span class="co"># Merge all metrics</span></span>
-<span id="cb110-44"><a href="alpha-diversity.html#cb110-44" tabindex="-1"></a>alpha_div_meta <span class="ot">&lt;-</span> richness <span class="sc">%&gt;%</span></span>
-<span id="cb110-45"><a href="alpha-diversity.html#cb110-45" tabindex="-1"></a>  <span class="fu">full_join</span>(neutral, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample)) <span class="sc">%&gt;%</span></span>
-<span id="cb110-46"><a href="alpha-diversity.html#cb110-46" tabindex="-1"></a>  <span class="fu">full_join</span>(phylogenetic, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample)) <span class="sc">%&gt;%</span></span>
-<span id="cb110-47"><a href="alpha-diversity.html#cb110-47" tabindex="-1"></a>  <span class="fu">full_join</span>(functional, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample))</span></code></pre></div>
-<div class="sourceCode" id="cb111"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb111-1"><a href="alpha-diversity.html#cb111-1" tabindex="-1"></a>metagenome_alpha_div <span class="ot">&lt;-</span> alpha_div_meta <span class="sc">%&gt;%</span></span>
-<span id="cb111-2"><a href="alpha-diversity.html#cb111-2" tabindex="-1"></a>  <span class="fu">select</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb111-3"><a href="alpha-diversity.html#cb111-3" tabindex="-1"></a>  <span class="fu">left_join</span>(sample_metadata, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample))</span>
-<span id="cb111-4"><a href="alpha-diversity.html#cb111-4" tabindex="-1"></a><span class="fu">saveRDS</span>(metagenome_alpha_div, <span class="st">&quot;resources/metagenomics/metagenome_alpha_div.rds&quot;</span>)</span></code></pre></div>
 <p><strong><em>Metagenomics</em></strong></p>
+<div class="sourceCode" id="cb117"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb117-1"><a href="alpha-diversity.html#cb117-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;resources/metagenomics/data_filtered.Rdata&quot;</span>)</span>
+<span id="cb117-2"><a href="alpha-diversity.html#cb117-2" tabindex="-1"></a>treatment_colors <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;#e5bd5b&quot;</span>, <span class="st">&quot;#6b7398&quot;</span>, <span class="st">&quot;#76b183&quot;</span>, <span class="st">&quot;#d57d2c&quot;</span>, <span class="st">&quot;#2a2d26&quot;</span>, <span class="st">&quot;#f9d4cc&quot;</span>, <span class="st">&quot;#3c634e&quot;</span>, <span class="st">&quot;#ea68c3&quot;</span>)</span>
+<span id="cb117-3"><a href="alpha-diversity.html#cb117-3" tabindex="-1"></a></span>
+<span id="cb117-4"><a href="alpha-diversity.html#cb117-4" tabindex="-1"></a>sample_metadata <span class="ot">&lt;-</span> sample_metadata <span class="sc">%&gt;%</span></span>
+<span id="cb117-5"><a href="alpha-diversity.html#cb117-5" tabindex="-1"></a>  <span class="fu">select</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">7</span>,<span class="dv">8</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb117-6"><a href="alpha-diversity.html#cb117-6" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">method=</span><span class="st">&quot;shotgun&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb118"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb118-1"><a href="alpha-diversity.html#cb118-1" tabindex="-1"></a>richness <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
+<span id="cb118-2"><a href="alpha-diversity.html#cb118-2" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb118-3"><a href="alpha-diversity.html#cb118-3" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb118-4"><a href="alpha-diversity.html#cb118-4" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb118-5"><a href="alpha-diversity.html#cb118-5" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb118-6"><a href="alpha-diversity.html#cb118-6" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb118-7"><a href="alpha-diversity.html#cb118-7" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">richness =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb118-8"><a href="alpha-diversity.html#cb118-8" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
+<span id="cb118-9"><a href="alpha-diversity.html#cb118-9" tabindex="-1"></a></span>
+<span id="cb118-10"><a href="alpha-diversity.html#cb118-10" tabindex="-1"></a>neutral <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
+<span id="cb118-11"><a href="alpha-diversity.html#cb118-11" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb118-12"><a href="alpha-diversity.html#cb118-12" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb118-13"><a href="alpha-diversity.html#cb118-13" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb118-14"><a href="alpha-diversity.html#cb118-14" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb118-15"><a href="alpha-diversity.html#cb118-15" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb118-16"><a href="alpha-diversity.html#cb118-16" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">neutral =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb118-17"><a href="alpha-diversity.html#cb118-17" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
+<span id="cb118-18"><a href="alpha-diversity.html#cb118-18" tabindex="-1"></a></span>
+<span id="cb118-19"><a href="alpha-diversity.html#cb118-19" tabindex="-1"></a>phylogenetic <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
+<span id="cb118-20"><a href="alpha-diversity.html#cb118-20" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb118-21"><a href="alpha-diversity.html#cb118-21" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb118-22"><a href="alpha-diversity.html#cb118-22" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">1</span>, <span class="at">tree =</span> genome_tree) <span class="sc">%&gt;%</span></span>
+<span id="cb118-23"><a href="alpha-diversity.html#cb118-23" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb118-24"><a href="alpha-diversity.html#cb118-24" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb118-25"><a href="alpha-diversity.html#cb118-25" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">phylogenetic =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb118-26"><a href="alpha-diversity.html#cb118-26" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
+<span id="cb118-27"><a href="alpha-diversity.html#cb118-27" tabindex="-1"></a></span>
+<span id="cb118-28"><a href="alpha-diversity.html#cb118-28" tabindex="-1"></a>dist <span class="ot">&lt;-</span> genome_gifts <span class="sc">%&gt;%</span></span>
+<span id="cb118-29"><a href="alpha-diversity.html#cb118-29" tabindex="-1"></a>  <span class="fu">to.elements</span>(., GIFT_db) <span class="sc">%&gt;%</span></span>
+<span id="cb118-30"><a href="alpha-diversity.html#cb118-30" tabindex="-1"></a>  <span class="fu">traits2dist</span>(., <span class="at">method =</span> <span class="st">&quot;gower&quot;</span>)</span>
+<span id="cb118-31"><a href="alpha-diversity.html#cb118-31" tabindex="-1"></a></span>
+<span id="cb118-32"><a href="alpha-diversity.html#cb118-32" tabindex="-1"></a>functional <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
+<span id="cb118-33"><a href="alpha-diversity.html#cb118-33" tabindex="-1"></a>  <span class="fu">filter</span>(genome <span class="sc">%in%</span> <span class="fu">rownames</span>(dist)) <span class="sc">%&gt;%</span></span>
+<span id="cb118-34"><a href="alpha-diversity.html#cb118-34" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb118-35"><a href="alpha-diversity.html#cb118-35" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb118-36"><a href="alpha-diversity.html#cb118-36" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">1</span>, <span class="at">dist =</span> dist) <span class="sc">%&gt;%</span></span>
+<span id="cb118-37"><a href="alpha-diversity.html#cb118-37" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb118-38"><a href="alpha-diversity.html#cb118-38" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb118-39"><a href="alpha-diversity.html#cb118-39" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">functional =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb118-40"><a href="alpha-diversity.html#cb118-40" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb118-41"><a href="alpha-diversity.html#cb118-41" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">functional =</span> <span class="fu">if_else</span>(<span class="fu">is.nan</span>(functional), <span class="dv">1</span>, functional))</span>
+<span id="cb118-42"><a href="alpha-diversity.html#cb118-42" tabindex="-1"></a></span>
+<span id="cb118-43"><a href="alpha-diversity.html#cb118-43" tabindex="-1"></a><span class="co"># Merge all metrics</span></span>
+<span id="cb118-44"><a href="alpha-diversity.html#cb118-44" tabindex="-1"></a>alpha_div_meta <span class="ot">&lt;-</span> richness <span class="sc">%&gt;%</span></span>
+<span id="cb118-45"><a href="alpha-diversity.html#cb118-45" tabindex="-1"></a>  <span class="fu">full_join</span>(neutral, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample)) <span class="sc">%&gt;%</span></span>
+<span id="cb118-46"><a href="alpha-diversity.html#cb118-46" tabindex="-1"></a>  <span class="fu">full_join</span>(phylogenetic, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample)) <span class="sc">%&gt;%</span></span>
+<span id="cb118-47"><a href="alpha-diversity.html#cb118-47" tabindex="-1"></a>  <span class="fu">full_join</span>(functional, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample))</span></code></pre></div>
+<div class="sourceCode" id="cb119"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb119-1"><a href="alpha-diversity.html#cb119-1" tabindex="-1"></a>metagenome_alpha_div <span class="ot">&lt;-</span> alpha_div_meta <span class="sc">%&gt;%</span></span>
+<span id="cb119-2"><a href="alpha-diversity.html#cb119-2" tabindex="-1"></a>  <span class="fu">select</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb119-3"><a href="alpha-diversity.html#cb119-3" tabindex="-1"></a>  <span class="fu">left_join</span>(sample_metadata, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample))</span></code></pre></div>
+<div class="sourceCode" id="cb120"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb120-1"><a href="alpha-diversity.html#cb120-1" tabindex="-1"></a><span class="fu">saveRDS</span>(metagenome_alpha_div, <span class="st">&quot;resources/metagenomics/metagenome_alpha_div.rds&quot;</span>)</span></code></pre></div>
 <!-- preamble start -->
 
     <script>
@@ -2389,31 +2366,36 @@ color: #a52929;
       </table>
     </div>
 <!-- hack to avoid NA insertion in last line -->
-<div class="sourceCode" id="cb112"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb112-1"><a href="alpha-diversity.html#cb112-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;resources/amplicon/data_standard_filt.Rdata&quot;</span>)</span>
-<span id="cb112-2"><a href="alpha-diversity.html#cb112-2" tabindex="-1"></a>sample_metadata <span class="ot">&lt;-</span> sample_metadata <span class="sc">%&gt;%</span> </span>
-<span id="cb112-3"><a href="alpha-diversity.html#cb112-3" tabindex="-1"></a>  <span class="fu">select</span>(<span class="dv">1</span>,<span class="dv">9</span>,<span class="dv">10</span>,<span class="dv">13</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb112-4"><a href="alpha-diversity.html#cb112-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">method=</span><span class="st">&quot;amplicon&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb113"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb113-1"><a href="alpha-diversity.html#cb113-1" tabindex="-1"></a>richness <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
-<span id="cb113-2"><a href="alpha-diversity.html#cb113-2" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb113-3"><a href="alpha-diversity.html#cb113-3" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb113-4"><a href="alpha-diversity.html#cb113-4" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb113-5"><a href="alpha-diversity.html#cb113-5" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb113-6"><a href="alpha-diversity.html#cb113-6" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb113-7"><a href="alpha-diversity.html#cb113-7" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">richness =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb113-8"><a href="alpha-diversity.html#cb113-8" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
-<span id="cb113-9"><a href="alpha-diversity.html#cb113-9" tabindex="-1"></a></span>
-<span id="cb113-10"><a href="alpha-diversity.html#cb113-10" tabindex="-1"></a>neutral <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
-<span id="cb113-11"><a href="alpha-diversity.html#cb113-11" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb113-12"><a href="alpha-diversity.html#cb113-12" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb113-13"><a href="alpha-diversity.html#cb113-13" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb113-14"><a href="alpha-diversity.html#cb113-14" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb113-15"><a href="alpha-diversity.html#cb113-15" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb113-16"><a href="alpha-diversity.html#cb113-16" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">neutral =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb113-17"><a href="alpha-diversity.html#cb113-17" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
-<span id="cb113-18"><a href="alpha-diversity.html#cb113-18" tabindex="-1"></a></span>
-<span id="cb113-19"><a href="alpha-diversity.html#cb113-19" tabindex="-1"></a>amplicon_alpha_div <span class="ot">&lt;-</span> richness <span class="sc">%&gt;%</span></span>
-<span id="cb113-20"><a href="alpha-diversity.html#cb113-20" tabindex="-1"></a>  <span class="fu">full_join</span>(neutral, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample))</span></code></pre></div>
 <p><strong><em>Amplicon</em></strong></p>
+<div class="sourceCode" id="cb121"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb121-1"><a href="alpha-diversity.html#cb121-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;resources/amplicon/data_standard_filt.Rdata&quot;</span>)</span>
+<span id="cb121-2"><a href="alpha-diversity.html#cb121-2" tabindex="-1"></a>sample_metadata <span class="ot">&lt;-</span> sample_metadata <span class="sc">%&gt;%</span></span>
+<span id="cb121-3"><a href="alpha-diversity.html#cb121-3" tabindex="-1"></a>  <span class="fu">select</span>(<span class="dv">1</span>,<span class="dv">9</span>,<span class="dv">10</span>,<span class="dv">13</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb121-4"><a href="alpha-diversity.html#cb121-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">method=</span><span class="st">&quot;amplicon&quot;</span>)</span>
+<span id="cb121-5"><a href="alpha-diversity.html#cb121-5" tabindex="-1"></a></span>
+<span id="cb121-6"><a href="alpha-diversity.html#cb121-6" tabindex="-1"></a>no_archaea <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span> </span>
+<span id="cb121-7"><a href="alpha-diversity.html#cb121-7" tabindex="-1"></a>  <span class="fu">left_join</span>(genome_metadata[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)], <span class="at">by=</span><span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb121-8"><a href="alpha-diversity.html#cb121-8" tabindex="-1"></a>  <span class="fu">filter</span>(domain<span class="sc">!=</span><span class="st">&quot;Archaea&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb121-9"><a href="alpha-diversity.html#cb121-9" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>domain)</span></code></pre></div>
+<div class="sourceCode" id="cb122"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb122-1"><a href="alpha-diversity.html#cb122-1" tabindex="-1"></a>richness <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
+<span id="cb122-2"><a href="alpha-diversity.html#cb122-2" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb122-3"><a href="alpha-diversity.html#cb122-3" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb122-4"><a href="alpha-diversity.html#cb122-4" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb122-5"><a href="alpha-diversity.html#cb122-5" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb122-6"><a href="alpha-diversity.html#cb122-6" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb122-7"><a href="alpha-diversity.html#cb122-7" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">richness =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb122-8"><a href="alpha-diversity.html#cb122-8" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
+<span id="cb122-9"><a href="alpha-diversity.html#cb122-9" tabindex="-1"></a></span>
+<span id="cb122-10"><a href="alpha-diversity.html#cb122-10" tabindex="-1"></a>neutral <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span></span>
+<span id="cb122-11"><a href="alpha-diversity.html#cb122-11" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb122-12"><a href="alpha-diversity.html#cb122-12" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">where</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(. <span class="sc">==</span> <span class="dv">0</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb122-13"><a href="alpha-diversity.html#cb122-13" tabindex="-1"></a>  <span class="fu">hilldiv</span>(., <span class="at">q =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb122-14"><a href="alpha-diversity.html#cb122-14" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb122-15"><a href="alpha-diversity.html#cb122-15" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb122-16"><a href="alpha-diversity.html#cb122-16" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">neutral =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb122-17"><a href="alpha-diversity.html#cb122-17" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&quot;sample&quot;</span>)</span>
+<span id="cb122-18"><a href="alpha-diversity.html#cb122-18" tabindex="-1"></a></span>
+<span id="cb122-19"><a href="alpha-diversity.html#cb122-19" tabindex="-1"></a>amplicon_alpha_div <span class="ot">&lt;-</span> richness <span class="sc">%&gt;%</span></span>
+<span id="cb122-20"><a href="alpha-diversity.html#cb122-20" tabindex="-1"></a>  <span class="fu">full_join</span>(neutral, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample))</span></code></pre></div>
 <!-- preamble start -->
 
     <script>
@@ -2518,17 +2500,17 @@ color: #a52929;
       </table>
     </div>
 <!-- hack to avoid NA insertion in last line -->
-<div class="sourceCode" id="cb114"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb114-1"><a href="alpha-diversity.html#cb114-1" tabindex="-1"></a>amplicon_alpha_div_data <span class="ot">&lt;-</span> amplicon_alpha_div <span class="sc">%&gt;%</span></span>
-<span id="cb114-2"><a href="alpha-diversity.html#cb114-2" tabindex="-1"></a>  <span class="fu">left_join</span>(sample_metadata, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample))</span>
-<span id="cb114-3"><a href="alpha-diversity.html#cb114-3" tabindex="-1"></a><span class="fu">saveRDS</span>(amplicon_alpha_div_data, <span class="st">&quot;resources/metagenomics/amplicon_alpha_div.rds&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb123"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb123-1"><a href="alpha-diversity.html#cb123-1" tabindex="-1"></a>amplicon_alpha_div_data <span class="ot">&lt;-</span> amplicon_alpha_div <span class="sc">%&gt;%</span></span>
+<span id="cb123-2"><a href="alpha-diversity.html#cb123-2" tabindex="-1"></a>  <span class="fu">left_join</span>(sample_metadata, <span class="at">by =</span> <span class="fu">join_by</span>(sample <span class="sc">==</span> sample))</span></code></pre></div>
+<div class="sourceCode" id="cb124"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb124-1"><a href="alpha-diversity.html#cb124-1" tabindex="-1"></a><span class="fu">saveRDS</span>(amplicon_alpha_div_data, <span class="st">&quot;resources/amplicon/amplicon_alpha_div.rds&quot;</span>)</span></code></pre></div>
 <div id="comparison" class="section level2 hasAnchor" number="4.1">
 <h2><span class="header-section-number">4.1</span> Comparison<a href="alpha-diversity.html#comparison" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb115"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb115-1"><a href="alpha-diversity.html#cb115-1" tabindex="-1"></a>join_alpha <span class="ot">&lt;-</span> <span class="fu">rbind</span>(metagenome_alpha_div,amplicon_alpha_div_data)</span></code></pre></div>
+<div class="sourceCode" id="cb125"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb125-1"><a href="alpha-diversity.html#cb125-1" tabindex="-1"></a>join_alpha <span class="ot">&lt;-</span> <span class="fu">rbind</span>(metagenome_alpha_div,amplicon_alpha_div_data)</span></code></pre></div>
 <div id="differences-between-methods-and-species" class="section level3 hasAnchor" number="4.1.1">
 <h3><span class="header-section-number">4.1.1</span> Differences between methods and species<a href="alpha-diversity.html#differences-between-methods-and-species" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><strong><em>Richness</em></strong></p>
-<div class="sourceCode" id="cb116"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb116-1"><a href="alpha-diversity.html#cb116-1" tabindex="-1"></a>Model_richness <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> richness <span class="sc">~</span> Species<span class="sc">*</span>method, <span class="at">data =</span> join_alpha)</span>
-<span id="cb116-2"><a href="alpha-diversity.html#cb116-2" tabindex="-1"></a><span class="fu">anova</span>(Model_richness)</span></code></pre></div>
+<div class="sourceCode" id="cb126"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb126-1"><a href="alpha-diversity.html#cb126-1" tabindex="-1"></a>Model_richness <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> richness <span class="sc">~</span> Species<span class="sc">*</span>method, <span class="at">data =</span> join_alpha)</span>
+<span id="cb126-2"><a href="alpha-diversity.html#cb126-2" tabindex="-1"></a><span class="fu">anova</span>(Model_richness)</span></code></pre></div>
 <pre class="script-output"><code>Analysis of Variance Table
 
 Response: richness
@@ -2540,8 +2522,8 @@ Residuals      96 566832    5905
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <p><strong><em>Neutral</em></strong></p>
-<div class="sourceCode" id="cb118"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb118-1"><a href="alpha-diversity.html#cb118-1" tabindex="-1"></a>Model_neutral <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> neutral <span class="sc">~</span> Species<span class="sc">*</span>method, <span class="at">data =</span> join_alpha)</span>
-<span id="cb118-2"><a href="alpha-diversity.html#cb118-2" tabindex="-1"></a><span class="fu">anova</span>(Model_neutral)</span></code></pre></div>
+<div class="sourceCode" id="cb128"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb128-1"><a href="alpha-diversity.html#cb128-1" tabindex="-1"></a>Model_neutral <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> neutral <span class="sc">~</span> Species<span class="sc">*</span>method, <span class="at">data =</span> join_alpha)</span>
+<span id="cb128-2"><a href="alpha-diversity.html#cb128-2" tabindex="-1"></a><span class="fu">anova</span>(Model_neutral)</span></code></pre></div>
 <pre class="script-output"><code>Analysis of Variance Table
 
 Response: neutral
@@ -2552,11 +2534,11 @@ Species:method  2   408.1   204.0  0.9345   0.39634
 Residuals      96 20960.9   218.3                      
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<div id="metagenomic-data" class="section level5 hasAnchor" number="4.1.1.0.1">
-<h5><span class="header-section-number">4.1.1.0.1</span> Metagenomic data<a href="alpha-diversity.html#metagenomic-data" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<div id="metagenomic-data" class="section level4 hasAnchor" number="4.1.1.1">
+<h4><span class="header-section-number">4.1.1.1</span> Metagenomic data<a href="alpha-diversity.html#metagenomic-data" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><strong><em>Richness</em></strong></p>
-<div class="sourceCode" id="cb120"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb120-1"><a href="alpha-diversity.html#cb120-1" tabindex="-1"></a>Model_richness <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> richness <span class="sc">~</span> Species, <span class="at">data =</span> metagenome_alpha_div)</span>
-<span id="cb120-2"><a href="alpha-diversity.html#cb120-2" tabindex="-1"></a><span class="fu">anova</span>(Model_richness)</span></code></pre></div>
+<div class="sourceCode" id="cb130"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb130-1"><a href="alpha-diversity.html#cb130-1" tabindex="-1"></a>Model_richness <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> richness <span class="sc">~</span> Species, <span class="at">data =</span> metagenome_alpha_div)</span>
+<span id="cb130-2"><a href="alpha-diversity.html#cb130-2" tabindex="-1"></a><span class="fu">anova</span>(Model_richness)</span></code></pre></div>
 <pre class="script-output"><code>Analysis of Variance Table
 
 Response: richness
@@ -2565,7 +2547,7 @@ Species    2   1704  852.00  8.4391 0.0007235 ***
 Residuals 48   4846  100.96                      
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<div class="sourceCode" id="cb122"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb122-1"><a href="alpha-diversity.html#cb122-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_richness, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
+<div class="sourceCode" id="cb132"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb132-1"><a href="alpha-diversity.html#cb132-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_richness, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
 <pre class="script-output"><code>$emmeans
  Species emmean   SE df lower.CL upper.CL
  Eb       19.70 3.18 48    13.31    26.09
@@ -2582,8 +2564,8 @@ $contrasts
 
 P value adjustment: tukey method for comparing a family of 3 estimates </code></pre>
 <p><strong><em>Neutral</em></strong></p>
-<div class="sourceCode" id="cb124"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb124-1"><a href="alpha-diversity.html#cb124-1" tabindex="-1"></a>Model_neutral <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> neutral <span class="sc">~</span> Species, <span class="at">data =</span> metagenome_alpha_div)</span>
-<span id="cb124-2"><a href="alpha-diversity.html#cb124-2" tabindex="-1"></a><span class="fu">anova</span>(Model_neutral)</span></code></pre></div>
+<div class="sourceCode" id="cb134"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb134-1"><a href="alpha-diversity.html#cb134-1" tabindex="-1"></a>Model_neutral <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> neutral <span class="sc">~</span> Species, <span class="at">data =</span> metagenome_alpha_div)</span>
+<span id="cb134-2"><a href="alpha-diversity.html#cb134-2" tabindex="-1"></a><span class="fu">anova</span>(Model_neutral)</span></code></pre></div>
 <pre class="script-output"><code>Analysis of Variance Table
 
 Response: neutral
@@ -2592,7 +2574,7 @@ Species    2  190.82  95.411  4.1954 0.02093 *
 Residuals 48 1091.60  22.742                  
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<div class="sourceCode" id="cb126"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb126-1"><a href="alpha-diversity.html#cb126-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_neutral, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
+<div class="sourceCode" id="cb136"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb136-1"><a href="alpha-diversity.html#cb136-1" tabindex="-1"></a><span class="fu">emmeans</span>(Model_neutral, pairwise <span class="sc">~</span> Species)</span></code></pre></div>
 <pre class="script-output"><code>$emmeans
  Species emmean   SE df lower.CL upper.CL
  Eb        7.33 1.51 48   4.2937    10.36
@@ -2608,12 +2590,11 @@ $contrasts
  Ha - Pk     -2.90 1.49 48  -1.940  0.1386
 
 P value adjustment: tukey method for comparing a family of 3 estimates </code></pre>
-</div>
-<div id="amplicon-data" class="section level5 hasAnchor" number="4.1.1.0.2">
-<h5><span class="header-section-number">4.1.1.0.2</span> Amplicon data<a href="alpha-diversity.html#amplicon-data" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<div id="amplicon-data" class="section level5 hasAnchor" number="4.1.1.1.1">
+<h5><span class="header-section-number">4.1.1.1.1</span> Amplicon data<a href="alpha-diversity.html#amplicon-data" class="anchor-section" aria-label="Anchor link to header"></a></h5>
 <p><strong><em>Richness</em></strong></p>
-<div class="sourceCode" id="cb128"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb128-1"><a href="alpha-diversity.html#cb128-1" tabindex="-1"></a>Model_richness <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> richness <span class="sc">~</span> Species, <span class="at">data =</span> amplicon_alpha_div_data)</span>
-<span id="cb128-2"><a href="alpha-diversity.html#cb128-2" tabindex="-1"></a><span class="fu">anova</span>(Model_richness)</span></code></pre></div>
+<div class="sourceCode" id="cb138"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb138-1"><a href="alpha-diversity.html#cb138-1" tabindex="-1"></a>Model_richness <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> richness <span class="sc">~</span> Species, <span class="at">data =</span> amplicon_alpha_div_data)</span>
+<span id="cb138-2"><a href="alpha-diversity.html#cb138-2" tabindex="-1"></a><span class="fu">anova</span>(Model_richness)</span></code></pre></div>
 <pre class="script-output"><code>Analysis of Variance Table
 
 Response: richness
@@ -2623,8 +2604,8 @@ Residuals 48 561986   11708
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <p><strong><em>Neutral</em></strong></p>
-<div class="sourceCode" id="cb130"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb130-1"><a href="alpha-diversity.html#cb130-1" tabindex="-1"></a>Model_neutral <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> neutral <span class="sc">~</span> Species, <span class="at">data =</span> amplicon_alpha_div_data)</span>
-<span id="cb130-2"><a href="alpha-diversity.html#cb130-2" tabindex="-1"></a><span class="fu">anova</span>(Model_neutral)</span></code></pre></div>
+<div class="sourceCode" id="cb140"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb140-1"><a href="alpha-diversity.html#cb140-1" tabindex="-1"></a>Model_neutral <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> neutral <span class="sc">~</span> Species, <span class="at">data =</span> amplicon_alpha_div_data)</span>
+<span id="cb140-2"><a href="alpha-diversity.html#cb140-2" tabindex="-1"></a><span class="fu">anova</span>(Model_neutral)</span></code></pre></div>
 <pre class="script-output"><code>Analysis of Variance Table
 
 Response: neutral
@@ -2632,6 +2613,7 @@ Response: neutral
 Species    2  1376.8  688.39   1.663 0.2003
 Residuals 48 19869.3  413.94               </code></pre>
 
+</div>
 </div>
 </div>
 </div>

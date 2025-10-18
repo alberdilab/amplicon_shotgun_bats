@@ -284,8 +284,7 @@ beta_q1n$S %>%
   labs(color = "Species")
 ```
 
-#### Phylogenetic diversity
-
+***Phylogenetic diversity***
 ```{r beta_div_nmds_phylo_plot, comment="", message=FALSE, warning=FALSE, fig.height=7, fig.width=10, fig.fullwidth=TRUE}
 beta_q1p$S %>%
   vegan::metaMDS(.,
@@ -330,7 +329,6 @@ beta_q1p$S %>%
 ```
 
 ***Functional diversity***
-
 ```{r beta_div_nmds_funct_plot, comment="", message=FALSE, warning=FALSE, fig.height=7, fig.width=10, fig.fullwidth=TRUE}
 beta_q1f$S %>%
   vegan::metaMDS(.,
@@ -375,7 +373,6 @@ beta_q1f$S %>%
 ```
 
 ## Amplicon
-
 ```{r div_load_data_ampli2, comment="", message=FALSE, warning=FALSE}
 load("resources/amplicon/data_standard_filt.Rdata")
 ```
@@ -431,7 +428,8 @@ pairwise.adonis(
 )
 ```
 
-```{r permanova_neutral_ampli, comment="", message=FALSE, warning=FALSE}
+***Neutral***
+```{r permanova_neutral_amplicon1, comment="", message=FALSE, warning=FALSE}
 #Neutral diversity
 betadisper(
   beta_q1n$S,
@@ -454,15 +452,8 @@ adonis2(
   tt()
 ```
 
-```{r pairwise_neutral, comment="", message=FALSE, warning=FALSE}
-pairwise.adonis(
-  beta_q1n$S,
-  sample_metadata %>%
-    filter(sample %in% labels(beta_q0n$S)) %>%
-    arrange(match(sample, labels(beta_q0n$S))) %>%
-    pull(Species),
-  perm = 999
-)
+```{r pairwise_neutral_ampli, comment="", message=FALSE, warning=FALSE}
+pairwise.adonis(beta_q1n$S, sample_metadata %>% filter(sample %in% labels(beta_q0n$S)) %>% arrange(match(sample, labels(beta_q0n$S))) %>% pull(Species), perm = 999)
 ```
 
 ### NMDS
@@ -557,80 +548,197 @@ beta_q1n$S %>%
 
 ## Comparison 
 
-```{r beta_div_nmds_richness_plot_ampli_comparison_general, comment="", message=FALSE, warning=FALSE}
-sample_metadata_amplicon <- sample_metadata %>% 
+### Aggregate counts at family level in both datasets
+```{r}
+load("resources/amplicon/data_standard_filt.Rdata")
+
+sample_metadata_amplicon <- sample_metadata[c(1,9,10,13)] %>%
+  mutate(sample = paste0(sample, "_ampli")) %>%
   mutate(method="amplicon")
 
-rich_beta_amplicon <- beta_q0n$S %>%
-  vegan::metaMDS(.,
-                 trymax = 500,
-                 k = 2,
-                 trace = 0) %>%
-  vegan::scores() %>%
-  as_tibble(., rownames = "sample") %>%
-  dplyr::left_join(sample_metadata_amplicon, by = join_by(sample == sample)) %>% 
-  mutate(individual=sample)%>%
-  mutate(sample = paste0(sample, "_ampli")) %>% 
-  select(sample,NMDS1,NMDS2,Species,method, individual) 
+genome_metadata_ampli <- genome_metadata %>%
+  mutate(
+    class  = if_else(is.na(class), paste0(phylum, "_Unclassified"), class),
+    order  = if_else(is.na(order), paste0(class, "_Unclassified"), order),
+    family = if_else(is.na(family), paste0(order, "_Unclassified"), family),
+    genus  = if_else(is.na(genus), paste0(family, "_Unclassified"), genus)
+  )
 
-neutral_beta_amplicon <- beta_q1n$S %>%
-  vegan::metaMDS(.,
-                 trymax = 500,
-                 k = 2,
-                 trace = 0) %>%
-  vegan::scores() %>%
-  as_tibble(., rownames = "sample") %>%
-  dplyr::left_join(sample_metadata_amplicon, by = join_by(sample == sample)) %>%  
-  mutate(individual=sample)%>%
-  mutate(sample = paste0(sample, "_ampli")) %>% 
-  select(sample,NMDS1,NMDS2,Species,method,individual)
+genome_tax_ampli <- genome_counts_filt %>% 
+  column_to_rownames(., "genome")%>%
+  rename_with(~ paste0(., "_ampli")) %>%
+  rownames_to_column(., "genome")%>%
+  left_join(genome_metadata_ampli, by = "genome")
+
+family_level_agg_ampli <- genome_tax_ampli %>%
+  select(-genome) %>%
+  group_by(phylum, class, family) %>%
+  summarise(across(where(is.numeric), sum, na.rm = TRUE))%>% 
+    as.data.frame() %>% 
+  select(-c(phylum,class))
 ```
-```{r}
+
+```{r load_data_beta_comparison}
 load("resources/metagenomics/data_filtered.Rdata")
-load("resources/metagenomics/beta_filtered.Rdata")
-sample_metadata <- sample_metadata %>%
-  filter(!sample %in% c("H06", "H20"))
+
+genome_metadata <- genome_metadata %>%
+  mutate(
+    class = if_else(is.na(class) | str_trim(class) == "", paste0(phylum, "_Unclassified"), class),
+    order = if_else(is.na(order) | str_trim(order) == "", paste0(class, "_Unclassified"), order),
+    family = if_else(is.na(family) | str_trim(family) == "", paste0(order, "_Unclassified"), family),
+    genus = if_else(is.na(genus) | str_trim(genus) == "", paste0(family, "_Unclassified"), genus)
+  )
+
+genome_tax <- genome_counts_filt %>% 
+  left_join(genome_metadata[c(1,3,4,6)], by = "genome")
+
+# Aggregate counts at the Family level
+family_level_agg <- genome_tax %>%
+  select(-genome) %>%
+  group_by(phylum, class, family) %>%
+  summarise(across(where(is.numeric), sum, na.rm = TRUE)) %>%
+  as.data.frame() %>% 
+  select(-c(phylum,class))
 ```
 
-```{r beta_meta_general, comment="", message=FALSE, warning=FALSE}
-sample_metadata <- sample_metadata %>% 
+Merge the table
+```{r}
+merged_table <- full_join(family_level_agg_ampli,family_level_agg, 
+          by = c("family"))%>%
+  mutate(across(where(is.numeric), ~replace_na(., 0)))
+
+sample_shot <- sample_metadata %>% 
+  select(-c(Habitat,Longitude, Latitude, Region))%>%
   mutate(method="shotgun")
 
-rich_beta_meta <- beta_q0n$S %>%
-  vegan::metaMDS(.,
-                 trymax = 500,
-                 k = 2,
-                 trace = 0) %>%
-  vegan::scores() %>%
-  as_tibble(., rownames = "sample") %>%
-  dplyr::left_join(sample_metadata, by = join_by(sample == sample))%>% 
-  mutate(individual=sample)%>% 
-  select(sample,NMDS1,NMDS2,Species,method, individual)
-
-neutral_beta_meta <- beta_q1n$S %>%
-  vegan::metaMDS(.,
-                 trymax = 500,
-                 k = 2,
-                 trace = 0) %>%
-  vegan::scores() %>%
-  as_tibble(., rownames = "sample") %>%
-  dplyr::left_join(sample_metadata, by = join_by(sample == sample)) %>% 
-  mutate(individual=sample)%>% 
-  select(sample,NMDS1,NMDS2,Species,method, individual)
+all_samples <- rbind(sample_shot, sample_metadata_amplicon)
 ```
 
-#### Richness
-```{r nmds_rich_general, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
-beta_richness_together <- rbind(rich_beta_amplicon, rich_beta_meta) %>%
-  mutate(id = paste(Species, method, sep = "_"))
-beta_colors <- c("#e5bd5b","#d57d2c","#6b7398","#ea68c3","#76b183","#3c634e")
-beta_richness_together %>%
-  group_by(id) %>%
+### Calculate the beta diversities
+```{r beta_div_together, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+beta_q0n <- merged_table %>%
+  select(-H19, -H20) %>% 
+  column_to_rownames(., "family") %>% 
+  hillpair(., q = 0)
+
+beta_q1n <- merged_table %>%
+  select(-H19) %>% 
+  column_to_rownames(., "family") %>% 
+  hillpair(., q = 1)
+```
+
+***Richness***
+```{r beta_div1_both_fig1, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+beta_q0n$S %>%
+  vegan::metaMDS(.,
+                 trymax = 500,
+                 k = 2,
+                 trace = 0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(all_samples, by = join_by(sample == sample)) %>%
+  group_by(method, Species) %>%
   mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
   mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
   ungroup() %>%
-  ggplot(aes(x = NMDS1, y = NMDS2, color = id)) +
+  ggplot(aes(x = NMDS1, y = NMDS2, color = Species, shape=method)) +
   geom_point(size = 4) +
+  geom_segment(aes(x = x_cen, y = y_cen, xend = NMDS1, yend = NMDS2 ), alpha = 0.9, show.legend = FALSE) +
+  theme(
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    panel.background = element_blank(),
+    axis.line = element_line(
+      size = 0.5,
+      linetype = "solid",
+      colour = "black"
+    ),
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.position = "right",
+    legend.box = "vertical"
+  ) #+labs(color = "method") +geom_text_repel(aes(label = sample), size=3)
+  
+```
+```{r permanova_rich_both_fig2, comment="", message=FALSE, warning=FALSE}
+betadisper(beta_q0n$S, all_samples %>% filter(sample %in% labels(beta_q0n$S)) %>% arrange(match(sample, labels(beta_q0n$S))) %>% pull(Species)) %>% permutest(.)
+
+adonis2(beta_q0n$S ~ Species*method, data = all_samples %>% filter(sample %in% labels(beta_q0n$S)) %>% arrange(match(sample, labels(beta_q0n$S))), permutations = 999) %>%
+  broom::tidy() %>%
+  tt()
+
+adonis2(
+  beta_q0n$S ~ Species*method,
+  by = "terms",
+  data = all_samples %>%
+    filter(sample %in% labels(beta_q0n$S)) %>%
+    arrange(match(sample, labels(beta_q0n$S))),
+  permutations = 999
+) %>%
+  broom::tidy() %>%
+  tt()
+```
+
+***Neutral diversity***
+```{r beta_div1_both_fig3, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+beta_q1n$S %>%
+  vegan::metaMDS(.,
+                 trymax = 500,
+                 k = 2,
+                 trace = 0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(all_samples, by = join_by(sample == sample)) %>%
+  group_by(method, Species) %>%
+  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
+  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
+  ungroup() %>%
+  ggplot(aes(x = NMDS1, y = NMDS2, color = Species, shape=method)) +
+  geom_point(size = 4) +
+ # scale_color_manual(values = species_color) +
+  geom_segment(
+    aes(
+      x = x_cen,
+      y = y_cen,
+      xend = NMDS1,
+      yend = NMDS2
+    ),
+    alpha = 0.9,
+    show.legend = FALSE
+  ) +
+  theme(
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    panel.background = element_blank(),
+    axis.line = element_line(
+      size = 0.5,
+      linetype = "solid",
+      colour = "black"
+    ),
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.position = "right",
+    legend.box = "vertical"
+  ) 
+#+labs(color = "method") +geom_text_repel(aes(label = sample), size=3)
+  
+```
+```{r beta_div1_both_appr_fig4, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+beta_q1n$S %>%
+  vegan::metaMDS(.,
+                 trymax = 500,
+                 k = 2,
+                 trace = 0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(all_samples, by = join_by(sample == sample)) %>%
+  group_by(method, Species) %>%
+  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
+  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
+  ungroup() %>%
+  ggplot(aes(x = NMDS1, y = NMDS2, color = Species, shape=method)) +
+  geom_point(size = 4) +
+ # scale_color_manual(values = species_color) +
   geom_segment(
     aes(
       x = x_cen,
@@ -655,41 +763,155 @@ beta_richness_together %>%
     legend.position = "right",
     legend.box = "vertical"
   ) +
-  labs(color = "Species & Method")
-
+  labs(color = "method") +geom_text_repel(aes(label = sample), size=3)
+  
 ```
 
-***Differences between species and methods***
+```{r permanova_neutral_tog, comment="", message=FALSE, warning=FALSE}
+betadisper(
+  beta_q1n$S,
+  all_samples %>%
+    filter(sample %in% labels(beta_q1n$S)) %>%
+    arrange(match(sample, labels(beta_q1n$S))) %>%
+    pull(Species)
+) %>%
+  permutest(.)
+
+adonis2(
+  beta_q1n$S ~ Species*method,
+  data = all_samples %>%
+    filter(sample %in% labels(beta_q1n$S)) %>%
+    arrange(match(sample, labels(beta_q1n$S))),
+  permutations = 999
+) %>%
+  broom::tidy() %>%
+  tt()
+
+adonis2(
+  beta_q1n$S ~ Species*method,
+  by = "terms",
+  data = all_samples %>%
+    filter(sample %in% labels(beta_q1n$S)) %>%
+    arrange(match(sample, labels(beta_q1n$S))),
+  permutations = 999
+) %>%
+  broom::tidy() %>%
+  tt()
+```
+
+### Each data set individually
+***Amplicon***
 ```{r}
-metadata_both <- beta_richness_together %>%
-  select(sample, Species, method, individual, id)
-dist_matrix <- dist(beta_richness_together %>% select(NMDS1, NMDS2), method = "euclidean")
-dist_matrix <- as.matrix(dist_matrix)
-rownames(dist_matrix) <- beta_richness_together$sample
-colnames(dist_matrix) <- beta_richness_together$sample
+beta_q1n_ampli <- family_level_agg_ampli %>%
+  column_to_rownames(., "family") %>% 
+  hillpair(., q = 1)
 
-adonis2(dist_matrix ~ method*Species,
-        data = metadata_both %>% arrange(match(sample,labels(dist_matrix))),
-        permutations = 999, by="terms") %>%
-        broom::tidy() %>%
-        tt()
+adonis2(
+  beta_q1n_ampli$S ~ Species,
+  by = "terms",
+  data = all_samples %>%
+    filter(sample %in% labels(beta_q1n_ampli$S)) %>%
+    arrange(match(sample, labels(beta_q1n_ampli$S))),
+  permutations = 999
+) %>%
+  broom::tidy() %>%
+  tt()
+
+pairwise.adonis(
+  beta_q1n_ampli$S,
+  all_samples %>%
+    filter(sample %in% labels(beta_q1n_ampli$S)) %>%
+    arrange(match(sample, labels(beta_q1n_ampli$S))) %>%
+    pull(Species),
+  perm = 999
+)
 ```
-
-#### Neutral
-```{r nmds_neu_general, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
-beta_neutral_together <- rbind(neutral_beta_amplicon, neutral_beta_meta) %>%
-  mutate(id = paste(Species, method, sep = "_"))
-beta_colors <- c("#e5bd5b","#d57d2c","#6b7398","#ea68c3","#76b183","#3c634e")
-
-beta_neutral_together %>%
-  filter(sample != "E31_ampli") %>%
-  group_by(id) %>%
+```{r beta_div1_both_fig5, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+beta_q1n_ampli$S %>%
+  vegan::metaMDS(.,
+                 trymax = 500,
+                 k = 2,
+                 trace = 0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(all_samples, by = join_by(sample == sample)) %>%
+  group_by(Species) %>%
   mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
   mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
   ungroup() %>%
-  ggplot(aes(x = NMDS1, y = NMDS2, color = id)) +
+  ggplot(aes(x = NMDS1, y = NMDS2, color = Species)) +
   geom_point(size = 4) +
-  scale_color_manual(values = beta_colors) +
+ # scale_color_manual(values = species_color) +
+  geom_segment(
+    aes(
+      x = x_cen,
+      y = y_cen,
+      xend = NMDS1,
+      yend = NMDS2
+    ),
+    alpha = 0.9,
+    show.legend = FALSE
+  ) +
+  theme(
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    panel.background = element_blank(),
+    axis.line = element_line(
+      size = 0.5,
+      linetype = "solid",
+      colour = "black"
+    ),
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.position = "right",
+    legend.box = "vertical"
+  ) 
+```
+
+***Shotgun***
+```{r pairwise_neutral_to, comment="", message=FALSE, warning=FALSE}
+beta_q1n_shot <- family_level_agg %>%
+  select(-H19,-H20) %>% 
+  column_to_rownames(., "family") %>% 
+  hillpair(., q = 1)
+
+adonis2(
+  beta_q1n_shot$S ~ Species,
+  by = "terms",
+  data = all_samples %>%
+    filter(sample %in% labels(beta_q1n_shot$S)) %>%
+    arrange(match(sample, labels(beta_q1n_shot$S))),
+  permutations = 999
+) %>%
+  broom::tidy() %>%
+  tt()
+
+pairwise.adonis(
+  beta_q1n_shot$S,
+  all_samples %>%
+    filter(sample %in% labels(beta_q1n_shot$S)) %>%
+    arrange(match(sample, labels(beta_q1n_shot$S))) %>%
+    pull(Species),
+  perm = 999
+)
+```
+
+```{r beta_div1_both_fig7, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+beta_q1n_shot$S %>%
+  vegan::metaMDS(.,
+                 trymax = 500,
+                 k = 2,
+                 trace = 0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(all_samples, by = join_by(sample == sample)) %>%
+  group_by(Species) %>%
+  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
+  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
+  ungroup() %>%
+  ggplot(aes(x = NMDS1, y = NMDS2, color = Species)) +
+  geom_point(size = 4) +
+ # scale_color_manual(values = species_color) +
   geom_segment(
     aes(
       x = x_cen,
@@ -714,150 +936,5 @@ beta_neutral_together %>%
     legend.position = "right",
     legend.box = "vertical"
   ) +
-  labs(color = "Species")
+  labs(color = "method") +geom_text_repel(aes(label = sample), size=3)
 ```
-
-***Differences between species and methods***
-```{r}
-metadata_both <- beta_neutral_together %>%
-  select(sample, Species, method, individual, id)
-dist_matrix <- dist(beta_neutral_together %>% select(NMDS1, NMDS2), method = "euclidean")
-dist_matrix <- as.matrix(dist_matrix)
-rownames(dist_matrix) <- beta_neutral_together$sample
-colnames(dist_matrix) <- beta_neutral_together$sample
-
-adonis2(dist_matrix ~ method*Species,
-        data = metadata_both %>% arrange(match(sample,labels(dist_matrix))),
-        permutations = 999, by="terms") %>%
-        broom::tidy() %>%
-        tt()
-```
-
-
-
-
-
-# Different abundance analysis
-```{r merge_p, comment="", message=FALSE, warning=FALSE}
-load("resources/metagenomics/data_filtered.Rdata")
-phyloseq_metagenome_filtered <- subset_samples(phyloseq_metagenome_filtered, !sample_names(phyloseq_metagenome_filtered) %in% c("H06", "H20"))
-phyloseq_metagenome_filtered <- prune_taxa(taxa_sums(phyloseq_metagenome_filtered)>0, phyloseq_metagenome_filtered)
-sample_data(phyloseq_metagenome_filtered)$method <- "shotgun"
-sample_data(phyloseq_metagenome_filtered)$sample_ID <- rownames(sample_data(phyloseq_metagenome_filtered))
-
-# otu_table(phyloseq_metagenome_filtered) <- otu_table(
-#   apply(otu_table(phyloseq_metagenome_filtered), 2, as.integer), 
-#   taxa_are_rows = taxa_are_rows(phyloseq_metagenome_filtered)  # Preserve original orientation
-# )
-
-phyloseq_metagenome_filtered_phylum <- tax_glom(phyloseq_metagenome_filtered, "phylum")
-
-load("resources/amplicon/data_standard_filt.Rdata")
-sample_data(phyloseq_16S_stand)$sample_ID <- rownames(sample_data(phyloseq_16S_stand))
-sample_names(phyloseq_16S_stand) <- paste0(sample_names(phyloseq_16S_stand), "_ampli")
-sample_data(phyloseq_16S_stand)$method <- "amplicon"
-
-phyloseq_16S_stand_phylum <- tax_glom(phyloseq_16S_stand, "phylum")
-
-merge_phylo <- merge_phyloseq(phyloseq_16S_stand_phylum,phyloseq_metagenome_filtered_phylum)
-
-```
-
-```{r merge_otu, comment="", message=FALSE, warning=FALSE}
-otu1 <- as.data.frame(otu_table(phyloseq_metagenome_filtered_phylum)) %>%
-  mutate_all(as.integer)
-tax1 <- as.data.frame(tax_table(phyloseq_metagenome_filtered_phylum)) %>% 
-  select(phylum)
-otu1$phylum <- tax1$phylum
-
-otu2 <- as.data.frame(otu_table(phyloseq_16S_stand_phylum))
-tax2 <- as.data.frame(tax_table(phyloseq_16S_stand_phylum)) %>% select(phylum)
-otu2$phylum <- tax2$phylum
-
-merged_otu <- full_join(otu1, otu2, by = "phylum") %>%
-  mutate(across(everything(), ~replace_na(., 0)))%>%
-  group_by(phylum) %>%
-  summarise(across(everything(), sum, na.rm = TRUE))
-merged_otu_mat <- as.matrix(merged_otu %>% select(-phylum))
-rownames(merged_otu_mat) <- merged_otu$phylum
-otu_table_merged <- otu_table(merged_otu_mat, taxa_are_rows = TRUE)
-
-merged_physeq_phylum <- phyloseq(otu_table_merged, sample_data(merge_phylo))
-merged_physeq_phylum <- prune_taxa(taxa_sums(merged_physeq_phylum)>0, merged_physeq_phylum)
-
-```
-
-```{r}
-ancom_rand_output_struc = ancombc2(data = merged_physeq_phylum, 
-                  assay_name = "counts", 
-                  tax_level = NULL,
-                  fix_formula = "method",
-                  rand_formula = "(1|sample_ID)",
-                  p_adj_method = "holm", 
-                  pseudo_sens = TRUE,
-                  prv_cut =0, 
-                  lib_cut = 0, 
-                  s0_perc = 0.05,
-                  group = "method", 
-                  struc_zero = TRUE, 
-                  neg_lb = FALSE,
-                  alpha = 0.05, 
-                  n_cl = 2, 
-                  verbose = TRUE,
-                  global = FALSE, 
-                  pairwise = FALSE, 
-                  dunnet = FALSE, 
-                  trend = FALSE,
-                  iter_control = list(tol = 1e-5, max_iter = 20, verbose = FALSE),
-                  em_control = list(tol = 1e-5, max_iter = 100),
-                  lme_control = lme4::lmerControl(),
-                  mdfdr_control = list(fwer_ctrl_method = "holm", B = 100), 
-                  trend_control = NULL)
-```
-
-***Total number of structural zeros***
-```{r}
-structural_zeros <- ancom_rand_output_struc$zero_ind
-structural_zeros_df <- as.data.frame(structural_zeros) %>% 
-  column_to_rownames(., "taxon")
-structural_zero_taxa <- rownames(structural_zeros_df)[apply(structural_zeros_df, 1, any)]
-structural_zero_groups <- structural_zeros_df[structural_zero_taxa, , drop = FALSE] %>% 
-  rename("Amplicon"=1) %>% 
-  rename("Shotgun"=2)
-nrow(structural_zero_groups)
-```
-
-***Structural zeros in Amplicon***
-```{r}
-structural_zero_groups %>% 
-  filter(Amplicon==TRUE) %>% 
-  nrow() %>% 
-  cat()
-
-structural_zero_groups %>% 
-  filter(Amplicon==TRUE)
-```
-
-***Structural zeros in Shotgun***
-```{r}
-structural_zero_groups %>% 
-  filter(Shotgun==TRUE) %>% 
-  nrow() %>% 
-  cat()
-
-structural_zero_groups %>% 
-  filter(Shotgun==TRUE)
-```
-
-***Phyla differentially abundant***
-```{r}
-ancom_rand_output_struc$res %>% 
-  filter(p_methodshotgun<0.05)
-```
-
-***Phyla not different***
-```{r}
-ancom_rand_output_struc$res %>% 
-  filter(p_methodshotgun>0.05)
-```
-

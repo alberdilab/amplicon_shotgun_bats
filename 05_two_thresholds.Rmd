@@ -132,6 +132,7 @@ master_table %>%
     legend.box = "horizontal"
   )
 ```
+
 ## Single to individuals
 ```{r single_ind_thres, comment="", message=FALSE, warning=FALSE}
 total_single <- master_table %>%
@@ -198,7 +199,7 @@ master_table %>%
 ```
 
 ## Single to species
-```{r single_sp, message=FALSE, fig.height=16, fig.width=18, fig.fullwidth=TRUE}
+```{r single_sp, message=FALSE, fig.height=16, fig.width=16, fig.fullwidth=TRUE}
 master_table %>%
   group_by(Species, copy_threshold, prevalence, genome) %>%
   summarise(freq = sum(pa, na.rm = TRUE), .groups = "drop") %>%
@@ -643,7 +644,6 @@ wilcox_results_table %>%
 ### Finding the threshold that gives results most similar to metagenomics
 
 ```{r thresholding_pca, message=FALSE, fig.height=10, fig.width=16, fig.fullwidth=TRUE}
-
 load("resources/metagenomics/data_filtered.Rdata")
 
 metagenomics_diversity <- genome_counts_filt %>% 
@@ -715,13 +715,11 @@ diversity_master %>%
   theme_minimal()
 ```
 
-
 ***Save the table with selected filtering thresholds***
 
 ```{r selected_table, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 load("resources/amplicon/data_nocopyfilt.Rdata")
 load("resources/amplicon/master_table.Rdata")
-
 
 genome_counts_filt_amplicon <- master_table %>%
   mutate(filter = str_c(copy_threshold, "_", prevalence)) %>%
