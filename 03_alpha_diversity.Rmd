@@ -6,12 +6,13 @@ message=FALSE)
 set.seed(1703)
 ```
 
+***Metagenomics***
 ```{r load_data_alpha_metagenomics}
 load("resources/metagenomics/data_filtered.Rdata")
 treatment_colors <- c("#e5bd5b", "#6b7398", "#76b183", "#d57d2c", "#2a2d26", "#f9d4cc", "#3c634e", "#ea68c3")
 
-sample_metadata <- sample_metadata %>% 
-  select(1,2,7,8) %>% 
+sample_metadata <- sample_metadata %>%
+  select(1,2,7,8) %>%
   mutate(method="shotgun")
 ```
 
@@ -65,14 +66,16 @@ alpha_div_meta <- richness %>%
   full_join(functional, by = join_by(sample == sample))
 ```
 
-```{r save_alpha_meta, comment="", message=FALSE, warning=FALSE}
+```{r alpha_meta_table, comment="", message=FALSE, warning=FALSE}
 metagenome_alpha_div <- alpha_div_meta %>%
   select(1:3) %>% 
   left_join(sample_metadata, by = join_by(sample == sample))
+```
+
+```{r save_alpha_meta, comment="", message=FALSE, warning=FALSE}
 saveRDS(metagenome_alpha_div, "resources/metagenomics/metagenome_alpha_div.rds")
 ```
 
-***Metagenomics***
 ```{r alpha_div_diets_summary_all_metagenomics, comment="",echo=FALSE, message=FALSE, warning=FALSE}
 alpha_div_meta %>%
   pivot_longer(-sample, names_to = "alpha", values_to = "value") %>%
@@ -99,13 +102,20 @@ alpha_div_meta %>%
   tt()
 ```
 
-
+***Amplicon***
 ```{r div_load_data, comment="", message=FALSE, warning=FALSE}
 load("resources/amplicon/data_standard_filt.Rdata")
-sample_metadata <- sample_metadata %>% 
-  select(1,9,10,13) %>% 
+sample_metadata <- sample_metadata %>%
+  select(1,9,10,13) %>%
   mutate(method="amplicon")
+
+no_archaea <- genome_counts_filt %>% 
+  left_join(genome_metadata[c(1,2)], by="genome") %>% 
+  filter(domain!="Archaea") %>% 
+  select(-domain)
+
 ```
+
 
 ```{r filter_copy2, comment="", message=FALSE, warning=FALSE}
 richness <- genome_counts_filt %>%
@@ -130,7 +140,6 @@ amplicon_alpha_div <- richness %>%
   full_join(neutral, by = join_by(sample == sample))
 ```
 
-***Amplicon***
 ```{r alpha_div_diets_summary_all_amplicon, comment="",echo=FALSE, message=FALSE, warning=FALSE}
 amplicon_alpha_div %>%
   pivot_longer(-sample, names_to = "alpha", values_to = "value") %>%
@@ -157,10 +166,12 @@ amplicon_alpha_div %>%
   tt()
 ```
 
-```{r save_alpha_amp, comment="", message=FALSE, warning=FALSE}
+```{r alpha_amp_table, comment="", message=FALSE, warning=FALSE}
 amplicon_alpha_div_data <- amplicon_alpha_div %>%
   left_join(sample_metadata, by = join_by(sample == sample))
-saveRDS(amplicon_alpha_div_data, "resources/metagenomics/amplicon_alpha_div.rds")
+```
+```{r save_alpha_amp, comment="", message=FALSE, warning=FALSE}
+saveRDS(amplicon_alpha_div_data, "resources/amplicon/amplicon_alpha_div.rds")
 ```
 
 ## Comparison
@@ -183,7 +194,7 @@ Model_neutral <- lm(formula = neutral ~ Species*method, data = join_alpha)
 anova(Model_neutral)
 ```
 
-##### Metagenomic data
+#### Metagenomic data
 
 ***Richness***
 ```{r rich_MM_general, comment="", message=FALSE, warning=FALSE}

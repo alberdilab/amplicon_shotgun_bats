@@ -65,9 +65,10 @@ sample_metadata <- sample_metadata[match(colnames(genome_counts_filt_r), sample_
 ```
 
 ### Genome metadata
+Unify the taxonomy
 ```{r loadgenomedata, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 genome_metadata <- read_tsv("resources/metagenomics/all_together_gtdbtk.tsv") %>%
-    rename(genome=1)%>%
+  rename(genome=1)%>%
   mutate(genome = str_replace(genome, "\\.fa$", ""))%>%
   semi_join(., genome_counts_filt, by = "genome") %>% 
   arrange(match(genome,genome_counts_filt$genome))%>% 
@@ -77,8 +78,8 @@ genome_metadata <- read_tsv("resources/metagenomics/all_together_gtdbtk.tsv") %>
   mutate(phylum = case_when(
         phylum == "Actinobacteriota" ~ "Actinomycetota",
         phylum == "Firmicutes" ~ "Bacillota",
-        phylum == "Firmicutes_A" ~ "Bacillota_A",
-        phylum == "Firmicutes_C" ~ "Bacillota_C",
+        phylum == "Firmicutes_A" ~ "Bacillota",
+        phylum == "Firmicutes_C" ~ "Bacillota",
         phylum == "Cyanobacteria" ~ "Cyanobacteriota",
         phylum == "Proteobacteria" ~ "Pseudomonadota",
         TRUE ~ phylum))
@@ -148,8 +149,7 @@ genome_data <- phyloseq(phylo_counts, phylo_taxonomy, phylo_samples, tree)
 ### Prepare color scheme
 ```{r get_ehi_colors_skin, warning=FALSE, comments="", message=FALSE, eval=FALSE}
 phylum_colors <- read_tsv(
-  "https://raw.githubusercontent.com/earthhologenome/EHI_taxonomy_colour/main/ehi_phylum_colors.tsv"
-) %>%
+  "https://raw.githubusercontent.com/earthhologenome/EHI_taxonomy_colour/main/ehi_phylum_colors.tsv") %>%
   mutate_at(vars(phylum), ~ str_replace(., "[dpcofgs]__", "")) %>%
   right_join(genome_metadata, by = join_by(phylum == phylum)) %>%
   arrange(match(genome, genome_tree$tip.label)) %>%
@@ -177,25 +177,26 @@ save(
 
 ## Amplicon
 ### Load data
-```{r ampli, comment="", message=FALSE, warning=FALSE, eval=FALSE}
+```{r load_ampli, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 read_counts <- read_tsv("resources/amplicon/ASVs_count_overlap10_nochim0.tsv") %>% dplyr::rename(asv = 1) %>%
-  as.data.frame()
-taxonomy_sp <- read_tsv("resources/amplicon/taxonomy_species_tax_overlap10_nochim0.tsv") %>%
+  as.data.frame() %>% 
+  column_to_rownames(., "asv")
+
+genome_metadata_16S <- read_tsv("resources/amplicon/taxonomy_species_tax_overlap10_nochim0.tsv") %>%
   dplyr::rename(asv = 1) %>%
-  as.data.frame()
-hierarchy <- read_csv("resources/amplicon/metadata.csv")
-samples <- read_counts %>% select(-asv) %>% colnames()
-hierarchy <- hierarchy[hierarchy$Sample %in% samples, ]
-metadata <- tibble::column_to_rownames(hierarchy, "Sample")
-read_counts_row <- column_to_rownames(read_counts, "asv")
-taxonomy_table_row <- column_to_rownames(taxonomy_sp, "asv")
+  as.data.frame() %>% 
+  column_to_rownames(., "asv")
+
+metadata <- read_csv("resources/amplicon/metadata.csv")%>%
+  filter(Sample %in% colnames(read_counts)) %>%
+  tibble::column_to_rownames(., "Sample")
 ```
 
 ### Create a phyloseq object
 ```{r amplidata, comment="", message=FALSE, warning=FALSE, eval=FALSE}
-count_phy <- otu_table(read_counts_row, taxa_are_rows = T)
+count_phy <- otu_table(read_counts, taxa_are_rows = T)
 sample_info_tab_phy <- sample_data(metadata)
-asv_tax.m <- as.matrix(taxonomy_table_row)
+asv_tax.m <- as.matrix(genome_metadata_16S)
 TAX = tax_table(asv_tax.m)
 physeq.raw = phyloseq(count_phy, TAX, sample_info_tab_phy)
 physeq.raw <- prune_taxa(taxa_sums(physeq.raw) > 0, physeq.raw)
@@ -229,7 +230,7 @@ count_phy_filt <- otu_table(count_filtdepth, taxa_are_rows = T)
 
 otu_table(physeq.final) <- count_phy_filt
 
-#TAXONOMY filtering
+#taxonomy filtering
 physeq_bacteria <- subset_taxa(physeq.final, Kingdom == "Bacteria")
 physeq_others <- subset_taxa(physeq.final, Kingdom != "Bacteria")
 physeq_archaea <- subset_taxa(physeq.final, Kingdom == "Archaea")
@@ -262,46 +263,38 @@ physeq_16S <- readRDS("resources/amplicon/physeq_final_nocopyfilter.RData")
 physeq_16S <- prune_taxa(taxa_sums(physeq_16S)>0, physeq_16S)
 ```
 
+
 ```{r cleandata, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 #list duplicated data
 remov_samples <- c("P19_r1", "P19_r2", "P10_r2", "P10_r1", "E06_r3", "E06_r2", "E15_r1", "E29_r1", "E29_r2", "E37_r2", "E37_r3", "E47_r2", "E50_r1", "H09_r1", "H13_r2", "H39_r1", "P35_r3", "P64_r2", "P64_r3")
 
-#Change the names in asv_table
-asv_16S <- data.frame(physeq_16S@otu_table) 
-names(asv_16S) <- sub("^[^.]+\\.", "",names(asv_16S))
-colnames(asv_16S)
-#filter duplicated data
-asv_16S_filt <- asv_16S[, -which(names(asv_16S) %in% remov_samples)]
-#remove _r* from the names
-names(asv_16S_filt) <- gsub(pattern = "_r[1-3]$", "", x = names(asv_16S_filt))
+asv_16S_filt <- physeq_16S@otu_table %>%
+  as.data.frame() %>%
+  rename_with(~ sub("^[^.]+\\.", "", .x)) %>%
+  select(-any_of(remov_samples)) %>%
+  rename_with(~ gsub("_r[1-3]$", "", .x)) %>%
+  filter(rowSums(. > 0) != 0) %>%
+  rownames_to_column("asv")
 ```
-```{r filterdata, comment="", message=FALSE, warning=FALSE, eval=FALSE}
-asv_16S_filt <- asv_16S_filt[rowSums(asv_16S_filt[, -1] > 0) != 0, ] %>% 
-  rownames_to_column(., "asv")
-```
+
 
 ```{r sampledata, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 #Prepare the samples data and filter
-sample_metadata_16S <-  data.frame(physeq_16S@sam_data) %>% 
-  rownames_to_column(., "sample_id") %>% 
-  separate_wider_delim(sample_id, ".", names = c('id', 'sample')) %>% 
-  select(-id) %>% 
-  separate_wider_delim(Sp_Biome, "_", names = c('Sp', 'Biome')) %>%  
-  column_to_rownames(., "sample") 
+sample_metadata_16S <- data.frame(physeq_16S@sam_data) %>%
+  rownames_to_column("sample_id") %>%
+  # split sample_id into id + sample, drop id
+  separate(sample_id, into = c("id", "sample"), sep = "\\.", extra = "merge", fill = "right") %>%
+  select(-id) %>%
+  # split Sp_Biome into two columns
+  tidyr::separate_wider_delim(Sp_Biome, "_", names = c("Sp", "Biome")) %>%
+  # remove unwanted samples
+  filter(!sample %in% remov_samples) %>%
+  # clean replicate suffixes in sample names
+  mutate(sample = gsub("_r[1-3]$", "", sample))
 
-# Define the row indices to keep based on row names
-rows_to_remove <- !(rownames(sample_metadata_16S) %in% remov_samples)
-# Filter the data frame based on the row indices
-sample_metadata_16S <- sample_metadata_16S[rows_to_remove, ]
-
-#remove _r*
-rownames(sample_metadata_16S) <- gsub(pattern = "_r[1-3]$", "", x = rownames(sample_metadata_16S))
-
-sample_metadata_16S <- sample_metadata_16S %>% 
-  rownames_to_column(., "sample")
-
-genome_metadata_16S <-  data.frame(physeq_16S@tax_table) %>% 
-  rownames_to_column(., "asv") %>% 
+genome_metadata_16S <- physeq_16S@tax_table %>%
+  as.data.frame() %>%
+  rownames_to_column("asv") %>%
   filter(asv %in% asv_16S_filt$asv)
 ```
 
@@ -312,36 +305,34 @@ save(sample_metadata_16S,
 ```
 
 ```{r comparabledata, comment="", message=FALSE, warning=FALSE, eval=FALSE}
+load("resources/metagenomics/data.Rdata")
+
 #keep samples present in metagenomic study
 sample_metadata_16S_filt <- sample_metadata_16S[sample_metadata_16S$sample %in% sample_metadata$sample,]
 
 #keep samples present in 16S study
-sample_metagenomic_filt <- sample_metadata[sample_metadata$sample %in% sample_metadata_16S$sample,]
+sample_metadata <- sample_metadata[sample_metadata$sample %in% sample_metadata_16S$sample,]
 ```
 
 ### Filtering the metagenomic data to match amplicon data
 ```{r metagenomicdata, comment="", message=FALSE, warning=FALSE, eval=FALSE}
-phyloM_samples <- sample_metagenomic_filt %>%
-  column_to_rownames(., "sample") %>% 
-  sample_data() #convert to phyloseq sample_data object
-
-sam_data(genome_data) <- phyloM_samples
-phyloseq_metagenome_filtered <- prune_taxa(taxa_sums(genome_data)>0, genome_data)
-
-sample_metadata <- data.frame(phyloseq_metagenome_filtered@sam_data)%>% 
-  rownames_to_column(., "sample")
-genome_metadata <- data.frame(phyloseq_metagenome_filtered@tax_table) %>% 
-  rownames_to_column(., "genome")
-genome_counts_filt <- data.frame(phyloseq_metagenome_filtered@otu_table) %>% 
-  rownames_to_column(., "genome")
-
+genome_counts_filt <- genome_counts_filt %>% 
+  select(any_of(c("genome",intersect(sample_metadata$sample, colnames(genome_counts_filt))))) %>% 
+  filter(rowSums(across(where(is.numeric)))!=0) %>%
+  select(genome, where(~ !all(. == 0)))
+  
+genome_metadata <- genome_metadata %>% 
+  filter(genome %in% genome_counts_filt$genome)
+  
 preprocess_info <- preprocess_info %>% 
   filter(sample %in% sample_metadata$sample)
 
 genome_tree <- keep.tip(genome_tree, tip=genome_metadata$genome) 
 
 genome_gifts <- genome_gifts[rownames(genome_gifts) %in% genome_counts_filt$genome,]
+```
 
+```{r metagenomicdata_save, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 save(sample_metadata, 
      genome_metadata, 
      read_counts, 
@@ -350,7 +341,6 @@ save(sample_metadata,
      preprocess_info,
      genome_tree, 
      genome_gifts,
-     phyloseq_metagenome_filtered,
      phylum_colors,
      file = "resources/metagenomics/data_filtered.Rdata")
 ```
@@ -511,6 +501,5 @@ master_table <- inner_join(threshold_table,prevalence_table,by=join_by("Species"
 ```
 
 ```{r save_master_table, comment="", message=FALSE, warning=FALSE, eval=FALSE}
-save(master_table,
-     file = "resources/amplicon/master_table.Rdata")
+save(master_table, file = "resources/amplicon/master_table.Rdata")
 ```

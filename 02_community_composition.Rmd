@@ -83,7 +83,7 @@ phylum_summary <- genome_counts_filt %>%
   pivot_longer(-genome, names_to = "sample", values_to = "count") %>%
   left_join(sample_metadata, by = join_by(sample == sample)) %>%
   left_join(genome_metadata, by = join_by(genome == genome)) %>%
-  group_by(sample,phylum,Species, Region) %>%
+  group_by(sample,phylum,Species) %>%
   summarise(relabun=sum(count))
 ```
 
@@ -150,35 +150,6 @@ family_summary %>%
 
 ```
 
-```{r taxonomy_jitterplot_family, warning=FALSE, comments="", message=FALSE, fig.height=8, fig.width=10, fig.fullwidth=TRUE}
-family_arrange <- family_summary %>%
-  group_by(family) %>%
-  summarise(mean = sum(relabun)) %>%
-  arrange(-mean) %>%
-  select(family) %>%
-  pull()
-
-# Per environment
-family_summary %>%
-  left_join(genome_metadata %>% select(family, phylum) %>% unique(),
-            by = join_by(family == family)) %>%
-  filter(family %in% family_arrange[1:20]) %>%
-  mutate(family = factor(family, levels = rev(family_arrange[1:20]))) %>%
-  filter(relabun > 0) %>%
-  ggplot(aes(
-    x = relabun,
-    y = family,
-    group = family,
-    color = phylum
-  )) +
-  scale_color_manual(values = phylum_colors[-8]) +
-  geom_jitter(alpha = 0.5) +
-  facet_grid(. ~ Species) +
-  theme_minimal() +
-  labs(y = "Family", x = "Relative abundance", color = "Phylum")
-```
-
-
 #### Genus level
 
 ***Percetange of genera in each group***
@@ -211,24 +182,6 @@ genus_summary %>%
   tt()
 ```
 
-```{r taxonomy_jitterplot_genus, fig.height=14, fig.width=10, fig.fullwidth=TRUE, eval=FALSE}
-genus_summary_sort <- genus_summary %>%
-    group_by(genus) %>%
-    summarise(mean=mean(relabun, na.rm=T),sd=sd(relabun, na.rm=T)) %>%
-    arrange(-mean) 
-
-genus_summary %>%
-  mutate(genus=factor(genus, levels=rev(genus_summary_sort %>% pull(genus)))) %>%
-  filter(relabun > 0) %>%
-  ggplot(aes(x=relabun, y=genus, group=genus, color=phylum)) +
-  scale_color_manual(values=phylum_colors) +
-  geom_jitter(alpha=0.5) + 
-  facet_grid(.~Species)+
-  theme_minimal() + 
-  theme(axis.text.y = element_text(size=6))+
-  labs(y="Genera", x="Relative abundance", color="Phylum")
-
-```
 
 ***Number of mags and distinct taxonomy***
 ```{r tax_overview, comment="", message=FALSE, warning=FALSE}
@@ -335,10 +288,11 @@ preabs_table <- genome_counts_filt %>%
   left_join(genome_metadata, by = join_by("genome" == "genome"))
 
 genus <- preabs_table %>%
-  filter(genus == "")
+    filter(genus=="")
+
 
 species <- preabs_table %>%
-  filter(species == "")
+  filter(species=="")
 
 no_annotation <- rbind(no_annotation,
                        data.frame(
@@ -355,11 +309,11 @@ for (bat in bats) {
   genus <- preabs_table %>%
     select({{bat}}, phylum, class, order, family, genus) %>%
     filter(!!sym(bat) >= 1) %>%
-    filter(genus == "")
+  filter(genus=="")
   
   species <- preabs_table %>%
     filter(!!sym(bat) >= 1) %>%
-    filter(species == "")
+  filter(species=="")
   
   no_annotation <- rbind(no_annotation,
                          data.frame(
@@ -373,7 +327,7 @@ for (bat in bats) {
 **Total percentage of MAGs without genus-level annotation**
 ```{r gen_percet, comment="", message=FALSE, warning=FALSE}
 nongenera <- genome_metadata %>%
-  filter(genus == "") %>%
+  filter(genus=="") %>% 
   summarize(Mag_nogenera = n()) %>%
   pull()
 nmags <- total_mags %>%
@@ -389,8 +343,9 @@ cat(perct)
 total_mag_phylum <- genome_metadata %>%
   group_by(phylum) %>%
   summarize(Total_MAGs = n())
+
 genome_metadata %>%
-  filter(genus == "") %>%
+    filter(genus=="")%>%
   group_by(phylum) %>%
   summarize(MAGs_nogenus = n()) %>%
   left_join(total_mag_phylum, by = join_by(phylum == phylum)) %>%
@@ -412,7 +367,7 @@ genome_metadata %>%
 **Total percentage of MAGs without species-level annotation**
 ```{r sp_percet, comment="", message=FALSE, warning=FALSE}
 nonspecies <- genome_metadata %>%
-  filter(species == "") %>%
+  filter(species=="") %>%
   summarize(Mag_nospecies = n()) %>%
   pull()
 perct <- nonspecies * 100 / nmags
@@ -425,7 +380,7 @@ total_mag_phylum <- genome_metadata %>%
   group_by(phylum) %>%
   summarize(MAGs_total = n())
 genome_metadata %>%
-  filter(species == "") %>%
+  filter(species=="") %>%
   group_by(phylum) %>%
   summarize(MAGs_nospecies = n()) %>%
   left_join(total_mag_phylum, by = join_by(phylum == phylum)) %>%
@@ -648,8 +603,16 @@ sample_sums(phyloseq_16S_archaea) %>%
   summarise(total_count=sum(count))
 ```
 
+Archaeal ASVs present in more than 1 individual
+```{r}
+data.frame(phyloseq_16S_archaea@otu_table) %>% 
+  rowSums() %>% 
+  as.data.frame() %>% 
+  filter(.>1)
+```
 
-#### Bacteria phylum level
+
+#### Phylum level
 ```{r taxonomy_barplot_ampli, fig.height=6, fig.width=10, fig.fullwidth=TRUE}
 genome_counts_filt %>%
   mutate_at(vars(-genome),  ~ . / sum(.)) %>% 
@@ -797,7 +760,6 @@ family_summary %>%
 #### Genus level
 
 ***Percetage of genera in each group***
-
 ```{r taxonomy_genus_summary_ampli, warning=FALSE, comments="", message=FALSE}
 genus_summary <- genome_counts_filt %>%
   mutate_at(vars(-genome),  ~ . / sum(.)) %>%
@@ -852,11 +814,11 @@ genus_summary %>%
   labs(y = "Genera", x = "Relative abundance", color = "Phylum")
 ```
 
-***Number of mags and distinct taxonomy***
+***Number of ASVs and distinct taxonomy***
 ```{r total_ASv_ampli, warning=FALSE, comments="", message=FALSE}
 bats = c("Eb", "Pk", "Ha")
 
-total_mags <- data.frame(
+total_asvs <- data.frame(
   Bat = character(),
   MAGs = numeric(),
   Phylum = numeric(),
@@ -889,11 +851,11 @@ family <- preabs_table %>%
 genus <- preabs_table %>%
   distinct(phylum, class, order, family, genus)
 
-total_mags <- rbind(
-  total_mags,
+total_asvs <- rbind(
+  total_asvs,
   data.frame(
     Bat = "Total",
-    MAGs = nrow(preabs_table),
+    ASVs = nrow(preabs_table),
     Phylum = nrow(phylum),
     Family = nrow(family),
     Genus = nrow(genus)
@@ -920,11 +882,11 @@ for (bat in bats) {
     filter(!!sym(bat) >= 1) %>%
     distinct(phylum, class, order, family, genus)
   
-  total_mags <- rbind(
-    total_mags,
+  total_asvs <- rbind(
+    total_asvs,
     data.frame(
       Bat = bat,
-      MAGs = nrow(number),
+      ASVs = nrow(number),
       Phylum = nrow(phylum),
       Family = nrow(family),
       Genus = nrow(genus)
@@ -977,11 +939,11 @@ for (bat in bats) {
   genus <- preabs_table %>%
     select({{bat}}, phylum, class, order, family, genus) %>%
     filter(!!sym(bat) >= 1) %>%
-    filter(is.na(genus))
+  filter(is.na(genus))
   
   species <- preabs_table %>%
     filter(!!sym(bat) >= 1) %>%
-    filter(is.na(species))
+  filter(is.na(species))
   
   no_annotation <- rbind(no_annotation,
                          data.frame(
@@ -992,31 +954,31 @@ for (bat in bats) {
 }
 ```
 
-**Total percentage of MAGs without genus-level annotation**
+**Total percentage of ASVs without genus-level annotation**
 ```{r gen_percet_ampli, comment="", message=FALSE, warning=FALSE}
 nongenera <- genome_metadata %>%
-  filter(is.na(genus)) %>%
-  summarize(Mag_nogenera = n()) %>%
+  filter(is.na(genus)) %>% 
+  summarize(ASV_nogenera = n()) %>%
   pull()
-nmags <- total_mags %>%
+nasvs <- total_asvs %>%
   filter(Bat == "Total") %>%
-  select(MAGs) %>%
+  select(ASVs) %>%
   pull()
-perct <- nongenera * 100 / nmags
+perct <- nongenera * 100 / nasvs
 cat(perct)
 ```
 
-***Percentage of MAGs without genus-level annotation by phylum***
+***Percentage of ASVs without genus-level annotation by phylum***
 ```{r nongene_phylum_gut_ampli, comment="", message=FALSE, warning=FALSE}
-total_mag_phylum <- genome_metadata %>%
+total_asv_phylum <- genome_metadata %>%
   group_by(phylum) %>%
-  summarize(Total_MAGs = n())
+  summarize(Total_ASVs = n())
 genome_metadata %>%
-  filter(is.na(genus)) %>%
+  filter(is.na(genus)) %>% 
   group_by(phylum) %>%
-  summarize(MAGs_nogenus = n()) %>%
-  left_join(total_mag_phylum, by = join_by(phylum == phylum)) %>%
-  mutate(Percentage_nogenus = 100 * MAGs_nogenus / Total_MAGs) %>%
+  summarize(ASVs_nogenus = n()) %>%
+  left_join(total_asv_phylum, by = join_by(phylum == phylum)) %>%
+  mutate(Percentage_nogenus = 100 * ASVs_nogenus / Total_ASVs) %>%
   tt()
 ```
 
@@ -1035,10 +997,10 @@ genome_metadata %>%
 **Total percentage of MAGs without species-level annotation**
 ```{r sp_percet_ampli, comment="", message=FALSE, warning=FALSE}
 nonspecies <- genome_metadata %>%
-   filter(is.na(species)) %>%
-  summarize(Mag_nospecies = n()) %>%
+     filter(is.na(species)) %>%
+  summarize(ASV_nospecies = n()) %>%
   pull()
-perct <- nonspecies * 100 / nmags
+perct <- nonspecies * 100 / nasvs
 cat(perct)
 ```
 
@@ -1046,15 +1008,15 @@ cat(perct)
 ```{r nonspe_phylum_ampli, comment="", message=FALSE, warning=FALSE}
 total_mag_phylum <- genome_metadata %>%
   group_by(phylum) %>%
-  summarize(MAGs_total = n())
+  summarize(ASVs_total = n())
 genome_metadata %>%
-  filter(is.na(species)) %>%
+    filter(is.na(species)) %>%
   group_by(phylum) %>%
-  summarize(MAGs_nospecies = n()) %>%
+  summarize(ASVs_nospecies = n()) %>%
   left_join(total_mag_phylum, by = join_by(phylum == phylum)) %>%
-  mutate(species_annotated = MAGs_total - MAGs_nospecies) %>%
-  mutate(Percentage_nospecies = 100 * MAGs_nospecies / MAGs_total) %>%
-  mutate(Percentage_species = 100 - 100 * MAGs_nospecies / MAGs_total) %>%
+  mutate(Species_annotated = ASVs_total - ASVs_nospecies) %>%
+  mutate(Percentage_nospecies = 100 * ASVs_nospecies / ASVs_total) %>%
+  mutate(Percentage_species = 100 - 100 * ASVs_nospecies / ASVs_total) %>%
   tt()
 ```
 
@@ -1090,6 +1052,7 @@ single_sp <- rbind(single_sp, data.frame(Bat = "Total",
 for (bat in bats) {
   unique <- table_upset_analysis %>%
     filter(rowSums(across(Eb:Pk)) == 1) %>%
+    column_to_rownames(., "sample") %>% 
     select(bat) %>%
     filter(. > 0) %>%
     nrow()
@@ -1147,11 +1110,11 @@ for (bat in bats) {
 
 
 ```{r merge_ampli, comment="", message=FALSE, warning=FALSE}
-summary_table_ampli <- total_mags %>%
+summary_table_ampli <- total_asvs %>%
   left_join(., no_annotation, by = "Bat") %>%
   left_join(., single_ind, by = "Bat") %>%
   left_join(., single_sp, by = "Bat") %>% 
-  mutate(MAGs_noSingleSpecies=MAGs-Single_individual)
+  mutate(ASVs_noSingleSpecies=ASVs-Single_individual)
   
 summary_table_ampli
 ```
@@ -1161,12 +1124,147 @@ summary_table_ampli
 summary_table_ampli %>% 
   select(-Phylum,-Family, -Genus) %>% 
   rowwise() %>% 
-  mutate(Mag_perc=MAGs*100/3834)%>% 
-  mutate(MAGs_noSingleSp_perc=MAGs_noSingleSpecies*100/MAGs)%>% 
-  mutate(No_genus_perc=No_genus*100/MAGs)%>% 
-  mutate(No_species_perc=No_species*100/MAGs) %>% 
-  mutate(Single_individual_perc=Single_individual*100/MAGs)%>% 
-  mutate(Single_species_perc=Single_species*100/MAGs) %>% 
+  mutate(ASV_perc=ASVs*100/3834)%>% 
+  mutate(ASVs_noSingleSp_perc=ASVs_noSingleSpecies*100/ASVs)%>% 
+  mutate(No_genus_perc=No_genus*100/ASVs)%>% 
+  mutate(No_species_perc=No_species*100/ASVs) %>% 
+  mutate(Single_individual_perc=Single_individual*100/ASVs)%>% 
+  mutate(Single_species_perc=Single_species*100/ASVs) %>% 
   mutate(Single_individual_per_unique=Single_individual*100/Single_species) %>% 
   select(1,8:14)
+```
+
+
+Phylum level
+```{r}
+load("resources/amplicon/data_standard_filt.Rdata")
+genome_counts_filt_amplicon <- genome_counts_filt
+genome_metadata_amplicon <- genome_metadata
+load("resources/metagenomics/data_filtered.Rdata")
+```
+
+```{r}
+topMAG_standard <- genome_counts_filt %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  left_join(genome_metadata[c(1, 3, 6, 7)], by="genome") %>% 
+  select(-genome) %>% 
+  group_by(phylum) %>% 
+  summarize(across(where(is.numeric), sum), .groups = "drop") %>% 
+  mutate(total_mag = rowSums(across(where(is.numeric)))) %>% 
+  select(total_mag, phylum) %>% 
+  arrange(desc(total_mag))%>%
+  slice_head(n = 10)
+```
+
+
+```{r}
+topASV_standard <-genome_counts_filt_amplicon %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  left_join(genome_metadata_amplicon, by="genome") %>% 
+  select(-genome) %>% 
+  group_by(phylum) %>% 
+  summarize(across(where(is.numeric), sum), .groups = "drop") %>% 
+  mutate(total_asv = rowSums(across(where(is.numeric)))) %>% 
+  select(total_asv, phylum) %>% 
+  arrange(desc(total_asv)) %>%
+  slice_head(n = 10)
+
+table_standard <- full_join(topMAG_standard,topASV_standard, by="phylum") %>% 
+    mutate(ASV = replace_na(total_asv, 0)) %>% 
+    mutate(MAG = replace_na(total_mag, 0)) %>% 
+  select(-total_asv, -total_mag) %>% 
+  pivot_longer(cols = c(MAG, ASV),
+               names_to = "source",
+               values_to = "abundance")
+```
+
+
+```{r figure_bar_phylum, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+ggplot(table_standard, aes(x = reorder(phylum, -abundance), y = abundance, fill = source)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(x = "Phylum", y = "Total abundance", fill = "Source") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size=12),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold"),
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"),
+        legend.text = element_text(size = 16),
+        legend.title = element_text(size = 18))
+```
+```{r figure_bubble_phylum, fig.height=6, fig.width=12, fig.fullwidth=TRUE}
+ggplot(table_standard, aes(x = source, y = phylum, size = abundance, color = phylum)) +
+  geom_point(alpha = 0.7) +
+  scale_size_continuous(
+    name = "Abundance",
+    range = c(0.01, 30),   # 0 ensures no bubble at abundance = 0
+    breaks = seq(0, 35, by = 5),   # Controls legend labels (your 0–5–10–...–30)
+    limits = c(0.01, NA)   # keep full range of values
+  )  +
+    scale_color_manual(values = phylum_colors) +
+    coord_flip()+
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 45,hjust = 1, size=12),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold"),
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"),
+        legend.text = element_text(size = 10),
+        legend.title = element_text(size = 12))+
+  labs(x = "Source", y = "Phylum",
+    title = "Metabarcoding with standard filtering")+
+  guides(color = "none", size = guide_legend(
+      override.aes = list(size = c(2, 4, 6, 8, 10,12)) # smaller bubbles in legend
+    )
+  )
+```
+
+Family level
+```{r}
+topFMAG_standard <- genome_counts_filt %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  left_join(genome_metadata[c(1, 3, 6, 7)], by="genome") %>% 
+  select(-genome) %>% 
+  group_by(phylum, family) %>% 
+  summarize(across(where(is.numeric), sum), .groups = "drop") %>% 
+  mutate(total_mag = rowSums(across(where(is.numeric)))) %>% 
+  select(total_mag, phylum, family) %>% 
+  arrange(desc(total_mag)) %>%
+  slice_head(n = 20)
+```
+
+```{r}
+topFASV_standard <-genome_counts_filt_amplicon %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  left_join(genome_metadata_amplicon, by="genome") %>% 
+  select(-genome) %>% 
+  group_by(phylum, family) %>% 
+  summarize(across(where(is.numeric), sum), .groups = "drop") %>% 
+  mutate(total_asv = rowSums(across(where(is.numeric)))) %>% 
+  select(total_asv, phylum, family) %>% 
+  arrange(desc(total_asv)) %>%
+  slice_head(n = 20)
+```
+
+```{r figure_scat_phylum, fig.height=8, fig.width=12, fig.fullwidth=TRUE}
+full_join(topFMAG_standard,topFASV_standard, by="family") %>% 
+    mutate(ASV = replace_na(total_asv, 0)) %>% 
+    mutate(MAG = replace_na(total_mag, 0)) %>% 
+    mutate(phylum_mag = coalesce(phylum.x, phylum.y))%>%
+  ggplot(., aes(x = MAG, y = ASV, color = phylum_mag, label = family)) +
+  geom_point(size = 3, alpha = 0.8) +
+  geom_text_repel(max.overlaps = 10) +
+  geom_smooth(method = "lm", se = FALSE, color = "grey50") +
+      scale_color_manual(values = phylum_colors) +
+  labs(
+    x = "MAG abundance",
+    y = "ASV abundance",
+    color = "Phylum",
+    title = "Metabarcoding with standard filtering"
+  ) +
+  theme_minimal()
 ```

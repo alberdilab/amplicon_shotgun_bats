@@ -1,6 +1,6 @@
 ---
 title: "AlberdiLab | Aizpurua et al. 2025"
-subtitle: "Bats microbiota using amplicon and shotgun"
+subtitle: "Comparing 16S metabarcoding and genome-resolved metagenomics to reveal functional insights into bat microbiomes"
 author:
   - Ostaizka Aizpurua^[University of Copenhagen, ostaizka.aizpurua@sund.ku.dk]
   - Antton Alberdi^[University of Copenhagen, antton.alberdi@sund.ku.dk]
@@ -10,7 +10,7 @@ documentclass: book
 bibliography: [book.bib, packages.bib]
 url: https://alberdilab.github.io/amplicon_shotgun_bats
 description: |
-  Data analysis code for the study on the study of gut microbiomes of Pyrenean brook salamanders in high and low altitudes.
+  Data analysis code for the manuscript titled: Comparing 16S metabarcoding and genome-resolved metagenomics to reveal functional insights into bat microbiomes.
 link-citations: yes
 github-repo: alberdilab/amplicon_shotgun_bats
 ---
