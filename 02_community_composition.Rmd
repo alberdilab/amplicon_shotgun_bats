@@ -74,10 +74,13 @@ genome_counts_filt %>%
     )
   ) +
   labs(fill = "Phylum", y = "Relative abundance", x = "Samples")
+
+#ggsave("Figures_ms/taxonomy_metagenomics.pdf", plot = p, width = 10, height = 6)
+
 ```
 
 ***Phylum relative abundances***
-```{r taxonomy_phylum_summary1, warning=FALSE, comments="", message=FALSE}
+```{r taxonomy_phylum_summary_metag, warning=FALSE, comments="", message=FALSE}
 phylum_summary <- genome_counts_filt %>%
   mutate_at(vars(-genome),~./sum(.)) %>%
   pivot_longer(-genome, names_to = "sample", values_to = "count") %>%
@@ -87,7 +90,7 @@ phylum_summary <- genome_counts_filt %>%
   summarise(relabun=sum(count))
 ```
 
-```{r taxonomy_phylum_summary2, warning=FALSE, comments="", message=FALSE}
+```{r taxonomy_phylum_summary_mmetag2, warning=FALSE, comments="", message=FALSE}
 phylum_summary %>%
   group_by(phylum) %>%
   summarise(
@@ -101,18 +104,32 @@ phylum_summary %>%
     Pk_sd = sd(relabun[Species == "Pk"] * 100, na.rm = T)
   ) %>%
   mutate(
-    Total_meta = str_c(round(Total_mean, 3), "±", round(Total_sd, 3)),
-    Eptesicus_meta = str_c(round(Eb_mean, 3), "±", round(Eb_sd, 3)),
-    Hypsugo_meta = str_c(round(Ha_mean, 3), "±", round(Ha_sd, 3)),
-    Pipistrellus_meta = str_c(round(Pk_mean, 3), "±", round(Pk_sd, 3))
+    Total = str_c(round(Total_mean, 3), "±", round(Total_sd, 3)),
+    Eptesicus = str_c(round(Eb_mean, 3), "±", round(Eb_sd, 3)),
+    Hypsugo = str_c(round(Ha_mean, 3), "±", round(Ha_sd, 3)),
+    Pipistrellus = str_c(round(Pk_mean, 3), "±", round(Pk_sd, 3))
   ) %>%
   arrange(-Eb_mean) %>%
   dplyr::select(phylum,
-                Total_meta,
-                Eptesicus_meta,
-                Hypsugo_meta,
-                Pipistrellus_meta) %>%
+                Total,
+                Eptesicus,
+                Hypsugo,
+                Pipistrellus) %>%
   tt()
+```
+```{r}
+phylum_summary <- genome_counts_filt %>%
+  mutate_at(vars(-genome),~./sum(.)) %>%
+  pivot_longer(-genome, names_to = "sample", values_to = "count") %>%
+  left_join(sample_metadata, by = join_by(sample == sample)) %>%
+  left_join(genome_metadata, by = join_by(genome == genome)) %>%
+  group_by(sample,domain,phylum,Species) %>%
+  summarise(relabun=sum(count))
+
+phylum_summary %>% 
+  filter(relabun > 0) %>% 
+  group_by(Species,domain) %>% 
+  summarise(n_phyla = n_distinct(phylum))
 ```
 
 #### Family level
@@ -475,24 +492,22 @@ for (bat in bats) {
 summary_table <- total_mags %>%
   left_join(., no_annotation, by = "Bat") %>%
   left_join(., single_ind, by = "Bat") %>%
-  left_join(., single_sp, by = "Bat") %>% 
-  mutate(MAGs_noSingleSpecies=MAGs-Single_individual)
-summary_table
+  left_join(., single_sp, by = "Bat")
+summary_table %>% tt()
 ```
 
 ```{r}
 summary_table %>%
   select(-Phylum, -Family, -Genus) %>%
   rowwise() %>%
-  mutate(Mag_perc=MAGs*100/135)%>%
-  mutate(MAGs_noSingleSp_perc=MAGs_noSingleSpecies*100/MAGs)%>% 
-  mutate(No_genus_perc = No_genus * 100 / MAGs) %>%
-  mutate(No_species_perc = No_species * 100 / MAGs) %>%
-  mutate(Single_individual_perc = Single_individual * 100 / MAGs) %>%
-  mutate(Single_species_perc = Single_species * 100 / MAGs) %>%
-  mutate(Single_individual_per_Single_species = Single_individual * 100 /
-           Single_species) %>%
-  select(1,8:14)
+  mutate(Mag_perc=round(MAGs*100/135, 2))%>%
+  mutate(No_genus_perc = round(No_genus * 100 / MAGs, 2)) %>%
+  mutate(No_species_perc = round(No_species * 100 / MAGs, 2)) %>%
+  mutate(Single_individual_perc = round(Single_individual * 100 / MAGs, 2)) %>%
+  mutate(Single_species_perc = round(Single_species * 100 / MAGs, 2)) %>%
+  mutate(Single_individual_per_Single_species = round(Single_individual * 100 /
+           Single_species, 2)) %>%
+  select(1,7:12)
 ```
 
 ## Amplicon
@@ -658,6 +673,9 @@ genome_counts_filt %>%
   ) +
   labs(fill = "Phylum", y = "Relative abundance", x = "Samples")+
   guides(fill = guide_legend(ncol = 2))
+
+#ggsave("Figures_ms/taxonomy_metabarcoding_standard.pdf", plot = p, width = 10, height = 6)
+
 ```
 
 
@@ -694,6 +712,21 @@ phylum_summary %>%
   arrange(-Eb_mean) %>%
   dplyr::select(phylum, Total, Eptesicus, Hypsugo, Pipistrellus) %>% 
   tt()
+```
+
+```{r}
+phylum_summary <- genome_counts_filt %>%
+  mutate_at(vars(-genome),~./sum(.)) %>%
+  pivot_longer(-genome, names_to = "sample", values_to = "count") %>%
+  left_join(sample_metadata, by = join_by(sample == sample)) %>%
+  left_join(genome_metadata, by = join_by(genome == genome)) %>%
+  group_by(sample,domain,phylum,Species) %>%
+  summarise(relabun=sum(count))
+
+phylum_summary %>% 
+  filter(relabun > 0) %>% 
+  group_by(Species,domain) %>% 
+  summarise(n_phyla = n_distinct(phylum))
 ```
 
 #### Family level
@@ -790,29 +823,6 @@ genus_summary %>%
   tt()
 ```
 
-```{r taxonomy_jitterplot_genus_ampli, fig.height=14, fig.width=10, fig.fullwidth=TRUE, eval=FALSE}
-genus_summary_sort <- genus_summary %>%
-  group_by(genus) %>%
-  summarise(mean = mean(relabun, na.rm = T),
-            sd = sd(relabun, na.rm = T)) %>%
-  arrange(-mean)
-
-genus_summary %>%
-  mutate(genus = factor(genus, levels = rev(genus_summary_sort %>% pull(genus)))) %>%
-  filter(relabun > 0) %>%
-  ggplot(aes(
-    x = relabun,
-    y = genus,
-    group = genus,
-    color = phylum
-  )) +
-  scale_color_manual(values = phylum_colors) +
-  geom_jitter(alpha = 0.5) +
-  facet_grid(. ~ Species) +
-  theme_minimal() +
-  theme(axis.text.y = element_text(size = 6)) +
-  labs(y = "Genera", x = "Relative abundance", color = "Phylum")
-```
 
 ***Number of ASVs and distinct taxonomy***
 ```{r total_ASv_ampli, warning=FALSE, comments="", message=FALSE}
@@ -1113,10 +1123,10 @@ for (bat in bats) {
 summary_table_ampli <- total_asvs %>%
   left_join(., no_annotation, by = "Bat") %>%
   left_join(., single_ind, by = "Bat") %>%
-  left_join(., single_sp, by = "Bat") %>% 
-  mutate(ASVs_noSingleSpecies=ASVs-Single_individual)
+  left_join(., single_sp, by = "Bat") 
   
-summary_table_ampli
+summary_table_ampli %>% 
+  tt()
 ```
 
 
@@ -1124,16 +1134,16 @@ summary_table_ampli
 summary_table_ampli %>% 
   select(-Phylum,-Family, -Genus) %>% 
   rowwise() %>% 
-  mutate(ASV_perc=ASVs*100/3834)%>% 
-  mutate(ASVs_noSingleSp_perc=ASVs_noSingleSpecies*100/ASVs)%>% 
-  mutate(No_genus_perc=No_genus*100/ASVs)%>% 
-  mutate(No_species_perc=No_species*100/ASVs) %>% 
-  mutate(Single_individual_perc=Single_individual*100/ASVs)%>% 
-  mutate(Single_species_perc=Single_species*100/ASVs) %>% 
-  mutate(Single_individual_per_unique=Single_individual*100/Single_species) %>% 
-  select(1,8:14)
+  mutate(ASV_perc=round(ASVs*100/3834, 2))%>% 
+  mutate(No_genus_perc=round(No_genus*100/ASVs, 2))%>% 
+  mutate(No_species_perc=round(No_species*100/ASVs, 2)) %>% 
+  mutate(Single_individual_perc=round(Single_individual*100/ASVs, 2))%>% 
+  mutate(Single_species_perc=round(Single_species*100/ASVs, 2)) %>% 
+  mutate(Single_individual_per_unique=round(Single_individual*100/Single_species, 2)) %>% 
+  select(1,7:12)
 ```
 
+### Differences in top phyla between methods
 
 Phylum level
 ```{r}
@@ -1154,6 +1164,34 @@ topMAG_standard <- genome_counts_filt %>%
   select(total_mag, phylum) %>% 
   arrange(desc(total_mag))%>%
   slice_head(n = 10)
+```
+
+CLR
+```{r}
+# phylo_genome <- genome_counts_filt %>% 
+#   column_to_rownames("genome") %>% 
+#   otu_table(., taxa_are_rows = TRUE)
+# 
+# phylo_genome_metagenome <- genome_metadata %>%
+#     column_to_rownames(var="genome")%>%
+#   as.matrix()%>%
+#   tax_table()
+# 
+# physeq_genome_filt <- phyloseq(phylo_genome,phylo_genome_metagenome)
+# physeq_genome_filt_clr <- microbiome::transform(physeq_genome_filt, "clr")
+# 
+# topFMAG_clr <- data.frame(physeq_genome_filt_clr@otu_table) %>%
+#   rownames_to_column(., "genome") %>%
+#   left_join(data.frame(physeq_genome_filt_clr@tax_table) %>%
+#   rownames_to_column(., "genome") %>%
+#       select(1, 3), by="genome") %>%
+#   select(-genome) %>% 
+#   group_by(phylum) %>% 
+#   summarize(across(where(is.numeric), sum), .groups = "drop") %>% 
+#   mutate(total_mag = rowSums(across(where(is.numeric)))) %>% 
+#   select(total_mag, phylum) %>% 
+#   arrange(desc(total_mag))%>%
+#   slice_head(n = 10)
 ```
 
 
@@ -1178,6 +1216,40 @@ table_standard <- full_join(topMAG_standard,topASV_standard, by="phylum") %>%
                values_to = "abundance")
 ```
 
+CLR
+```{r}
+# phylo_genome_amplicon <- genome_counts_filt_amplicon %>% 
+#   column_to_rownames("genome") %>% 
+#   otu_table(., taxa_are_rows = TRUE)
+# 
+# phylo_tax_amplicon <- genome_metadata_amplicon %>%
+#     column_to_rownames(var="genome")%>%
+#   as.matrix()%>%
+#   tax_table()
+# 
+# physeq_amplicon_filt <- phyloseq(phylo_genome_amplicon,phylo_tax_amplicon)
+# physeq_amplicon_filt_clr <- microbiome::transform(physeq_amplicon_filt, "clr")
+# 
+# topFASV_clr <- data.frame(physeq_amplicon_filt_clr@otu_table) %>%
+#   rownames_to_column(., "genome") %>%
+#   left_join(data.frame(physeq_amplicon_filt_clr@tax_table) %>%
+#   rownames_to_column(., "genome") %>%
+#       select(1, 3), by="genome") %>%
+#   select(-genome) %>% 
+#   group_by(phylum) %>% 
+#   mutate(total_asv = rowSums(across(where(is.numeric)))) %>% 
+#   select(total_asv, phylum) %>% 
+#   arrange(desc(total_asv)) %>%
+#   slice_head(n = 10)
+# 
+# table_clr <- full_join(topFMAG_clr,topFASV_clr, by="phylum") %>% 
+#     mutate(ASV = replace_na(total_asv, 0)) %>% 
+#     mutate(MAG = replace_na(total_mag, 0)) %>% 
+#   select(-total_asv, -total_mag) %>% 
+#   pivot_longer(cols = c(MAG, ASV),
+#                names_to = "source",
+#                values_to = "abundance")
+```
 
 ```{r figure_bar_phylum, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
 ggplot(table_standard, aes(x = reorder(phylum, -abundance), y = abundance, fill = source)) +
@@ -1250,7 +1322,7 @@ topFASV_standard <-genome_counts_filt_amplicon %>%
   slice_head(n = 20)
 ```
 
-```{r figure_scat_phylum, fig.height=8, fig.width=12, fig.fullwidth=TRUE}
+```{r figure_scat_family, fig.height=8, fig.width=12, fig.fullwidth=TRUE}
 full_join(topFMAG_standard,topFASV_standard, by="family") %>% 
     mutate(ASV = replace_na(total_asv, 0)) %>% 
     mutate(MAG = replace_na(total_mag, 0)) %>% 
@@ -1268,3 +1340,600 @@ full_join(topFMAG_standard,topFASV_standard, by="family") %>%
   ) +
   theme_minimal()
 ```
+
+# Histograms
+
+## Metagenomics
+
+```{r}
+load("resources/metagenomics/data_filtered.Rdata")
+```
+```{r histogram_abundace_together_mags, fig.height=6, fig.width=18, fig.fullwidth=TRUE}
+genome_counts_filt %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%          # normalize each genome
+  column_to_rownames("genome") %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("sample") %>%
+  select(-sample) %>%                      # remove grouping info
+  summarise(across(everything(), mean, na.rm = TRUE)) %>%  # mean across all samples
+  pivot_longer(
+    cols = everything(),
+    names_to = "Genome",
+    values_to = "MeanValue"
+  ) %>%
+  arrange(desc(MeanValue)) %>% 
+  ggplot(., aes(x = reorder(Genome, -MeanValue), y = MeanValue)) +
+  geom_col(fill = "steelblue") +
+  theme_minimal() +
+  labs(
+    x = "MAGs",
+    y = "Mean Value",
+    title = "Overall Mean Genome Abundance (All Samples Combined)"
+  ) +
+  theme(axis.text.x = element_text(angle=45, hjust=1, size = 8),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold"),
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"),
+        legend.text = element_text(size = 16),
+        legend.title = element_text(size = 18))
+
+
+```
+```{r histogram_abundace_mag, fig.height=6, fig.width=12, fig.fullwidth=TRUE}
+genome_counts_filt %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  column_to_rownames(., "genome") %>% 
+  t() %>% 
+  as.data.frame() %>% 
+  rownames_to_column(., "sample") %>% 
+  left_join(sample_metadata[c(1, 2)], by="sample") %>% 
+  select(-sample) %>% 
+  group_by(Species) %>% 
+  summarise(across(where(is.numeric), mean, na.rm = TRUE)) %>% 
+  pivot_longer(
+    cols = -Species,                # all columns except Species
+    names_to = "Genome",            # column names become a variable
+    values_to = "MeanValue"         # cell values become this variable
+  ) %>%
+  group_by(Genome) %>%
+  mutate(overall_mean = mean(MeanValue, na.rm = TRUE)) %>%
+  ungroup() %>%
+  mutate(Genome = fct_reorder(Genome, overall_mean, .desc = TRUE)) %>% 
+  ggplot(., aes(x = Genome, y = MeanValue, fill = Species)) +
+  geom_col(position = "dodge") + 
+  theme_minimal() +
+  labs(
+    x = "Genome",
+    y = "Mean Value",
+    fill = "Species",
+    title = "Mean Genome Abundance per Species"
+  ) +
+  theme(axis.text.x = element_blank(),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold"),
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"),
+        legend.text = element_text(size = 16),
+        legend.title = element_text(size = 18))
+```
+```{r together_prev_mag, fig.height=6, fig.width=12, fig.fullwidth=TRUE}
+presence_threshold <- 0  # define what counts as "present"
+
+genome_counts_filt %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  column_to_rownames("genome") %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("sample") %>%
+  left_join(sample_metadata[c("sample", "Species")], by = "sample") %>%
+  pivot_longer(
+    cols = -c(sample, Species),
+    names_to = "Genome",
+    values_to = "RelAbundance"
+  ) %>%
+  group_by(Genome) %>%
+  summarise(
+    MeanAbundance = mean(RelAbundance, na.rm = TRUE),
+    Prevalence = sum(RelAbundance > presence_threshold, na.rm = TRUE),
+    FractionPrevalence = Prevalence / n(),  # optional normalized prevalence
+    .groups = "drop"
+  ) %>% 
+  ggplot(., aes(x = fct_reorder(Genome, -MeanAbundance), y = MeanAbundance, fill = Prevalence)) +
+  geom_col() +
+  scale_fill_viridis_c(option = "plasma") +
+  theme_minimal() +
+  labs(
+    x = "MAGs",
+    y = "Mean relative abundance",
+    fill = "Prevalence",
+    title = "Mean MAG relative abundance colored by prevalence"
+  ) +
+  theme(axis.text.x = element_blank(),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold"),
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 12))
+```
+
+```{r log_transfe, fig.height=6, fig.width=12, fig.fullwidth=TRUE}
+presence_threshold <- 0  # define what counts as "present"
+
+genome_summary_abs <- genome_counts_filt %>%
+  column_to_rownames("genome") %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("sample") %>%
+  left_join(sample_metadata[c("sample", "Species")], by = "sample") %>%
+  pivot_longer(
+    cols = -c(sample, Species),
+    names_to = "Genome",
+    values_to = "AbsCount"
+  ) %>%
+  group_by(Genome) %>%
+  summarise(
+    MeanAbsCount = mean(AbsCount, na.rm = TRUE),
+    Prevalence = sum(AbsCount > presence_threshold, na.rm = TRUE),
+    FractionPrevalence = Prevalence / n(),
+    .groups = "drop"
+  ) %>%
+  mutate(LogMeanAbsCount = log10(MeanAbsCount + 1)) 
+ggplot(genome_summary_abs, aes(
+  x = fct_reorder(Genome, MeanAbsCount, .desc = TRUE),
+  y = LogMeanAbsCount,
+  fill = FractionPrevalence
+)) +
+  geom_col() +
+  scale_fill_viridis_c(option = "turbo", limits = c(0, 1)) +
+  theme_minimal() +
+  labs(
+    x = "MAGs",
+    y = "log10",
+    fill = "Prevalence",
+    title = "Mean MAG Abundance (Absolute Counts, log-transformed) Colored by Prevalence"
+  ) +
+  theme(axis.text.x = element_blank(),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold"),
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 12))
+```
+
+```{r}
+presence_threshold <- 0
+genome_prevalence_counts <- genome_counts_filt %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%              # normalize within genome if needed
+  column_to_rownames("genome") %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("sample") %>%
+  left_join(sample_metadata[c("sample", "Species")], by = "sample") %>%
+  pivot_longer(
+    cols = -c(sample, Species),
+    names_to = "Genome",
+    values_to = "RelAbundance"
+  ) %>%
+  group_by(Genome) %>%
+  summarise(
+    Prevalence = sum(RelAbundance > presence_threshold, na.rm = TRUE),  # count of samples
+    TotalSamples = n(),                                                  # total samples in that species
+    Fraction = Prevalence / TotalSamples,                                # optional: proportion
+    .groups = "drop"
+  )
+```
+```{r}
+ggplot(genome_prevalence_counts, aes(x = reorder(Genome, -Prevalence), y = Prevalence)) +
+  geom_col(position = "dodge") +
+  theme_minimal() +
+  labs(
+    x = "MAGs",
+    y = "Prevalence",
+    title = "MAGs Prevalence Within Each Species"
+  ) +
+  theme(axis.text.x = element_blank(),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold"),
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 12))
+```
+```{r histogram_abundace, fig.height=6, fig.width=12, fig.fullwidth=TRUE}
+genome_counts_filt %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  column_to_rownames(., "genome") %>% 
+  t() %>% 
+  as.data.frame() %>% 
+  rownames_to_column(., "sample") %>% 
+  left_join(sample_metadata[c(1, 2)], by="sample") %>% 
+  select(-sample) %>% 
+  group_by(Species) %>% 
+  summarise(across(where(is.numeric), mean, na.rm = TRUE)) %>% 
+  pivot_longer(
+    cols = -Species,                # all columns except Species
+    names_to = "Genome",            # column names become a variable
+    values_to = "MeanValue"         # cell values become this variable
+  ) %>%
+  group_by(Genome) %>%
+  mutate(overall_mean = mean(MeanValue, na.rm = TRUE)) %>%
+  ungroup() %>%
+  mutate(Genome = fct_reorder(Genome, overall_mean, .desc = TRUE)) %>% 
+  ggplot(., aes(x = Genome, y = MeanValue, fill = Species)) +
+  geom_col(position = "dodge") + 
+  theme_minimal() +
+  labs(
+    x = "Genome",
+    y = "Mean Value",
+    fill = "Species",
+    title = "Mean Genome Abundance per Species"
+  ) +
+  theme(axis.text.x = element_blank(),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold"),
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"),
+        legend.text = element_text(size = 16),
+        legend.title = element_text(size = 18))
+```
+
+```{r}
+presence_threshold <- 0
+genome_prevalence_counts_species <- genome_counts_filt %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%              # normalize within genome if needed
+  column_to_rownames("genome") %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("sample") %>%
+  left_join(sample_metadata[c("sample", "Species")], by = "sample") %>%
+  pivot_longer(
+    cols = -c(sample, Species),
+    names_to = "Genome",
+    values_to = "RelAbundance"
+  ) %>%
+  group_by(Species, Genome) %>%
+  summarise(
+    Prevalence = sum(RelAbundance > presence_threshold, na.rm = TRUE),  # count of samples
+    TotalSamples = n(),                                                  # total samples in that species
+    Fraction = Prevalence / TotalSamples,                                # optional: proportion
+    .groups = "drop"
+  )
+```
+```{r}
+genome_prevalence_counts_species %>% 
+  filter(Species=="Eb") %>% 
+    filter(Prevalence!=0) %>% 
+ggplot(., aes(x = reorder(Genome, -Prevalence), y = Prevalence)) +
+  geom_col(position = "dodge") +
+  theme_minimal() +
+  labs(
+    x = "MAGs",
+    y = "Prevalence",
+    title = "MAGs prevalence within Cnephaeus"
+  ) +
+  theme(axis.text.x = element_blank(),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold"),
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"))
+```
+```{r}
+genome_prevalence_counts_species %>% 
+  filter(Species=="Ha") %>%
+  filter(Prevalence!=0) %>% 
+ggplot(., aes(x = reorder(Genome, -Prevalence), y = Prevalence)) +
+  geom_col(position = "dodge") +
+  theme_minimal() +
+  labs(
+    x = "MAGs",
+    y = "Prevalence",
+    title = "MAGs prevalence within Hypsugo"
+  ) +
+  theme(axis.text.x = element_blank(),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold"),
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"))
+```
+
+```{r}
+genome_prevalence_counts_species %>% 
+  filter(Species=="Pk") %>%
+  filter(Prevalence!=0) %>% 
+ggplot(., aes(x = reorder(Genome, -Prevalence), y = Prevalence)) +
+  geom_col(position = "dodge") +
+  theme_minimal() +
+  labs(
+    x = "MAGs",
+    y = "Prevalence",
+    title = "MAGs prevalence within Pipistrellus"
+  ) +
+  theme(axis.text.x = element_blank(),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold"),
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"))
+```
+
+## Metabarcoding
+```{r}
+load("resources/amplicon/data_standard_filt.Rdata")
+```
+
+```{r histogram_abundace_together, fig.height=6, fig.width=12, fig.fullwidth=TRUE}
+genome_counts_filt %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%          # normalize each genome
+  column_to_rownames("genome") %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("sample") %>%
+  select(-sample) %>%                      # remove grouping info
+  summarise(across(everything(), mean, na.rm = TRUE)) %>%  # mean across all samples
+  pivot_longer(
+    cols = everything(),
+    names_to = "Genome",
+    values_to = "MeanValue"
+  ) %>%
+  arrange(desc(MeanValue)) %>% 
+  ggplot(., aes(x = reorder(Genome, -MeanValue), y = MeanValue)) +
+  geom_col(fill = "steelblue") +
+  theme_minimal() +
+  labs(
+    x = "ASVs",
+    y = "Mean Value",
+    title = "Overall Mean Genome Abundance (All Samples Combined)"
+  ) +
+  theme(axis.text.x = element_blank(),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold"),
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"),
+        legend.text = element_text(size = 16),
+        legend.title = element_text(size = 18))
+
+
+```
+```{r together_prev, fig.height=6, fig.width=12, fig.fullwidth=TRUE}
+presence_threshold <- 0  # define what counts as "present"
+
+genome_counts_filt %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  column_to_rownames("genome") %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("sample") %>%
+  left_join(sample_metadata[c("sample", "Species")], by = "sample") %>%
+  pivot_longer(
+    cols = -c(sample, Species),
+    names_to = "Genome",
+    values_to = "RelAbundance"
+  ) %>%
+  group_by(Genome) %>%
+  summarise(
+    MeanAbundance = mean(RelAbundance, na.rm = TRUE),
+    Prevalence = sum(RelAbundance > presence_threshold, na.rm = TRUE),
+    FractionPrevalence = Prevalence / n(),  # optional normalized prevalence
+    .groups = "drop"
+  ) %>% 
+  arrange(-MeanAbundance)  %>% 
+  ggplot(., aes(x = fct_reorder(Genome, -MeanAbundance), y = MeanAbundance, fill = Prevalence)) +
+  geom_col() +
+  scale_fill_viridis_c(option = "plasma") +
+  theme_minimal() +
+  labs(
+    x = "ASVs",
+    y = "Mean relative abundance",
+    fill = "Prevalence",
+    title = "Mean relative abundance of top 200 ASVs colored by prevalence"
+  ) +
+  theme(axis.text.x = element_blank(),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold"),
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 12))
+```
+
+```{r log_transf, fig.height=6, fig.width=12, fig.fullwidth=TRUE}
+presence_threshold <- 0  # define what counts as "present"
+
+genome_summary_abs <- genome_counts_filt %>%
+#  mutate(across(-genome, ~ . / sum(.))) %>%
+  column_to_rownames("genome") %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("sample") %>%
+  left_join(sample_metadata[c("sample", "Species")], by = "sample") %>%
+  pivot_longer(
+    cols = -c(sample, Species),
+    names_to = "Genome",
+    values_to = "AbsCount"
+  ) %>%
+  group_by(Genome) %>%
+  summarise(
+    MeanAbsCount = mean(AbsCount, na.rm = TRUE),
+    Prevalence = sum(AbsCount > presence_threshold, na.rm = TRUE),
+    FractionPrevalence = Prevalence / n(),
+    .groups = "drop"
+  ) %>%
+  mutate(LogMeanAbsCount = log10(MeanAbsCount + 1)) 
+ggplot(genome_summary_abs, aes(
+  x = fct_reorder(Genome, MeanAbsCount, .desc = TRUE),
+  y = LogMeanAbsCount,
+  fill = FractionPrevalence
+)) +
+  geom_col() +
+  scale_fill_viridis_c(option = "turbo", limits = c(0, 1)) +
+  theme_minimal() +
+  labs(
+    x = "ASVs",
+    y = "log10",
+    fill = "Prevalence",
+    title = "Mean ASV Abundance (Absolute Counts, log-transformed) Colored by Prevalence"
+  ) +
+  theme(axis.text.x = element_blank(),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold"),
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 12))
+```
+```{r together, fig.height=6, fig.width=12, fig.fullwidth=TRUE}
+presence_threshold <- 0  # define what counts as "present"
+
+genome_counts_filt %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  column_to_rownames("genome") %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("sample") %>%
+  left_join(sample_metadata[c("sample", "Species")], by = "sample") %>%
+  pivot_longer(
+    cols = -c(sample, Species),
+    names_to = "Genome",
+    values_to = "RelAbundance"
+  ) %>%
+  group_by(Genome) %>%
+  summarise(
+    MeanAbundance = mean(RelAbundance, na.rm = TRUE),
+    Prevalence = sum(RelAbundance > presence_threshold, na.rm = TRUE),
+    FractionPrevalence = Prevalence / n(),  # optional normalized prevalence
+    .groups = "drop"
+  ) %>% 
+arrange(-MeanAbundance)  %>% 
+  slice_head(n = 200) %>% 
+ggplot(., aes(x = fct_reorder(Genome, -MeanAbundance), y = MeanAbundance, fill = Prevalence)) +
+  geom_col() +
+  scale_fill_viridis_c(option = "plasma") +
+  theme_minimal() +
+  labs(
+    x = "ASVs",
+    y = "Mean relative abundance",
+    fill = "Prevalence",
+    title = "Mean relative abundance of top 200 ASVs colored by prevalence"
+  ) +
+  theme(axis.text.x = element_blank(),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold"),
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 12))
+```
+
+```{r}
+presence_threshold <- 0
+genome_prevalence_counts_species <- genome_counts_filt %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%              # normalize within genome if needed
+  column_to_rownames("genome") %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("sample") %>%
+  left_join(sample_metadata[c("sample", "Species")], by = "sample") %>%
+  pivot_longer(
+    cols = -c(sample, Species),
+    names_to = "Genome",
+    values_to = "RelAbundance"
+  ) %>%
+  group_by(Species, Genome) %>%
+  summarise(
+    Prevalence = sum(RelAbundance > presence_threshold, na.rm = TRUE),  # count of samples
+    TotalSamples = n(),                                                  # total samples in that species
+    Fraction = Prevalence / TotalSamples,                                # optional: proportion
+    .groups = "drop"
+  )
+```
+```{r}
+genome_prevalence_counts_species %>% 
+  filter(Species=="Eb") %>% 
+    filter(Prevalence!=0) %>% 
+ggplot(., aes(x = reorder(Genome, -Prevalence), y = Prevalence)) +
+  geom_col(position = "dodge") +
+  theme_minimal() +
+  labs(
+    x = "ASVs",
+    y = "Prevalence",
+    title = "ASVs prevalence within Cnephaeus"
+  ) +
+  theme(axis.text.x = element_blank(),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold"),
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"))
+```
+```{r}
+genome_prevalence_counts_species %>% 
+  filter(Species=="Ha") %>%
+  filter(Prevalence!=0) %>% 
+ggplot(., aes(x = reorder(Genome, -Prevalence), y = Prevalence)) +
+  geom_col(position = "dodge") +
+  theme_minimal() +
+  labs(
+    x = "ASVs",
+    y = "Prevalence",
+    title = "ASVs prevalence within Hypsugo"
+  ) +
+  theme(axis.text.x = element_blank(),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold"),
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"))
+```
+
+```{r}
+genome_prevalence_counts_species %>% 
+  filter(Species=="Pk") %>%
+  filter(Prevalence!=0) %>% 
+ggplot(., aes(x = reorder(Genome, -Prevalence), y = Prevalence)) +
+  geom_col(position = "dodge") +
+  theme_minimal() +
+  labs(
+    x = "ASVs",
+    y = "Prevalence",
+    title = "ASVs prevalence within Pipistrellus"
+  ) +
+  theme(axis.text.x = element_blank(),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold"),
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"))
+```
+

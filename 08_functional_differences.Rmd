@@ -1,0 +1,523 @@
+# Functional differences
+
+## Metagenomics
+
+```{r load_data_func_met,comment="", echo=FALSE, message=FALSE, warning=FALSE}
+load("resources/metagenomics/data_filtered.Rdata")
+```
+
+```{r gift_analysis_meta, comment="", message=FALSE, warning=FALSE}
+genome_counts_filt <- genome_counts_filt %>%
+  column_to_rownames(., "genome") %>%
+  filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
+  select_if(~!all(. == 0))%>%
+  rownames_to_column(., "genome")
+
+genome_gifts <- genome_gifts[rownames(genome_gifts) %in% genome_counts_filt$genome,]
+genome_gifts <- genome_gifts[, colSums(genome_gifts != 0) > 0]
+genome_counts_filt <- genome_counts_filt[genome_counts_filt$genome %in% rownames(genome_gifts),]
+
+#Aggregate bundle-level GIFTs into the compound level
+GIFTs_elements <- to.elements(genome_gifts,GIFT_db)
+GIFTs_elements_filtered <- GIFTs_elements[rownames(GIFTs_elements) %in% genome_counts_filt$genome,]
+GIFTs_elements_filtered <- as.data.frame(GIFTs_elements_filtered) %>% 
+  select_if(~ !is.numeric(.) || sum(.) != 0)
+
+#Aggregate element-level GIFTs into the function level
+GIFTs_functions <- to.functions(GIFTs_elements_filtered,GIFT_db)
+
+#Aggregate function-level GIFTs into overall Biosynthesis, Degradation and Structural GIFTs
+GIFTs_domains <- to.domains(GIFTs_functions,GIFT_db)
+
+#Get community-weighed average GIFTs per sample
+genome_counts_row <- genome_counts_filt %>%
+  mutate_at(vars(-genome),~./sum(.)) %>% 
+  column_to_rownames(., "genome") 
+# genome_counts_row <- rownames_to_column(genome_counts_row, "genome")
+GIFTs_elements_community <- to.community(GIFTs_elements_filtered,genome_counts_row,GIFT_db)
+GIFTs_functions_community <- to.community(GIFTs_functions,genome_counts_row,GIFT_db)
+GIFTs_domains_community <- to.community(GIFTs_domains,genome_counts_row,GIFT_db)
+
+unique_funct_db <- GIFT_db[c(3, 4, 5)] %>%
+  distinct(Code_function, .keep_all = TRUE)
+```
+
+### Functional capacity of the MAGs
+
+```{r GIFTs_elements_meta, comment="", message=FALSE, warning=FALSE, fig.dim = c(20, 20)}
+GIFTs_elements %>%
+  reshape2::melt() %>%
+  dplyr::rename(Genome = Var1, Code_element = Var2, GIFT = value) %>%
+  inner_join(GIFT_db,by="Code_element") %>%
+  ggplot(., aes(x=Code_element, y=Genome, fill=GIFT, group=Code_function))+
+  geom_tile()+
+  scale_y_discrete(guide = guide_axis(check.overlap = TRUE))+
+  scale_x_discrete(guide = guide_axis(check.overlap = TRUE))+
+  scale_fill_gradientn(limits = c(0,1), colours=brewer.pal(7, "YlGnBu"))+
+  facet_grid(. ~ Code_function, scales = "free", space = "free")+
+  theme_grey(base_size=8)+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),strip.text.x = element_text(angle = 90))
+```
+
+### MCI
+```{r mci_meta, warning=FALSE, comments="", message=FALSE}
+GIFTs_functions_community %>%
+  as.data.frame() %>% 
+  rownames_to_column(., "sample") %>%
+  pivot_longer(-sample, names_to = "trait", values_to = "value") %>%
+  left_join(sample_metadata%>% select(sample, Species), by = join_by(sample == sample)) %>%
+  left_join(unique_funct_db[c(1,2)], by = join_by(trait == Code_function)) %>% 
+  group_by(Species, Domain) %>%
+  summarise(mean = mean(value), sd = sd(value)) %>% 
+  mutate(MCI = str_c(round(mean, 3), "±", round(sd, 3))) %>% 
+  select(-mean, -sd) %>% 
+  pivot_wider(names_from = Domain,
+    values_from = MCI)
+```
+
+```{r gitfs_meta, message=FALSE, warning=FALSE}
+unique_funct_db <- GIFT_db[c(3, 4, 5)] %>%
+  distinct(Code_function, .keep_all = TRUE)
+
+MCI <- GIFTs_functions_community %>%
+  as.data.frame() %>% 
+  rownames_to_column(., "sample") %>%
+  pivot_longer(-sample, names_to = "trait", values_to = "value") %>%
+  left_join(sample_metadata%>% select(sample, Species), by = join_by(sample == sample)) %>%
+  left_join(unique_funct_db[c(1,2)], by = join_by(trait == Code_function))
+
+MCI_sub <- MCI %>% filter(Domain=="Biosynthesis")
+shapiro.test(MCI_sub$value)
+kruskal.test(value ~ Species, data = MCI_sub)
+
+MCI_sub <- MCI %>% filter(Domain=="Degradation")
+shapiro.test(MCI_sub$value)
+kruskal.test(value ~ Species, data = MCI_sub)
+
+MCI_sub <- MCI %>% filter(Domain=="Structure")
+shapiro.test(MCI_sub$value)
+kruskal.test(value ~ Species, data = MCI_sub)
+
+```
+
+***Functional differences considering the three species***
+```{r commun_wilcox_elem_meta, comment="", message=FALSE, warning=FALSE}
+uniqueGIFT_db<- unique(GIFT_db[c(2,4,5,6)]) %>% unite("Function",Function:Element, sep= "_", remove=FALSE)
+
+element_gift <- GIFTs_elements_community %>% 
+  as.data.frame() %>% 
+  rownames_to_column(., "sample") %>% 
+  left_join(., sample_metadata[c(1,2)], by=join_by("sample"=="sample"))
+```
+
+***p adjusted***
+```{r}
+element_gift %>%
+  pivot_longer(-c(sample,Species), names_to = "trait", values_to = "value") %>%
+  group_by(trait) %>%
+  summarise(p_value = summary(aov(value ~ Species))[[1]][["Pr(>F)"]][1]) %>%
+  mutate(p_adjust = p.adjust(p_value, method = "BH")) %>%
+  filter(p_adjust < 0.05) %>%
+  left_join(.,uniqueGIFT_db[c(1,3)],by = join_by(trait == Code_element))
+```
+
+***p value***
+```{r}
+element_gift %>%
+  pivot_longer(-c(sample,Species), names_to = "trait", values_to = "value") %>%
+  group_by(trait) %>%
+  summarise(p_value = summary(aov(value ~ Species))[[1]][["Pr(>F)"]][1]) %>%
+  filter(p_value < 0.05) %>%
+  left_join(.,uniqueGIFT_db[c(1,3)],by = join_by(trait == Code_element))
+```
+```{r}
+# element_gift <- GIFTs_elements_community %>% 
+#   as.data.frame() %>% 
+#   rownames_to_column(., "sample") %>% 
+#   left_join(., sample_metadata[c(1,2)], by = join_by("sample" == "sample"))
+
+# uniqueGIFT_db <- unique(GIFT_db[c(2,4,5,6)]) %>% 
+#   unite("Function", Function:Element, sep = "_", remove = FALSE)
+
+anova_results <- element_gift %>%
+  pivot_longer(-c(sample, Species), names_to = "trait", values_to = "value") %>%
+  group_by(trait) %>%
+  summarise(anova_p = summary(aov(value ~ Species))[[1]][["Pr(>F)"]][1]  ) %>%
+#  mutate(p_adjust_ANOVA = p.adjust(anova_p, method = "BH")) %>%
+  filter(anova_p < 0.05)
+
+element_gift %>%
+  pivot_longer(-c(sample, Species), names_to = "trait", values_to = "value") %>%
+  filter(trait %in% anova_results$trait) %>% 
+  group_by(trait) %>%
+  summarise(
+    tukey_results = list(
+      as.data.frame(TukeyHSD(aov(value ~ Species))$Species) |> 
+      tibble::rownames_to_column("contrast")
+    )
+  ) %>%
+  unnest(tukey_results) %>% 
+ filter(`p adj` < 0.05) %>% 
+         left_join(., uniqueGIFT_db[c(1,3)], by = join_by(trait == Code_element))
+```
+
+## Metabarcoding Standard
+
+```{r load_data_func_sta,comment="", echo=FALSE, message=FALSE, warning=FALSE}
+load("resources/amplicon/data_standard_filt.Rdata")
+```
+
+### Prepare for PicrusT
+
+```{r prepare_picrust,comment="", echo=FALSE, message=FALSE, warning=FALSE, eval=FALSE}
+write_tsv(genome_counts_filt,"resources/amplicon/picrust/counts.tsv")
+asvs <- genome_metadata$genome
+fasta_all <- readDNAStringSet("resources/amplicon/ASVs_seqtab_overlap10_nochim0.fa", format="fasta")
+fasta_filtered <- fasta_all[asvs]
+writeXStringSet(fasta_filtered,
+                filepath = "resources/amplicon/picrust/sequences.fa",
+                format   = "fasta")
+```
+
+### Run Picrust
+
+```{sh run_picrust,comment="", echo=FALSE, message=FALSE, warning=FALSE, eval=FALSE}
+conda activate picrust2
+picrust2_pipeline.py -s resources/amplicon/picrust/sequences.fa \
+      -i resources/amplicon/picrust/counts.tsv \
+      -o resources/amplicon/picrust/results \
+      -p 4 \
+      --verbose
+```
+
+### Analyse functions
+
+```{r load_functions,comment="", echo=FALSE, message=FALSE, warning=FALSE, eval=FALSE}
+amplicon_ko <- read_tsv("resources/amplicon/picrust/results/combined_KO_predicted.tsv")
+amplicon_ec <- read_tsv("resources/amplicon/picrust/results/combined_EC_predicted.tsv")
+
+tree_bacteria <- read.tree("resources/amplicon/picrust/results/bac_reduced.tre")
+```
+
+```{r distillr_functions,comment="", echo=FALSE, message=FALSE, warning=FALSE, eval=FALSE}
+amplicon_ko_long <- amplicon_ko  %>% 
+  pivot_longer(!sequence,names_to="kegg",values_to="value") %>% 
+  filter(value>0) %>% 
+  mutate(kegg = stringr::str_remove(kegg, "^ko:"))
+
+amplicon_ec_long <- amplicon_ec  %>% 
+  pivot_longer(!sequence,names_to="ec",values_to="value") %>% 
+  filter(value>0) %>% 
+  mutate(ec = str_c("[EC:",ec,"]"))
+
+# Distil KO and EC separately (for later merging)
+amplicon_ko_distil <- distill(amplicon_ko_long,GIFT_db,genomecol=1,annotcol=2, verbosity=T)
+amplicon_ec_distil <- distill(amplicon_ec_long,GIFT_db,genomecol=1,annotcol=2, verbosity=T)
+
+# Save distilled tables
+amplicon_ko_distil %>% 
+  as.data.frame() %>% 
+  rownames_to_column("genome") %>% 
+  write_tsv("resources/amplicon/picrust/results/gifts_ko.tsv")
+
+amplicon_ec_distil %>% 
+  as.data.frame() %>% 
+  rownames_to_column("genome") %>% 
+  write_tsv("resources/amplicon/picrust/results/gifts_ec.tsv")
+```
+
+```{r distillr_functions_merge, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+# Merge distilled tables
+amplicon_ko_distil <- read_tsv("resources/amplicon/picrust/results/gifts_ko.tsv") %>% column_to_rownames(var="genome")
+amplicon_ec_distil <- read_tsv("resources/amplicon/picrust/results/gifts_ec.tsv") %>% column_to_rownames(var="genome")
+
+amplicon_distil <- pmax(amplicon_ko_distil, amplicon_ec_distil)
+amplicon_elements <- to.elements(amplicon_distil,GIFT_db)
+
+#Aggregate element-level GIFTs into the function level
+amplicon_functions <- to.functions(amplicon_elements,GIFT_db)
+
+genome_counts_row <- genome_counts_filt %>%
+  mutate_at(vars(-genome),~./sum(.)) %>% 
+  column_to_rownames(., "genome") 
+
+amplicon_elem_community_standard <- to.community(amplicon_elements,genome_counts_row,GIFT_db)
+amplicon_func_community_standard <- to.community(amplicon_functions,genome_counts_row,GIFT_db)
+```
+
+### MCI
+```{r mci_sta, warning=FALSE, comments="", message=FALSE}
+amplicon_func_community_standard %>%
+  as.data.frame() %>% 
+  rownames_to_column(., "sample") %>%
+  pivot_longer(-sample, names_to = "trait", values_to = "value") %>%
+  left_join(sample_metadata%>% select(sample, Species), by = join_by(sample == sample)) %>%
+  left_join(unique_funct_db[c(1,2)], by = join_by(trait == Code_function)) %>% 
+  group_by(Species, Domain) %>%
+  summarise(mean = mean(value), sd = sd(value)) %>% 
+  mutate(MCI = str_c(round(mean, 3), "±", round(sd, 3))) %>% 
+  select(-mean, -sd) %>% 
+  pivot_wider(names_from = Domain,
+    values_from = MCI)
+```
+
+```{r gitfs_sta, message=FALSE, warning=FALSE}
+
+
+MCI <- amplicon_func_community_standard %>%
+  as.data.frame() %>% 
+  rownames_to_column(., "sample") %>%
+  pivot_longer(-sample, names_to = "trait", values_to = "value") %>%
+  left_join(sample_metadata%>% select(sample, Species), by = join_by(sample == sample)) %>%
+  left_join(unique_funct_db[c(1,2)], by = join_by(trait == Code_function))
+
+MCI_sub <- MCI %>% filter(Domain=="Biosynthesis")
+shapiro.test(MCI_sub$value)
+kruskal.test(value ~ Species, data = MCI_sub)
+
+MCI_sub <- MCI %>% filter(Domain=="Degradation")
+shapiro.test(MCI_sub$value)
+kruskal.test(value ~ Species, data = MCI_sub)
+
+MCI_sub <- MCI %>% filter(Domain=="Structure")
+shapiro.test(MCI_sub$value)
+kruskal.test(value ~ Species, data = MCI_sub)
+
+```
+
+```{r distillr_functions_community_standard, comment="", echo=FALSE, message=FALSE, warning=FALSE}
+amplicon_func_community_standard %>%
+    as.data.frame() %>%
+    rownames_to_column(var="sample")%>%
+    pivot_longer(!sample,names_to="trait",values_to="gift") %>%
+    left_join(sample_metadata, by = join_by(sample == sample)) %>%
+    mutate(functionid = substr(trait, 1, 3)) %>%
+    mutate(trait = case_when(
+      trait %in% GIFT_db$Code_element ~ GIFT_db$Element[match(trait, GIFT_db$Code_element)],
+      TRUE ~ trait
+    )) %>%
+    mutate(functionid = case_when(
+      functionid %in% GIFT_db$Code_function ~ GIFT_db$Function[match(functionid, GIFT_db$Code_function)],
+      TRUE ~ functionid
+    )) %>%
+    mutate(trait=factor(trait,levels=unique(GIFT_db$Element))) %>%
+    mutate(functionid=factor(functionid,levels=unique(GIFT_db$Function))) %>%
+    ggplot(aes(x=sample,y=trait,fill=gift)) +
+        geom_tile(colour="white", linewidth=0.2)+
+        scale_fill_gradientn(colours=rev(c("#d53e4f", "#f46d43", "#fdae61", "#fee08b", "#e6f598", "#abdda4", "#ddf1da")))+
+        facet_grid(functionid ~ Species, scales="free",space="free") +
+        theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+              axis.text.y = element_text(size=8),
+              strip.text.y = element_text(angle = 0)
+              ) +
+        labs(y="Traits",x="Samples",fill="GIFT")
+```
+
+***Functional differences considering the three species***
+```{r commun_wilcox_elem_sta, comment="", message=FALSE, warning=FALSE}
+uniqueGIFT_db<- unique(GIFT_db[c(2,4,5,6)]) %>% unite("Function",Function:Element, sep= "_", remove=FALSE)
+
+element_gift <- amplicon_elem_community_standard %>% 
+  as.data.frame() %>% 
+  rownames_to_column(., "sample") %>% 
+  left_join(., sample_metadata[c("sample","Species")], by=join_by("sample"=="sample"))
+```
+
+***p adjusted***
+```{r}
+element_gift %>%
+  pivot_longer(-c(sample,Species), names_to = "trait", values_to = "value") %>%
+  group_by(trait) %>%
+  summarise(p_value = summary(aov(value ~ Species))[[1]][["Pr(>F)"]][1]) %>%
+  mutate(p_adjust = p.adjust(p_value, method = "BH")) %>%
+  filter(p_adjust < 0.05) %>%
+  left_join(.,uniqueGIFT_db[c(1,3)],by = join_by(trait == Code_element))
+```
+
+***p value***
+```{r}
+element_gift %>%
+  pivot_longer(-c(sample,Species), names_to = "trait", values_to = "value") %>%
+  group_by(trait) %>%
+  summarise(p_value = summary(aov(value ~ Species))[[1]][["Pr(>F)"]][1]) %>%
+  filter(p_value < 0.05) %>%
+  left_join(.,uniqueGIFT_db[c(1,3)],by = join_by(trait == Code_element))
+```
+```{r}
+# element_gift <- GIFTs_elements_community %>% 
+#   as.data.frame() %>% 
+#   rownames_to_column(., "sample") %>% 
+#   left_join(., sample_metadata[c(1,2)], by = join_by("sample" == "sample"))
+
+# uniqueGIFT_db <- unique(GIFT_db[c(2,4,5,6)]) %>% 
+#   unite("Function", Function:Element, sep = "_", remove = FALSE)
+
+anova_results <- element_gift %>%
+  pivot_longer(-c(sample, Species), names_to = "trait", values_to = "value") %>%
+  group_by(trait) %>%
+  summarise(anova_p = summary(aov(value ~ Species))[[1]][["Pr(>F)"]][1]  ) %>%
+#  mutate(p_adjust_ANOVA = p.adjust(anova_p, method = "BH")) %>%
+  filter(anova_p < 0.05)
+
+element_gift %>%
+  pivot_longer(-c(sample, Species), names_to = "trait", values_to = "value") %>%
+  filter(trait %in% anova_results$trait) %>% 
+  group_by(trait) %>%
+  summarise(
+    tukey_results = list(
+      as.data.frame(TukeyHSD(aov(value ~ Species))$Species) |> 
+      tibble::rownames_to_column("contrast")
+    )
+  ) %>%
+  unnest(tukey_results) %>% 
+ filter(`p adj` < 0.05) %>% 
+         left_join(., uniqueGIFT_db[c(1,3)], by = join_by(trait == Code_element))
+```
+
+### Metabarcoding selected
+
+```{r distillr_functions_community_sel,comment="", echo=FALSE, message=FALSE, warning=FALSE}
+load("resources/amplicon/selected_filtering.Rdata")
+
+genome_counts_row <- genome_counts_filt_amplicon %>%
+  mutate_at(vars(-genome),~./sum(.)) %>% 
+  column_to_rownames(., "genome") 
+
+amplicon_elements_filtered <- amplicon_elements[rownames(genome_counts_row),]
+
+#Aggregate element-level GIFTs into the function level
+amplicon_functions <- to.functions(amplicon_elements_filtered,GIFT_db)
+
+amplicon_elem_community_selected <- to.community(amplicon_elements_filtered,genome_counts_row,GIFT_db)
+amplicon_func_community_selected <- to.community(amplicon_functions,genome_counts_row,GIFT_db)
+```
+
+```{r}
+amplicon_elem_community_selected %>%
+    as.data.frame() %>%
+    rownames_to_column(var="sample")%>%
+    pivot_longer(!sample,names_to="trait",values_to="gift") %>%
+    left_join(sample_metadata_amplicon, by = join_by(sample == sample)) %>%
+    mutate(functionid = substr(trait, 1, 3)) %>%
+    mutate(trait = case_when(
+      trait %in% GIFT_db$Code_element ~ GIFT_db$Element[match(trait, GIFT_db$Code_element)],
+      TRUE ~ trait
+    )) %>%
+    mutate(functionid = case_when(
+      functionid %in% GIFT_db$Code_function ~ GIFT_db$Function[match(functionid, GIFT_db$Code_function)],
+      TRUE ~ functionid
+    )) %>%
+    mutate(trait=factor(trait,levels=unique(GIFT_db$Element))) %>%
+    mutate(functionid=factor(functionid,levels=unique(GIFT_db$Function))) %>%
+    ggplot(aes(x=sample,y=trait,fill=gift)) +
+        geom_tile(colour="white", linewidth=0.2)+
+        scale_fill_gradientn(colours=rev(c("#d53e4f", "#f46d43", "#fdae61", "#fee08b", "#e6f598", "#abdda4", "#ddf1da")))+
+        facet_grid(functionid ~ Species, scales="free",space="free") +
+        theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+              axis.text.y = element_text(size=8),
+              strip.text.y = element_text(angle = 0)
+              ) +
+        labs(y="Traits",x="Samples",fill="GIFT")
+```
+
+### MCI
+```{r mci_sel, warning=FALSE, comments="", message=FALSE}
+amplicon_func_community_selected %>%
+  as.data.frame() %>% 
+  rownames_to_column(., "sample") %>%
+  pivot_longer(-sample, names_to = "trait", values_to = "value") %>%
+  left_join(sample_metadata%>% select(sample, Species), by = join_by(sample == sample)) %>%
+  left_join(unique_funct_db[c(1,2)], by = join_by(trait == Code_function)) %>% 
+  group_by(Species, Domain) %>%
+  summarise(mean = mean(value), sd = sd(value)) %>% 
+  mutate(MCI = str_c(round(mean, 3), "±", round(sd, 3))) %>% 
+  select(-mean, -sd) %>% 
+  pivot_wider(names_from = Domain,
+    values_from = MCI)
+```
+
+```{r gitfs_sel, message=FALSE, warning=FALSE}
+unique_funct_db <- GIFT_db[c(3, 4, 5)] %>%
+  distinct(Code_function, .keep_all = TRUE)
+
+MCI <- amplicon_func_community_selected %>%
+  as.data.frame() %>% 
+  rownames_to_column(., "sample") %>%
+  pivot_longer(-sample, names_to = "trait", values_to = "value") %>%
+  left_join(sample_metadata%>% select(sample, Species), by = join_by(sample == sample)) %>%
+  left_join(unique_funct_db[c(1,2)], by = join_by(trait == Code_function))
+
+MCI_sub <- MCI %>% filter(Domain=="Biosynthesis")
+shapiro.test(MCI_sub$value)
+kruskal.test(value ~ Species, data = MCI_sub)
+
+MCI_sub <- MCI %>% filter(Domain=="Degradation")
+shapiro.test(MCI_sub$value)
+kruskal.test(value ~ Species, data = MCI_sub)
+
+MCI_sub <- MCI %>% filter(Domain=="Structure")
+shapiro.test(MCI_sub$value)
+kruskal.test(value ~ Species, data = MCI_sub)
+
+```
+
+***Functional differences considering the three species***
+```{r commun_wilcox_elem_sel, comment="", message=FALSE, warning=FALSE}
+uniqueGIFT_db<- unique(GIFT_db[c(2,4,5,6)]) %>% unite("Function",Function:Element, sep= "_", remove=FALSE)
+
+element_gift <- amplicon_elem_community_selected %>% 
+  as.data.frame() %>% 
+  rownames_to_column(., "sample") %>% 
+  left_join(., sample_metadata[c("sample","Species")], by=join_by("sample"=="sample"))
+```
+
+***p adjusted***
+```{r}
+element_gift %>%
+  pivot_longer(-c(sample,Species), names_to = "trait", values_to = "value") %>%
+  group_by(trait) %>%
+  summarise(p_value = summary(aov(value ~ Species))[[1]][["Pr(>F)"]][1]) %>%
+  mutate(p_adjust = p.adjust(p_value, method = "BH")) %>%
+  filter(p_adjust < 0.05) %>%
+  left_join(.,uniqueGIFT_db[c(1,3)],by = join_by(trait == Code_element))
+```
+
+***p value***
+```{r}
+element_gift %>%
+  pivot_longer(-c(sample,Species), names_to = "trait", values_to = "value") %>%
+  group_by(trait) %>%
+  summarise(p_value = summary(aov(value ~ Species))[[1]][["Pr(>F)"]][1]) %>%
+  filter(p_value < 0.05) %>%
+  left_join(.,uniqueGIFT_db[c(1,3)],by = join_by(trait == Code_element))
+```
+```{r}
+# element_gift <- GIFTs_elements_community %>% 
+#   as.data.frame() %>% 
+#   rownames_to_column(., "sample") %>% 
+#   left_join(., sample_metadata[c(1,2)], by = join_by("sample" == "sample"))
+
+# uniqueGIFT_db <- unique(GIFT_db[c(2,4,5,6)]) %>% 
+#   unite("Function", Function:Element, sep = "_", remove = FALSE)
+
+anova_results <- element_gift %>%
+  pivot_longer(-c(sample, Species), names_to = "trait", values_to = "value") %>%
+  group_by(trait) %>%
+  summarise(anova_p = summary(aov(value ~ Species))[[1]][["Pr(>F)"]][1]  ) %>%
+#  mutate(p_adjust_ANOVA = p.adjust(anova_p, method = "BH")) %>%
+  filter(anova_p < 0.05)
+
+element_gift %>%
+  pivot_longer(-c(sample, Species), names_to = "trait", values_to = "value") %>%
+  filter(trait %in% anova_results$trait) %>% 
+  group_by(trait) %>%
+  summarise(
+    tukey_results = list(
+      as.data.frame(TukeyHSD(aov(value ~ Species))$Species) |> 
+      tibble::rownames_to_column("contrast")
+    )
+  ) %>%
+  unnest(tukey_results) %>% 
+ filter(`p adj` < 0.05) %>% 
+         left_join(., uniqueGIFT_db[c(1,3)], by = join_by(trait == Code_element))
+```

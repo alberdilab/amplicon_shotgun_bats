@@ -1,0 +1,1814 @@
+# Metabarcoding selected filtering (t3_p10)
+
+```{r knitr_options_comp, include=FALSE}
+knitr::opts_chunk$set(fig.width=10, fig.height=7, fig.fullwidth=TRUE,
+fig.path='Figures/', warning=FALSE,
+message=FALSE)
+set.seed(24022025)
+```
+
+Check filtered ASVs
+```{r}
+load("resources/amplicon/selected_filtering.Rdata")
+load("resources/amplicon/data_standard_filt.Rdata")
+
+filtered <- genome_counts_filt %>% 
+  filter(!genome %in% genome_counts_filt_amplicon$genome)
+
+filtered %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  column_to_rownames("genome") %>%
+  mutate(across(everything(), ~ as.integer(. > 0))) %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("sample") %>%
+  left_join(sample_metadata[c("sample", "Species")], by = "sample") %>%
+  group_by(Species) %>%
+  summarize(across(-sample, sum), .groups = "drop") %>%
+  column_to_rownames("Species") %>%
+  t() %>%
+  as.data.frame() %>% 
+  rownames_to_column(., "genome") %>% 
+  left_join(genome_metadata, by="genome") %>% 
+  group_by(phylum)
+
+```
+
+```{r}
+load("resources/amplicon/selected_filtering.Rdata")
+species_color <- c("#e5bd5b", "#6b7398", "#76b183")
+```
+
+## Taxonomy
+
+Stacked bar chart with filtered amplicon data
+```{r taxonomy_barplot_selec_filt, fig.height=6, fig.width=10, fig.fullwidth=TRUE}
+genome_counts_filt_amplicon %>%
+  mutate_at(vars(-genome),  ~ . / sum(.)) %>% 
+  pivot_longer(-genome, names_to = "sample", values_to = "count") %>% 
+  left_join(., genome_metadata_amplicon, by = join_by(genome == genome)) %>% 
+  left_join(., sample_metadata_amplicon, by = join_by(sample == sample)) %>% 
+  filter(count > 0) %>% #filter 0 counts
+  ggplot(., aes(
+    x = sample,
+    y = count,
+    fill = phylum,
+    group = phylum
+  )) + 
+  geom_bar(stat = "identity",
+           colour = "white",
+           linewidth = 0.1) + 
+  scale_fill_manual(values = phylum_colors) +
+  facet_nested( ~ factor(
+    Species,
+    labels = c("Eb" = "Eptesicus", "Ha" = "Hypsugo", "Pk" = "Pipistrellus")
+  ), scales = "free") + 
+  guides(fill = guide_legend(ncol = 1)) +
+  theme(
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.title.x = element_blank(),
+    panel.background = element_blank(),
+    panel.border = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    legend.text = element_text(size = 6),
+    strip.background = element_rect(fill = "white"),
+    strip.text = element_text(
+      size = 12,
+      lineheight = 0.6,
+      face = "bold"
+    ),
+    axis.line = element_line(
+      linewidth = 0.5,
+      linetype = "solid",
+      colour = "black"
+    )
+  ) +
+  labs(fill = "Phylum", y = "Relative abundance", x = "Samples")+
+  guides(fill = guide_legend(ncol = 2))
+
+#ggsave("Figures_ms/taxonomy_metabarcoding_t3_p10.pdf", plot = p, width = 10, height = 6)
+```
+
+***Phylum relative abundances***
+```{r taxonomy_phylum_selected, warning=FALSE, comments="", message=FALSE}
+phylum_summary <- genome_counts_filt_amplicon %>%
+  mutate_at(vars(-genome),~./sum(.)) %>%
+  pivot_longer(-genome, names_to = "sample", values_to = "count") %>%
+  left_join(sample_metadata_amplicon, by = join_by(sample == sample)) %>%
+  left_join(genome_metadata_amplicon, by = join_by(genome == genome)) %>%
+  group_by(sample,phylum,Species) %>%
+  summarise(relabun=sum(count))
+```
+
+```{r taxonomy_phylum_summary_selected, warning=FALSE, comments="", message=FALSE}
+phylum_summary %>%
+  group_by(phylum) %>%
+  summarise(
+    Total_mean = mean(relabun * 100, na.rm = T),
+    Total_sd = sd(relabun * 100, na.rm = T),
+    Eb_mean = mean(relabun[Species == "Eb"] * 100, na.rm = T),
+    Eb_sd = sd(relabun[Species == "Eb"] * 100, na.rm = T),
+    Ha_mean = mean(relabun[Species == "Ha"] * 100, na.rm = T),
+    Ha_sd = sd(relabun[Species == "Ha"] * 100, na.rm = T),
+    Pk_mean = mean(relabun[Species == "Pk"] * 100, na.rm = T),
+    Pk_sd = sd(relabun[Species == "Pk"] * 100, na.rm = T)
+  ) %>%
+  mutate(
+    Total = str_c(round(Total_mean, 3), "±", round(Total_sd, 3)),
+    Eptesicus = str_c(round(Eb_mean, 3), "±", round(Eb_sd, 3)),
+    Hypsugo = str_c(round(Ha_mean, 3), "±", round(Ha_sd, 3)),
+    Pipistrellus = str_c(round(Pk_mean, 3), "±", round(Pk_sd, 3))
+  ) %>%
+  arrange(-Eb_mean) %>%
+  dplyr::select(phylum,
+                Total,
+                Eptesicus,
+                Hypsugo,
+                Pipistrellus) %>%
+  tt()
+```
+
+
+***Number of ASVs and distinct taxonomy***
+```{r dist_ASv_ampli, warning=FALSE, comments="", message=FALSE}
+bats = c("Eb", "Pk", "Ha")
+
+total_asvs <- data.frame(
+  Bat = character(),
+  ASVs = numeric(),
+  Phylum = numeric(),
+  Family = numeric(),
+  Genus = numeric()
+)
+
+preabs_table <- genome_counts_filt_amplicon %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  column_to_rownames("genome") %>%
+  mutate(across(everything(), ~ as.integer(. > 0))) %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("sample") %>%
+  left_join(sample_metadata[c("sample", "Species")], by = "sample") %>%
+  group_by(Species) %>%
+  summarize(across(-sample, sum), .groups = "drop") %>%
+  column_to_rownames("Species") %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("genome")  %>%
+  left_join(genome_metadata_amplicon, by = join_by("genome" == "genome"))
+
+phylum <- preabs_table %>%
+  distinct(phylum)
+
+family <- preabs_table %>%
+  distinct(phylum, class, order, family)
+
+genus <- preabs_table %>%
+  distinct(phylum, class, order, family, genus)
+
+total_asvs <- rbind(
+  total_asvs,
+  data.frame(
+    Bat = "Total",
+    ASVs = nrow(preabs_table),
+    Phylum = nrow(phylum),
+    Family = nrow(family),
+    Genus = nrow(genus)
+  )
+)
+
+for (bat in bats) {
+  number <- preabs_table %>%
+    select({{bat}}) %>%
+    filter(. >= 1)
+  
+  phylum <- preabs_table %>%
+    select({{bat}}, phylum) %>%
+    filter(!!sym(bat) >= 1) %>%
+    distinct(phylum)
+  
+  family <- preabs_table %>%
+    select({{bat}}, phylum, class, order, family) %>%
+    filter(!!sym(bat) >= 1) %>%
+    distinct(phylum, class, order, family)
+  
+  genus <- preabs_table %>%
+    select({{bat}}, phylum, class, order, family, genus) %>%
+    filter(!!sym(bat) >= 1) %>%
+    distinct(phylum, class, order, family, genus)
+  
+  total_asvs <- rbind(
+    total_asvs,
+    data.frame(
+      Bat = bat,
+      ASVs = nrow(number),
+      Phylum = nrow(phylum),
+      Family = nrow(family),
+      Genus = nrow(genus)
+    )
+  )
+}
+```
+
+```{r total_annot_ampli_species, warning=FALSE, comments="", message=FALSE}
+bats = c("Eb", "Pk", "Ha")
+
+no_annotation <- data.frame(Bat = character(),
+                            No_genus = numeric(),
+                            No_species = numeric())
+
+preabs_table <- genome_counts_filt_amplicon %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  column_to_rownames("genome") %>%
+  mutate(across(everything(), ~ as.integer(. > 0))) %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("sample") %>%
+  left_join(sample_metadata[c("sample", "Species")], by = "sample") %>%
+  group_by(Species) %>%
+  summarize(across(-sample, sum), .groups = "drop") %>%
+  column_to_rownames("Species") %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("genome")  %>%
+  left_join(genome_metadata_amplicon, by = join_by("genome" == "genome"))
+
+genus <- preabs_table  %>%
+  filter(is.na(genus))
+
+species <- preabs_table  %>%
+  filter(is.na(species))
+
+no_annotation <- rbind(no_annotation,
+                       data.frame(
+                         Bat = "Total",
+                         No_genus = nrow(genus),
+                         No_species = nrow(species)
+                       ))
+
+for (bat in bats) {
+  number <- preabs_table %>%
+    select({{bat}}) %>%
+    filter(. >= 1)
+  
+  genus <- preabs_table %>%
+    select({{bat}}, phylum, class, order, family, genus) %>%
+    filter(!!sym(bat) >= 1) %>%
+  filter(is.na(genus))
+  
+  species <- preabs_table %>%
+    filter(!!sym(bat) >= 1) %>%
+  filter(is.na(species))
+  
+  no_annotation <- rbind(no_annotation,
+                         data.frame(
+                           Bat = bat,
+                           No_genus = nrow(genus),
+                           No_species = nrow(species)
+                         ))
+}
+```
+
+**Total percentage of ASVs without genus-level annotation**
+```{r genon_percet_ampli, comment="", message=FALSE, warning=FALSE}
+nongenera <- genome_metadata_amplicon %>%
+  filter(is.na(genus)) %>% 
+  summarize(ASV_nogenera = n()) %>%
+  pull()
+nasvs <- total_asvs %>%
+  filter(Bat == "Total") %>%
+  select(ASVs) %>%
+  pull()
+perct <- nongenera * 100 / nasvs
+cat(perct)
+```
+
+***Percentage of ASVs without genus-level annotation by phylum***
+```{r nongene_phylum_ampli, comment="", message=FALSE, warning=FALSE}
+total_asv_phylum <- genome_metadata_amplicon %>%
+  group_by(phylum) %>%
+  summarize(Total_ASVs = n())
+genome_metadata_amplicon %>%
+  filter(is.na(genus)) %>% 
+  group_by(phylum) %>%
+  summarize(ASVs_nogenus = n()) %>%
+  left_join(total_asv_phylum, by = join_by(phylum == phylum)) %>%
+  mutate(Percentage_nogenus = 100 * ASVs_nogenus / Total_ASVs) %>%
+  tt()
+```
+
+
+**Number of bacterial species**
+```{r phyla_ampli_bacteria, comment="", message=FALSE, warning=FALSE}
+genome_metadata_amplicon %>% 
+  filter(domain == "Bacteria")%>%
+  dplyr::select(species) %>%
+  unique() %>%
+  drop_na() %>% 
+  pull() %>%
+  length() %>% 
+  cat()
+```
+
+**Total percentage of MAGs without species-level annotation**
+```{r sp_percet_ampli_filt, comment="", message=FALSE, warning=FALSE}
+nonspecies <- genome_metadata_amplicon %>%
+  filter(is.na(species)) %>%
+  summarize(ASV_nospecies = n()) %>%
+  pull()
+perct <- nonspecies * 100 / nasvs
+cat(perct)
+```
+
+**MAGs without species-level annotation**
+```{r nonspe_phylum_ampli_filt, comment="", message=FALSE, warning=FALSE}
+total_mag_phylum <- genome_metadata_amplicon %>%
+  group_by(phylum) %>%
+  summarize(ASVs_total = n())
+
+genome_metadata_amplicon %>%
+    filter(is.na(species)) %>%
+  group_by(phylum) %>%
+  summarize(ASVs_nospecies = n()) %>%
+  left_join(total_mag_phylum, by = join_by(phylum == phylum)) %>%
+  mutate(Species_annotated = ASVs_total - ASVs_nospecies) %>%
+  mutate(Percentage_nospecies = 100 * ASVs_nospecies / ASVs_total) %>%
+  mutate(Percentage_species = 100 - 100 * ASVs_nospecies / ASVs_total) %>%
+  tt()
+```
+
+### Summary table
+
+```{r single_sp_ampli_filt, comment="", message=FALSE, warning=FALSE}
+bats = c("Eb", "Pk", "Ha")
+
+single_sp <- data.frame(Bat = character(), Single_species = numeric())
+
+table_upset_analysis <- genome_counts_filt_amplicon %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  column_to_rownames("genome") %>%
+  mutate(across(everything(), ~ as.integer(. > 0))) %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("sample") %>%
+  left_join(sample_metadata[c("sample", "Species")], by = "sample") %>%
+  group_by(Species) %>%
+  summarize(across(-sample, sum), .groups = "drop") %>%
+  column_to_rownames("Species") %>%
+  mutate(across(everything(), ~ as.integer(. > 0))) %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("sample")
+
+unique_all <- table_upset_analysis %>%
+  filter(rowSums(across(Eb:Pk)) == 1)
+
+single_sp <- rbind(single_sp, data.frame(Bat = "Total",
+                                         Single_species = nrow(unique_all)))
+  
+for (bat in bats) {
+  unique <- table_upset_analysis %>%
+    filter(rowSums(across(Eb:Pk)) == 1) %>%
+    column_to_rownames(., "sample") %>% 
+    select(bat) %>%
+    filter(. > 0) %>%
+    nrow()
+  single_sp <- rbind(single_sp, data.frame(Bat = bat, Single_species = unique))
+}
+
+```
+
+
+```{r single_ind_ampli_filt, comment="", message=FALSE, warning=FALSE}
+single_ind <- data.frame(Bat = character(), Single_individual = numeric())
+
+freq_table <- genome_counts_filt_amplicon %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  column_to_rownames("genome") %>%
+  mutate(across(everything(), ~ as.integer(. > 0))) %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("sample") %>%
+  left_join(sample_metadata[c("sample", "Species")], by = "sample") %>%
+  group_by(Species) %>%
+  summarize(across(-sample, sum), .groups = "drop") %>%
+  column_to_rownames("Species") %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("asv")
+
+singleton_filt <- freq_table %>%
+  rowwise() %>%
+  mutate(row_sum = sum(c_across(-asv))) %>%
+  filter(row_sum == 1) %>%
+  column_to_rownames(var = "asv")  %>%
+  filter(row_sum == 1)
+
+single_ind <- rbind(single_ind, data.frame(
+  Bat = "Total",
+  Single_individual = nrow(singleton_filt)
+))
+     
+for (bat in bats) {
+  singleton_filt <- freq_table %>%
+    rowwise() %>%
+    mutate(row_sum = sum(c_across(-asv))) %>%
+    filter(row_sum == 1) %>%
+    column_to_rownames(var = "asv")  %>%
+    select(bat) %>%
+    filter(. == 1)
+  
+  single_ind <- rbind(single_ind, data.frame(
+    Bat = bat,
+    Single_individual = nrow(singleton_filt) 
+  ))
+}
+```
+
+
+```{r merge_ampli_filt, comment="", message=FALSE, warning=FALSE}
+summary_table_ampli <- total_asvs %>%
+  left_join(., no_annotation, by = "Bat") %>%
+  left_join(., single_ind, by = "Bat") %>%
+  left_join(., single_sp, by = "Bat") 
+  
+summary_table_ampli %>% 
+  tt()
+```
+
+
+***Shared phyla***
+```{r}
+meta_phylum <- genome_metadata %>% 
+  distinct(domain,phylum)
+
+genome_metadata_amplicon %>% 
+  distinct(domain,phylum) %>% 
+  filter(phylum %in% meta_phylum$phylum)
+```
+
+***Only in metagenomic data***
+```{r}
+ampli_phylum <- genome_metadata_amplicon %>% 
+  distinct(domain,phylum)
+genome_metadata %>% 
+  distinct(domain,phylum) %>% 
+  filter(!phylum %in% genome_metadata_amplicon$phylum)
+```
+
+***Only in amplicon data***
+```{r}
+genome_metadata_amplicon %>% 
+  distinct(domain,phylum) %>% 
+  filter(!phylum %in% meta_phylum$phylum)
+```
+
+### Differences at family level
+***Number of families in metagenomic data***
+```{r}
+load("resources/metagenomics/data_filtered.Rdata")
+```
+
+```{r}
+cat(genome_metadata %>%
+      distinct(domain, phylum, family) %>%
+      count() %>%
+      pull())
+```
+
+***Number of families in amplicon data***
+```{r}
+cat(genome_metadata_amplicon %>%
+      distinct(domain, phylum, family) %>%
+      count() %>%
+      pull())
+```
+
+***Shared families***
+```{r}
+meta_family <- genome_metadata %>% 
+  distinct(domain,phylum, family)
+
+genome_metadata_amplicon %>% 
+  distinct(domain,phylum, family) %>% 
+  filter(family %in% meta_family$family)
+```
+
+***Only in metagenomic data***
+```{r}
+ampli_family <- genome_metadata_amplicon %>% 
+  distinct(domain,phylum,family)
+
+genome_metadata %>% 
+  distinct(domain,phylum,family) %>% 
+  filter(!family %in% ampli_family$family)
+```
+
+***Only in amplicon data***
+```{r}
+genome_metadata_amplicon %>% 
+  distinct(domain,phylum,family) %>% 
+  filter(!family %in% meta_family$family)
+```
+
+### Differences in top ASVs and MAGs
+Top 20 MAGs
+```{r top_mags, echo=FALSE}
+genome_counts_filt %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  mutate(total = rowSums(across(-genome))) %>%
+  arrange(desc(total)) %>%
+  slice_head(n = 20) %>% 
+  select(genome, total) %>% 
+  left_join(genome_metadata[1:8])
+```
+
+Top 20 ASVs
+```{r top_asv, echo=FALSE}
+genome_counts_filt_amplicon %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  mutate(total = rowSums(across(-genome))) %>%
+  arrange(desc(total)) %>%
+  slice_head(n = 20) %>% 
+  select(genome, total) %>% 
+  left_join(genome_metadata_amplicon)
+```
+
+Phylum level
+```{r top_mags_phylum, echo=FALSE}
+topMAG <- genome_counts_filt %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  left_join(genome_metadata[c(1, 3, 6, 7)], by="genome") %>% 
+  select(-genome) %>% 
+  group_by(phylum) %>% 
+  summarize(across(where(is.numeric), sum), .groups = "drop") %>% 
+  mutate(total_mag = rowSums(across(where(is.numeric)))) %>% 
+  select(total_mag, phylum) %>% 
+  arrange(desc(total_mag))%>%
+  slice_head(n = 10)
+```
+
+```{r top_asv_phylum, echo=FALSE}
+topASV <- genome_counts_filt_amplicon %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  left_join(genome_metadata_amplicon, by="genome") %>% 
+  select(-genome) %>% 
+  group_by(phylum) %>% 
+  summarize(across(where(is.numeric), sum), .groups = "drop") %>% 
+  mutate(total_asv = rowSums(across(where(is.numeric)))) %>% 
+  select(total_asv, phylum) %>% 
+  arrange(desc(total_asv)) %>%
+  slice_head(n = 10)
+
+table <- full_join(topMAG,topASV, by="phylum") %>% 
+    mutate(ASV = replace_na(total_asv, 0)) %>% 
+    mutate(MAG = replace_na(total_mag, 0)) %>% 
+  select(-total_asv, -total_mag) %>% 
+  pivot_longer(cols = c(MAG, ASV),
+               names_to = "source",
+               values_to = "abundance")
+```
+
+```{r figure_bar_phylum_filt, echo=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+ggplot(table, aes(x = reorder(phylum, -abundance), y = abundance, fill = source)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(x = "Phylum", y = "Total abundance", fill = "Source") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size=12),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold"),
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"),
+        legend.text = element_text(size = 16),
+        legend.title = element_text(size = 18))
+```
+```{r figure_bubble_phylum_filt, echo=FALSE, fig.height=6, fig.width=12, fig.fullwidth=TRUE}
+ggplot(table, aes(x = source, y = phylum, size = abundance, color = phylum)) +
+  geom_point(alpha = 0.7) +
+  scale_size_continuous(
+    name = "Abundance",
+    range = c(0.01, 30),   # 0 ensures no bubble at abundance = 0
+    breaks = seq(0, 35, by = 5),   # Controls legend labels (your 0–5–10–...–30)
+    limits = c(0.01, NA)   # keep full range of values
+  )  +
+    scale_color_manual(values = phylum_colors) +
+    coord_flip()+
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 45,hjust = 1, size=12),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold"),
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"),
+        legend.text = element_text(size = 10),
+        legend.title = element_text(size = 12))+
+  labs(x = "Source", y = "Phylum",
+    title = "Metabarcoding with selected threshold")+
+  guides(color = "none", size = guide_legend(
+      override.aes = list(size = c(2, 4, 6, 8, 10, 12)) # smaller bubbles in legend
+    )
+  )
+```
+```{r figure_scat_phylum_filt, echo=FALSE, fig.height=6, fig.width=12, fig.fullwidth=TRUE}
+full_join(topMAG,topASV, by="phylum") %>% 
+    mutate(ASV = replace_na(total_asv, 0)) %>% 
+    mutate(MAG = replace_na(total_mag, 0)) %>% 
+  ggplot(., aes(x = MAG, y = ASV, color = phylum, label = phylum)) +
+  geom_point(size = 3, alpha = 0.8) +
+  geom_text_repel(max.overlaps = 20) +
+  geom_smooth(method = "lm", se = FALSE, color = "grey50") +
+  labs(
+    x = "MAG abundance",
+    y = "ASV abundance",
+    color = "Phylum",
+    title = "Comparison of MAG and ASV abundances by phylum"
+  ) +
+  theme_minimal()
+```
+
+Family level
+```{r family_top_mag, echo=FALSE}
+topFMAG <- genome_counts_filt %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  left_join(genome_metadata[c(1:7)], by="genome") %>%
+  mutate(
+    class  = if_else(str_trim(class) == "", paste0(phylum, "_Unclassified"), class),
+    order  = if_else(str_trim(order) == "",
+                     if_else(str_detect(class, "Unclassified"), class, paste0(class, "_Unclassified")),
+                     order),
+    family = if_else(str_trim(family) == "",
+                     if_else(str_detect(order, "Unclassified"), order, paste0(order, "_Unclassified")),
+                     family),
+    genus  = if_else(str_trim(genus) == "",
+                     if_else(str_detect(family, "Unclassified"), family, paste0(family, "_Unclassified")),
+                     genus)
+  )%>% 
+  select(-genome) %>% 
+  group_by(phylum, family) %>% 
+  summarize(across(where(is.numeric), sum), .groups = "drop") %>% 
+  mutate(total_mag = rowSums(across(where(is.numeric)))) %>% 
+  select(total_mag, phylum, family) %>% 
+  arrange(desc(total_mag)) %>%
+  slice_head(n = 20)
+```
+```{r family_top_asv, echo=FALSE}
+topFASV <-genome_counts_filt_amplicon %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  left_join(genome_metadata_amplicon, by="genome") %>%
+  mutate(
+    class  = if_else(is.na(class), paste0(phylum, "_Unclassified"), class),
+    order  = if_else(is.na(order),
+                     if_else(str_detect(class, "Unclassified"), class, paste0(class, "_Unclassified")),
+                     order),
+    family = if_else(is.na(family),
+                     if_else(str_detect(order, "Unclassified"), order, paste0(order, "_Unclassified")),
+                     family),
+    genus  = if_else(is.na(genus),
+                     if_else(str_detect(family, "Unclassified"), family, paste0(family, "_Unclassified")),
+                     genus)
+  ) %>% 
+  select(-genome) %>% 
+  group_by(phylum, family) %>% 
+  summarize(across(where(is.numeric), sum), .groups = "drop") %>% 
+  mutate(total_asv = rowSums(across(where(is.numeric)))) %>% 
+  select(total_asv, phylum, family) %>% 
+  arrange(desc(total_asv)) %>%
+  slice_head(n = 20)
+```
+```{r family_top_table, echo=FALSE}
+table_family <- full_join(topFMAG,topFASV, by="family") %>% 
+    mutate(ASV = replace_na(total_asv, 0)) %>% 
+    mutate(MAG = replace_na(total_mag, 0)) %>% 
+    rename(
+    phylum_mag = phylum.x,
+   phylum_asv =phylum.y,
+  )%>%
+  mutate(phylum_mag = coalesce(phylum_mag, phylum_asv))%>%
+  pivot_longer(cols = c(MAG, ASV),
+               names_to = "source",
+               values_to = "abundance")
+```
+
+```{r figure_bar_family_top, echo=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+ggplot(table_family, aes(x = reorder(family, -abundance), y = abundance, fill = source)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(x = "family", y = "Total abundance", fill = "Source") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size=12),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold"),
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"),
+        legend.text = element_text(size = 16),
+        legend.title = element_text(size = 18))
+```
+```{r figure_bubble_family_top, echo=FALSE, fig.height=7, fig.width=20, fig.fullwidth=TRUE}
+ggplot(table_family, aes(x = source, y = family, size = abundance, color = phylum_mag)) +
+  geom_point(alpha = 0.7) +
+  scale_size_continuous(
+    name = "Abundance",
+    range = c(0.01, 20),   # 0 ensures no bubble at abundance = 0
+    breaks = seq(0, 15, by = 2),   # Controls legend labels (your 0–5–10–...–30)
+    limits = c(0.01, NA)   # keep full range of values
+  )  +
+    scale_color_manual(values = phylum_colors) +
+    coord_flip()+
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 45,hjust = 1, size=12),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold"),
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"),
+        legend.text = element_text(size = 10),
+        legend.title = element_text(size = 12))+
+  labs(x = "Source", y = "Family",
+    title = "Metabarcoding with standard filtering")+
+  guides(color = "none", size = guide_legend(
+      override.aes = list(size = c(2, 4, 6, 8, 10)) # smaller bubbles in legend
+    )
+  )
+```
+
+```{r figure_scat_family_top, echo=FALSE, fig.height=8, fig.width=12, fig.fullwidth=TRUE}
+full_join(topFMAG,topFASV, by="family") %>% 
+    mutate(ASV = replace_na(total_asv, 0)) %>% 
+    mutate(MAG = replace_na(total_mag, 0)) %>% 
+    mutate(phylum_mag = coalesce(phylum.x, phylum.y))%>%
+  ggplot(., aes(x = MAG, y = ASV, color = phylum_mag, label = family)) +
+  geom_point(size = 3, alpha = 0.8) +
+  geom_text_repel(max.overlaps = 10) +
+  geom_smooth(method = "lm", se = FALSE, color = "grey50") +
+      scale_color_manual(values = phylum_colors) +
+  labs(
+    x = "MAG abundance",
+    y = "ASV abundance",
+    color = "Phylum",
+    title = "Metabarcoding with selected filtering"
+  ) +
+  theme_minimal()
+```
+
+Genus level
+```{r genus_mag_top, echo=FALSE}
+top20MAG <-  genome_counts_filt %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  left_join(genome_metadata[c(1:7)], by="genome") %>%
+  mutate(
+    class  = if_else(str_trim(class) == "", paste0(phylum, "_Unclassified"), class),
+    order  = if_else(str_trim(order) == "",
+                     if_else(str_detect(class, "Unclassified"), class, paste0(class, "_Unclassified")),
+                     order),
+    family = if_else(str_trim(family) == "",
+                     if_else(str_detect(order, "Unclassified"), order, paste0(order, "_Unclassified")),
+                     family),
+    genus  = if_else(str_trim(genus) == "",
+                     if_else(str_detect(family, "Unclassified"), family, paste0(family, "_Unclassified")),
+                     genus)
+  )%>% 
+  select(-genome) %>% 
+  group_by(phylum, family, genus) %>% 
+  summarize(across(where(is.numeric), sum), .groups = "drop") %>% 
+  mutate(total_mag = rowSums(across(where(is.numeric)))) %>% 
+  select(total_mag, phylum, family, genus) %>% 
+  arrange(desc(total_mag)) %>%
+  slice_head(n = 20)
+
+genome_counts_filt %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  left_join(genome_metadata[c(1, 3, 6, 7)], by="genome") %>% 
+  select(-genome) %>% 
+  group_by(phylum, family, genus) %>% 
+  summarize(across(where(is.numeric), sum), .groups = "drop") %>% 
+  mutate(total_mag = rowSums(across(where(is.numeric)))) %>% 
+  select(total_mag, phylum, family, genus) %>% 
+  arrange(desc(total_mag)) %>%
+  slice_head(n = 20)
+```
+
+```{r genus_asv_top, echo=FALSE}
+top20ASV <-genome_counts_filt_amplicon %>%
+  mutate(across(-genome, ~ . / sum(.))) %>%
+  left_join(genome_metadata_amplicon, by="genome") %>%
+  mutate(
+    class  = if_else(is.na(class), paste0(phylum, "_Unclassified"), class),
+    order  = if_else(is.na(order),
+                     if_else(str_detect(class, "Unclassified"), class, paste0(class, "_Unclassified")),
+                     order),
+    family = if_else(is.na(family),
+                     if_else(str_detect(order, "Unclassified"), order, paste0(order, "_Unclassified")),
+                     family),
+    genus  = if_else(is.na(genus),
+                     if_else(str_detect(family, "Unclassified"), family, paste0(family, "_Unclassified")),
+                     genus)
+  ) %>% 
+  select(-genome) %>% 
+  group_by(phylum, family, genus) %>% 
+  summarize(across(where(is.numeric), sum), .groups = "drop") %>% 
+  mutate(total_asv = rowSums(across(where(is.numeric)))) %>% 
+  select(total_asv, phylum, family, genus) %>% 
+  arrange(desc(total_asv)) %>%
+  slice_head(n = 20)
+```
+
+```{r bubble_genus_top, echo=FALSE, fig.height=7, fig.width=20, fig.fullwidth=TRUE}
+table <- full_join(top20MAG,top20ASV, by="genus") %>% 
+    mutate(ASV = replace_na(total_asv, 0)) %>% 
+    mutate(MAG = replace_na(total_mag, 0)) %>% 
+    rename(
+    phylum_mag = phylum.x,
+   family_mag= family.x,
+   phylum_asv =phylum.y,
+  family_asv=family.y,
+  )%>%
+    mutate(phylum_mag = coalesce(phylum_mag, phylum_asv))%>%
+  pivot_longer(cols = c(MAG, ASV),
+               names_to = "source",
+               values_to = "abundance")
+
+ggplot(table, aes(x = reorder(genus, -abundance), y = abundance, fill = source)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(x = "Genus", y = "Total abundance", fill = "Source") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+ggplot(table, aes(x = source, y = genus, size = abundance, color = phylum_mag))+
+  geom_point(alpha = 0.7) +
+  scale_size_continuous(
+    name = "Abundance",
+    range = c(0.01, 20),   # 0 ensures no bubble at abundance = 0
+    breaks = seq(0, 15, by = 2),   # Controls legend labels (your 0–5–10–...–30)
+    limits = c(0.01, NA)   # keep full range of values
+  )  +
+    scale_color_manual(values = phylum_colors) +
+    coord_flip()+
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 45,hjust = 1, size=12),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold"),
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"),
+        legend.text = element_text(size = 10),
+        legend.title = element_text(size = 12))+
+  labs(x = "Source", y = "Family",
+    title = "Metabarcoding with standard filtering")+
+  guides(color = "none", size = guide_legend(
+      override.aes = list(size = c(2, 4, 6, 8, 10)) # smaller bubbles in legend
+    )
+  )
+  
+```
+```{r figure_scat_genus_top, echo=FALSE, fig.height=8, fig.width=12, fig.fullwidth=TRUE}
+full_join(top20MAG,top20ASV, by="genus") %>% 
+    mutate(ASV = replace_na(total_asv, 0)) %>% 
+    mutate(MAG = replace_na(total_mag, 0)) %>% 
+    mutate(phylum_mag = coalesce(phylum.x, phylum.y))%>%
+  ggplot(., aes(x = MAG, y = ASV, color = phylum_mag, label = genus)) +
+  geom_point(size = 3, alpha = 0.8) +
+  geom_text_repel(max.overlaps = 10) +
+  geom_smooth(method = "lm", se = FALSE, color = "grey50") +
+      scale_color_manual(values = phylum_colors) +
+  labs(
+    x = "MAG abundance",
+    y = "ASV abundance",
+    color = "Phylum",
+    title = "Metabarcoding with selected filtering"
+  ) +
+  theme_minimal()
+```
+
+## Alpha Diversity
+
+### Metabarcoding selected
+```{r alpha_cal_filt_selected, comment="", message=FALSE, warning=FALSE}
+richness <- genome_counts_filt_amplicon %>%
+  column_to_rownames(var = "genome") %>%
+  dplyr::select(where( ~ !all(. == 0))) %>%
+  hilldiv(., q = 0) %>%
+  t() %>%
+  as.data.frame() %>%
+  dplyr::rename(richness = 1) %>%
+  rownames_to_column(var = "sample")
+
+neutral <- genome_counts_filt_amplicon %>%
+  column_to_rownames(var = "genome") %>%
+  dplyr::select(where( ~ !all(. == 0))) %>%
+  hilldiv(., q = 1) %>%
+  t() %>%
+  as.data.frame() %>%
+  dplyr::rename(neutral = 1) %>%
+  rownames_to_column(var = "sample")
+
+metabarcoding_selected_alpha_div <- richness %>%
+  full_join(neutral, by = join_by(sample == sample)) %>% 
+  mutate(method="Metabarcoding_selected")
+```
+
+Correlation between diversity and estimate microbial fraction
+```{r}
+fraction_ampli <- read_csv("resources/metagenomics/microbial_fraction_estimation.csv") %>% 
+  mutate(sample = str_remove(sample, "_M_1")) %>% 
+  select(sample, read_fraction) %>% 
+  right_join(amplicon_alpha_div, by="sample") %>% 
+  left_join(sample_metadata_amplicon, by="sample") 
+
+cor.test(fraction_ampli$read_fraction, fraction_ampli$richness, method = "spearman")
+cor.test(fraction_ampli$read_fraction, fraction_ampli$neutral, method = "spearman")
+```
+
+```{r fraction_ampli_fig_selected, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+
+p1_ampli <- ggplot(fraction_ampli, aes(x = read_fraction, y = richness)) +
+  geom_point(size = 3, color = "#2E86AB") +
+  geom_smooth(method = "lm", se = TRUE, color = "black") +
+  theme_classic() +
+  labs(x = "Read Fraction (%)", y = "Richness", title= "Correlation between estimated microbial fraction and diversity")
+
+p2_ampli <- ggplot(fraction_ampli, aes(x = read_fraction, y = neutral)) +
+  geom_point(size = 3, color = "#F39C12") +
+  geom_smooth(method = "lm", se = TRUE, color = "black") +
+  theme_classic() +
+  labs(x = "Read Fraction (%)", y = "Neutral Alpha Diversity")
+
+p1_ampli + p2_ampli 
+
+#ggsave("Figures_ms/fraction_diversity_metabarcoding.pdf", plot = p_both_ampli, width = 10, height = 6)
+
+```
+```{r alpha_div_selected, comment="",echo=FALSE, message=FALSE, warning=FALSE}
+richness %>%
+  full_join(neutral, by = join_by(sample == sample))  %>%
+  pivot_longer(-sample, names_to = "alpha", values_to = "value") %>%
+  left_join(sample_metadata, by = join_by(sample == sample)) %>%
+  group_by(alpha) %>%
+  summarise(
+    total_mean = mean(value, na.rm = T),
+    total_sd = sd(value, na.rm = T),
+    Eb_mean = mean(value[Species == "Eb"], na.rm = T),
+    Eb_sd = sd(value[Species == "Eb"], na.rm = T),
+    Ha_mean = mean(value[Species == "Ha"], na.rm = T),
+    Ha_sd = sd(value[Species == "Ha"], na.rm = T),
+    Pk_mean = mean(value[Species == "Pk"], na.rm = T),
+    Pk_sd = sd(value[Species == "Pk"], na.rm = T)
+  ) %>%
+  mutate(
+    Total = str_c(round(total_mean, 2), "±", round(total_sd, 2)),
+    Eptesicus = str_c(round(Eb_mean, 2), "±", round(Eb_sd, 2)),
+    Hypsugo = str_c(round(Ha_mean, 2), "±", round(Ha_sd, 2)),
+    Pipistrellus = str_c(round(Pk_mean, 2), "±", round(Pk_sd, 2))
+  ) %>%
+  arrange(-Eb_mean) %>%
+  dplyr::select(alpha, Total, Eptesicus, Pipistrellus, Hypsugo) %>%
+  tt()
+```
+
+
+```{r}
+sample_metadata_amplicon <- sample_metadata_amplicon[c(1,9,10,13)] %>%
+  mutate(sample = paste0(sample, "_ampli_selec")) %>%
+  mutate(method="Metabarcoding_selected")
+
+genome_metadata_amplicon <- genome_metadata_amplicon %>%
+  mutate(
+    class  = if_else(is.na(class), paste0(phylum, "_Unclassified"), class),
+    order  = if_else(is.na(order),
+                     if_else(str_detect(class, "Unclassified"), class, paste0(class, "_Unclassified")),
+                     order),
+    family = if_else(is.na(family),
+                     if_else(str_detect(order, "Unclassified"), order, paste0(order, "_Unclassified")),
+                     family),
+    genus  = if_else(is.na(genus),
+                     if_else(str_detect(family, "Unclassified"), family, paste0(family, "_Unclassified")),
+                     genus)
+  )
+
+genome_tax_ampli <- genome_counts_filt_amplicon %>% 
+  column_to_rownames(., "genome")%>%
+  rename_with(~ paste0(., "_ampli_selec")) %>%
+  rownames_to_column(., "genome")%>%
+  left_join(genome_metadata_amplicon, by = "genome")
+
+family_level_agg_ampli <- genome_tax_ampli %>%
+  select(-genome) %>%
+  group_by(phylum, class, family) %>%
+  summarise(across(where(is.numeric), \(x) sum(x, na.rm = TRUE)), .groups = "drop")%>% 
+    as.data.frame() %>% 
+  select(-c(phylum,class))
+
+phylum_level_agg_ampli <- genome_tax_ampli %>%
+  select(-genome) %>%
+  group_by(phylum) %>%
+  summarise(across(where(is.numeric), \(x) sum(x, na.rm = TRUE)), .groups = "drop")%>% 
+    as.data.frame()
+```
+
+***Family level***
+```{r alpha_family_indiv_fil, comment="", message=FALSE, warning=FALSE}
+richness_f_ampli <- family_level_agg_ampli %>%
+  column_to_rownames(var = "family") %>%
+  dplyr::select(where( ~ !all(. == 0))) %>%
+  hilldiv(., q = 0) %>%
+  t() %>%
+  as.data.frame() %>%
+  dplyr::rename(richness = 1) %>%
+  rownames_to_column(var = "sample")
+
+neutral_f_ampli <- family_level_agg_ampli %>%
+  column_to_rownames(var = "family") %>%
+  dplyr::select(where( ~ !all(. == 0))) %>%
+  hilldiv(., q = 1) %>%
+  t() %>%
+  as.data.frame() %>%
+  dplyr::rename(neutral = 1) %>%
+  rownames_to_column(var = "sample")
+
+alpha_div_f_ampli <- richness_f_ampli %>%
+  full_join(neutral_f_ampli, by = join_by(sample == sample))
+
+alpha_div_f_ampli_data <- alpha_div_f_ampli %>%
+  left_join(sample_metadata_amplicon, by = join_by(sample == sample))
+```
+
+Richness
+```{r rich_MM_general_indiv_fil, comment="", message=FALSE, warning=FALSE}
+Model_richness <- lm(formula = richness ~ Species, data = alpha_div_f_ampli_data)
+anova(Model_richness)
+emmeans(Model_richness, pairwise ~ Species)
+```
+
+Neutral
+```{r neutral_MM_general_indiv_fil, comment="", message=FALSE, warning=FALSE}
+Model_neutral <- lm(formula = neutral ~ Species, data = alpha_div_f_ampli_data)
+anova(Model_neutral)
+emmeans(Model_neutral, pairwise ~ Species)
+```
+
+***Phylum level***
+```{r alpha_family_indiv, comment="", message=FALSE, warning=FALSE}
+richness_p_ampli <- phylum_level_agg_ampli %>%
+  column_to_rownames(var = "phylum") %>%
+  dplyr::select(where( ~ !all(. == 0))) %>%
+  hilldiv(., q = 0) %>%
+  t() %>%
+  as.data.frame() %>%
+  dplyr::rename(richness = 1) %>%
+  rownames_to_column(var = "sample")
+
+neutral_p_ampli <- phylum_level_agg_ampli %>%
+  column_to_rownames(var = "phylum") %>%
+  dplyr::select(where( ~ !all(. == 0))) %>%
+  hilldiv(., q = 1) %>%
+  t() %>%
+  as.data.frame() %>%
+  dplyr::rename(neutral = 1) %>%
+  rownames_to_column(var = "sample")
+
+alpha_div_phylum_ampli <- richness_p_ampli %>%
+  full_join(neutral_p_ampli, by = join_by(sample == sample))
+
+alpha_div_phylum_ampli_data <- alpha_div_phylum_ampli %>%
+  left_join(sample_metadata_amplicon, by = join_by(sample == sample))
+```
+
+Richness
+```{r rich_MM_general_indiv, comment="", message=FALSE, warning=FALSE}
+Model_richness <- lm(formula = richness ~ Species, data = alpha_div_phylum_ampli_data)
+anova(Model_richness)
+emmeans(Model_richness, pairwise ~ Species)
+```
+
+Neutral
+```{r neutral_MM_general_indiv, comment="", message=FALSE, warning=FALSE}
+Model_neutral <- lm(formula = neutral ~ Species, data = alpha_div_phylum_ampli_data)
+anova(Model_neutral)
+```
+
+### Comparison (metabarcoding selected vs metagenomics)
+
+#### At ASV/MAG level
+```{r load_data_alpha_meta_filt}
+metagenome_alpha_div <- readRDS("resources/metagenomics/metagenome_alpha_div.rds") %>% 
+  select(sample, richness, neutral, method)
+
+metabarcoding_standard_alpha_div <- readRDS("resources/amplicon/amplicon_alpha_div.rds") %>% 
+  select(sample, richness, neutral, method)
+
+join_alpha_three <- rbind(metagenome_alpha_div,metabarcoding_standard_alpha_div, metabarcoding_selected_alpha_div) %>%
+  left_join(sample_metadata, by = join_by(sample == sample))
+
+join_alpha <- rbind(metagenome_alpha_div, metabarcoding_selected_alpha_div) %>%
+  left_join(sample_metadata, by = join_by(sample == sample))
+```
+
+***Richness***
+```{r rich_MM_comp_species_filt, comment="", message=FALSE, warning=FALSE}
+Model_richness <- lm(formula = richness ~ Species*method, data = join_alpha)
+anova(Model_richness)
+emmeans(Model_richness, pairwise ~ Species)
+```
+
+***Neutral***
+```{r neutral_MM_com_species_filt, comment="", message=FALSE, warning=FALSE}
+Model_neutral <- lm(formula = neutral ~ Species*method, data = join_alpha)
+anova(Model_neutral)
+emmeans(Model_neutral, pairwise ~ Species)
+```
+
+#### At different taxonomic level
+```{r}
+load("resources/alpha_together.Rdata")
+#load("resources/amplicon/selected_filtering.Rdata")
+```
+
+Merge the table
+```{r}
+merged_table_family_methods <- full_join(family_level_agg_ampli,merged_table, 
+          by = c("family"))%>%
+  mutate(across(where(is.numeric), ~replace_na(., 0)))
+
+merged_table_phylum_methods <- full_join(phylum_level_agg_ampli,merged_table_phylum, 
+          by = c("phylum"))%>%
+  mutate(across(where(is.numeric), ~replace_na(., 0)))
+
+all_samples <- rbind(all_samples, sample_metadata_amplicon)
+```
+
+***Family level***
+```{r alpha_family, comment="", message=FALSE, warning=FALSE}
+richness <- merged_table_family_methods %>%
+  column_to_rownames(var = "family") %>%
+  dplyr::select(where( ~ !all(. == 0))) %>%
+  hilldiv(., q = 0) %>%
+  t() %>%
+  as.data.frame() %>%
+  dplyr::rename(richness = 1) %>%
+  rownames_to_column(var = "sample")
+
+neutral <- merged_table_family_methods %>%
+  column_to_rownames(var = "family") %>%
+  dplyr::select(where( ~ !all(. == 0))) %>%
+  hilldiv(., q = 1) %>%
+  t() %>%
+  as.data.frame() %>%
+  dplyr::rename(neutral = 1) %>%
+  rownames_to_column(var = "sample")
+
+alpha_div_family <- richness %>%
+  full_join(neutral, by = join_by(sample == sample))
+
+alpha_div_family_data <- alpha_div_family %>%
+  left_join(all_samples, by = join_by(sample == sample))
+```
+
+Richness
+```{r rich_MM_ampli_sel_species_family, comment="", message=FALSE, warning=FALSE}
+alpha_div_family_data_filt <- alpha_div_family_data %>% 
+  filter(method!="Metabarcoding_standard")
+Model_richness <- lm(formula = richness ~ Species*method, data = alpha_div_family_data_filt)
+anova(Model_richness)
+summary(Model_richness)
+```
+
+Neutral
+```{r neutral_MM_ampli_sel_species_family, comment="", message=FALSE, warning=FALSE}
+Model_neutral <- lm(formula = neutral ~ Species*method, data = alpha_div_family_data_filt)
+anova(Model_neutral)
+summary(Model_neutral)
+emmeans(Model_neutral, pairwise ~ Species)
+```
+
+***Phylum level***
+```{r alpha_phylum_sel, comment="", message=FALSE, warning=FALSE}
+richness_phylum <- merged_table_phylum_methods %>%
+  column_to_rownames(var = "phylum") %>%
+  dplyr::select(where( ~ !all(. == 0))) %>%
+  hilldiv(., q = 0) %>%
+  t() %>%
+  as.data.frame() %>%
+  dplyr::rename(richness = 1) %>%
+  rownames_to_column(var = "sample")
+
+neutral_phylum <- merged_table_phylum_methods %>%
+  column_to_rownames(var = "phylum") %>%
+  dplyr::select(where( ~ !all(. == 0))) %>%
+  hilldiv(., q = 1) %>%
+  t() %>%
+  as.data.frame() %>%
+  dplyr::rename(neutral = 1) %>%
+  rownames_to_column(var = "sample")
+
+alpha_div_phylum <- richness_phylum %>%
+  full_join(neutral_phylum, by = join_by(sample == sample))
+alpha_div_phylum_data <- alpha_div_phylum %>%
+  left_join(all_samples, by = join_by(sample == sample))
+```
+
+Richness
+```{r rich_alpha_phylum, comment="", message=FALSE, warning=FALSE}
+alpha_div_phylum_data_filt <- alpha_div_phylum_data %>% 
+  filter(method!="Metabarcoding_standard")
+Model_richness_phylum <- lm(formula = richness ~ Species*method, data = alpha_div_phylum_data_filt)
+anova(Model_richness_phylum)
+summary(Model_richness_phylum)
+emmeans(Model_richness_phylum, pairwise ~ Species)
+
+```
+
+Neutral
+```{r neutral_alpha_phylum, comment="", message=FALSE, warning=FALSE}
+Model_neutral_phylum <- lm(formula = neutral ~ Species*method, data = alpha_div_phylum_data_filt)
+anova(Model_neutral_phylum)
+summary(Model_neutral_phylum)
+emmeans(Model_neutral_phylum, pairwise ~ Species)
+```
+
+### Alpha diversity figure (three methods)
+
+```{r fig_family, comment="", message=FALSE, warning=FALSE, fig.height=6, fig.width=16, fig.fullwidth=TRUE}
+alpha_div_family_data %>%
+  select(-sample, -Life_stage, -Sex) %>%
+  pivot_longer(
+    cols = -c(method, Species),
+    names_to = "metric",
+    values_to = "value"
+  ) %>%
+  mutate(
+    metric = factor(
+      metric,
+      levels = c("richness", "neutral"),
+      labels = c("Richness", "Neutral")
+    ),
+    Species = factor(
+      Species,
+      levels = c("Eb", "Ha", "Pk"),
+      labels = c("C. bottae", "H. ariel", "P. kuhlii")
+      ),
+    method = factor(
+      method,
+      levels = c("Metabarcoding_standard", "Metabarcoding_selected", "Metagenomics"),
+      labels = c("Metabarcoding Standard", "Metabarcoding Selected", "Metagenomics")
+  )) %>%   
+  ggplot(aes(y = value, x = method, color = Species, fill = Species)) +
+  geom_boxplot(
+    width = 0.4,
+    alpha = 0.5,
+    outlier.shape = NA,
+ #   show.legend = FALSE,
+    position = position_dodge(width = 0.75)
+  ) +
+  geom_jitter(
+    position = position_jitterdodge(jitter.width = 0.1, dodge.width = 0.75),
+    size = 1,
+    alpha = 0.8,
+    show.legend = FALSE
+  ) +
+  facet_wrap(~metric, scales = "free_y") +
+  scale_color_manual(values=species_color,  labels = c(expression(italic("C. bottae")),
+             expression(italic("H. ariel")),
+             expression(italic("P. kuhlii"))))+
+  scale_fill_manual(values=species_color,  labels = c(expression(italic("C. bottae")),
+             expression(italic("H. ariel")),
+             expression(italic("P. kuhlii")))) +
+  theme_classic() +
+  theme(
+    strip.background = element_blank(),
+    panel.grid.minor.x = element_line(size = 0.1, color = "grey"),
+    axis.text.y = element_text(size = 12),
+    axis.text.x = element_text(size = 12),
+    axis.title.x = element_blank(),
+    axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0), size = 14),
+    strip.text = element_text(size = 14, lineheight = 0.6, face = "bold")
+  ) +
+  labs(
+#    x = "Methodological approach",
+    y = "Alpha diversity at family level",
+    fill = "Species"
+  )
+
+#ggsave("Figures_ms/alpha_family.pdf", plot = p, width = 8, height = 4)
+```
+
+```{r gif_phylum_sel, comment="", message=FALSE, warning=FALSE, fig.height=6, fig.width=16, fig.fullwidth=TRUE}
+alpha_div_phylum_data %>%
+  select(-sample, -Life_stage, -Sex) %>%
+  pivot_longer(
+    cols = -c(method, Species),
+    names_to = "metric",
+    values_to = "value"
+  ) %>%
+  mutate(
+    metric = factor(
+      metric,
+      levels = c("richness", "neutral"),
+      labels = c("Richness", "Neutral")
+    ),
+    Species = factor(
+      Species,
+      levels = c("Eb", "Ha", "Pk"),
+      labels = c("C. bottae", "H. ariel", "P. kuhlii")
+      ),
+    method = factor(
+      method,
+      levels = c("Metabarcoding_standard", "Metabarcoding_selected", "Metagenomics"),
+      labels = c("Metabarcoding Standard", "Metabarcoding Selected", "Metagenomics")
+  )) %>%   
+  ggplot(aes(y = value, x = method, color = Species, fill = Species)) +
+  geom_boxplot(
+    width = 0.4,
+    alpha = 0.5,
+    outlier.shape = NA,
+ #   show.legend = FALSE,
+    position = position_dodge(width = 0.75)
+  ) +
+  geom_jitter(
+    position = position_jitterdodge(jitter.width = 0.1, dodge.width = 0.75),
+    size = 1,
+    alpha = 0.8,
+    show.legend = FALSE
+  ) +
+  facet_wrap(~metric, scales = "free_y") +
+  scale_color_manual(values=species_color,  labels = c(expression(italic("C. bottae")),
+             expression(italic("H. ariel")),
+             expression(italic("P. kuhlii"))))+
+  scale_fill_manual(values=species_color,  labels = c(expression(italic("C. bottae")),
+             expression(italic("H. ariel")),
+             expression(italic("P. kuhlii")))) +
+  theme_classic() +
+  theme(
+    strip.background = element_blank(),
+    panel.grid.minor.x = element_line(size = 0.1, color = "grey"),
+    axis.text.y = element_text(size = 12),
+    axis.text.x = element_text(size = 12),
+    axis.title.x = element_blank(),
+    axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0), size = 14),
+    strip.text = element_text(size = 14, lineheight = 0.6, face = "bold")
+  ) +
+  labs(
+#    x = "Methodological approach",
+    y = "Alpha diversity at phylum level",
+    fill = "Species"
+  )
+#ggsave("Figures_ms/alpha_phylum.pdf", plot = p, width = 8, height = 4)
+
+```
+
+## Beta diversity
+
+***Calculate the beta diversities***
+```{r beta_div_together_family_merged, comment="", message=FALSE, warning=FALSE}
+beta_q0n <- merged_table_family_methods %>%
+  select(-H19, -H20) %>% 
+  column_to_rownames(., "family") %>% 
+  hillpair(., q = 0)
+
+beta_q1n <- merged_table_family_methods %>%
+  select(-H19) %>% 
+  column_to_rownames(., "family") %>% 
+  hillpair(., q = 1)
+
+beta_q0n_phylum <- merged_table_phylum_methods %>%
+  select(-H19, -H20) %>% 
+  column_to_rownames(., "phylum") %>% 
+  hillpair(., q = 0)
+
+beta_q1n_phylum <- merged_table_phylum_methods %>%
+  select(-H19) %>% 
+  column_to_rownames(., "phylum") %>% 
+  hillpair(., q = 1)
+
+methods_colors <- c("#d15aa9","#d4b9ed", "#c7c5c6")
+
+```
+
+
+***Richness at family***
+```{r beta_richness_Family_three1, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+beta_q0n$S %>%
+  vegan::metaMDS(.,
+                 trymax = 500,
+                 k = 2,
+                 trace = 0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(all_samples, by = join_by(sample == sample)) %>%
+  group_by(method, Species) %>%
+  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
+  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
+  ungroup() %>%
+  mutate(
+    Species = factor(
+      Species,
+      levels = c("Eb", "Ha", "Pk"),
+      labels = c("C. bottae", "H. ariel", "P. kuhlii")),
+      method = factor(
+      method,
+      levels = c("Metabarcoding_standard", "Metabarcoding_selected", "Metagenomics"),
+      labels = c("Metabarcoding Standard", "Metabarcoding Selected", "Metagenomics")
+      )
+  ) %>% 
+  ggplot(aes(x = NMDS1, y = NMDS2, color = Species, shape=method)) +
+  geom_point(size = 4) +
+  geom_segment(aes(x = x_cen, y = y_cen, xend = NMDS1, yend = NMDS2 ), alpha = 0.9, show.legend = FALSE) +
+  scale_color_manual(values = species_color,
+                     labels = c(
+                       expression(italic("C. bottae")),
+                       expression(italic("H. ariel")),
+                       expression(italic("P. kuhlii"))
+                     ))+
+  theme(
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    panel.background = element_blank(),
+    axis.line = element_line(
+      size = 0.5,
+      linetype = "solid",
+      colour = "black"
+    ),
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.position = "right",
+    legend.box = "vertical"
+  ) +
+  labs(
+    shape = "Methodological approach"
+  )#+labs(color = "method") +geom_text_repel(aes(label = sample), size=3)
+  
+```
+```{r beta_richness_Family_three2, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+beta_q0n$S %>%
+  vegan::metaMDS(.,
+                 trymax = 500,
+                 k = 2,
+                 trace = 0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(all_samples, by = join_by(sample == sample)) %>%
+  group_by(method) %>%
+  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
+  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
+  ungroup() %>%
+  mutate(
+    Species = factor(
+      Species,
+      levels = c("Eb", "Ha", "Pk"),
+      labels = c("C. bottae", "H. ariel", "P. kuhlii")),
+      method = factor(
+      method,
+      levels = c("Metabarcoding_standard", "Metabarcoding_selected", "Metagenomics"),
+      labels = c("Metabarcoding Standard", "Metabarcoding Selected", "Metagenomics")
+      )
+  ) %>% 
+  ggplot(aes(x = NMDS1, y = NMDS2, color = method)) +
+  geom_point(size = 4) +
+  geom_segment(aes(x = x_cen, y = y_cen, xend = NMDS1, yend = NMDS2 ), alpha = 0.9, show.legend = FALSE) +
+  scale_color_manual(values = methods_colors,
+                     labels = c(
+                       expression(italic("Metabarcoding Standard")),
+                       expression(italic("Metabarcoding Selected")),
+                       expression(italic("Metagenomics"))
+                     ))+
+  theme(
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    panel.background = element_blank(),
+    axis.line = element_line(
+      size = 0.5,
+      linetype = "solid",
+      colour = "black"
+    ),
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.position = "right",
+    legend.box = "vertical"
+  )
+#+labs(color = "method") +geom_text_repel(aes(label = sample), size=3)
+  
+```
+
+
+```{r permanova_rich_both_fig_family_fil, comment="", message=FALSE, warning=FALSE}
+m <- as.matrix(beta_q0n$S)
+samples <- rownames(m)
+to_remove <- grepl("_ampli$", samples) & !grepl("_ampli_Select$", samples)
+m_filtered <- m[!to_remove, !to_remove]
+beta_q0n_S_filtered <- as.dist(m_filtered)
+
+
+betadisper(beta_q0n_S_filtered, all_samples %>% filter(sample %in% labels(beta_q0n_S_filtered)) %>% arrange(match(sample, labels(beta_q0n_S_filtered))) %>% pull(Species)) %>% permutest(.)
+
+adonis2(beta_q0n_S_filtered ~ Species*method, data = all_samples %>% filter(sample %in% labels(beta_q0n_S_filtered)) %>% arrange(match(sample, labels(beta_q0n_S_filtered))), permutations = 999) %>%
+  broom::tidy() %>%
+  tt()
+
+adonis2(
+  beta_q0n_S_filtered ~ Species*method,
+  by = "terms",
+  data = all_samples %>%
+    filter(sample %in% labels(beta_q0n_S_filtered)) %>%
+    arrange(match(sample, labels(beta_q0n_S_filtered))),
+  permutations = 999
+) %>%
+  broom::tidy() %>%
+  tt()
+```
+
+***Neutral diversity at family***
+```{r beta_neutral_Family_three1, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+beta_q1n$S %>%
+  vegan::metaMDS(.,
+                 trymax = 500,
+                 k = 2,
+                 trace = 0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(all_samples, by = join_by(sample == sample)) %>%
+  group_by(method, Species) %>%
+  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
+  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
+  ungroup() %>%
+  mutate(
+    Species = factor(
+      Species,
+      levels = c("Eb", "Ha", "Pk"),
+      labels = c("C. bottae", "H. ariel", "P. kuhlii"))
+  ) %>% 
+  ggplot(aes(x = NMDS1, y = NMDS2, color = Species, shape=method)) +
+  geom_point(size = 3) +
+  geom_segment(aes(x = x_cen, y = y_cen, xend = NMDS1, yend = NMDS2 ), alpha = 0.9, show.legend = FALSE) +
+  scale_color_manual(values = species_color,
+                     labels = c(
+                       expression(italic("C. bottae")),
+                       expression(italic("H. ariel")),
+                       expression(italic("P. kuhlii"))
+                     ))+
+  theme(
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    panel.background = element_blank(),
+    axis.line = element_line(
+      size = 0.5,
+      linetype = "solid",
+      colour = "black"
+    ),
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.position = "right",
+    legend.box = "vertical"
+  ) +
+  labs(shape = "Methodological approach")
+#+geom_text_repel(aes(label = sample), size=3)
+#ggsave("Figures_ms/beta_family_neutral.pdf", plot = p, width = 12, height = 6)
+  
+```
+```{r beta_neutral_Family_three2, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+p1 <- beta_q1n$S %>%
+  vegan::metaMDS(.,
+                 trymax = 500,
+                 k = 2,
+                 trace = 0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(all_samples, by = join_by(sample == sample)) %>%
+  filter(sample!="P36") %>% 
+  group_by(method) %>%
+  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
+  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
+  ungroup() %>%
+    mutate(
+    Species = factor(
+      Species,
+      levels = c("Eb", "Ha", "Pk"),
+      labels = c("C. bottae", "H. ariel", "P. kuhlii"))
+  ) %>% 
+  ggplot(aes(x = NMDS1, y = NMDS2, color = method, shape= Species)) +
+  geom_point(size = 3) +
+  geom_segment(aes(x = x_cen, y = y_cen, xend = NMDS1, yend = NMDS2 ), alpha = 0.9, show.legend = FALSE) +
+  scale_color_manual(values = methods_colors,
+                     labels = c(
+                       expression(italic("Metabarcoding Standard")),
+                       expression(italic("Metabarcoding Selected")),
+                       expression(italic("Metagenomics"))
+                     ))+
+scale_shape_discrete(
+  labels = c(
+    expression(italic("C. bottae")),
+    expression(italic("H. ariel")),
+    expression(italic("P. kuhlii"))
+  )
+) +
+  theme(
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    panel.background = element_blank(),
+    axis.line = element_line(
+      size = 0.5,
+      linetype = "solid",
+      colour = "black"
+    ),
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.position = "right",
+    legend.box = "vertical"
+  ) +
+  labs(color = "Methodological approach",shape="Species")
+
+#+geom_text_repel(aes(label = sample), size=3)
+ggsave("Figures_ms/beta_family_neutral_three_shapes.pdf", plot = p1, width = 12, height = 6)
+  
+```
+
+```{r permanova_neutral_tog_Family_fil, comment="", message=FALSE, warning=FALSE}
+m <- as.matrix(beta_q1n$S)
+samples <- rownames(m)
+to_remove <- grepl("_ampli$", samples) & !grepl("_ampli_Select$", samples)
+m_filtered <- m[!to_remove, !to_remove]
+beta_q1n_S_filtered <- as.dist(m_filtered)
+
+
+betadisper(beta_q1n_S_filtered, all_samples %>% filter(sample %in% labels(beta_q1n_S_filtered)) %>% arrange(match(sample, labels(beta_q1n_S_filtered))) %>% pull(Species)) %>% permutest(.)
+
+adonis2(beta_q1n_S_filtered ~ Species*method, data = all_samples %>% filter(sample %in% labels(beta_q1n_S_filtered)) %>% arrange(match(sample, labels(beta_q1n_S_filtered))), permutations = 999) %>%
+  broom::tidy() %>%
+  tt()
+
+adonis2(
+  beta_q1n_S_filtered ~ Species*method,
+  by = "terms",
+  data = all_samples %>%
+    filter(sample %in% labels(beta_q1n_S_filtered)) %>%
+    arrange(match(sample, labels(beta_q1n_S_filtered))),
+  permutations = 999
+) %>%
+  broom::tidy() %>%
+  tt()
+
+```
+
+***Richness at phylum***
+```{r beta_div1_both_fig_phylum_fil, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+beta_q0n_phylum$S %>%
+  vegan::metaMDS(.,
+                 trymax = 500,
+                 k = 2,
+                 trace = 0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(all_samples, by = join_by(sample == sample)) %>%
+  group_by(method, Species) %>%
+  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
+  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
+  ungroup() %>%
+  mutate(
+    Species = factor(
+      Species,
+      levels = c("Eb", "Ha", "Pk"),
+      labels = c("C. bottae", "H. ariel", "P. kuhlii"))
+  ) %>% 
+  ggplot(aes(x = NMDS1, y = NMDS2, color = Species, shape=method)) +
+  geom_point(size = 4) +
+  geom_segment(aes(x = x_cen, y = y_cen, xend = NMDS1, yend = NMDS2 ), alpha = 0.9, show.legend = FALSE) +
+  scale_color_manual(values = species_color,
+                     labels = c(
+                       expression(italic("C. bottae")),
+                       expression(italic("H. ariel")),
+                       expression(italic("P. kuhlii"))
+                     ))+
+  theme(
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    panel.background = element_blank(),
+    axis.line = element_line(
+      size = 0.5,
+      linetype = "solid",
+      colour = "black"
+    ),
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.position = "right",
+    legend.box = "vertical"
+  ) +
+  labs(
+    shape = "Methodological approach"
+  )
+  
+```
+
+```{r permanova_rich_both_phylum_fig2_fil, comment="", message=FALSE, warning=FALSE}
+m <- as.matrix(beta_q0n_phylum$S)
+samples <- rownames(m)
+to_remove <- grepl("_ampli$", samples) & !grepl("_ampli_Select$", samples)
+m_filtered <- m[!to_remove, !to_remove]
+beta_q0n_phylum_S_filtered <- as.dist(m_filtered)
+
+
+betadisper(beta_q0n_phylum_S_filtered, all_samples %>% filter(sample %in% labels(beta_q0n_phylum_S_filtered)) %>% arrange(match(sample, labels(beta_q0n_phylum_S_filtered))) %>% pull(Species)) %>% permutest(.)
+
+adonis2(beta_q0n_phylum_S_filtered ~ Species*method, data = all_samples %>% filter(sample %in% labels(beta_q0n_phylum_S_filtered)) %>% arrange(match(sample, labels(beta_q0n_phylum_S_filtered))), permutations = 999) %>%
+  broom::tidy() %>%
+  tt()
+
+adonis2(
+  beta_q0n_phylum_S_filtered ~ Species*method,
+  by = "terms",
+  data = all_samples %>%
+    filter(sample %in% labels(beta_q0n_phylum_S_filtered)) %>%
+    arrange(match(sample, labels(beta_q0n_phylum_S_filtered))),
+  permutations = 999
+) %>%
+  broom::tidy() %>%
+  tt()
+```
+
+***Neutral diversity at phylum***
+```{r beta_div1_both_fig3_phylum_fil, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+beta_q1n_phylum$S %>%
+  vegan::metaMDS(.,
+                 trymax = 500,
+                 k = 2,
+                 trace = 0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(all_samples, by = join_by(sample == sample)) %>%
+#  filter(sample!="P36") %>% 
+  group_by(method) %>%
+  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
+  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
+  ungroup() %>%
+    mutate(
+    Species = factor(
+      Species,
+      levels = c("Eb", "Ha", "Pk"),
+      labels = c("C. bottae", "H. ariel", "P. kuhlii"))
+  ) %>% 
+  ggplot(aes(x = NMDS1, y = NMDS2, color = method, shape= Species)) +
+  geom_point(size = 3) +
+  geom_segment(aes(x = x_cen, y = y_cen, xend = NMDS1, yend = NMDS2 ), alpha = 0.9, show.legend = FALSE) +
+  scale_color_manual(values = methods_colors,
+                     labels = c(
+                       expression(italic("Metabarcoding Standard")),
+                       expression(italic("Metabarcoding Selected")),
+                       expression(italic("Metagenomics"))
+                     ))+
+scale_shape_discrete(
+  labels = c(
+    expression(italic("C. bottae")),
+    expression(italic("H. ariel")),
+    expression(italic("P. kuhlii"))
+  )
+) +
+  theme(
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    panel.background = element_blank(),
+    axis.line = element_line(
+      size = 0.5,
+      linetype = "solid",
+      colour = "black"
+    ),
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.position = "right",
+    legend.box = "vertical"
+  ) +
+  labs(color = "Methodological approach",shape="Species")
+  
+#ggsave("Figures_ms/beta_phylum_neutral.pdf", plot = p, width = 12, height = 6)
+
+```
+
+```{r permanova_neutral_tog_phylum_fil, comment="", message=FALSE, warning=FALSE}
+m <- as.matrix(beta_q1n_phylum$S)
+samples <- rownames(m)
+to_remove <- grepl("_ampli$", samples) & !grepl("_ampli_Select$", samples)
+m_filtered <- m[!to_remove, !to_remove]
+beta_q1n_phylum_S_filtered <- as.dist(m_filtered)
+
+
+betadisper(beta_q1n_phylum_S_filtered, all_samples %>% filter(sample %in% labels(beta_q1n_phylum_S_filtered)) %>% arrange(match(sample, labels(beta_q1n_phylum_S_filtered))) %>% pull(Species)) %>% permutest(.)
+
+adonis2(beta_q1n_phylum_S_filtered ~ Species*method, data = all_samples %>% filter(sample %in% labels(beta_q1n_phylum_S_filtered)) %>% arrange(match(sample, labels(beta_q1n_phylum_S_filtered))), permutations = 999) %>%
+  broom::tidy() %>%
+  tt()
+
+adonis2(
+  beta_q1n_phylum_S_filtered ~ Species*method,
+  by = "terms",
+  data = all_samples %>%
+    filter(sample %in% labels(beta_q1n_phylum_S_filtered)) %>%
+    arrange(match(sample, labels(beta_q1n_phylum_S_filtered))),
+  permutations = 999
+) %>%
+  broom::tidy() %>%
+  tt()
+```

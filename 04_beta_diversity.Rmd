@@ -15,7 +15,6 @@ species_color <- c("#e5bd5b", "#6b7398", "#76b183")
 
 ***Identifying outliers***
 ```{r beta_div_nmds_neutral_plot_out, comment="", message=FALSE, warning=FALSE, fig.height=5, fig.width=10, fig.fullwidth=TRUE}
-
 beta_q1n <- genome_counts_filt %>%
   column_to_rownames(., "genome") %>%
   filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
@@ -75,46 +74,18 @@ beta_q1n <- genome_counts_filt %>%
   filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
   select_if( ~ !all(. == 0)) %>%
   hillpair(., q = 1)
-
-genome_counts_filt_beta <- genome_counts_filt %>%
-  column_to_rownames(., "genome") %>%
-  filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
-  select_if( ~ !all(. == 0)) %>%
-  rownames_to_column(., "genome")
-
-genome_tree <- keep.tip(genome_tree, tip = genome_counts_filt_beta$genome)
-beta_q1p <- genome_counts_filt %>%
-  column_to_rownames(., "genome") %>%
-  filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
-  select_if( ~ !all(. == 0)) %>%
-  hillpair(., q = 1, tree = genome_tree)
-
-genome_gifts1 <- genome_gifts[genome_counts_filt_beta$genome, ]
-genome_gifts1 <- genome_gifts1[, colSums(genome_gifts1 != 0) > 0]
-
-dist <- genome_gifts1 %>%
-  to.elements(., GIFT_db) %>%
-  traits2dist(., method = "gower")
-
-beta_q1f <- genome_counts_filt %>%
-  column_to_rownames(., "genome") %>%
-  filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
-  select_if( ~ !all(. == 0)) %>%
-  hillpair(., q = 1, dist = dist)
 ```
 
-```{r save_beta, comment="", message=FALSE,echo=FALSE,warning=FALSE, eval=FALSE}
+```{r save_beta_meta, comment="", message=FALSE,echo=FALSE,warning=FALSE, eval=FALSE}
 save(beta_q0n, 
-     beta_q1n, 
-     beta_q1p, 
-     beta_q1f, 
+     beta_q1n,
      file = "resources/metagenomics/beta_filtered.Rdata")
 ```
 
-### Permanova
+### At ASV level
 
 ***Richness***
-```{r permanova, comment="", message=FALSE, warning=FALSE}
+```{r richness_metag, comment="", message=FALSE, warning=FALSE}
 betadisper(beta_q0n$S, sample_metadata$Species) %>% permutest(.)
 adonis2(
   beta_q0n$S ~ Species,
@@ -125,12 +96,12 @@ adonis2(
   broom::tidy() %>%
   tt()
 ```
-```{r pairwise_neutral_metagenomics, comment="", message=FALSE, warning=FALSE}
+```{r pairwise_richness_metagenomics, comment="", message=FALSE, warning=FALSE}
 pairwise.adonis(beta_q0n$S, sample_metadata$Species, perm = 999)
 ```
 
 ***Neutral***
-```{r permanova_neutral, comment="", message=FALSE, warning=FALSE}
+```{r permanova_neutral_metag, comment="", message=FALSE, warning=FALSE}
 betadisper(beta_q1n$S, sample_metadata$Species) %>% permutest(.)
 
 adonis2(
@@ -142,40 +113,11 @@ adonis2(
   broom::tidy() %>%
   tt()
 ```
-```{r pairwise_neutral_metagenomics2, comment="", message=FALSE, warning=FALSE}
+```{r pairwise_neutral_metagenomics, comment="", message=FALSE, warning=FALSE}
 pairwise.adonis(beta_q1n$S, sample_metadata$Species, perm = 999)
 ```
 
-***Phylogenetic***
-```{r permanova_phylo, comment="", message=FALSE, warning=FALSE}
-betadisper(beta_q1p$S, sample_metadata$Species) %>% permutest(.)
-adonis2(
-  beta_q1p$S ~ Species,
-  by = "terms",
-  data = sample_metadata %>% arrange(match(sample, labels(beta_q1p$S))),
-  permutations = 999
-) %>%
-  broom::tidy() %>%
-  tt()
-```
-```{r pairwise_phylo, comment="", message=FALSE, warning=FALSE}
-pairwise.adonis(beta_q1p$S, sample_metadata$Species, perm = 999)
-```
-
-***Functional***
-```{r permanova_func, comment="", message=FALSE, warning=FALSE}
-betadisper(beta_q1f$S, sample_metadata$Species) %>% permutest(.)
-adonis2(
-  beta_q1f$S ~ Species,
-  by = "terms",
-  data = sample_metadata %>% arrange(match(sample, labels(beta_q1f$S))),
-  permutations = 999
-) %>%
-  broom::tidy() %>%
-  tt()
-```
-
-### NMDS
+#### NMDS
 
 ***Richness***
 ```{r beta_div_nmds_richness_plot, comment="", message=FALSE, warning=FALSE, fig.height=5, fig.width=10, fig.fullwidth=TRUE}
@@ -191,9 +133,18 @@ beta_q0n$S %>%
   mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
   mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
   ungroup() %>%
+  mutate(
+    Species = factor(
+      Species,
+      levels = c("Eb", "Ha", "Pk"),
+      labels = c("C. bottae", "H. ariel", "P. kuhlii")
+      )
+  ) %>% 
   ggplot(aes(x = NMDS1, y = NMDS2, color = Species)) +
-  geom_point(size = 4) +
-  scale_color_manual(values = species_color) +
+  geom_point(size = 3) +
+  scale_color_manual(values=species_color,  labels = c(expression(italic("C. bottae")),
+             expression(italic("H. ariel")),
+             expression(italic("P. kuhlii"))))+
   geom_segment(
     aes(
       x = x_cen,
@@ -219,6 +170,9 @@ beta_q0n$S %>%
     legend.box = "vertical"
   ) +
   labs(color = "Species")
+
+#ggsave("Figures_ms/beta_richness_metagenomics.pdf", plot = p, width = 8, height = 4)
+
 ```
 
 ***Neutral***
@@ -240,8 +194,152 @@ beta_q1n$S %>%
     y = NMDS2,
     color = Species
   )) +
-  geom_point(size = 4) +
-  scale_color_manual(values = species_color) +
+  geom_point(size = 3) +
+  scale_color_manual(values=species_color,  labels = c(expression(italic("C. bottae")),
+             expression(italic("H. ariel")),
+             expression(italic("P. kuhlii"))))+
+  geom_segment(
+    aes(
+      x = x_cen,
+      y = y_cen,
+      xend = NMDS1,
+      yend = NMDS2
+    ),
+    alpha = 0.9,
+    show.legend = FALSE
+  ) +
+  theme(
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    panel.background = element_blank(),
+    axis.line = element_line(
+      size = 0.5,
+      linetype = "solid",
+      colour = "black"
+    ),
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.position = "right",
+    legend.box = "vertical"
+  ) +
+  labs(color = "Species")
+
+#ggsave("Figures_ms/beta_neutral_metagenomics.pdf", plot = p, width = 8, height = 4)
+```
+
+### At different taxonomic level
+```{r }
+genome_metadata <- genome_metadata %>%
+  mutate(
+    class  = if_else(str_trim(class) == "", paste0(phylum, "_Unclassified"), class),
+    order  = if_else(str_trim(order) == "",
+                     if_else(str_detect(class, "Unclassified"), class, paste0(class, "_Unclassified")),
+                     order),
+    family = if_else(str_trim(family) == "",
+                     if_else(str_detect(order, "Unclassified"), order, paste0(order, "_Unclassified")),
+                     family),
+    genus  = if_else(str_trim(genus) == "",
+                     if_else(str_detect(family, "Unclassified"), family, paste0(family, "_Unclassified")),
+                     genus)
+  )
+
+genome_tax <- genome_counts_filt %>% 
+  left_join(genome_metadata[c(1,3,4,6)], by = "genome")
+
+# Aggregate counts at the Family level
+family_level_agg <- genome_tax %>%
+  select(-genome) %>%
+  group_by(phylum, class, family) %>%
+  summarise(across(where(is.numeric), \(x) sum(x, na.rm = TRUE)), .groups = "drop")%>% 
+  as.data.frame() %>% 
+  select(-c(phylum,class))
+
+# Aggregate counts at the Phylum level
+phylum_level_agg <- genome_tax %>%
+  select(-genome) %>%
+  group_by(phylum) %>%
+  summarise(across(where(is.numeric), \(x) sum(x, na.rm = TRUE)), .groups = "drop")%>% 
+  as.data.frame() 
+```
+
+#### Family
+```{r pairwise_richness_family_metag, comment="", message=FALSE, warning=FALSE}
+beta_q0n_shot <- family_level_agg %>%
+  select(-H09) %>% 
+  column_to_rownames(., "family") %>% 
+  hillpair(., q = 0)
+
+adonis2(
+  beta_q0n_shot$S ~ Species,
+  by = "terms",
+  data = all_samples %>%
+    filter(sample %in% labels(beta_q0n_shot$S)) %>%
+    arrange(match(sample, labels(beta_q0n_shot$S))),
+  permutations = 999
+) %>%
+  broom::tidy() %>%
+  tt()
+
+pairwise.adonis(
+  beta_q0n_shot$S,
+  all_samples %>%
+    filter(sample %in% labels(beta_q0n_shot$S)) %>%
+    arrange(match(sample, labels(beta_q0n_shot$S))) %>%
+    pull(Species),
+  perm = 999
+)
+```
+```{r pairwise_neutral_family_metag, comment="", message=FALSE, warning=FALSE}
+beta_q1n_shot <- family_level_agg %>%
+  select(-H19) %>% 
+  column_to_rownames(., "family") %>% 
+  hillpair(., q = 1)
+
+adonis2(
+  beta_q1n_shot$S ~ Species,
+  by = "terms",
+  data = all_samples %>%
+    filter(sample %in% labels(beta_q1n_shot$S)) %>%
+    arrange(match(sample, labels(beta_q1n_shot$S))),
+  permutations = 999
+) %>%
+  broom::tidy() %>%
+  tt()
+
+pairwise.adonis(
+  beta_q1n_shot$S,
+  all_samples %>%
+    filter(sample %in% labels(beta_q1n_shot$S)) %>%
+    arrange(match(sample, labels(beta_q1n_shot$S))) %>%
+    pull(Species),
+  perm = 999
+)
+```
+
+```{r beta_div1_both_fig7, comment="", message=FALSE, warning=FALSE, fig.height=6, fig.width=10, fig.fullwidth=TRUE}
+beta_q1n_shot$S %>%
+  vegan::metaMDS(.,
+                 trymax = 500,
+                 k = 2,
+                 trace = 0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(all_samples, by = join_by(sample == sample)) %>%
+  group_by(Species) %>%
+  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
+  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
+  ungroup() %>%
+  mutate(
+    Species = factor(
+      Species,
+      levels = c("Eb", "Pk", "Ha"),
+      labels = c("C. bottae", "P. kuhlii", "H. ariel")
+      )) %>%
+  ggplot(aes(x = NMDS1, y = NMDS2, color = Species)) +
+  geom_point(size = 3) +
+  scale_color_manual(values=species_color,  labels = c(expression(italic("C. bottae")),
+             expression(italic("H. ariel")),
+             expression(italic("P. kuhlii")))) +  
   geom_segment(
     aes(
       x = x_cen,
@@ -269,92 +367,58 @@ beta_q1n$S %>%
   labs(color = "Species")
 ```
 
-***Phylogenetic diversity***
-```{r beta_div_nmds_phylo_plot, comment="", message=FALSE, warning=FALSE, fig.height=7, fig.width=10, fig.fullwidth=TRUE}
-beta_q1p$S %>%
-  vegan::metaMDS(.,
-                 trymax = 500,
-                 k = 2,
-                 trace = 0) %>%
-  vegan::scores() %>%
-  as_tibble(., rownames = "sample") %>%
-  dplyr::left_join(sample_metadata, by = join_by(sample == sample)) %>%
-  group_by(Species) %>%
-  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
-  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
-  ungroup() %>%
-  ggplot(aes(x = NMDS1, y = NMDS2, color = Species)) +
-  geom_point(size = 4) +
-  scale_color_manual(values = species_color) +
-  geom_segment(
-    aes(
-      x = x_cen,
-      y = y_cen,
-      xend = NMDS1,
-      yend = NMDS2
-    ),
-    alpha = 0.9,
-    show.legend = FALSE
-  ) +
-  theme(
-    axis.title = element_text(size = 12, face = "bold"),
-    axis.text = element_text(size = 10),
-    panel.background = element_blank(),
-    axis.line = element_line(
-      size = 0.5,
-      linetype = "solid",
-      colour = "black"
-    ),
-    legend.text = element_text(size = 10),
-    legend.title = element_text(size = 12),
-    legend.position = "right",
-    legend.box = "vertical"
-  ) +
-  labs(color = "Species")
-```
+#### Phylum
+```{r pairwise_richness_phylum_metag, comment="", message=FALSE, warning=FALSE}
+beta_q0n_P_shot <- phylum_level_agg %>%
+  select(-H09) %>% 
+  column_to_rownames(., "phylum") %>% 
+  hillpair(., q = 0)
 
-***Functional diversity***
-```{r beta_div_nmds_funct_plot, comment="", message=FALSE, warning=FALSE, fig.height=7, fig.width=10, fig.fullwidth=TRUE}
-beta_q1f$S %>%
-  vegan::metaMDS(.,
-                 trymax = 500,
-                 k = 2,
-                 trace = 0) %>%
-  vegan::scores() %>%
-  as_tibble(., rownames = "sample") %>%
-  dplyr::left_join(sample_metadata, by = join_by(sample == sample)) %>%
-  group_by(Species) %>%
-  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
-  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
-  ungroup() %>%
-  ggplot(aes(x = NMDS1, y = NMDS2, color = Species)) +
-  geom_point(size = 4) +
-  scale_color_manual(values = species_color) +
-  geom_segment(
-    aes(
-      x = x_cen,
-      y = y_cen,
-      xend = NMDS1,
-      yend = NMDS2
-    ),
-    alpha = 0.9,
-    show.legend = FALSE
-  ) +
-  theme(
-    axis.title = element_text(size = 12, face = "bold"),
-    axis.text = element_text(size = 10),
-    panel.background = element_blank(),
-    axis.line = element_line(
-      size = 0.5,
-      linetype = "solid",
-      colour = "black"
-    ),
-    legend.text = element_text(size = 10),
-    legend.title = element_text(size = 12),
-    legend.position = "right",
-    legend.box = "vertical"
-  ) +
-  labs(color = "Species")
+adonis2(
+  beta_q0n_P_shot$S ~ Species,
+  by = "terms",
+  data = all_samples %>%
+    filter(sample %in% labels(beta_q0n_P_shot$S)) %>%
+    arrange(match(sample, labels(beta_q0n_P_shot$S))),
+  permutations = 999
+) %>%
+  broom::tidy() %>%
+  tt()
+
+pairwise.adonis(
+  beta_q0n_P_shot$S,
+  all_samples %>%
+    filter(sample %in% labels(beta_q0n_P_shot$S)) %>%
+    arrange(match(sample, labels(beta_q0n_P_shot$S))) %>%
+    pull(Species),
+  perm = 999
+)
+```
+```{r pairwise_neutral_phylum_metag, comment="", message=FALSE, warning=FALSE}
+beta_q1n_P_shot <- phylum_level_agg %>%
+  select(-H19) %>% 
+  column_to_rownames(., "phylum") %>% 
+  hillpair(., q = 1)
+
+adonis2(
+  beta_q1n_P_shot$S ~ Species,
+  by = "terms",
+  data = all_samples %>%
+    filter(sample %in% labels(beta_q1n_P_shot$S)) %>%
+    arrange(match(sample, labels(beta_q1n_P_shot$S))),
+  permutations = 999
+) %>%
+  broom::tidy() %>%
+  tt()
+
+pairwise.adonis(
+  beta_q1n_P_shot$S,
+  all_samples %>%
+    filter(sample %in% labels(beta_q1n_P_shot$S)) %>%
+    arrange(match(sample, labels(beta_q1n_P_shot$S))) %>%
+    pull(Species),
+  perm = 999
+)
 ```
 
 ## Amplicon
@@ -364,21 +428,19 @@ load("resources/amplicon/data_standard_filt.Rdata")
 
 ```{r beta_div_ampli, comment="", message=FALSE, warning=FALSE}
 beta_q0n <- genome_counts_filt %>%
-#  select(-H06, -H20) %>%
   column_to_rownames(., "genome") %>%
   filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
   select_if( ~ !all(. == 0)) %>%
   hillpair(., q = 0)
 
 beta_q1n <- genome_counts_filt %>%
-#  select(-H06, -H20) %>%
   column_to_rownames(., "genome") %>%
   filter(rowSums(. != 0, na.rm = TRUE) > 0) %>%
   select_if( ~ !all(. == 0)) %>%
   hillpair(., q = 1)
 ```
 
-### Permanova
+### At ASV level
 
 ***Richness***
 ```{r permanova_ampli, comment="", message=FALSE, warning=FALSE}
@@ -441,7 +503,7 @@ adonis2(
 pairwise.adonis(beta_q1n$S, sample_metadata %>% filter(sample %in% labels(beta_q0n$S)) %>% arrange(match(sample, labels(beta_q0n$S))) %>% pull(Species), perm = 999)
 ```
 
-### NMDS
+#### NMDS
 
 ***Richness***
 ```{r beta_div_nmds_richness_plot_ampli, comment="", message=FALSE, warning=FALSE, fig.height=5, fig.width=10, fig.fullwidth=TRUE}
@@ -458,8 +520,10 @@ beta_q0n$S %>%
   mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
   ungroup() %>%
   ggplot(aes(x = NMDS1, y = NMDS2, color = Species)) +
-  geom_point(size = 4) +
-  scale_color_manual(values = species_color) +
+ geom_point(size = 3) +
+  scale_color_manual(values=species_color,  labels = c(expression(italic("C. bottae")),
+             expression(italic("H. ariel")),
+             expression(italic("P. kuhlii"))))+
   geom_segment(
     aes(
       x = x_cen,
@@ -502,8 +566,154 @@ beta_q1n$S %>%
   mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
   ungroup() %>%
   ggplot(aes(x = NMDS1, y = NMDS2, color = Species)) +
-  geom_point(size = 4) +
-  scale_color_manual(values = species_color) +
+   geom_point(size = 3) +
+  scale_color_manual(values=species_color,  labels = c(expression(italic("C. bottae")),
+             expression(italic("H. ariel")),
+             expression(italic("P. kuhlii"))))+
+  geom_segment(
+    aes(
+      x = x_cen,
+      y = y_cen,
+      xend = NMDS1,
+      yend = NMDS2
+    ),
+    alpha = 0.9,
+    show.legend = FALSE
+  ) +
+  theme(
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    panel.background = element_blank(),
+    axis.line = element_line(
+      size = 0.5,
+      linetype = "solid",
+      colour = "black"
+    ),
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.position = "right",
+    legend.box = "vertical"
+  ) +
+  labs(color = "Species")
+
+#ggsave("Figures_ms/beta_neutral_metabarcoding.pdf", plot = p, width = 8, height = 4)
+```
+
+### At different taxonomic level
+```{r}
+sample_metadata_amplicon <- sample_metadata[c(1,9,10,13)] %>%
+  mutate(sample = paste0(sample, "_ampli")) %>%
+  mutate(method="Metabarcoding_standard")
+
+genome_metadata_ampli <- genome_metadata %>%
+  mutate(
+    class  = if_else(is.na(class), paste0(phylum, "_Unclassified"), class),
+    order  = if_else(is.na(order),
+                     if_else(str_detect(class, "Unclassified"), class, paste0(class, "_Unclassified")),
+                     order),
+    family = if_else(is.na(family),
+                     if_else(str_detect(order, "Unclassified"), order, paste0(order, "_Unclassified")),
+                     family),
+    genus  = if_else(is.na(genus),
+                     if_else(str_detect(family, "Unclassified"), family, paste0(family, "_Unclassified")),
+                     genus)
+  )
+
+genome_tax_ampli <- genome_counts_filt %>% 
+  column_to_rownames(., "genome")%>%
+  rename_with(~ paste0(., "_ampli")) %>%
+  rownames_to_column(., "genome")%>%
+  left_join(genome_metadata_ampli, by = "genome")
+
+family_level_agg_ampli <- genome_tax_ampli %>%
+  select(-genome) %>%
+  group_by(phylum, class, family) %>%
+  summarise(across(where(is.numeric), \(x) sum(x, na.rm = TRUE)), .groups = "drop")%>% 
+    as.data.frame() %>% 
+  select(-c(phylum,class))
+
+phylum_level_agg_ampli <- genome_tax_ampli %>%
+  select(-genome) %>%
+  group_by(phylum) %>%
+  summarise(across(where(is.numeric), \(x) sum(x, na.rm = TRUE)), .groups = "drop")%>% 
+    as.data.frame()
+```
+
+#### Family level
+```{r}
+beta_q0n_ampli <- family_level_agg_ampli %>%
+  column_to_rownames(., "family") %>% 
+  hillpair(., q = 0)
+
+adonis2(
+  beta_q0n_ampli$S ~ Species,
+  by = "terms",
+  data = all_samples %>%
+    filter(sample %in% labels(beta_q0n_ampli$S)) %>%
+    arrange(match(sample, labels(beta_q0n_ampli$S))),
+  permutations = 999
+) %>%
+  broom::tidy() %>%
+  tt()
+
+pairwise.adonis(
+  beta_q0n_ampli$S,
+  all_samples %>%
+    filter(sample %in% labels(beta_q0n_ampli$S)) %>%
+    arrange(match(sample, labels(beta_q0n_ampli$S))) %>%
+    pull(Species),
+  perm = 999
+)
+```
+```{r}
+beta_q1n_ampli <- family_level_agg_ampli %>%
+  column_to_rownames(., "family") %>% 
+  hillpair(., q = 1)
+
+adonis2(
+  beta_q1n_ampli$S ~ Species,
+  by = "terms",
+  data = all_samples %>%
+    filter(sample %in% labels(beta_q1n_ampli$S)) %>%
+    arrange(match(sample, labels(beta_q1n_ampli$S))),
+  permutations = 999
+) %>%
+  broom::tidy() %>%
+  tt()
+
+pairwise.adonis(
+  beta_q1n_ampli$S,
+  all_samples %>%
+    filter(sample %in% labels(beta_q1n_ampli$S)) %>%
+    arrange(match(sample, labels(beta_q1n_ampli$S))) %>%
+    pull(Species),
+  perm = 999
+)
+```
+```{r beta_div1_both_fig5, comment="", message=FALSE, warning=FALSE, fig.height=6, fig.width=10, fig.fullwidth=TRUE}
+beta_q1n_ampli$S %>%
+  vegan::metaMDS(.,
+                 trymax = 500,
+                 k = 2,
+                 trace = 0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(all_samples, by = join_by(sample == sample)) %>%
+  group_by(Species) %>%
+  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
+  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
+  ungroup() %>%
+  mutate(
+    Species = factor(
+      Species,
+      levels = c("Eb", "Pk", "Ha"),
+      labels = c("C. bottae", "P. kuhlii", "H. ariel")
+      )) %>%
+  ggplot(aes(x = NMDS1, y = NMDS2, color = Species)) +
+  geom_point(size = 3) +
+  scale_color_manual(values=species_color,  labels = c(expression(italic("C. bottae")),
+             expression(italic("H. ariel")),
+             expression(italic("P. kuhlii")))) +  
   geom_segment(
     aes(
       x = x_cen,
@@ -531,22 +741,80 @@ beta_q1n$S %>%
   labs(color = "Species")
 ```
 
+#### Phylum level
+```{r}
+beta_q0n_P_ampli <- phylum_level_agg_ampli %>%
+  column_to_rownames(., "phylum") %>% 
+  hillpair(., q = 0)
+
+adonis2(
+  beta_q0n_P_ampli$S ~ Species,
+  by = "terms",
+  data = all_samples %>%
+    filter(sample %in% labels(beta_q0n_P_ampli$S)) %>%
+    arrange(match(sample, labels(beta_q0n_P_ampli$S))),
+  permutations = 999
+) %>%
+  broom::tidy() %>%
+  tt()
+
+pairwise.adonis(
+  beta_q0n_P_ampli$S,
+  all_samples %>%
+    filter(sample %in% labels(beta_q0n_P_ampli$S)) %>%
+    arrange(match(sample, labels(beta_q0n_P_ampli$S))) %>%
+    pull(Species),
+  perm = 999
+)
+```
+```{r}
+beta_q1n_P_ampli <- phylum_level_agg_ampli %>%
+  column_to_rownames(., "phylum") %>% 
+  hillpair(., q = 1)
+
+adonis2(
+  beta_q1n_P_ampli$S ~ Species,
+  by = "terms",
+  data = all_samples %>%
+    filter(sample %in% labels(beta_q1n_P_ampli$S)) %>%
+    arrange(match(sample, labels(beta_q1n_P_ampli$S))),
+  permutations = 999
+) %>%
+  broom::tidy() %>%
+  tt()
+
+pairwise.adonis(
+  beta_q1n_ampli$S,
+  all_samples %>%
+    filter(sample %in% labels(beta_q1n_P_ampli$S)) %>%
+    arrange(match(sample, labels(beta_q1n_P_ampli$S))) %>%
+    pull(Species),
+  perm = 999
+)
+```
+
 ## Comparison 
 
-### Aggregate counts at family level in both datasets
+*Aggregate counts at family or phylum level in both datasets*
 ```{r}
 load("resources/amplicon/data_standard_filt.Rdata")
 
 sample_metadata_amplicon <- sample_metadata[c(1,9,10,13)] %>%
   mutate(sample = paste0(sample, "_ampli")) %>%
-  mutate(method="amplicon")
+  mutate(method="Metabarcoding_standard")
 
 genome_metadata_ampli <- genome_metadata %>%
   mutate(
     class  = if_else(is.na(class), paste0(phylum, "_Unclassified"), class),
-    order  = if_else(is.na(order), paste0(class, "_Unclassified"), order),
-    family = if_else(is.na(family), paste0(order, "_Unclassified"), family),
-    genus  = if_else(is.na(genus), paste0(family, "_Unclassified"), genus)
+    order  = if_else(is.na(order),
+                     if_else(str_detect(class, "Unclassified"), class, paste0(class, "_Unclassified")),
+                     order),
+    family = if_else(is.na(family),
+                     if_else(str_detect(order, "Unclassified"), order, paste0(order, "_Unclassified")),
+                     family),
+    genus  = if_else(is.na(genus),
+                     if_else(str_detect(family, "Unclassified"), family, paste0(family, "_Unclassified")),
+                     genus)
   )
 
 genome_tax_ampli <- genome_counts_filt %>% 
@@ -558,20 +826,32 @@ genome_tax_ampli <- genome_counts_filt %>%
 family_level_agg_ampli <- genome_tax_ampli %>%
   select(-genome) %>%
   group_by(phylum, class, family) %>%
-  summarise(across(where(is.numeric), sum, na.rm = TRUE))%>% 
+  summarise(across(where(is.numeric), \(x) sum(x, na.rm = TRUE)), .groups = "drop")%>% 
     as.data.frame() %>% 
   select(-c(phylum,class))
+
+phylum_level_agg_ampli <- genome_tax_ampli %>%
+  select(-genome) %>%
+  group_by(phylum) %>%
+  summarise(across(where(is.numeric), \(x) sum(x, na.rm = TRUE)), .groups = "drop")%>% 
+    as.data.frame()
 ```
 
-```{r load_data_beta_comparison}
+```{r }
 load("resources/metagenomics/data_filtered.Rdata")
 
 genome_metadata <- genome_metadata %>%
   mutate(
-    class = if_else(is.na(class) | str_trim(class) == "", paste0(phylum, "_Unclassified"), class),
-    order = if_else(is.na(order) | str_trim(order) == "", paste0(class, "_Unclassified"), order),
-    family = if_else(is.na(family) | str_trim(family) == "", paste0(order, "_Unclassified"), family),
-    genus = if_else(is.na(genus) | str_trim(genus) == "", paste0(family, "_Unclassified"), genus)
+    class  = if_else(str_trim(class) == "", paste0(phylum, "_Unclassified"), class),
+    order  = if_else(str_trim(order) == "",
+                     if_else(str_detect(class, "Unclassified"), class, paste0(class, "_Unclassified")),
+                     order),
+    family = if_else(str_trim(family) == "",
+                     if_else(str_detect(order, "Unclassified"), order, paste0(order, "_Unclassified")),
+                     family),
+    genus  = if_else(str_trim(genus) == "",
+                     if_else(str_detect(family, "Unclassified"), family, paste0(family, "_Unclassified")),
+                     genus)
   )
 
 genome_tax <- genome_counts_filt %>% 
@@ -581,26 +861,36 @@ genome_tax <- genome_counts_filt %>%
 family_level_agg <- genome_tax %>%
   select(-genome) %>%
   group_by(phylum, class, family) %>%
-  summarise(across(where(is.numeric), sum, na.rm = TRUE)) %>%
+  summarise(across(where(is.numeric), \(x) sum(x, na.rm = TRUE)), .groups = "drop")%>% 
   as.data.frame() %>% 
   select(-c(phylum,class))
+
+# Aggregate counts at the Phylum level
+phylum_level_agg <- genome_tax %>%
+  select(-genome) %>%
+  group_by(phylum) %>%
+  summarise(across(where(is.numeric), \(x) sum(x, na.rm = TRUE)), .groups = "drop")%>% 
+  as.data.frame() 
 ```
 
-Merge the table
 ```{r}
 merged_table <- full_join(family_level_agg_ampli,family_level_agg, 
           by = c("family"))%>%
   mutate(across(where(is.numeric), ~replace_na(., 0)))
 
+merged_table_phylum <- full_join(phylum_level_agg_ampli,phylum_level_agg, 
+          by = c("phylum"))%>%
+  mutate(across(where(is.numeric), ~replace_na(., 0)))
+
+
 sample_shot <- sample_metadata %>% 
   select(-c(Habitat,Longitude, Latitude, Region))%>%
-  mutate(method="shotgun")
+  mutate(method="Metagenomics")
 
 all_samples <- rbind(sample_shot, sample_metadata_amplicon)
 ```
 
-### Calculate the beta diversities
-```{r beta_div_together, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+```{r beta_div_together_family, comment="", message=FALSE, warning=FALSE}
 beta_q0n <- merged_table %>%
   select(-H19, -H20) %>% 
   column_to_rownames(., "family") %>% 
@@ -610,9 +900,20 @@ beta_q1n <- merged_table %>%
   select(-H19) %>% 
   column_to_rownames(., "family") %>% 
   hillpair(., q = 1)
+
+beta_q0n_phylum <- merged_table_phylum %>%
+  select(-H19, -H20) %>% 
+  column_to_rownames(., "phylum") %>% 
+  hillpair(., q = 0)
+
+beta_q1n_phylum <- merged_table_phylum %>%
+  select(-H19) %>% 
+  column_to_rownames(., "phylum") %>% 
+  hillpair(., q = 1)
 ```
 
-***Richness***
+### Family
+***Richness at family***
 ```{r beta_div1_both_fig1, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
 beta_q0n$S %>%
   vegan::metaMDS(.,
@@ -626,9 +927,22 @@ beta_q0n$S %>%
   mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
   mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
   ungroup() %>%
+  mutate(
+    Species = factor(
+      Species,
+      levels = c("Eb", "Pk", "Ha"),
+      labels = c("C. bottae", "P. kuhlii", "H. ariel")
+      )
+  ) %>% 
   ggplot(aes(x = NMDS1, y = NMDS2, color = Species, shape=method)) +
   geom_point(size = 4) +
   geom_segment(aes(x = x_cen, y = y_cen, xend = NMDS1, yend = NMDS2 ), alpha = 0.9, show.legend = FALSE) +
+  scale_color_manual(values = species_color,
+                     labels = c(
+                       expression(italic("C. bottae")),
+                       expression(italic("H. ariel")),
+                       expression(italic("P. kuhlii"))
+                     ))+
   theme(
     axis.title = element_text(size = 12, face = "bold"),
     axis.text = element_text(size = 10),
@@ -642,10 +956,16 @@ beta_q0n$S %>%
     legend.title = element_text(size = 12),
     legend.position = "right",
     legend.box = "vertical"
-  ) #+labs(color = "method") +geom_text_repel(aes(label = sample), size=3)
+  ) +
+  labs(
+    x = "Methodological approach",
+    y = "Alpha diversity at phylum level",
+    shape = "Methodological approach"
+  )#+labs(color = "method") +geom_text_repel(aes(label = sample), size=3)
   
 ```
-```{r permanova_rich_both_fig2, comment="", message=FALSE, warning=FALSE}
+
+```{r permanova_rich_both_fig_family, comment="", message=FALSE, warning=FALSE}
 betadisper(beta_q0n$S, all_samples %>% filter(sample %in% labels(beta_q0n$S)) %>% arrange(match(sample, labels(beta_q0n$S))) %>% pull(Species)) %>% permutest(.)
 
 adonis2(beta_q0n$S ~ Species*method, data = all_samples %>% filter(sample %in% labels(beta_q0n$S)) %>% arrange(match(sample, labels(beta_q0n$S))), permutations = 999) %>%
@@ -664,8 +984,8 @@ adonis2(
   tt()
 ```
 
-***Neutral diversity***
-```{r beta_div1_both_fig3, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+***Neutral diversity at family***
+```{r beta_div1_both_fig3_Family, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
 beta_q1n$S %>%
   vegan::metaMDS(.,
                  trymax = 500,
@@ -678,62 +998,22 @@ beta_q1n$S %>%
   mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
   mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
   ungroup() %>%
+  mutate(
+    Species = factor(
+      Species,
+      levels = c("Eb", "Pk", "Ha"),
+      labels = c("C. bottae", "P. kuhlii", "H. ariel")
+      )
+  ) %>% 
   ggplot(aes(x = NMDS1, y = NMDS2, color = Species, shape=method)) +
-  geom_point(size = 4) +
- # scale_color_manual(values = species_color) +
-  geom_segment(
-    aes(
-      x = x_cen,
-      y = y_cen,
-      xend = NMDS1,
-      yend = NMDS2
-    ),
-    alpha = 0.9,
-    show.legend = FALSE
-  ) +
-  theme(
-    axis.title = element_text(size = 12, face = "bold"),
-    axis.text = element_text(size = 10),
-    panel.background = element_blank(),
-    axis.line = element_line(
-      size = 0.5,
-      linetype = "solid",
-      colour = "black"
-    ),
-    legend.text = element_text(size = 10),
-    legend.title = element_text(size = 12),
-    legend.position = "right",
-    legend.box = "vertical"
-  ) 
-#+labs(color = "method") +geom_text_repel(aes(label = sample), size=3)
-  
-```
-```{r beta_div1_both_appr_fig4, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
-beta_q1n$S %>%
-  vegan::metaMDS(.,
-                 trymax = 500,
-                 k = 2,
-                 trace = 0) %>%
-  vegan::scores() %>%
-  as_tibble(., rownames = "sample") %>%
-  dplyr::left_join(all_samples, by = join_by(sample == sample)) %>%
-  group_by(method, Species) %>%
-  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
-  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
-  ungroup() %>%
-  ggplot(aes(x = NMDS1, y = NMDS2, color = Species, shape=method)) +
-  geom_point(size = 4) +
- # scale_color_manual(values = species_color) +
-  geom_segment(
-    aes(
-      x = x_cen,
-      y = y_cen,
-      xend = NMDS1,
-      yend = NMDS2
-    ),
-    alpha = 0.9,
-    show.legend = FALSE
-  ) +
+  geom_point(size = 3) +
+  geom_segment(aes(x = x_cen, y = y_cen, xend = NMDS1, yend = NMDS2 ), alpha = 0.9, show.legend = FALSE) +
+  scale_color_manual(values = species_color,
+                     labels = c(
+                       expression(italic("C. bottae")),
+                       expression(italic("H. ariel")),
+                       expression(italic("P. kuhlii"))
+                     ))+
   theme(
     axis.title = element_text(size = 12, face = "bold"),
     axis.text = element_text(size = 10),
@@ -748,11 +1028,12 @@ beta_q1n$S %>%
     legend.position = "right",
     legend.box = "vertical"
   ) +
-  labs(color = "method") +geom_text_repel(aes(label = sample), size=3)
-  
+  labs(shape = "Methodological approach")
+#+geom_text_repel(aes(label = sample), size=3)
+#ggsave("Figures_ms/beta_family_neutral.pdf", plot = p, width = 12, height = 6)
 ```
 
-```{r permanova_neutral_tog, comment="", message=FALSE, warning=FALSE}
+```{r permanova_neutral_tog_Family, comment="", message=FALSE, warning=FALSE}
 betadisper(
   beta_q1n$S,
   all_samples %>%
@@ -784,142 +1065,151 @@ adonis2(
   tt()
 ```
 
-### Each data set individually
-***Amplicon***
+### Phylum
+***Richness at phylum***
+```{r beta_div1_both_fig_phylum, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+beta_q0n_phylum$S %>%
+  vegan::metaMDS(.,
+                 trymax = 500,
+                 k = 2,
+                 trace = 0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(all_samples, by = join_by(sample == sample)) %>%
+  group_by(method, Species) %>%
+  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
+  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
+  ungroup() %>%
+  ggplot(aes(x = NMDS1, y = NMDS2, color = Species, shape=method)) +
+  geom_point(size = 4) +
+  geom_segment(aes(x = x_cen, y = y_cen, xend = NMDS1, yend = NMDS2 ), alpha = 0.9, show.legend = FALSE) +
+  theme(
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    panel.background = element_blank(),
+    axis.line = element_line(
+      size = 0.5,
+      linetype = "solid",
+      colour = "black"
+    ),
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.position = "right",
+    legend.box = "vertical"
+  ) +labs(color = "method") + geom_text_repel(aes(label = sample), size=3)
+  
+```
+
+```{r permanova_rich_both_phylum_fig2, comment="", message=FALSE, warning=FALSE}
+betadisper(beta_q0n_phylum$S, all_samples %>% filter(sample %in% labels(beta_q0n_phylum$S)) %>% arrange(match(sample, labels(beta_q0n_phylum$S))) %>% pull(Species)) %>% permutest(.)
+
+adonis2(beta_q0n_phylum$S ~ Species*method, data = all_samples %>% filter(sample %in% labels(beta_q0n_phylum$S)) %>% arrange(match(sample, labels(beta_q0n_phylum$S))), permutations = 999) %>%
+  broom::tidy() %>%
+  tt()
+
+adonis2(
+  beta_q0n_phylum$S ~ Species*method,
+  by = "terms",
+  data = all_samples %>%
+    filter(sample %in% labels(beta_q0n_phylum$S)) %>%
+    arrange(match(sample, labels(beta_q0n_phylum$S))),
+  permutations = 999
+) %>%
+  broom::tidy() %>%
+  tt()
+```
+
+***Neutral diversity at phylum***
+```{r beta_div1_both_fig3_phylum, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+beta_q1n_phylum$S %>%
+  vegan::metaMDS(.,
+                 trymax = 500,
+                 k = 2,
+                 trace = 0) %>%
+  vegan::scores() %>%
+  as_tibble(., rownames = "sample") %>%
+  dplyr::left_join(all_samples, by = join_by(sample == sample)) %>%
+  group_by(method, Species) %>%
+  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
+  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
+  ungroup() %>%
+  mutate(
+    Species = factor(
+      Species,
+      levels = c("Eb", "Pk", "Ha"),
+      labels = c("C. bottae", "P. kuhlii", "H. ariel")
+      )
+  ) %>% 
+  ggplot(aes(x = NMDS1, y = NMDS2, color = Species, shape=method)) +
+  geom_point(size = 3) +
+  geom_segment(aes(x = x_cen, y = y_cen, xend = NMDS1, yend = NMDS2 ), alpha = 0.9, show.legend = FALSE) +
+  scale_color_manual(values = species_color,
+                     labels = c(
+                       expression(italic("C. bottae")),
+                       expression(italic("H. ariel")),
+                       expression(italic("P. kuhlii"))
+                     ))+
+  theme(
+    axis.title = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    panel.background = element_blank(),
+    axis.line = element_line(
+      size = 0.5,
+      linetype = "solid",
+      colour = "black"
+    ),
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.position = "right",
+    legend.box = "vertical"
+  ) +
+  labs(shape = "Methodological approach")
+  
+#ggsave("Figures_ms/beta_phylum_neutral.pdf", plot = p, width = 12, height = 6)
+
+```
+
+
+```{r permanova_neutral_tog_phylum, comment="", message=FALSE, warning=FALSE}
+betadisper(
+  beta_q1n_phylum$S,
+  all_samples %>%
+    filter(sample %in% labels(beta_q1n_phylum$S)) %>%
+    arrange(match(sample, labels(beta_q1n_phylum$S))) %>%
+    pull(Species)
+) %>%
+  permutest(.)
+
+adonis2(
+  beta_q1n_phylum$S ~ Species*method,
+  data = all_samples %>%
+    filter(sample %in% labels(beta_q1n_phylum$S)) %>%
+    arrange(match(sample, labels(beta_q1n_phylum$S))),
+  permutations = 999
+) %>%
+  broom::tidy() %>%
+  tt()
+
+adonis2(
+  beta_q1n_phylum$S ~ Species*method,
+  by = "terms",
+  data = all_samples %>%
+    filter(sample %in% labels(beta_q1n_phylum$S)) %>%
+    arrange(match(sample, labels(beta_q1n_phylum$S))),
+  permutations = 999
+) %>%
+  broom::tidy() %>%
+  tt()
+```
 ```{r}
-beta_q1n_ampli <- family_level_agg_ampli %>%
-  column_to_rownames(., "family") %>% 
-  hillpair(., q = 1)
+library(pairwiseAdonis)
 
-adonis2(
-  beta_q1n_ampli$S ~ Species,
-  by = "terms",
-  data = all_samples %>%
-    filter(sample %in% labels(beta_q1n_ampli$S)) %>%
-    arrange(match(sample, labels(beta_q1n_ampli$S))),
-  permutations = 999
-) %>%
-  broom::tidy() %>%
-  tt()
-
-pairwise.adonis(
-  beta_q1n_ampli$S,
-  all_samples %>%
-    filter(sample %in% labels(beta_q1n_ampli$S)) %>%
-    arrange(match(sample, labels(beta_q1n_ampli$S))) %>%
-    pull(Species),
-  perm = 999
-)
-```
-```{r beta_div1_both_fig5, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
-beta_q1n_ampli$S %>%
-  vegan::metaMDS(.,
-                 trymax = 500,
-                 k = 2,
-                 trace = 0) %>%
-  vegan::scores() %>%
-  as_tibble(., rownames = "sample") %>%
-  dplyr::left_join(all_samples, by = join_by(sample == sample)) %>%
-  group_by(Species) %>%
-  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
-  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
-  ungroup() %>%
-  ggplot(aes(x = NMDS1, y = NMDS2, color = Species)) +
-  geom_point(size = 4) +
- # scale_color_manual(values = species_color) +
-  geom_segment(
-    aes(
-      x = x_cen,
-      y = y_cen,
-      xend = NMDS1,
-      yend = NMDS2
-    ),
-    alpha = 0.9,
-    show.legend = FALSE
-  ) +
-  theme(
-    axis.title = element_text(size = 12, face = "bold"),
-    axis.text = element_text(size = 10),
-    panel.background = element_blank(),
-    axis.line = element_line(
-      size = 0.5,
-      linetype = "solid",
-      colour = "black"
-    ),
-    legend.text = element_text(size = 10),
-    legend.title = element_text(size = 12),
-    legend.position = "right",
-    legend.box = "vertical"
-  ) 
+sample_metadata_row <- all_samples %>%
+    filter(sample %in% labels(beta_q1n_phylum$S)) %>%
+    arrange(match(sample, labels(beta_q1n_phylum$S))) %>% 
+  column_to_rownames(., "sample") 
+            
+pairwise.adonis2(beta_q1n_phylum$S ~ Species, data=sample_metadata_row, perm = 999)
 ```
 
-***Shotgun***
-```{r pairwise_neutral_to, comment="", message=FALSE, warning=FALSE}
-beta_q1n_shot <- family_level_agg %>%
-  select(-H19,-H20) %>% 
-  column_to_rownames(., "family") %>% 
-  hillpair(., q = 1)
 
-adonis2(
-  beta_q1n_shot$S ~ Species,
-  by = "terms",
-  data = all_samples %>%
-    filter(sample %in% labels(beta_q1n_shot$S)) %>%
-    arrange(match(sample, labels(beta_q1n_shot$S))),
-  permutations = 999
-) %>%
-  broom::tidy() %>%
-  tt()
-
-pairwise.adonis(
-  beta_q1n_shot$S,
-  all_samples %>%
-    filter(sample %in% labels(beta_q1n_shot$S)) %>%
-    arrange(match(sample, labels(beta_q1n_shot$S))) %>%
-    pull(Species),
-  perm = 999
-)
-```
-
-```{r beta_div1_both_fig7, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
-beta_q1n_shot$S %>%
-  vegan::metaMDS(.,
-                 trymax = 500,
-                 k = 2,
-                 trace = 0) %>%
-  vegan::scores() %>%
-  as_tibble(., rownames = "sample") %>%
-  dplyr::left_join(all_samples, by = join_by(sample == sample)) %>%
-  group_by(Species) %>%
-  mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
-  mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
-  ungroup() %>%
-  ggplot(aes(x = NMDS1, y = NMDS2, color = Species)) +
-  geom_point(size = 4) +
- # scale_color_manual(values = species_color) +
-  geom_segment(
-    aes(
-      x = x_cen,
-      y = y_cen,
-      xend = NMDS1,
-      yend = NMDS2
-    ),
-    alpha = 0.9,
-    show.legend = FALSE
-  ) +
-  theme(
-    axis.title = element_text(size = 12, face = "bold"),
-    axis.text = element_text(size = 10),
-    panel.background = element_blank(),
-    axis.line = element_line(
-      size = 0.5,
-      linetype = "solid",
-      colour = "black"
-    ),
-    legend.text = element_text(size = 10),
-    legend.title = element_text(size = 12),
-    legend.position = "right",
-    legend.box = "vertical"
-  ) +
-  labs(color = "method") +geom_text_repel(aes(label = sample), size=3)
-```
