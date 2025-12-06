@@ -68,21 +68,27 @@ sample_metadata <- sample_metadata[match(colnames(genome_counts_filt_r), sample_
 Unify the taxonomy
 ```{r loadgenomedata, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 genome_metadata <- read_tsv("resources/metagenomics/all_together_gtdbtk.tsv") %>%
-  rename(genome=1)%>%
-  mutate(genome = str_replace(genome, "\\.fa$", ""))%>%
+  rename(genome=1) %>%
+  mutate(genome = str_replace(genome, "\\.fa$", "")) %>%
   semi_join(., genome_counts_filt, by = "genome") %>% 
-  arrange(match(genome,genome_counts_filt$genome))%>% 
+  arrange(match(genome,genome_counts_filt$genome)) %>% 
   mutate(classification = str_replace_all(classification, ".__", "")) %>%
   separate(col = classification, sep = ";", into = c("domain", "phylum", "class", "order", "family", "genus", "species"))%>% 
   left_join(., genomes_length, by=join_by(genome==genome))%>%
-  mutate(phylum = case_when(
-        phylum == "Actinobacteriota" ~ "Actinomycetota",
-        phylum == "Firmicutes" ~ "Bacillota",
-        phylum == "Firmicutes_A" ~ "Bacillota",
-        phylum == "Firmicutes_C" ~ "Bacillota",
-        phylum == "Cyanobacteria" ~ "Cyanobacteriota",
-        phylum == "Proteobacteria" ~ "Pseudomonadota",
+    mutate(phylum = case_when(
+        phylum == "Bacillota_A" ~ "Bacillota",
+        phylum == "Bacillota_C" ~ "Bacillota",
         TRUE ~ phylum))
+
+
+  # mutate(phylum = case_when(
+  #       phylum == "Actinobacteriota" ~ "Actinomycetota",
+  #       phylum == "Firmicutes" ~ "Bacillota",
+  #       phylum == "Firmicutes_A" ~ "Bacillota_A",
+  #       phylum == "Firmicutes_C" ~ "Bacillota_C",
+  #       phylum == "Cyanobacteria" ~ "Cyanobacteriota",
+  #       phylum == "Proteobacteria" ~ "Pseudomonadota",
+  #       TRUE ~ phylum))
 ```
 
 ### Genome tree
@@ -168,15 +174,16 @@ save(sample_metadata,
   preprocess_info,
   genome_tree,
   genome_gifts,
-  genome_data,
   phylum_colors,
   file = "resources/metagenomics/data.Rdata")
+
 ```
 
 ## Amplicon
 ### Load data
 ```{r load_ampli, comment="", message=FALSE, warning=FALSE, eval=FALSE}
-read_counts <- read_tsv("resources/amplicon/ASVs_count_overlap10_nochim0.tsv") %>% dplyr::rename(asv = 1) %>%
+read_counts <- read_tsv("resources/amplicon/ASVs_count_overlap10_nochim0.tsv") %>% 
+  dplyr::rename(asv = 1) %>%
   as.data.frame() %>% 
   column_to_rownames(., "asv")
 
@@ -229,6 +236,10 @@ count_phy_filt <- otu_table(count_filtdepth, taxa_are_rows = T)
 otu_table(physeq.final) <- count_phy_filt
 
 #taxonomy filtering
+
+physeq.final <- subset_taxa(physeq.final, Kingdom != "Eukaryota")
+physeq.final <- prune_taxa(taxa_sums(physeq.final) > 0, physeq.final)
+
 physeq_bacteria <- subset_taxa(physeq.final, Kingdom == "Bacteria")
 physeq_others <- subset_taxa(physeq.final, Kingdom != "Bacteria")
 physeq_archaea <- subset_taxa(physeq.final, Kingdom == "Archaea")
@@ -273,10 +284,7 @@ asv_16S_filt <- physeq_16S@otu_table %>%
   rename_with(~ gsub("_r[1-3]$", "", .x)) %>%
   filter(rowSums(. > 0) != 0) %>%
   rownames_to_column("asv")
-```
 
-
-```{r sampledata, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 #Prepare the samples data and filter
 sample_metadata_16S <- data.frame(physeq_16S@sam_data) %>%
   rownames_to_column("sample_id") %>%
@@ -297,11 +305,12 @@ genome_metadata_16S <- physeq_16S@tax_table %>%
 ```
 
 ```{r save_16S, comment="", message=FALSE, warning=FALSE, eval=FALSE}
-save(sample_metadata_16S, 
-     genome_metadata_16S,
-     file = "resources/amplicon/data_withoutcopy.Rdata")
+# save(sample_metadata_16S, 
+#      genome_metadata_16S,
+#      file = "resources/amplicon/data_withoutcopy.Rdata")
 ```
 
+### Filtering the metagenomic data to match amplicon data
 ```{r comparabledata, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 load("resources/metagenomics/data.Rdata")
 
@@ -311,8 +320,6 @@ sample_metadata_16S_filt <- sample_metadata_16S[sample_metadata_16S$sample %in% 
 #keep samples present in 16S study
 sample_metadata <- sample_metadata[sample_metadata$sample %in% sample_metadata_16S$sample,]
 ```
-
-### Filtering the metagenomic data to match amplicon data
 ```{r metagenomicdata, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 genome_counts_filt <- genome_counts_filt %>% 
   select(any_of(c("genome",intersect(sample_metadata$sample, colnames(genome_counts_filt))))) %>% 
@@ -321,7 +328,34 @@ genome_counts_filt <- genome_counts_filt %>%
   
 genome_metadata <- genome_metadata %>% 
   filter(genome %in% genome_counts_filt$genome)
-  
+
+genome_metadata <- genome_metadata %>%
+  mutate(
+    phylum = case_when(
+      phylum == "Bacillota_A" ~ "Bacillota",
+      phylum == "Bacillota_C" ~ "Bacillota",
+      TRUE ~ phylum
+    )) %>%
+  mutate(
+    family = if_else(
+      (genus %in% c("Morganella", "Arsenophonus")) & family == "Enterobacteriaceae", "Morganellaceae", family
+  )) %>% 
+  mutate(
+    order = case_when(order == "Enterobacterales_A" ~ "Enterobacterales", TRUE ~ order
+    )) %>% 
+  mutate(
+    family = case_when(family == "Burkholderiaceae_B" ~ "Burkholderiaceae", TRUE ~ family
+    )) %>% 
+  mutate(
+    genus = case_when(
+      genus == "Enterococcus_B" ~ "Enterococcus",
+      genus == "Fusobacterium_A" ~ "Fusobacterium",
+      genus == "Enterococcus_D" ~ "Enterococcus",
+      genus == "Citrobacter_A" ~ "Citrobacter",
+      TRUE ~ genus
+    )) %>% 
+  mutate(species = sub("^[^ ]+\\s+", "", species))
+ 
 preprocess_info <- preprocess_info %>% 
   filter(sample %in% sample_metadata$sample)
 
@@ -399,6 +433,7 @@ taxonomy <- genome_metadata %>%
   column_to_rownames("genome") %>% 
   as.matrix() %>% 
   tax_table()
+
 sample_data <- sample_metadata %>% 
   column_to_rownames("sample") %>% 
   sample_data()
@@ -426,14 +461,19 @@ load("resources/amplicon/data_nocopyfilt.Rdata")
 genome_metadata <- genome_metadata %>%
   filter(!is.na(phylum))
 
-genome_counts_filt <- genome_counts_filt %>%
-  filter(genome %in% genome_metadata$genome) %>%
-  mutate_at(vars(-genome),  ~ . / sum(.)) %>%
-  column_to_rownames(., "genome") %>%
-  .[, colSums(.) > 0.00005] %>%
-  filter(rowSums(across(everything())) != 0) %>%
-  rownames_to_column(., "genome")
+genome_counts_filt_abs <- genome_counts_filt %>%
+  mutate(across(-genome,  ~ . / sum(.))) %>%
+  mutate(across(-genome, ~ if_else(. < 0.0001, 0, .))) %>% 
+  mutate(across(-genome, ~ if_else(. > 0, 1, 0)))
 
+genome_counts_filt <- genome_counts_filt %>%
+  column_to_rownames("genome") %>%
+  `*`(genome_counts_filt_abs %>%
+        column_to_rownames("genome")) %>%
+  rownames_to_column("genome") %>% 
+  filter(genome %in% genome_metadata$genome) %>% 
+  filter(rowSums(across(-genome)) != 0)
+  
 genome_metadata <- genome_metadata %>%
   filter(genome %in% genome_counts_filt$genome)
 
@@ -447,7 +487,6 @@ phylum_colors <- read_tsv("https://raw.githubusercontent.com/earthhologenome/EHI
     pull(colors, name=phylum)
 
 phyloseq_16S_stand <- prune_taxa(taxa_names(phyloseq_16S_filtered) %in% genome_counts_filt$genome, phyloseq_16S_filtered)
-
 ```
 
 ```{r save_ampli, comment="", message=FALSE, warning=FALSE, eval=FALSE}
@@ -494,7 +533,7 @@ master_table <- inner_join(threshold_table,prevalence_table,by=join_by("Species"
   pivot_longer(!c(genome,sample,Species,copy_threshold), names_to = "prevalence",values_to = "value") %>% 
   mutate(pa = if_else(value > 0, 1, 0)) %>%
   group_by(Species, sample, copy_threshold,prevalence) %>%
-  mutate(value = value / sum(value))%>%
+  mutate(value = value / sum(value)) %>%
   ungroup()
 ```
 
