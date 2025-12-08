@@ -41,22 +41,22 @@ alpha_div_meta <- richness %>%
 ```
 
 ```{r}
-fraction <- read_csv("resources/metagenomics/microbial_fraction_estimation.csv") %>% 
-  mutate(sample = str_remove(sample, "_M_1")) %>% 
-  select(sample, read_fraction) %>% 
+microbial_fraction_mapped <- microbial_fraction %>% 
+#  mutate(sample = str_remove(sample, "_M_1")) %>% 
+  select(sample, mapped_microbial_fraction) %>% 
   right_join(alpha_div_meta, by="sample") %>% 
   left_join(sample_metadata, by="sample")
 
-fraction %>% 
+microbial_fraction_mapped %>% 
   summarise(
-    Total_mean = mean(read_fraction, na.rm = T),
-    Total_sd = sd(read_fraction, na.rm = T),
-    Eb_mean = mean(read_fraction[Species == "Eb"], na.rm = T),
-    Eb_sd = sd(read_fraction[Species == "Eb"], na.rm = T),
-    Ha_mean = mean(read_fraction[Species == "Ha"], na.rm = T),
-    Ha_sd = sd(read_fraction[Species == "Ha"], na.rm = T),
-    Pk_mean = mean(read_fraction[Species == "Pk"], na.rm = T),
-    Pk_sd = sd(read_fraction[Species == "Pk"], na.rm = T)
+    Total_mean = mean(mapped_microbial_fraction, na.rm = T),
+    Total_sd = sd(mapped_microbial_fraction, na.rm = T),
+    Eb_mean = mean(mapped_microbial_fraction[Species == "Eb"], na.rm = T),
+    Eb_sd = sd(mapped_microbial_fraction[Species == "Eb"], na.rm = T),
+    Ha_mean = mean(mapped_microbial_fraction[Species == "Ha"], na.rm = T),
+    Ha_sd = sd(mapped_microbial_fraction[Species == "Ha"], na.rm = T),
+    Pk_mean = mean(mapped_microbial_fraction[Species == "Pk"], na.rm = T),
+    Pk_sd = sd(mapped_microbial_fraction[Species == "Pk"], na.rm = T)
   ) %>%
   mutate(
     Total = str_c(round(Total_mean, 3), "±", round(Total_sd, 3)),
@@ -74,34 +74,34 @@ fraction %>%
   
 ```
 ```{r}
-  kruskal.test(read_fraction ~ Species, data = fraction)
+  kruskal.test(mapped_microbial_fraction ~ Species, data = microbial_fraction_mapped)
 ```
 
 Correlation between diversity and estimate microbial fraction
 ```{r}
-cor.test(fraction$read_fraction, fraction$richness, method = "spearman")
-cor.test(fraction$read_fraction, fraction$neutral, method = "spearman")
+cor.test(microbial_fraction_mapped$mapped_microbial_fraction, microbial_fraction_mapped$richness, method = "spearman")
+cor.test(microbial_fraction_mapped$mapped_microbial_fraction, microbial_fraction_mapped$neutral, method = "spearman")
 
 # Histogram
-hist(fraction$read_fraction, main = "Read Fraction", xlab = "read_fraction")
-hist(fraction$richness, main = "Richness", xlab = "richness")
+hist(microbial_fraction_mapped$mapped_microbial_fraction, main = "Read Fraction", xlab = "read_fraction")
+hist(microbial_fraction_mapped$richness, main = "Richness", xlab = "richness")
 
 # QQ plots
-qqnorm(fraction$read_fraction); qqline(fraction$read_fraction)
-qqnorm(fraction$richness); qqline(fraction$richness)
+qqnorm(microbial_fraction_mapped$mapped_microbial_fraction); qqline(microbial_fraction_mapped$mapped_microbial_fraction)
+qqnorm(microbial_fraction_mapped$richness); qqline(microbial_fraction_mapped$richness)
 
-shapiro.test(fraction$read_fraction)
-shapiro.test(fraction$richness)
+shapiro.test(microbial_fraction_mapped$mapped_microbial_fraction)
+shapiro.test(microbial_fraction_mapped$richness)
 ```
 
 ```{r fig_fraction_mergedmeta, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
-p1 <- ggplot(fraction, aes(x = read_fraction, y = richness)) +
+p1 <- ggplot(microbial_fraction_mapped, aes(x = mapped_microbial_fraction, y = richness)) +
   geom_point(size = 3, color = "#2E86AB") +
   geom_smooth(method = "lm", se = TRUE, color = "black") +
   theme_classic() +
   labs(x = "Read Fraction (%)", y = "Richness")
 
-p2 <- ggplot(fraction, aes(x = read_fraction, y = neutral)) +
+p2 <- ggplot(microbial_fraction_mapped, aes(x = mapped_microbial_fraction, y = neutral)) +
   geom_point(size = 3, color = "#F39C12") +
   geom_smooth(method = "lm", se = TRUE, color = "black") +
   theme_classic() +
