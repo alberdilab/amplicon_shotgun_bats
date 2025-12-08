@@ -1366,7 +1366,7 @@ alpha_div_phylum_data %>%
 ## Beta diversity
 
 ***Calculate the beta diversities***
-```{r beta_div_together_family_merged, comment="", message=FALSE, warning=FALSE}
+```{r beta_div_together_family_merged, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 beta_q0n <- merged_table_family_methods %>%
   select(-H19, -H20) %>% 
   column_to_rownames(., "family") %>% 
@@ -1391,6 +1391,17 @@ methods_colors <- c("#d15aa9","#d4b9ed", "#c7c5c6")
 
 ```
 
+```{r save_beta, comment="", message=FALSE, warning=FALSE, eval=FALSE}
+save(beta_q0n,
+     beta_q1n,
+     beta_q0n_phylum,
+     beta_q1n_phylum,
+     file = "resources/beta_tax.Rdata")
+```
+
+```{r load_beta, comment="", message=FALSE, warning=FALSE}
+load("resources/beta_tax.Rdata")
+```
 
 ***Richness at family***
 ```{r beta_richness_Family_three1, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
@@ -1572,7 +1583,7 @@ beta_q1n$S %>%
   
 ```
 ```{r beta_neutral_Family_three2, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
-p1 <- beta_q1n$S %>%
+beta_q1n$S %>%
   vegan::metaMDS(.,
                  trymax = 500,
                  k = 2,
@@ -1584,14 +1595,8 @@ p1 <- beta_q1n$S %>%
   group_by(method) %>%
   mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
   mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
-  ungroup() %>%
-    mutate(
-    Species = factor(
-      Species,
-      levels = c("Eb", "Ha", "Pk"),
-      labels = c("C. bottae", "H. ariel", "P. kuhlii"))
-  ) %>% 
-  ggplot(aes(x = NMDS1, y = NMDS2, color = method, shape= Species)) +
+  ungroup() %>% 
+  ggplot(aes(x = NMDS1, y = NMDS2, color = method)) + 
   geom_point(size = 3) +
   geom_segment(aes(x = x_cen, y = y_cen, xend = NMDS1, yend = NMDS2 ), alpha = 0.9, show.legend = FALSE) +
   scale_color_manual(values = methods_colors,
@@ -1600,13 +1605,6 @@ p1 <- beta_q1n$S %>%
                        expression(italic("Metabarcoding Selected")),
                        expression(italic("Metagenomics"))
                      ))+
-scale_shape_discrete(
-  labels = c(
-    expression(italic("C. bottae")),
-    expression(italic("H. ariel")),
-    expression(italic("P. kuhlii"))
-  )
-) +
   theme(
     axis.title = element_text(size = 12, face = "bold"),
     axis.text = element_text(size = 10),
@@ -1623,8 +1621,7 @@ scale_shape_discrete(
   ) +
   labs(color = "Methodological approach",shape="Species")
 
-#+geom_text_repel(aes(label = sample), size=3)
-ggsave("Figures_ms/beta_family_neutral_three_shapes.pdf", plot = p1, width = 12, height = 6)
+#ggsave("Figures_ms/beta_family_neutral_three_shapes.pdf", plot = p1, width = 12, height = 6)
   
 ```
 
@@ -1740,17 +1737,10 @@ beta_q1n_phylum$S %>%
   vegan::scores() %>%
   as_tibble(., rownames = "sample") %>%
   dplyr::left_join(all_samples, by = join_by(sample == sample)) %>%
-#  filter(sample!="P36") %>% 
   group_by(method) %>%
   mutate(x_cen = mean(NMDS1, na.rm = TRUE)) %>%
   mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
   ungroup() %>%
-    mutate(
-    Species = factor(
-      Species,
-      levels = c("Eb", "Ha", "Pk"),
-      labels = c("C. bottae", "H. ariel", "P. kuhlii"))
-  ) %>% 
   ggplot(aes(x = NMDS1, y = NMDS2, color = method, shape= Species)) +
   geom_point(size = 3) +
   geom_segment(aes(x = x_cen, y = y_cen, xend = NMDS1, yend = NMDS2 ), alpha = 0.9, show.legend = FALSE) +
@@ -1760,13 +1750,6 @@ beta_q1n_phylum$S %>%
                        expression(italic("Metabarcoding Selected")),
                        expression(italic("Metagenomics"))
                      ))+
-scale_shape_discrete(
-  labels = c(
-    expression(italic("C. bottae")),
-    expression(italic("H. ariel")),
-    expression(italic("P. kuhlii"))
-  )
-) +
   theme(
     axis.title = element_text(size = 12, face = "bold"),
     axis.text = element_text(size = 10),

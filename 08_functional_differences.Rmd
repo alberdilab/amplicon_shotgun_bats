@@ -159,6 +159,140 @@ element_gift %>%
   unnest(tukey_results) %>% 
  filter(`p adj` < 0.05) %>% 
          left_join(., uniqueGIFT_db[c(1,3)], by = join_by(trait == Code_element))
+
+uniqueGIFT_db<- unique(GIFT_db[c(2,4,5,6)]) %>% unite("Function",Function:Element, sep= "_", remove=FALSE)
+
+significant_elements <- element_gift %>%
+  pivot_longer(-c(sample, Species), names_to = "trait", values_to = "value") %>%
+  filter(trait %in% anova_results$trait) %>% 
+  group_by(trait) %>%
+  summarise(
+    tukey_results = list(
+      as.data.frame(TukeyHSD(aov(value ~ Species))$Species) |> 
+      tibble::rownames_to_column("contrast")
+    )
+  ) %>%
+  unnest(tukey_results) %>% 
+ filter(`p adj` < 0.05) %>% 
+         left_join(., uniqueGIFT_db[c(1,3)], by = join_by(trait == Code_element))
+```
+```{r}
+sig_Pk_Eb <- significant_elements %>% filter(contrast=="Pk-Eb")
+
+filtered_elements_sig_Pk_Eb <- element_gift %>%
+  column_to_rownames(., "sample") %>% 
+  select(sig_Pk_Eb$trait)%>% 
+  rownames_to_column(., "sample") %>% 
+  left_join(., sample_metadata %>% select("sample","Species"), by = join_by(sample == sample)) %>% 
+  filter(Species %in% c("Pk", "Eb"))%>%
+  select(-sample) %>%
+  group_by(Species) %>%
+  summarise(across(everything(), mean)) %>%
+  t() %>%
+  row_to_names(row_number = 1) %>%
+  as.data.frame() %>%
+  mutate_if(is.character, as.numeric) %>%
+  rownames_to_column(., "Elements") %>%
+  left_join(.,uniqueGIFT_db[c(1,3,4)],by = join_by(Elements == Code_element)) %>% 
+  arrange(Function) %>% 
+  mutate(Difference=Pk-Eb)%>% 
+  mutate(group_color = ifelse(Difference <0, "Eb","Pk")) 
+
+
+filtered_elements_sig_Pk_Eb %>%
+  ggplot(aes(x=forcats::fct_reorder(Function,Difference), y=Difference, fill=group_color)) + 
+  geom_col() +
+#  geom_point(size=4) + 
+  scale_fill_manual(values=c("#76b183")) + 
+  geom_hline(yintercept=0) + 
+  coord_flip()+
+  theme(axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12),
+        legend.position = "right", 
+        legend.title = element_blank(),
+        panel.background = element_blank(),
+          panel.grid.major = element_line(size = 0.15, linetype = 'solid',
+                                colour = "grey"))+
+  xlab("Function") + 
+  ylab("Mean difference")
+```
+```{r}
+sig_Pk_Ha <- significant_elements %>% filter(contrast=="Pk-Ha")
+
+filtered_elements_sig_Pk_Ha <- element_gift %>%
+  column_to_rownames(., "sample") %>% 
+  select(sig_Pk_Ha$trait)%>% 
+  rownames_to_column(., "sample") %>% 
+  left_join(., sample_metadata %>% select("sample","Species"), by = join_by(sample == sample)) %>% 
+  filter(Species %in% c("Pk", "Ha"))%>%
+  select(-sample) %>%
+  group_by(Species) %>%
+  summarise(across(everything(), mean)) %>%
+  t() %>%
+  row_to_names(row_number = 1) %>%
+  as.data.frame() %>%
+  mutate_if(is.character, as.numeric) %>%
+  rownames_to_column(., "Elements") %>%
+  left_join(.,uniqueGIFT_db[c(1,3,4)],by = join_by(Elements == Code_element)) %>% 
+  arrange(Function) %>% 
+  mutate(Difference=Pk-Ha)%>% 
+  mutate(group_color = ifelse(Difference <0, "Ha","Pk")) 
+
+filtered_elements_sig_Pk_Ha %>%
+  ggplot(aes(x=forcats::fct_reorder(Function,Difference), y=Difference, fill=group_color)) + 
+  geom_col() +
+#  geom_point(size=4) + 
+  scale_fill_manual(values=c("#6b7398", "#76b183")) + 
+  geom_hline(yintercept=0) + 
+  coord_flip()+
+  theme(axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12),
+        legend.position = "right", 
+        legend.title = element_blank(),
+        panel.background = element_blank(),
+          panel.grid.major = element_line(size = 0.15, linetype = 'solid',
+                                colour = "grey"))+
+  xlab("Function") + 
+  ylab("Mean difference")
+```
+```{r}
+sig_Ha_Eb <- significant_elements %>% filter(contrast=="Ha-Eb")
+
+filtered_elements_sig_Ha_Eb <- element_gift %>%
+  column_to_rownames(., "sample") %>% 
+  select(sig_Ha_Eb$trait)%>% 
+  rownames_to_column(., "sample") %>% 
+  left_join(., sample_metadata %>% select("sample","Species"), by = join_by(sample == sample)) %>% 
+  filter(Species %in% c("Ha", "Eb"))%>%
+  select(-sample) %>%
+  group_by(Species) %>%
+  summarise(across(everything(), mean)) %>%
+  t() %>%
+  row_to_names(row_number = 1) %>%
+  as.data.frame() %>%
+  mutate_if(is.character, as.numeric) %>%
+  rownames_to_column(., "Elements") %>%
+  left_join(.,uniqueGIFT_db[c(1,3,4)],by = join_by(Elements == Code_element)) %>% 
+  arrange(Function) %>% 
+  mutate(Difference=Ha-Eb)%>% 
+  mutate(group_color = ifelse(Difference <0, "Eb","Ha")) 
+
+filtered_elements_sig_Ha_Eb %>%
+  ggplot(aes(x=forcats::fct_reorder(Function,Difference), y=Difference, fill=group_color)) + 
+  geom_col() +
+#  geom_point(size=4) + 
+  scale_fill_manual(values=c("#e5bd5b", "#6b7398")) + 
+  geom_hline(yintercept=0) + 
+  coord_flip()+
+  theme(axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12),
+        legend.position = "right", 
+        legend.title = element_blank(),
+        panel.background = element_blank(),
+          panel.grid.major = element_line(size = 0.15, linetype = 'solid',
+                                colour = "grey"))+
+  xlab("Function") + 
+  ylab("Mean difference")
 ```
 
 ## Metabarcoding Standard
@@ -317,7 +451,7 @@ amplicon_func_community_standard %>%
 ```{r commun_wilcox_elem_sta, comment="", message=FALSE, warning=FALSE}
 uniqueGIFT_db<- unique(GIFT_db[c(2,4,5,6)]) %>% unite("Function",Function:Element, sep= "_", remove=FALSE)
 
-element_gift <- amplicon_elem_community_standard %>% 
+element_gift_MS <- amplicon_elem_community_standard %>% 
   as.data.frame() %>% 
   rownames_to_column(., "sample") %>% 
   left_join(., sample_metadata[c("sample","Species")], by=join_by("sample"=="sample"))
@@ -325,7 +459,7 @@ element_gift <- amplicon_elem_community_standard %>%
 
 ***p adjusted***
 ```{r}
-element_gift %>%
+element_gift_MS %>%
   pivot_longer(-c(sample,Species), names_to = "trait", values_to = "value") %>%
   group_by(trait) %>%
   summarise(p_value = summary(aov(value ~ Species))[[1]][["Pr(>F)"]][1]) %>%
@@ -336,7 +470,7 @@ element_gift %>%
 
 ***p value***
 ```{r}
-element_gift %>%
+element_gift_MS %>%
   pivot_longer(-c(sample,Species), names_to = "trait", values_to = "value") %>%
   group_by(trait) %>%
   summarise(p_value = summary(aov(value ~ Species))[[1]][["Pr(>F)"]][1]) %>%
@@ -352,16 +486,16 @@ element_gift %>%
 # uniqueGIFT_db <- unique(GIFT_db[c(2,4,5,6)]) %>% 
 #   unite("Function", Function:Element, sep = "_", remove = FALSE)
 
-anova_results <- element_gift %>%
+anova_results_MS <- element_gift_MS %>%
   pivot_longer(-c(sample, Species), names_to = "trait", values_to = "value") %>%
   group_by(trait) %>%
   summarise(anova_p = summary(aov(value ~ Species))[[1]][["Pr(>F)"]][1]  ) %>%
 #  mutate(p_adjust_ANOVA = p.adjust(anova_p, method = "BH")) %>%
   filter(anova_p < 0.05)
 
-element_gift %>%
+element_gift_MS %>%
   pivot_longer(-c(sample, Species), names_to = "trait", values_to = "value") %>%
-  filter(trait %in% anova_results$trait) %>% 
+  filter(trait %in% anova_results_MS$trait) %>% 
   group_by(trait) %>%
   summarise(
     tukey_results = list(
@@ -372,6 +506,141 @@ element_gift %>%
   unnest(tukey_results) %>% 
  filter(`p adj` < 0.05) %>% 
          left_join(., uniqueGIFT_db[c(1,3)], by = join_by(trait == Code_element))
+
+uniqueGIFT_db<- unique(GIFT_db[c(2,4,5,6)]) %>% unite("Function",Function:Element, sep= "_", remove=FALSE)
+
+significant_elements_MS <- element_gift_MS %>%
+  pivot_longer(-c(sample, Species), names_to = "trait", values_to = "value") %>%
+  filter(trait %in% anova_results_MS$trait) %>% 
+  group_by(trait) %>%
+  summarise(
+    tukey_results = list(
+      as.data.frame(TukeyHSD(aov(value ~ Species))$Species) |> 
+      tibble::rownames_to_column("contrast")
+    )
+  ) %>%
+  unnest(tukey_results) %>% 
+ filter(`p adj` < 0.05) %>% 
+         left_join(., uniqueGIFT_db[c(1,3)], by = join_by(trait == Code_element))
+```
+
+```{r}
+sig_Pk_Eb_MS <- significant_elements_MS %>% filter(contrast=="Pk-Eb")
+
+filtered_elements_sig_Pk_Eb_MS <- element_gift_MS %>%
+  column_to_rownames(., "sample") %>% 
+  select(sig_Pk_Eb_MS$trait)%>% 
+  rownames_to_column(., "sample") %>% 
+  left_join(., sample_metadata %>% select("sample","Species"), by = join_by(sample == sample)) %>% 
+  filter(Species %in% c("Pk", "Eb"))%>%
+  select(-sample) %>%
+  group_by(Species) %>%
+  summarise(across(everything(), mean)) %>%
+  t() %>%
+  row_to_names(row_number = 1) %>%
+  as.data.frame() %>%
+  mutate_if(is.character, as.numeric) %>%
+  rownames_to_column(., "Elements") %>%
+  left_join(.,uniqueGIFT_db[c(1,3,4)],by = join_by(Elements == Code_element)) %>% 
+  arrange(Function) %>% 
+  mutate(Difference=Pk-Eb)%>% 
+  mutate(group_color = ifelse(Difference <0, "Eb","Pk")) 
+
+
+filtered_elements_sig_Pk_Eb_MS %>%
+  ggplot(aes(x=forcats::fct_reorder(Function,Difference), y=Difference, fill=group_color)) + 
+  geom_col() +
+#  geom_point(size=4) + 
+  scale_fill_manual(values=c("#e5bd5b", "#76b183")) + 
+  geom_hline(yintercept=0) + 
+  coord_flip()+
+  theme(axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12),
+        legend.position = "right", 
+        legend.title = element_blank(),
+        panel.background = element_blank(),
+          panel.grid.major = element_line(size = 0.15, linetype = 'solid',
+                                colour = "grey"))+
+  xlab("Function") + 
+  ylab("Mean difference")
+```
+```{r}
+sig_Pk_Ha_MS <- significant_elements_MS %>% filter(contrast=="Pk-Ha")
+
+filtered_elements_sig_Pk_Ha_MS <- element_gift_MS %>%
+  column_to_rownames(., "sample") %>% 
+  select(sig_Pk_Ha_MS$trait)%>% 
+  rownames_to_column(., "sample") %>% 
+  left_join(., sample_metadata %>% select("sample","Species"), by = join_by(sample == sample)) %>% 
+  filter(Species %in% c("Pk", "Ha"))%>%
+  select(-sample) %>%
+  group_by(Species) %>%
+  summarise(across(everything(), mean)) %>%
+  t() %>%
+  row_to_names(row_number = 1) %>%
+  as.data.frame() %>%
+  mutate_if(is.character, as.numeric) %>%
+  rownames_to_column(., "Elements") %>%
+  left_join(.,uniqueGIFT_db[c(1,3,4)],by = join_by(Elements == Code_element)) %>% 
+  arrange(Function) %>% 
+  mutate(Difference=Pk-Ha)%>% 
+  mutate(group_color = ifelse(Difference <0, "Ha","Pk")) 
+
+filtered_elements_sig_Pk_Ha_MS %>%
+  ggplot(aes(x=forcats::fct_reorder(Function,Difference), y=Difference, fill=group_color)) + 
+  geom_col() +
+#  geom_point(size=4) + 
+  scale_fill_manual(values=c("#6b7398", "#76b183")) + 
+  geom_hline(yintercept=0) + 
+  coord_flip()+
+  theme(axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12),
+        legend.position = "right", 
+        legend.title = element_blank(),
+        panel.background = element_blank(),
+          panel.grid.major = element_line(size = 0.15, linetype = 'solid',
+                                colour = "grey"))+
+  xlab("Function") + 
+  ylab("Mean difference")
+```
+```{r}
+sig_Ha_Eb_MS <- significant_elements_MS %>% filter(contrast=="Ha-Eb")
+
+filtered_elements_sig_Ha_Eb_MS <- element_gift_MS %>%
+  column_to_rownames(., "sample") %>% 
+  select(sig_Ha_Eb_MS$trait)%>% 
+  rownames_to_column(., "sample") %>% 
+  left_join(., sample_metadata %>% select("sample","Species"), by = join_by(sample == sample)) %>% 
+  filter(Species %in% c("Ha", "Eb"))%>%
+  select(-sample) %>%
+  group_by(Species) %>%
+  summarise(across(everything(), mean)) %>%
+  t() %>%
+  row_to_names(row_number = 1) %>%
+  as.data.frame() %>%
+  mutate_if(is.character, as.numeric) %>%
+  rownames_to_column(., "Elements") %>%
+  left_join(.,uniqueGIFT_db[c(1,3,4)],by = join_by(Elements == Code_element)) %>% 
+  arrange(Function) %>% 
+  mutate(Difference=Ha-Eb)%>% 
+  mutate(group_color = ifelse(Difference <0, "Eb","Ha")) 
+
+filtered_elements_sig_Ha_Eb_MS %>%
+  ggplot(aes(x=forcats::fct_reorder(Function,Difference), y=Difference, fill=group_color)) + 
+  geom_col() +
+#  geom_point(size=4) + 
+  scale_fill_manual(values=c("#e5bd5b", "#6b7398")) + 
+  geom_hline(yintercept=0) + 
+  coord_flip()+
+  theme(axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12),
+        legend.position = "right", 
+        legend.title = element_blank(),
+        panel.background = element_blank(),
+          panel.grid.major = element_line(size = 0.15, linetype = 'solid',
+                                colour = "grey"))+
+  xlab("Function") + 
+  ylab("Mean difference")
 ```
 
 ### Metabarcoding selected
@@ -465,7 +734,7 @@ kruskal.test(value ~ Species, data = MCI_sub)
 ```{r commun_wilcox_elem_sel, comment="", message=FALSE, warning=FALSE}
 uniqueGIFT_db<- unique(GIFT_db[c(2,4,5,6)]) %>% unite("Function",Function:Element, sep= "_", remove=FALSE)
 
-element_gift <- amplicon_elem_community_selected %>% 
+element_gift_MSel <- amplicon_elem_community_selected %>% 
   as.data.frame() %>% 
   rownames_to_column(., "sample") %>% 
   left_join(., sample_metadata[c("sample","Species")], by=join_by("sample"=="sample"))
@@ -473,7 +742,7 @@ element_gift <- amplicon_elem_community_selected %>%
 
 ***p adjusted***
 ```{r}
-element_gift %>%
+element_gift_MSel %>%
   pivot_longer(-c(sample,Species), names_to = "trait", values_to = "value") %>%
   group_by(trait) %>%
   summarise(p_value = summary(aov(value ~ Species))[[1]][["Pr(>F)"]][1]) %>%
@@ -484,7 +753,7 @@ element_gift %>%
 
 ***p value***
 ```{r}
-element_gift %>%
+element_gift_MSel %>%
   pivot_longer(-c(sample,Species), names_to = "trait", values_to = "value") %>%
   group_by(trait) %>%
   summarise(p_value = summary(aov(value ~ Species))[[1]][["Pr(>F)"]][1]) %>%
@@ -500,16 +769,16 @@ element_gift %>%
 # uniqueGIFT_db <- unique(GIFT_db[c(2,4,5,6)]) %>% 
 #   unite("Function", Function:Element, sep = "_", remove = FALSE)
 
-anova_results <- element_gift %>%
+anova_results_MSel <- element_gift_MSel %>%
   pivot_longer(-c(sample, Species), names_to = "trait", values_to = "value") %>%
   group_by(trait) %>%
   summarise(anova_p = summary(aov(value ~ Species))[[1]][["Pr(>F)"]][1]  ) %>%
 #  mutate(p_adjust_ANOVA = p.adjust(anova_p, method = "BH")) %>%
   filter(anova_p < 0.05)
 
-element_gift %>%
+element_gift_MSel %>%
   pivot_longer(-c(sample, Species), names_to = "trait", values_to = "value") %>%
-  filter(trait %in% anova_results$trait) %>% 
+  filter(trait %in% anova_results_MSel$trait) %>% 
   group_by(trait) %>%
   summarise(
     tukey_results = list(
@@ -520,4 +789,140 @@ element_gift %>%
   unnest(tukey_results) %>% 
  filter(`p adj` < 0.05) %>% 
          left_join(., uniqueGIFT_db[c(1,3)], by = join_by(trait == Code_element))
+
+uniqueGIFT_db<- unique(GIFT_db[c(2,4,5,6)]) %>% unite("Function",Function:Element, sep= "_", remove=FALSE)
+
+significant_elements_MSel <- element_gift_MSel %>%
+  pivot_longer(-c(sample, Species), names_to = "trait", values_to = "value") %>%
+  filter(trait %in% anova_results_MSel$trait) %>% 
+  group_by(trait) %>%
+  summarise(
+    tukey_results = list(
+      as.data.frame(TukeyHSD(aov(value ~ Species))$Species) |> 
+      tibble::rownames_to_column("contrast")
+    )
+  ) %>%
+  unnest(tukey_results) %>% 
+ filter(`p adj` < 0.05) %>% 
+         left_join(., uniqueGIFT_db[c(1,3)], by = join_by(trait == Code_element))
+```
+```{r}
+sig_Pk_Eb_MSel <- significant_elements_MSel %>% filter(contrast=="Pk-Eb")
+
+filtered_elements_sig_Pk_Eb_MSel <- element_gift_MSel %>%
+  column_to_rownames(., "sample") %>% 
+  select(sig_Pk_Eb_MSel$trait)%>% 
+  rownames_to_column(., "sample") %>% 
+  left_join(., sample_metadata %>% select("sample","Species"), by = join_by(sample == sample)) %>% 
+  filter(Species %in% c("Pk", "Eb"))%>%
+  select(-sample) %>%
+  group_by(Species) %>%
+  summarise(across(everything(), mean)) %>%
+  t() %>%
+  row_to_names(row_number = 1) %>%
+  as.data.frame() %>%
+  mutate_if(is.character, as.numeric) %>%
+  rownames_to_column(., "Elements") %>%
+  left_join(.,uniqueGIFT_db[c(1,3,4)],by = join_by(Elements == Code_element)) %>% 
+  arrange(Function) %>% 
+  mutate(Difference=Pk-Eb)%>% 
+  mutate(group_color = ifelse(Difference <0, "Eb","Pk")) 
+
+
+filtered_elements_sig_Pk_Eb_MSel %>%
+  ggplot(aes(x=forcats::fct_reorder(Function,Difference), y=Difference, fill=group_color)) + 
+  geom_col() +
+#  geom_point(size=4) + 
+  scale_fill_manual(values=c("#e5bd5b", "#76b183")) + 
+  geom_hline(yintercept=0) + 
+  coord_flip()+
+  theme(axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12),
+        legend.position = "right", 
+        legend.title = element_blank(),
+        panel.background = element_blank(),
+          panel.grid.major = element_line(size = 0.15, linetype = 'solid',
+                                colour = "grey"))+
+  xlab("Function") + 
+  ylab("Mean difference")
+```
+```{r}
+sig_Pk_Ha_MSel <- significant_elements_MSel %>% filter(contrast=="Pk-Ha")
+
+filtered_elements_sig_Pk_Ha_MSel <- element_gift_MSel %>%
+  column_to_rownames(., "sample") %>% 
+  select(sig_Pk_Ha_MSel$trait)%>% 
+  rownames_to_column(., "sample") %>% 
+  left_join(., sample_metadata %>% select("sample","Species"), by = join_by(sample == sample)) %>% 
+  filter(Species %in% c("Pk", "Ha"))%>%
+  select(-sample) %>%
+  group_by(Species) %>%
+  summarise(across(everything(), mean)) %>%
+  t() %>%
+  row_to_names(row_number = 1) %>%
+  as.data.frame() %>%
+  mutate_if(is.character, as.numeric) %>%
+  rownames_to_column(., "Elements") %>%
+  left_join(.,uniqueGIFT_db[c(1,3,4)],by = join_by(Elements == Code_element)) %>% 
+  arrange(Function) %>% 
+  mutate(Difference=Pk-Ha)%>% 
+  mutate(group_color = ifelse(Difference <0, "Ha","Pk")) 
+
+filtered_elements_sig_Pk_Ha_MSel %>%
+  ggplot(aes(x=forcats::fct_reorder(Function,Difference), y=Difference, fill=group_color)) + 
+  geom_col() +
+#  geom_point(size=4) + 
+  scale_fill_manual(values=c("#6b7398", "#76b183")) + 
+  geom_hline(yintercept=0) + 
+  coord_flip()+
+  theme(axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12),
+        legend.position = "right", 
+        legend.title = element_blank(),
+        panel.background = element_blank(),
+          panel.grid.major = element_line(size = 0.15, linetype = 'solid',
+                                colour = "grey"))+
+  xlab("Function") + 
+  ylab("Mean difference")
+```
+```{r}
+
+
+sig_Ha_Eb_MSel <- significant_elements_MSel %>% filter(contrast=="Ha-Eb")
+
+filtered_elements_sig_Ha_Eb_MSel <- element_gift_MSel %>%
+  column_to_rownames(., "sample") %>% 
+  select(sig_Ha_Eb_MSel$trait)%>% 
+  rownames_to_column(., "sample") %>% 
+  left_join(., sample_metadata %>% select("sample","Species"), by = join_by(sample == sample)) %>% 
+  filter(Species %in% c("Ha", "Eb"))%>%
+  select(-sample) %>%
+  group_by(Species) %>%
+  summarise(across(everything(), mean)) %>%
+  t() %>%
+  row_to_names(row_number = 1) %>%
+  as.data.frame() %>%
+  mutate_if(is.character, as.numeric) %>%
+  rownames_to_column(., "Elements") %>%
+  left_join(.,uniqueGIFT_db[c(1,3,4)],by = join_by(Elements == Code_element)) %>% 
+  arrange(Function) %>% 
+  mutate(Difference=Ha-Eb)%>% 
+  mutate(group_color = ifelse(Difference <0, "Eb","Ha")) 
+
+filtered_elements_sig_Ha_Eb_MSel %>%
+  ggplot(aes(x=forcats::fct_reorder(Function,Difference), y=Difference, fill=group_color)) + 
+  geom_col() +
+#  geom_point(size=4) + 
+  scale_fill_manual(values=c("#e5bd5b", "#6b7398")) + 
+  geom_hline(yintercept=0) + 
+  coord_flip()+
+  theme(axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12),
+        legend.position = "right", 
+        legend.title = element_blank(),
+        panel.background = element_blank(),
+          panel.grid.major = element_line(size = 0.15, linetype = 'solid',
+                                colour = "grey"))+
+  xlab("Function") + 
+  ylab("Mean difference")
 ```

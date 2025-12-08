@@ -509,6 +509,102 @@ summary_table %>%
            Single_species, 2)) %>%
   select(1,7:12)
 ```
+### Read fractions
+
+```{r microbial_fraction_abs}
+microbial_fraction %>%
+  select(sample,lowqual_bases,host_bases,unmapped_bases,mapped_bases) %>% 
+	pivot_longer(!sample, names_to = "fraction", values_to = "value") %>%
+	mutate(value = value / 1000000000) %>%
+	mutate(fraction = factor(fraction, levels = c("lowqual_bases","host_bases","unmapped_bases","mapped_bases"))) %>%
+  inner_join(sample_metadata,by="sample") %>% 
+	ggplot(., aes(x = sample, y = value, fill=fraction)) +
+	    geom_bar(position="stack", stat = "identity") +
+      scale_fill_manual(name="Sequence type",
+                    breaks=c("lowqual_bases","host_bases","unmapped_bases","mapped_bases"),
+                    labels=c("Low quality","Mapped to host","Unmapped","Mapped to MAGs"),
+                    values=c("#CCCCCC", "#bcdee1", "#d8b8a3","#93655c"))+
+      facet_grid(cols=vars(Species), space="free", scales="free") +
+	    labs(x = "Samples", y = "Amount of data (GB)") +
+	    theme_classic() +
+	    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size=6),legend.position = "bottom")
+```
+
+```{r microbial_fraction_rel}
+microbial_fraction %>%
+  select(sample,lowqual_bases,host_bases,unmapped_bases,mapped_bases) %>% 
+	pivot_longer(!sample, names_to = "fraction", values_to = "value") %>%
+	group_by(sample) %>%
+  mutate(value = value / sum(value)) %>% 
+  ungroup() %>%
+	mutate(fraction = factor(fraction, levels = c("lowqual_bases","host_bases","unmapped_bases","mapped_bases"))) %>%
+  inner_join(sample_metadata,by="sample") %>% 
+	ggplot(., aes(x = sample, y = value, fill=fraction)) +
+	    geom_bar(position="stack", stat = "identity") +
+      scale_fill_manual(name="Sequence type",
+                    breaks=c("lowqual_bases","host_bases","unmapped_bases","mapped_bases"),
+                    labels=c("Low quality","Mapped to host","Unmapped","Mapped to MAGs"),
+                    values=c("#CCCCCC", "#bcdee1", "#d8b8a3","#93655c"))+
+      facet_grid(cols=vars(Species), space="free", scales="free") +
+	    labs(x = "Samples", y = "Amount of data (GB)") +
+	    theme_classic() +
+	    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size=6),legend.position = "bottom")
+```
+```{r microbial_fraction_ranges}
+microbial_fraction %>%
+  mutate(host_fraction=host_bases/(lowqual_bases+host_bases+unmapped_bases+mapped_bases)*100) %>% 
+  mutate(mapped_fraction=mapped_bases/(lowqual_bases+host_bases+unmapped_bases+mapped_bases)*100) %>% 
+  select(sample,host_fraction,mapped_fraction) %>% 
+	pivot_longer(!sample, names_to = "fraction", values_to = "value") %>%
+  group_by(fraction) %>% 
+  summarise(min=min(value),max=max(value))
+```
+
+### Estimated vs recovered proportion
+
+```{r gut_data_estimations_plot, message=FALSE, warning=FALSE, fig.height=6, fig.width=10, fig.fullwidth=TRUE}
+microbial_fraction %>% 
+	mutate(mapped_microbial_fraction = ifelse(estimated_microbial_fraction == 0, 0, mapped_microbial_fraction)) %>% 
+	mutate(estimated_microbial_fraction = ifelse(estimated_microbial_fraction == 0, NA, estimated_microbial_fraction)) %>% 
+	mutate(estimated_microbial_fraction = ifelse(estimated_microbial_fraction < mapped_microbial_fraction, NA, estimated_microbial_fraction)) %>% 
+	mutate(estimated_microbial_fraction = ifelse(estimated_microbial_fraction > 100, 100, estimated_microbial_fraction)) %>%
+  select(sample,estimated_microbial_fraction,mapped_microbial_fraction) %>% 
+	pivot_longer(!sample, names_to = "proportion", values_to = "value") %>%
+	mutate(proportion = factor(proportion, levels = c("mapped_microbial_fraction","estimated_microbial_fraction"))) %>%
+  inner_join(sample_metadata,by="sample") %>% 
+	ggplot(., aes(x = value, y = sample, color=proportion)) +
+			geom_line(aes(group = sample), color = "#f8a538") +
+			geom_point() +
+      scale_color_manual(name="Proportion",
+                    breaks=c("mapped_microbial_fraction","estimated_microbial_fraction"),
+                    labels=c("Recovered","Estimated"),
+                    values=c("#52e1e8", "#876b53"))+
+      facet_grid(rows=vars(Species), space="free", scales="free") +
+			theme_classic() +
+			labs(y = "Samples", x = "Prokaryotic fraction (%)") +
+	    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size=6),legend.position = "right")
+
+```
+
+### Domain-adjusted mapping rate
+
+```{r gut_data_estimations_plot_do, message=FALSE, warning=FALSE, fig.height=6, fig.width=10, fig.fullwidth=TRUE}
+microbial_fraction %>% 
+    mutate(damr=ifelse(mapped_microbial_fraction>estimated_microbial_fraction,100,mapped_microbial_fraction/estimated_microbial_fraction*100)) %>% 
+    inner_join(sample_metadata,by="sample") %>% 
+    summarise(mean=mean(damr),sd=sd(damr))
+
+microbial_fraction %>% 
+    mutate(damr=ifelse(mapped_microbial_fraction>estimated_microbial_fraction,100,mapped_microbial_fraction/estimated_microbial_fraction*100)) %>% 
+    inner_join(sample_metadata,by="sample") %>% 
+    group_by(Species) %>% 
+    summarise(mean=mean(damr),sd=sd(damr))
+
+microbial_fraction %>% 
+    mutate(damr=ifelse(mapped_microbial_fraction>estimated_microbial_fraction,100,mapped_microbial_fraction/estimated_microbial_fraction*100)) %>% 
+    inner_join(sample_metadata,by="sample") %>% 
+    kruskal.test(damr ~ Species)
+```
 
 ## Amplicon
 ### Taxonomy overview 

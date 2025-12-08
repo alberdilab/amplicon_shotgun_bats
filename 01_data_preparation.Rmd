@@ -32,6 +32,27 @@ read_counts <- molten_table %>%
   rownames_to_column(., "genome")
 ```
 
+```{r microbial_fraction, comment="", message=FALSE, warning=FALSE, eval=FALSE}
+smf <- read_tsv("resources/metagenomics/microbial_fraction_estimation.tsv") %>% 
+  mutate(sample = str_remove(sample, "_M_1")) %>% 
+  dplyr::rename(metagenome_bases=metagenome_size)
+
+preprocessing <- read_tsv("resources/metagenomics/preprocessing_report.tsv") %>% 
+  mutate(host_bases=bases_post_filt-metagenomic_bases) %>% 
+  mutate(lowqual_bases=bases_pre_filt-bases_post_filt)
+
+microbial_fraction <- molten_table %>%
+  select(genome, sample, read_count) %>% 
+  group_by(sample) %>% 
+  summarise(mapped_bases=sum(read_count*146)) %>% 
+  inner_join(smf, by="sample") %>% 
+  inner_join(preprocessing %>% select(sample,lowqual_bases,host_bases), by="sample") %>% 
+  mutate(unmapped_bases=metagenome_bases-mapped_bases) %>% 
+  mutate(estimated_microbial_fraction=bacterial_archaeal_bases/metagenome_bases*100) %>% 
+  mutate(mapped_microbial_fraction=mapped_bases/metagenome_bases*100) %>% 
+  select(sample,lowqual_bases,host_bases,metagenome_bases,mapped_bases,unmapped_bases,bacterial_archaeal_bases,estimated_microbial_fraction,mapped_microbial_fraction)
+```
+
 ### Genome counts
 ```{r coverage, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 genome_counts_filt <- molten_table %>%
@@ -174,9 +195,9 @@ save(sample_metadata,
   preprocess_info,
   genome_tree,
   genome_gifts,
+  microbial_fraction,
   phylum_colors,
   file = "resources/metagenomics/data.Rdata")
-
 ```
 
 ## Amplicon
@@ -364,7 +385,7 @@ genome_tree <- keep.tip(genome_tree, tip=genome_metadata$genome)
 genome_gifts <- genome_gifts[rownames(genome_gifts) %in% genome_counts_filt$genome,]
 ```
 
-```{r metagenomicdata_save, comment="", message=FALSE, warning=FALSE, eval=FALSE}
+```{r metagenomicdata_save, eval=FALSE, message=FALSE, warning=FALSE, comment=""}
 save(sample_metadata, 
      genome_metadata, 
      read_counts, 
@@ -373,6 +394,7 @@ save(sample_metadata,
      preprocess_info,
      genome_tree, 
      genome_gifts,
+     microbial_fraction,
      phylum_colors,
      file = "resources/metagenomics/data_filtered.Rdata")
 ```

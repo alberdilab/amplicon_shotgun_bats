@@ -34,6 +34,9 @@ phylum-level
 family-level
 genus-level
 summary-table
+read-fractions
+estimated-vs-recovered-proportion
+domain-adjusted-mapping-rate
 amplicon-1
 taxonomy-overview-1
 archaea

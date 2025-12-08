@@ -24,7 +24,7 @@
 <meta name="author" content="Antton Alberdi" />
 
 
-<meta name="date" content="2025-12-05" />
+<meta name="date" content="2025-12-08" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -2096,6 +2096,9 @@ color: #a52929;
 <ul>
 <li class="chapter" data-level="3.1.1" data-path="community-composition.html"><a href="community-composition.html#taxonomy-overview"><i class="fa fa-check"></i><b>3.1.1</b> Taxonomy overview</a></li>
 <li class="chapter" data-level="3.1.2" data-path="community-composition.html"><a href="community-composition.html#summary-table"><i class="fa fa-check"></i><b>3.1.2</b> Summary table</a></li>
+<li class="chapter" data-level="3.1.3" data-path="community-composition.html"><a href="community-composition.html#read-fractions"><i class="fa fa-check"></i><b>3.1.3</b> Read fractions</a></li>
+<li class="chapter" data-level="3.1.4" data-path="community-composition.html"><a href="community-composition.html#estimated-vs-recovered-proportion"><i class="fa fa-check"></i><b>3.1.4</b> Estimated vs recovered proportion</a></li>
+<li class="chapter" data-level="3.1.5" data-path="community-composition.html"><a href="community-composition.html#domain-adjusted-mapping-rate"><i class="fa fa-check"></i><b>3.1.5</b> Domain-adjusted mapping rate</a></li>
 </ul></li>
 <li class="chapter" data-level="3.2" data-path="community-composition.html"><a href="community-composition.html#amplicon-1"><i class="fa fa-check"></i><b>3.2</b> Amplicon</a>
 <ul>
@@ -2220,223 +2223,223 @@ color: #a52929;
             <section class="normal" id="section-">
 <div id="differential-abundance" class="section level1 hasAnchor" number="7">
 <h1><span class="header-section-number">Chapter 7</span> Differential abundance<a href="differential-abundance.html#differential-abundance" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div class="sourceCode" id="cb331"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb331-1"><a href="differential-abundance.html#cb331-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;resources/amplicon/data_standard_filt.Rdata&quot;</span>)</span>
-<span id="cb331-2"><a href="differential-abundance.html#cb331-2" tabindex="-1"></a></span>
-<span id="cb331-3"><a href="differential-abundance.html#cb331-3" tabindex="-1"></a>sample_metadata_amplicon <span class="ot">&lt;-</span> sample_metadata[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">9</span>,<span class="dv">10</span>,<span class="dv">13</span>)] <span class="sc">%&gt;%</span></span>
-<span id="cb331-4"><a href="differential-abundance.html#cb331-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sample =</span> <span class="fu">paste0</span>(sample, <span class="st">&quot;_ampli&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb331-5"><a href="differential-abundance.html#cb331-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">method=</span><span class="st">&quot;Metabarcoding_standard&quot;</span>)</span>
-<span id="cb331-6"><a href="differential-abundance.html#cb331-6" tabindex="-1"></a></span>
-<span id="cb331-7"><a href="differential-abundance.html#cb331-7" tabindex="-1"></a>genome_metadata_ampli <span class="ot">&lt;-</span> genome_metadata <span class="sc">%&gt;%</span></span>
-<span id="cb331-8"><a href="differential-abundance.html#cb331-8" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb331-9"><a href="differential-abundance.html#cb331-9" tabindex="-1"></a>    <span class="at">class  =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(class), <span class="fu">paste0</span>(phylum, <span class="st">&quot;_Unclassified&quot;</span>), class),</span>
-<span id="cb331-10"><a href="differential-abundance.html#cb331-10" tabindex="-1"></a>    <span class="at">order  =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(order),</span>
-<span id="cb331-11"><a href="differential-abundance.html#cb331-11" tabindex="-1"></a>                     <span class="fu">if_else</span>(<span class="fu">str_detect</span>(class, <span class="st">&quot;Unclassified&quot;</span>), class, <span class="fu">paste0</span>(class, <span class="st">&quot;_Unclassified&quot;</span>)),</span>
-<span id="cb331-12"><a href="differential-abundance.html#cb331-12" tabindex="-1"></a>                     order),</span>
-<span id="cb331-13"><a href="differential-abundance.html#cb331-13" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(family),</span>
-<span id="cb331-14"><a href="differential-abundance.html#cb331-14" tabindex="-1"></a>                     <span class="fu">if_else</span>(<span class="fu">str_detect</span>(order, <span class="st">&quot;Unclassified&quot;</span>), order, <span class="fu">paste0</span>(order, <span class="st">&quot;_Unclassified&quot;</span>)),</span>
-<span id="cb331-15"><a href="differential-abundance.html#cb331-15" tabindex="-1"></a>                     family),</span>
-<span id="cb331-16"><a href="differential-abundance.html#cb331-16" tabindex="-1"></a>    <span class="at">genus  =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(genus),</span>
-<span id="cb331-17"><a href="differential-abundance.html#cb331-17" tabindex="-1"></a>                     <span class="fu">if_else</span>(<span class="fu">str_detect</span>(family, <span class="st">&quot;Unclassified&quot;</span>), family, <span class="fu">paste0</span>(family, <span class="st">&quot;_Unclassified&quot;</span>)),</span>
-<span id="cb331-18"><a href="differential-abundance.html#cb331-18" tabindex="-1"></a>                     genus)</span>
-<span id="cb331-19"><a href="differential-abundance.html#cb331-19" tabindex="-1"></a>  )</span>
-<span id="cb331-20"><a href="differential-abundance.html#cb331-20" tabindex="-1"></a></span>
-<span id="cb331-21"><a href="differential-abundance.html#cb331-21" tabindex="-1"></a>genome_tax_ampli <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span> </span>
-<span id="cb331-22"><a href="differential-abundance.html#cb331-22" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(., <span class="st">&quot;genome&quot;</span>)<span class="sc">%&gt;%</span></span>
-<span id="cb331-23"><a href="differential-abundance.html#cb331-23" tabindex="-1"></a>  <span class="fu">rename_with</span>(<span class="sc">~</span> <span class="fu">paste0</span>(., <span class="st">&quot;_ampli&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb331-24"><a href="differential-abundance.html#cb331-24" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(., <span class="st">&quot;genome&quot;</span>)<span class="sc">%&gt;%</span></span>
-<span id="cb331-25"><a href="differential-abundance.html#cb331-25" tabindex="-1"></a>  <span class="fu">left_join</span>(genome_metadata_ampli, <span class="at">by =</span> <span class="st">&quot;genome&quot;</span>)</span>
-<span id="cb331-26"><a href="differential-abundance.html#cb331-26" tabindex="-1"></a></span>
-<span id="cb331-27"><a href="differential-abundance.html#cb331-27" tabindex="-1"></a>family_level_agg_ampli <span class="ot">&lt;-</span> genome_tax_ampli <span class="sc">%&gt;%</span></span>
-<span id="cb331-28"><a href="differential-abundance.html#cb331-28" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>genome) <span class="sc">%&gt;%</span></span>
-<span id="cb331-29"><a href="differential-abundance.html#cb331-29" tabindex="-1"></a>  <span class="fu">group_by</span>(phylum, class, family) <span class="sc">%&gt;%</span></span>
-<span id="cb331-30"><a href="differential-abundance.html#cb331-30" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), \(x) <span class="fu">sum</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>)<span class="sc">%&gt;%</span> </span>
-<span id="cb331-31"><a href="differential-abundance.html#cb331-31" tabindex="-1"></a>    <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb331-32"><a href="differential-abundance.html#cb331-32" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(phylum,class))</span>
-<span id="cb331-33"><a href="differential-abundance.html#cb331-33" tabindex="-1"></a></span>
-<span id="cb331-34"><a href="differential-abundance.html#cb331-34" tabindex="-1"></a>phylum_level_agg_ampli <span class="ot">&lt;-</span> genome_tax_ampli <span class="sc">%&gt;%</span></span>
-<span id="cb331-35"><a href="differential-abundance.html#cb331-35" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>genome) <span class="sc">%&gt;%</span></span>
-<span id="cb331-36"><a href="differential-abundance.html#cb331-36" tabindex="-1"></a>  <span class="fu">group_by</span>(phylum) <span class="sc">%&gt;%</span></span>
-<span id="cb331-37"><a href="differential-abundance.html#cb331-37" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), \(x) <span class="fu">sum</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>)<span class="sc">%&gt;%</span> </span>
-<span id="cb331-38"><a href="differential-abundance.html#cb331-38" tabindex="-1"></a>    <span class="fu">as.data.frame</span>()</span></code></pre></div>
-<div class="sourceCode" id="cb332"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb332-1"><a href="differential-abundance.html#cb332-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;resources/metagenomics/data_filtered.Rdata&quot;</span>)</span>
-<span id="cb332-2"><a href="differential-abundance.html#cb332-2" tabindex="-1"></a></span>
-<span id="cb332-3"><a href="differential-abundance.html#cb332-3" tabindex="-1"></a>genome_metadata <span class="ot">&lt;-</span> genome_metadata <span class="sc">%&gt;%</span></span>
-<span id="cb332-4"><a href="differential-abundance.html#cb332-4" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb332-5"><a href="differential-abundance.html#cb332-5" tabindex="-1"></a>    <span class="at">class  =</span> <span class="fu">if_else</span>(<span class="fu">str_trim</span>(class) <span class="sc">==</span> <span class="st">&quot;&quot;</span>, <span class="fu">paste0</span>(phylum, <span class="st">&quot;_Unclassified&quot;</span>), class),</span>
-<span id="cb332-6"><a href="differential-abundance.html#cb332-6" tabindex="-1"></a>    <span class="at">order  =</span> <span class="fu">if_else</span>(<span class="fu">str_trim</span>(order) <span class="sc">==</span> <span class="st">&quot;&quot;</span>,</span>
-<span id="cb332-7"><a href="differential-abundance.html#cb332-7" tabindex="-1"></a>                     <span class="fu">if_else</span>(<span class="fu">str_detect</span>(class, <span class="st">&quot;Unclassified&quot;</span>), class, <span class="fu">paste0</span>(class, <span class="st">&quot;_Unclassified&quot;</span>)),</span>
-<span id="cb332-8"><a href="differential-abundance.html#cb332-8" tabindex="-1"></a>                     order),</span>
-<span id="cb332-9"><a href="differential-abundance.html#cb332-9" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">if_else</span>(<span class="fu">str_trim</span>(family) <span class="sc">==</span> <span class="st">&quot;&quot;</span>,</span>
-<span id="cb332-10"><a href="differential-abundance.html#cb332-10" tabindex="-1"></a>                     <span class="fu">if_else</span>(<span class="fu">str_detect</span>(order, <span class="st">&quot;Unclassified&quot;</span>), order, <span class="fu">paste0</span>(order, <span class="st">&quot;_Unclassified&quot;</span>)),</span>
-<span id="cb332-11"><a href="differential-abundance.html#cb332-11" tabindex="-1"></a>                     family),</span>
-<span id="cb332-12"><a href="differential-abundance.html#cb332-12" tabindex="-1"></a>    <span class="at">genus  =</span> <span class="fu">if_else</span>(<span class="fu">str_trim</span>(genus) <span class="sc">==</span> <span class="st">&quot;&quot;</span>,</span>
-<span id="cb332-13"><a href="differential-abundance.html#cb332-13" tabindex="-1"></a>                     <span class="fu">if_else</span>(<span class="fu">str_detect</span>(family, <span class="st">&quot;Unclassified&quot;</span>), family, <span class="fu">paste0</span>(family, <span class="st">&quot;_Unclassified&quot;</span>)),</span>
-<span id="cb332-14"><a href="differential-abundance.html#cb332-14" tabindex="-1"></a>                     genus)</span>
-<span id="cb332-15"><a href="differential-abundance.html#cb332-15" tabindex="-1"></a>  )</span>
-<span id="cb332-16"><a href="differential-abundance.html#cb332-16" tabindex="-1"></a></span>
-<span id="cb332-17"><a href="differential-abundance.html#cb332-17" tabindex="-1"></a>genome_tax <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span> </span>
-<span id="cb332-18"><a href="differential-abundance.html#cb332-18" tabindex="-1"></a>  <span class="fu">left_join</span>(genome_metadata[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">6</span>)], <span class="at">by =</span> <span class="st">&quot;genome&quot;</span>)</span>
-<span id="cb332-19"><a href="differential-abundance.html#cb332-19" tabindex="-1"></a></span>
-<span id="cb332-20"><a href="differential-abundance.html#cb332-20" tabindex="-1"></a><span class="co"># Aggregate counts at the Family level</span></span>
-<span id="cb332-21"><a href="differential-abundance.html#cb332-21" tabindex="-1"></a>family_level_agg <span class="ot">&lt;-</span> genome_tax <span class="sc">%&gt;%</span></span>
-<span id="cb332-22"><a href="differential-abundance.html#cb332-22" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>genome) <span class="sc">%&gt;%</span></span>
-<span id="cb332-23"><a href="differential-abundance.html#cb332-23" tabindex="-1"></a>  <span class="fu">group_by</span>(phylum, class, family) <span class="sc">%&gt;%</span></span>
-<span id="cb332-24"><a href="differential-abundance.html#cb332-24" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), \(x) <span class="fu">sum</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>)<span class="sc">%&gt;%</span> </span>
-<span id="cb332-25"><a href="differential-abundance.html#cb332-25" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb332-26"><a href="differential-abundance.html#cb332-26" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(phylum,class))</span>
-<span id="cb332-27"><a href="differential-abundance.html#cb332-27" tabindex="-1"></a></span>
-<span id="cb332-28"><a href="differential-abundance.html#cb332-28" tabindex="-1"></a><span class="co"># Aggregate counts at the Phylum level</span></span>
-<span id="cb332-29"><a href="differential-abundance.html#cb332-29" tabindex="-1"></a>phylum_level_agg <span class="ot">&lt;-</span> genome_tax <span class="sc">%&gt;%</span></span>
-<span id="cb332-30"><a href="differential-abundance.html#cb332-30" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>genome) <span class="sc">%&gt;%</span></span>
-<span id="cb332-31"><a href="differential-abundance.html#cb332-31" tabindex="-1"></a>  <span class="fu">group_by</span>(phylum) <span class="sc">%&gt;%</span></span>
-<span id="cb332-32"><a href="differential-abundance.html#cb332-32" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), \(x) <span class="fu">sum</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>)<span class="sc">%&gt;%</span> </span>
-<span id="cb332-33"><a href="differential-abundance.html#cb332-33" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() </span></code></pre></div>
+<div class="sourceCode" id="cb343"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb343-1"><a href="differential-abundance.html#cb343-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;resources/amplicon/data_standard_filt.Rdata&quot;</span>)</span>
+<span id="cb343-2"><a href="differential-abundance.html#cb343-2" tabindex="-1"></a></span>
+<span id="cb343-3"><a href="differential-abundance.html#cb343-3" tabindex="-1"></a>sample_metadata_amplicon <span class="ot">&lt;-</span> sample_metadata[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">9</span>,<span class="dv">10</span>,<span class="dv">13</span>)] <span class="sc">%&gt;%</span></span>
+<span id="cb343-4"><a href="differential-abundance.html#cb343-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sample =</span> <span class="fu">paste0</span>(sample, <span class="st">&quot;_ampli&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb343-5"><a href="differential-abundance.html#cb343-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">method=</span><span class="st">&quot;Metabarcoding_standard&quot;</span>)</span>
+<span id="cb343-6"><a href="differential-abundance.html#cb343-6" tabindex="-1"></a></span>
+<span id="cb343-7"><a href="differential-abundance.html#cb343-7" tabindex="-1"></a>genome_metadata_ampli <span class="ot">&lt;-</span> genome_metadata <span class="sc">%&gt;%</span></span>
+<span id="cb343-8"><a href="differential-abundance.html#cb343-8" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb343-9"><a href="differential-abundance.html#cb343-9" tabindex="-1"></a>    <span class="at">class  =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(class), <span class="fu">paste0</span>(phylum, <span class="st">&quot;_Unclassified&quot;</span>), class),</span>
+<span id="cb343-10"><a href="differential-abundance.html#cb343-10" tabindex="-1"></a>    <span class="at">order  =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(order),</span>
+<span id="cb343-11"><a href="differential-abundance.html#cb343-11" tabindex="-1"></a>                     <span class="fu">if_else</span>(<span class="fu">str_detect</span>(class, <span class="st">&quot;Unclassified&quot;</span>), class, <span class="fu">paste0</span>(class, <span class="st">&quot;_Unclassified&quot;</span>)),</span>
+<span id="cb343-12"><a href="differential-abundance.html#cb343-12" tabindex="-1"></a>                     order),</span>
+<span id="cb343-13"><a href="differential-abundance.html#cb343-13" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(family),</span>
+<span id="cb343-14"><a href="differential-abundance.html#cb343-14" tabindex="-1"></a>                     <span class="fu">if_else</span>(<span class="fu">str_detect</span>(order, <span class="st">&quot;Unclassified&quot;</span>), order, <span class="fu">paste0</span>(order, <span class="st">&quot;_Unclassified&quot;</span>)),</span>
+<span id="cb343-15"><a href="differential-abundance.html#cb343-15" tabindex="-1"></a>                     family),</span>
+<span id="cb343-16"><a href="differential-abundance.html#cb343-16" tabindex="-1"></a>    <span class="at">genus  =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(genus),</span>
+<span id="cb343-17"><a href="differential-abundance.html#cb343-17" tabindex="-1"></a>                     <span class="fu">if_else</span>(<span class="fu">str_detect</span>(family, <span class="st">&quot;Unclassified&quot;</span>), family, <span class="fu">paste0</span>(family, <span class="st">&quot;_Unclassified&quot;</span>)),</span>
+<span id="cb343-18"><a href="differential-abundance.html#cb343-18" tabindex="-1"></a>                     genus)</span>
+<span id="cb343-19"><a href="differential-abundance.html#cb343-19" tabindex="-1"></a>  )</span>
+<span id="cb343-20"><a href="differential-abundance.html#cb343-20" tabindex="-1"></a></span>
+<span id="cb343-21"><a href="differential-abundance.html#cb343-21" tabindex="-1"></a>genome_tax_ampli <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span> </span>
+<span id="cb343-22"><a href="differential-abundance.html#cb343-22" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(., <span class="st">&quot;genome&quot;</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb343-23"><a href="differential-abundance.html#cb343-23" tabindex="-1"></a>  <span class="fu">rename_with</span>(<span class="sc">~</span> <span class="fu">paste0</span>(., <span class="st">&quot;_ampli&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb343-24"><a href="differential-abundance.html#cb343-24" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(., <span class="st">&quot;genome&quot;</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb343-25"><a href="differential-abundance.html#cb343-25" tabindex="-1"></a>  <span class="fu">left_join</span>(genome_metadata_ampli, <span class="at">by =</span> <span class="st">&quot;genome&quot;</span>)</span>
+<span id="cb343-26"><a href="differential-abundance.html#cb343-26" tabindex="-1"></a></span>
+<span id="cb343-27"><a href="differential-abundance.html#cb343-27" tabindex="-1"></a>family_level_agg_ampli <span class="ot">&lt;-</span> genome_tax_ampli <span class="sc">%&gt;%</span></span>
+<span id="cb343-28"><a href="differential-abundance.html#cb343-28" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>genome) <span class="sc">%&gt;%</span></span>
+<span id="cb343-29"><a href="differential-abundance.html#cb343-29" tabindex="-1"></a>  <span class="fu">group_by</span>(phylum, class, family) <span class="sc">%&gt;%</span></span>
+<span id="cb343-30"><a href="differential-abundance.html#cb343-30" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), \(x) <span class="fu">sum</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>)<span class="sc">%&gt;%</span> </span>
+<span id="cb343-31"><a href="differential-abundance.html#cb343-31" tabindex="-1"></a>    <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb343-32"><a href="differential-abundance.html#cb343-32" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(phylum,class))</span>
+<span id="cb343-33"><a href="differential-abundance.html#cb343-33" tabindex="-1"></a></span>
+<span id="cb343-34"><a href="differential-abundance.html#cb343-34" tabindex="-1"></a>phylum_level_agg_ampli <span class="ot">&lt;-</span> genome_tax_ampli <span class="sc">%&gt;%</span></span>
+<span id="cb343-35"><a href="differential-abundance.html#cb343-35" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>genome) <span class="sc">%&gt;%</span></span>
+<span id="cb343-36"><a href="differential-abundance.html#cb343-36" tabindex="-1"></a>  <span class="fu">group_by</span>(phylum) <span class="sc">%&gt;%</span></span>
+<span id="cb343-37"><a href="differential-abundance.html#cb343-37" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), \(x) <span class="fu">sum</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>)<span class="sc">%&gt;%</span> </span>
+<span id="cb343-38"><a href="differential-abundance.html#cb343-38" tabindex="-1"></a>    <span class="fu">as.data.frame</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb344"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb344-1"><a href="differential-abundance.html#cb344-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;resources/metagenomics/data_filtered.Rdata&quot;</span>)</span>
+<span id="cb344-2"><a href="differential-abundance.html#cb344-2" tabindex="-1"></a></span>
+<span id="cb344-3"><a href="differential-abundance.html#cb344-3" tabindex="-1"></a>genome_metadata <span class="ot">&lt;-</span> genome_metadata <span class="sc">%&gt;%</span></span>
+<span id="cb344-4"><a href="differential-abundance.html#cb344-4" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb344-5"><a href="differential-abundance.html#cb344-5" tabindex="-1"></a>    <span class="at">class  =</span> <span class="fu">if_else</span>(<span class="fu">str_trim</span>(class) <span class="sc">==</span> <span class="st">&quot;&quot;</span>, <span class="fu">paste0</span>(phylum, <span class="st">&quot;_Unclassified&quot;</span>), class),</span>
+<span id="cb344-6"><a href="differential-abundance.html#cb344-6" tabindex="-1"></a>    <span class="at">order  =</span> <span class="fu">if_else</span>(<span class="fu">str_trim</span>(order) <span class="sc">==</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb344-7"><a href="differential-abundance.html#cb344-7" tabindex="-1"></a>                     <span class="fu">if_else</span>(<span class="fu">str_detect</span>(class, <span class="st">&quot;Unclassified&quot;</span>), class, <span class="fu">paste0</span>(class, <span class="st">&quot;_Unclassified&quot;</span>)),</span>
+<span id="cb344-8"><a href="differential-abundance.html#cb344-8" tabindex="-1"></a>                     order),</span>
+<span id="cb344-9"><a href="differential-abundance.html#cb344-9" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">if_else</span>(<span class="fu">str_trim</span>(family) <span class="sc">==</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb344-10"><a href="differential-abundance.html#cb344-10" tabindex="-1"></a>                     <span class="fu">if_else</span>(<span class="fu">str_detect</span>(order, <span class="st">&quot;Unclassified&quot;</span>), order, <span class="fu">paste0</span>(order, <span class="st">&quot;_Unclassified&quot;</span>)),</span>
+<span id="cb344-11"><a href="differential-abundance.html#cb344-11" tabindex="-1"></a>                     family),</span>
+<span id="cb344-12"><a href="differential-abundance.html#cb344-12" tabindex="-1"></a>    <span class="at">genus  =</span> <span class="fu">if_else</span>(<span class="fu">str_trim</span>(genus) <span class="sc">==</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb344-13"><a href="differential-abundance.html#cb344-13" tabindex="-1"></a>                     <span class="fu">if_else</span>(<span class="fu">str_detect</span>(family, <span class="st">&quot;Unclassified&quot;</span>), family, <span class="fu">paste0</span>(family, <span class="st">&quot;_Unclassified&quot;</span>)),</span>
+<span id="cb344-14"><a href="differential-abundance.html#cb344-14" tabindex="-1"></a>                     genus)</span>
+<span id="cb344-15"><a href="differential-abundance.html#cb344-15" tabindex="-1"></a>  )</span>
+<span id="cb344-16"><a href="differential-abundance.html#cb344-16" tabindex="-1"></a></span>
+<span id="cb344-17"><a href="differential-abundance.html#cb344-17" tabindex="-1"></a>genome_tax <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span> </span>
+<span id="cb344-18"><a href="differential-abundance.html#cb344-18" tabindex="-1"></a>  <span class="fu">left_join</span>(genome_metadata[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">6</span>)], <span class="at">by =</span> <span class="st">&quot;genome&quot;</span>)</span>
+<span id="cb344-19"><a href="differential-abundance.html#cb344-19" tabindex="-1"></a></span>
+<span id="cb344-20"><a href="differential-abundance.html#cb344-20" tabindex="-1"></a><span class="co"># Aggregate counts at the Family level</span></span>
+<span id="cb344-21"><a href="differential-abundance.html#cb344-21" tabindex="-1"></a>family_level_agg <span class="ot">&lt;-</span> genome_tax <span class="sc">%&gt;%</span></span>
+<span id="cb344-22"><a href="differential-abundance.html#cb344-22" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>genome) <span class="sc">%&gt;%</span></span>
+<span id="cb344-23"><a href="differential-abundance.html#cb344-23" tabindex="-1"></a>  <span class="fu">group_by</span>(phylum, class, family) <span class="sc">%&gt;%</span></span>
+<span id="cb344-24"><a href="differential-abundance.html#cb344-24" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), \(x) <span class="fu">sum</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>)<span class="sc">%&gt;%</span> </span>
+<span id="cb344-25"><a href="differential-abundance.html#cb344-25" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb344-26"><a href="differential-abundance.html#cb344-26" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(phylum,class))</span>
+<span id="cb344-27"><a href="differential-abundance.html#cb344-27" tabindex="-1"></a></span>
+<span id="cb344-28"><a href="differential-abundance.html#cb344-28" tabindex="-1"></a><span class="co"># Aggregate counts at the Phylum level</span></span>
+<span id="cb344-29"><a href="differential-abundance.html#cb344-29" tabindex="-1"></a>phylum_level_agg <span class="ot">&lt;-</span> genome_tax <span class="sc">%&gt;%</span></span>
+<span id="cb344-30"><a href="differential-abundance.html#cb344-30" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>genome) <span class="sc">%&gt;%</span></span>
+<span id="cb344-31"><a href="differential-abundance.html#cb344-31" tabindex="-1"></a>  <span class="fu">group_by</span>(phylum) <span class="sc">%&gt;%</span></span>
+<span id="cb344-32"><a href="differential-abundance.html#cb344-32" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), \(x) <span class="fu">sum</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>)<span class="sc">%&gt;%</span> </span>
+<span id="cb344-33"><a href="differential-abundance.html#cb344-33" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() </span></code></pre></div>
 <p>Merge the table</p>
-<div class="sourceCode" id="cb333"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb333-1"><a href="differential-abundance.html#cb333-1" tabindex="-1"></a>merged_table <span class="ot">&lt;-</span> <span class="fu">full_join</span>(family_level_agg_ampli,family_level_agg, </span>
-<span id="cb333-2"><a href="differential-abundance.html#cb333-2" tabindex="-1"></a>          <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;family&quot;</span>))<span class="sc">%&gt;%</span></span>
-<span id="cb333-3"><a href="differential-abundance.html#cb333-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span><span class="fu">replace_na</span>(., <span class="dv">0</span>)))</span>
-<span id="cb333-4"><a href="differential-abundance.html#cb333-4" tabindex="-1"></a></span>
-<span id="cb333-5"><a href="differential-abundance.html#cb333-5" tabindex="-1"></a>merged_table_phylum <span class="ot">&lt;-</span> <span class="fu">full_join</span>(phylum_level_agg_ampli,phylum_level_agg, </span>
-<span id="cb333-6"><a href="differential-abundance.html#cb333-6" tabindex="-1"></a>          <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;phylum&quot;</span>))<span class="sc">%&gt;%</span></span>
-<span id="cb333-7"><a href="differential-abundance.html#cb333-7" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span><span class="fu">replace_na</span>(., <span class="dv">0</span>)))</span>
-<span id="cb333-8"><a href="differential-abundance.html#cb333-8" tabindex="-1"></a></span>
-<span id="cb333-9"><a href="differential-abundance.html#cb333-9" tabindex="-1"></a></span>
-<span id="cb333-10"><a href="differential-abundance.html#cb333-10" tabindex="-1"></a>sample_shot <span class="ot">&lt;-</span> sample_metadata <span class="sc">%&gt;%</span> </span>
-<span id="cb333-11"><a href="differential-abundance.html#cb333-11" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(Habitat,Longitude, Latitude, Region))<span class="sc">%&gt;%</span></span>
-<span id="cb333-12"><a href="differential-abundance.html#cb333-12" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">method=</span><span class="st">&quot;Metagenomics&quot;</span>)</span>
-<span id="cb333-13"><a href="differential-abundance.html#cb333-13" tabindex="-1"></a></span>
-<span id="cb333-14"><a href="differential-abundance.html#cb333-14" tabindex="-1"></a>all_samples <span class="ot">&lt;-</span> <span class="fu">rbind</span>(sample_shot, sample_metadata_amplicon)</span></code></pre></div>
+<div class="sourceCode" id="cb345"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb345-1"><a href="differential-abundance.html#cb345-1" tabindex="-1"></a>merged_table <span class="ot">&lt;-</span> <span class="fu">full_join</span>(family_level_agg_ampli,family_level_agg, </span>
+<span id="cb345-2"><a href="differential-abundance.html#cb345-2" tabindex="-1"></a>          <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;family&quot;</span>))<span class="sc">%&gt;%</span></span>
+<span id="cb345-3"><a href="differential-abundance.html#cb345-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span><span class="fu">replace_na</span>(., <span class="dv">0</span>)))</span>
+<span id="cb345-4"><a href="differential-abundance.html#cb345-4" tabindex="-1"></a></span>
+<span id="cb345-5"><a href="differential-abundance.html#cb345-5" tabindex="-1"></a>merged_table_phylum <span class="ot">&lt;-</span> <span class="fu">full_join</span>(phylum_level_agg_ampli,phylum_level_agg, </span>
+<span id="cb345-6"><a href="differential-abundance.html#cb345-6" tabindex="-1"></a>          <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;phylum&quot;</span>))<span class="sc">%&gt;%</span></span>
+<span id="cb345-7"><a href="differential-abundance.html#cb345-7" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span><span class="fu">replace_na</span>(., <span class="dv">0</span>)))</span>
+<span id="cb345-8"><a href="differential-abundance.html#cb345-8" tabindex="-1"></a></span>
+<span id="cb345-9"><a href="differential-abundance.html#cb345-9" tabindex="-1"></a></span>
+<span id="cb345-10"><a href="differential-abundance.html#cb345-10" tabindex="-1"></a>sample_shot <span class="ot">&lt;-</span> sample_metadata <span class="sc">%&gt;%</span> </span>
+<span id="cb345-11"><a href="differential-abundance.html#cb345-11" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(Habitat,Longitude, Latitude, Region))<span class="sc">%&gt;%</span></span>
+<span id="cb345-12"><a href="differential-abundance.html#cb345-12" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">method=</span><span class="st">&quot;Metagenomics&quot;</span>)</span>
+<span id="cb345-13"><a href="differential-abundance.html#cb345-13" tabindex="-1"></a></span>
+<span id="cb345-14"><a href="differential-abundance.html#cb345-14" tabindex="-1"></a>all_samples <span class="ot">&lt;-</span> <span class="fu">rbind</span>(sample_shot, sample_metadata_amplicon)</span></code></pre></div>
 <div id="phylum-level-5" class="section level2 hasAnchor" number="7.1">
 <h2><span class="header-section-number">7.1</span> Phylum level<a href="differential-abundance.html#phylum-level-5" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <div id="metagenomics-5" class="section level3 hasAnchor" number="7.1.1">
 <h3><span class="header-section-number">7.1.1</span> Metagenomics<a href="differential-abundance.html#metagenomics-5" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb334"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb334-1"><a href="differential-abundance.html#cb334-1" tabindex="-1"></a>phylo_samples <span class="ot">&lt;-</span> sample_metadata <span class="sc">%&gt;%</span> </span>
-<span id="cb334-2"><a href="differential-abundance.html#cb334-2" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb334-3"><a href="differential-abundance.html#cb334-3" tabindex="-1"></a>  <span class="fu">sample_data</span>()</span>
-<span id="cb334-4"><a href="differential-abundance.html#cb334-4" tabindex="-1"></a></span>
-<span id="cb334-5"><a href="differential-abundance.html#cb334-5" tabindex="-1"></a>phylo_genome <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span> </span>
-<span id="cb334-6"><a href="differential-abundance.html#cb334-6" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">one_of</span>(<span class="fu">c</span>(<span class="st">&quot;genome&quot;</span>, <span class="fu">rownames</span>(phylo_samples)))) <span class="sc">%&gt;%</span></span>
-<span id="cb334-7"><a href="differential-abundance.html#cb334-7" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb334-8"><a href="differential-abundance.html#cb334-8" tabindex="-1"></a>  <span class="fu">otu_table</span>(., <span class="at">taxa_are_rows =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb334-9"><a href="differential-abundance.html#cb334-9" tabindex="-1"></a></span>
-<span id="cb334-10"><a href="differential-abundance.html#cb334-10" tabindex="-1"></a>phylo_taxonomy <span class="ot">&lt;-</span> genome_metadata <span class="sc">%&gt;%</span> </span>
-<span id="cb334-11"><a href="differential-abundance.html#cb334-11" tabindex="-1"></a>  <span class="fu">filter</span>(genome <span class="sc">%in%</span> <span class="fu">rownames</span>(phylo_genome)) <span class="sc">%&gt;%</span> </span>
-<span id="cb334-12"><a href="differential-abundance.html#cb334-12" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb334-13"><a href="differential-abundance.html#cb334-13" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(domain,phylum,class,order,family,genus,species) <span class="sc">%&gt;%</span> </span>
-<span id="cb334-14"><a href="differential-abundance.html#cb334-14" tabindex="-1"></a>  <span class="fu">as.matrix</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb334-15"><a href="differential-abundance.html#cb334-15" tabindex="-1"></a>  <span class="fu">tax_table</span>()</span>
-<span id="cb334-16"><a href="differential-abundance.html#cb334-16" tabindex="-1"></a></span>
-<span id="cb334-17"><a href="differential-abundance.html#cb334-17" tabindex="-1"></a>physeq_genome_phylum_metagen <span class="ot">&lt;-</span> <span class="fu">phyloseq</span>(phylo_genome, phylo_samples, phylo_taxonomy)</span></code></pre></div>
-<div class="sourceCode" id="cb335"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb335-1"><a href="differential-abundance.html#cb335-1" tabindex="-1"></a>ancom_rand_output_phylum_metagen <span class="ot">=</span> <span class="fu">ancombc2</span>(</span>
-<span id="cb335-2"><a href="differential-abundance.html#cb335-2" tabindex="-1"></a>  <span class="at">data =</span> physeq_genome_phylum_metagen,</span>
-<span id="cb335-3"><a href="differential-abundance.html#cb335-3" tabindex="-1"></a>  <span class="at">assay_name =</span> <span class="st">&quot;counts&quot;</span>,</span>
-<span id="cb335-4"><a href="differential-abundance.html#cb335-4" tabindex="-1"></a>  <span class="at">tax_level =</span> <span class="st">&quot;phylum&quot;</span>,</span>
-<span id="cb335-5"><a href="differential-abundance.html#cb335-5" tabindex="-1"></a>  <span class="at">fix_formula =</span> <span class="st">&quot;Species&quot;</span>,</span>
-<span id="cb335-6"><a href="differential-abundance.html#cb335-6" tabindex="-1"></a>  <span class="at">p_adj_method =</span> <span class="st">&quot;holm&quot;</span>,</span>
-<span id="cb335-7"><a href="differential-abundance.html#cb335-7" tabindex="-1"></a>  <span class="at">pseudo_sens =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb335-8"><a href="differential-abundance.html#cb335-8" tabindex="-1"></a>  <span class="at">prv_cut =</span> <span class="dv">0</span>,</span>
-<span id="cb335-9"><a href="differential-abundance.html#cb335-9" tabindex="-1"></a>  <span class="at">lib_cut =</span> <span class="dv">0</span>,</span>
-<span id="cb335-10"><a href="differential-abundance.html#cb335-10" tabindex="-1"></a>  <span class="at">s0_perc =</span> <span class="fl">0.05</span>,</span>
-<span id="cb335-11"><a href="differential-abundance.html#cb335-11" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">&quot;Species&quot;</span>,</span>
-<span id="cb335-12"><a href="differential-abundance.html#cb335-12" tabindex="-1"></a>  <span class="at">struc_zero =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb335-13"><a href="differential-abundance.html#cb335-13" tabindex="-1"></a>  <span class="at">neg_lb =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb335-14"><a href="differential-abundance.html#cb335-14" tabindex="-1"></a>  <span class="at">alpha =</span> <span class="fl">0.05</span>,</span>
-<span id="cb335-15"><a href="differential-abundance.html#cb335-15" tabindex="-1"></a>  <span class="at">n_cl =</span> <span class="dv">2</span>,</span>
-<span id="cb335-16"><a href="differential-abundance.html#cb335-16" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb335-17"><a href="differential-abundance.html#cb335-17" tabindex="-1"></a>  <span class="at">global =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb335-18"><a href="differential-abundance.html#cb335-18" tabindex="-1"></a>  <span class="at">pairwise =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb335-19"><a href="differential-abundance.html#cb335-19" tabindex="-1"></a>  <span class="at">dunnet =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb335-20"><a href="differential-abundance.html#cb335-20" tabindex="-1"></a>  <span class="at">trend =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb335-21"><a href="differential-abundance.html#cb335-21" tabindex="-1"></a>  <span class="at">iter_control =</span> <span class="fu">list</span>(</span>
-<span id="cb335-22"><a href="differential-abundance.html#cb335-22" tabindex="-1"></a>    <span class="at">tol =</span> <span class="fl">1e-5</span>,</span>
-<span id="cb335-23"><a href="differential-abundance.html#cb335-23" tabindex="-1"></a>    <span class="at">max_iter =</span> <span class="dv">20</span>,</span>
-<span id="cb335-24"><a href="differential-abundance.html#cb335-24" tabindex="-1"></a>    <span class="at">verbose =</span> <span class="cn">FALSE</span></span>
-<span id="cb335-25"><a href="differential-abundance.html#cb335-25" tabindex="-1"></a>  ),</span>
-<span id="cb335-26"><a href="differential-abundance.html#cb335-26" tabindex="-1"></a>  <span class="at">em_control =</span> <span class="fu">list</span>(<span class="at">tol =</span> <span class="fl">1e-5</span>, <span class="at">max_iter =</span> <span class="dv">100</span>),</span>
-<span id="cb335-27"><a href="differential-abundance.html#cb335-27" tabindex="-1"></a>  <span class="at">mdfdr_control =</span> <span class="fu">list</span>(<span class="at">fwer_ctrl_method =</span> <span class="st">&quot;holm&quot;</span>, <span class="at">B =</span> <span class="dv">100</span>),</span>
-<span id="cb335-28"><a href="differential-abundance.html#cb335-28" tabindex="-1"></a>  <span class="at">trend_control =</span> <span class="cn">NULL</span></span>
-<span id="cb335-29"><a href="differential-abundance.html#cb335-29" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb346"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb346-1"><a href="differential-abundance.html#cb346-1" tabindex="-1"></a>phylo_samples <span class="ot">&lt;-</span> sample_metadata <span class="sc">%&gt;%</span> </span>
+<span id="cb346-2"><a href="differential-abundance.html#cb346-2" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb346-3"><a href="differential-abundance.html#cb346-3" tabindex="-1"></a>  <span class="fu">sample_data</span>()</span>
+<span id="cb346-4"><a href="differential-abundance.html#cb346-4" tabindex="-1"></a></span>
+<span id="cb346-5"><a href="differential-abundance.html#cb346-5" tabindex="-1"></a>phylo_genome <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span> </span>
+<span id="cb346-6"><a href="differential-abundance.html#cb346-6" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">one_of</span>(<span class="fu">c</span>(<span class="st">&quot;genome&quot;</span>, <span class="fu">rownames</span>(phylo_samples)))) <span class="sc">%&gt;%</span></span>
+<span id="cb346-7"><a href="differential-abundance.html#cb346-7" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb346-8"><a href="differential-abundance.html#cb346-8" tabindex="-1"></a>  <span class="fu">otu_table</span>(., <span class="at">taxa_are_rows =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb346-9"><a href="differential-abundance.html#cb346-9" tabindex="-1"></a></span>
+<span id="cb346-10"><a href="differential-abundance.html#cb346-10" tabindex="-1"></a>phylo_taxonomy <span class="ot">&lt;-</span> genome_metadata <span class="sc">%&gt;%</span> </span>
+<span id="cb346-11"><a href="differential-abundance.html#cb346-11" tabindex="-1"></a>  <span class="fu">filter</span>(genome <span class="sc">%in%</span> <span class="fu">rownames</span>(phylo_genome)) <span class="sc">%&gt;%</span> </span>
+<span id="cb346-12"><a href="differential-abundance.html#cb346-12" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb346-13"><a href="differential-abundance.html#cb346-13" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(domain,phylum,class,order,family,genus,species) <span class="sc">%&gt;%</span> </span>
+<span id="cb346-14"><a href="differential-abundance.html#cb346-14" tabindex="-1"></a>  <span class="fu">as.matrix</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb346-15"><a href="differential-abundance.html#cb346-15" tabindex="-1"></a>  <span class="fu">tax_table</span>()</span>
+<span id="cb346-16"><a href="differential-abundance.html#cb346-16" tabindex="-1"></a></span>
+<span id="cb346-17"><a href="differential-abundance.html#cb346-17" tabindex="-1"></a>physeq_genome_phylum_metagen <span class="ot">&lt;-</span> <span class="fu">phyloseq</span>(phylo_genome, phylo_samples, phylo_taxonomy)</span></code></pre></div>
+<div class="sourceCode" id="cb347"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb347-1"><a href="differential-abundance.html#cb347-1" tabindex="-1"></a>ancom_rand_output_phylum_metagen <span class="ot">=</span> <span class="fu">ancombc2</span>(</span>
+<span id="cb347-2"><a href="differential-abundance.html#cb347-2" tabindex="-1"></a>  <span class="at">data =</span> physeq_genome_phylum_metagen,</span>
+<span id="cb347-3"><a href="differential-abundance.html#cb347-3" tabindex="-1"></a>  <span class="at">assay_name =</span> <span class="st">&quot;counts&quot;</span>,</span>
+<span id="cb347-4"><a href="differential-abundance.html#cb347-4" tabindex="-1"></a>  <span class="at">tax_level =</span> <span class="st">&quot;phylum&quot;</span>,</span>
+<span id="cb347-5"><a href="differential-abundance.html#cb347-5" tabindex="-1"></a>  <span class="at">fix_formula =</span> <span class="st">&quot;Species&quot;</span>,</span>
+<span id="cb347-6"><a href="differential-abundance.html#cb347-6" tabindex="-1"></a>  <span class="at">p_adj_method =</span> <span class="st">&quot;holm&quot;</span>,</span>
+<span id="cb347-7"><a href="differential-abundance.html#cb347-7" tabindex="-1"></a>  <span class="at">pseudo_sens =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb347-8"><a href="differential-abundance.html#cb347-8" tabindex="-1"></a>  <span class="at">prv_cut =</span> <span class="dv">0</span>,</span>
+<span id="cb347-9"><a href="differential-abundance.html#cb347-9" tabindex="-1"></a>  <span class="at">lib_cut =</span> <span class="dv">0</span>,</span>
+<span id="cb347-10"><a href="differential-abundance.html#cb347-10" tabindex="-1"></a>  <span class="at">s0_perc =</span> <span class="fl">0.05</span>,</span>
+<span id="cb347-11"><a href="differential-abundance.html#cb347-11" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">&quot;Species&quot;</span>,</span>
+<span id="cb347-12"><a href="differential-abundance.html#cb347-12" tabindex="-1"></a>  <span class="at">struc_zero =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb347-13"><a href="differential-abundance.html#cb347-13" tabindex="-1"></a>  <span class="at">neg_lb =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb347-14"><a href="differential-abundance.html#cb347-14" tabindex="-1"></a>  <span class="at">alpha =</span> <span class="fl">0.05</span>,</span>
+<span id="cb347-15"><a href="differential-abundance.html#cb347-15" tabindex="-1"></a>  <span class="at">n_cl =</span> <span class="dv">2</span>,</span>
+<span id="cb347-16"><a href="differential-abundance.html#cb347-16" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb347-17"><a href="differential-abundance.html#cb347-17" tabindex="-1"></a>  <span class="at">global =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb347-18"><a href="differential-abundance.html#cb347-18" tabindex="-1"></a>  <span class="at">pairwise =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb347-19"><a href="differential-abundance.html#cb347-19" tabindex="-1"></a>  <span class="at">dunnet =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb347-20"><a href="differential-abundance.html#cb347-20" tabindex="-1"></a>  <span class="at">trend =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb347-21"><a href="differential-abundance.html#cb347-21" tabindex="-1"></a>  <span class="at">iter_control =</span> <span class="fu">list</span>(</span>
+<span id="cb347-22"><a href="differential-abundance.html#cb347-22" tabindex="-1"></a>    <span class="at">tol =</span> <span class="fl">1e-5</span>,</span>
+<span id="cb347-23"><a href="differential-abundance.html#cb347-23" tabindex="-1"></a>    <span class="at">max_iter =</span> <span class="dv">20</span>,</span>
+<span id="cb347-24"><a href="differential-abundance.html#cb347-24" tabindex="-1"></a>    <span class="at">verbose =</span> <span class="cn">FALSE</span></span>
+<span id="cb347-25"><a href="differential-abundance.html#cb347-25" tabindex="-1"></a>  ),</span>
+<span id="cb347-26"><a href="differential-abundance.html#cb347-26" tabindex="-1"></a>  <span class="at">em_control =</span> <span class="fu">list</span>(<span class="at">tol =</span> <span class="fl">1e-5</span>, <span class="at">max_iter =</span> <span class="dv">100</span>),</span>
+<span id="cb347-27"><a href="differential-abundance.html#cb347-27" tabindex="-1"></a>  <span class="at">mdfdr_control =</span> <span class="fu">list</span>(<span class="at">fwer_ctrl_method =</span> <span class="st">&quot;holm&quot;</span>, <span class="at">B =</span> <span class="dv">100</span>),</span>
+<span id="cb347-28"><a href="differential-abundance.html#cb347-28" tabindex="-1"></a>  <span class="at">trend_control =</span> <span class="cn">NULL</span></span>
+<span id="cb347-29"><a href="differential-abundance.html#cb347-29" tabindex="-1"></a>)</span></code></pre></div>
 <div id="structural-zeros" class="section level4 hasAnchor" number="7.1.1.1">
 <h4><span class="header-section-number">7.1.1.1</span> Structural zeros<a href="differential-abundance.html#structural-zeros" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><strong><em>Total number of structural zeros</em></strong></p>
-<div class="sourceCode" id="cb336"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb336-1"><a href="differential-abundance.html#cb336-1" tabindex="-1"></a><span class="co"># Extract structural zeros</span></span>
-<span id="cb336-2"><a href="differential-abundance.html#cb336-2" tabindex="-1"></a>structural_zeros <span class="ot">&lt;-</span> ancom_rand_output_phylum_metagen<span class="sc">$</span>zero_ind</span>
-<span id="cb336-3"><a href="differential-abundance.html#cb336-3" tabindex="-1"></a></span>
-<span id="cb336-4"><a href="differential-abundance.html#cb336-4" tabindex="-1"></a><span class="co"># Convert to a data frame for better readability</span></span>
-<span id="cb336-5"><a href="differential-abundance.html#cb336-5" tabindex="-1"></a>structural_zeros_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(structural_zeros) <span class="sc">%&gt;%</span> </span>
-<span id="cb336-6"><a href="differential-abundance.html#cb336-6" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(., <span class="st">&quot;taxon&quot;</span>)</span>
-<span id="cb336-7"><a href="differential-abundance.html#cb336-7" tabindex="-1"></a></span>
-<span id="cb336-8"><a href="differential-abundance.html#cb336-8" tabindex="-1"></a>structural_zero_taxa <span class="ot">&lt;-</span> <span class="fu">rownames</span>(structural_zeros_df)[<span class="fu">apply</span>(structural_zeros_df, <span class="dv">1</span>, any)]</span>
-<span id="cb336-9"><a href="differential-abundance.html#cb336-9" tabindex="-1"></a></span>
-<span id="cb336-10"><a href="differential-abundance.html#cb336-10" tabindex="-1"></a><span class="co"># Identify in which groups each taxon is a structural zero</span></span>
-<span id="cb336-11"><a href="differential-abundance.html#cb336-11" tabindex="-1"></a>structural_zero_groups <span class="ot">&lt;-</span> structural_zeros_df[structural_zero_taxa, , drop <span class="ot">=</span> <span class="cn">FALSE</span>] <span class="sc">%&gt;%</span> </span>
-<span id="cb336-12"><a href="differential-abundance.html#cb336-12" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">&quot;Eb&quot;</span><span class="ot">=</span><span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb336-13"><a href="differential-abundance.html#cb336-13" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">&quot;Ha&quot;</span><span class="ot">=</span><span class="dv">2</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb336-14"><a href="differential-abundance.html#cb336-14" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">&quot;Pk&quot;</span><span class="ot">=</span><span class="dv">3</span>) </span>
-<span id="cb336-15"><a href="differential-abundance.html#cb336-15" tabindex="-1"></a></span>
-<span id="cb336-16"><a href="differential-abundance.html#cb336-16" tabindex="-1"></a><span class="co"># Total number of structural zeros</span></span>
-<span id="cb336-17"><a href="differential-abundance.html#cb336-17" tabindex="-1"></a><span class="fu">nrow</span>(structural_zero_groups)</span></code></pre></div>
+<div class="sourceCode" id="cb348"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb348-1"><a href="differential-abundance.html#cb348-1" tabindex="-1"></a><span class="co"># Extract structural zeros</span></span>
+<span id="cb348-2"><a href="differential-abundance.html#cb348-2" tabindex="-1"></a>structural_zeros <span class="ot">&lt;-</span> ancom_rand_output_phylum_metagen<span class="sc">$</span>zero_ind</span>
+<span id="cb348-3"><a href="differential-abundance.html#cb348-3" tabindex="-1"></a></span>
+<span id="cb348-4"><a href="differential-abundance.html#cb348-4" tabindex="-1"></a><span class="co"># Convert to a data frame for better readability</span></span>
+<span id="cb348-5"><a href="differential-abundance.html#cb348-5" tabindex="-1"></a>structural_zeros_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(structural_zeros) <span class="sc">%&gt;%</span> </span>
+<span id="cb348-6"><a href="differential-abundance.html#cb348-6" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(., <span class="st">&quot;taxon&quot;</span>)</span>
+<span id="cb348-7"><a href="differential-abundance.html#cb348-7" tabindex="-1"></a></span>
+<span id="cb348-8"><a href="differential-abundance.html#cb348-8" tabindex="-1"></a>structural_zero_taxa <span class="ot">&lt;-</span> <span class="fu">rownames</span>(structural_zeros_df)[<span class="fu">apply</span>(structural_zeros_df, <span class="dv">1</span>, any)]</span>
+<span id="cb348-9"><a href="differential-abundance.html#cb348-9" tabindex="-1"></a></span>
+<span id="cb348-10"><a href="differential-abundance.html#cb348-10" tabindex="-1"></a><span class="co"># Identify in which groups each taxon is a structural zero</span></span>
+<span id="cb348-11"><a href="differential-abundance.html#cb348-11" tabindex="-1"></a>structural_zero_groups <span class="ot">&lt;-</span> structural_zeros_df[structural_zero_taxa, , drop <span class="ot">=</span> <span class="cn">FALSE</span>] <span class="sc">%&gt;%</span> </span>
+<span id="cb348-12"><a href="differential-abundance.html#cb348-12" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">&quot;Eb&quot;</span><span class="ot">=</span><span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb348-13"><a href="differential-abundance.html#cb348-13" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">&quot;Ha&quot;</span><span class="ot">=</span><span class="dv">2</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb348-14"><a href="differential-abundance.html#cb348-14" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">&quot;Pk&quot;</span><span class="ot">=</span><span class="dv">3</span>) </span>
+<span id="cb348-15"><a href="differential-abundance.html#cb348-15" tabindex="-1"></a></span>
+<span id="cb348-16"><a href="differential-abundance.html#cb348-16" tabindex="-1"></a><span class="co"># Total number of structural zeros</span></span>
+<span id="cb348-17"><a href="differential-abundance.html#cb348-17" tabindex="-1"></a><span class="fu">nrow</span>(structural_zero_groups)</span></code></pre></div>
 <pre class="script-output"><code>[1] 10</code></pre>
 <p><strong><em>Structural zeros in EB</em></strong></p>
-<div class="sourceCode" id="cb338"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb338-1"><a href="differential-abundance.html#cb338-1" tabindex="-1"></a>structural_zero_groups <span class="sc">%&gt;%</span> </span>
-<span id="cb338-2"><a href="differential-abundance.html#cb338-2" tabindex="-1"></a>  <span class="fu">filter</span>(Eb<span class="sc">==</span><span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb338-3"><a href="differential-abundance.html#cb338-3" tabindex="-1"></a>  <span class="fu">nrow</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb350"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb350-1"><a href="differential-abundance.html#cb350-1" tabindex="-1"></a>structural_zero_groups <span class="sc">%&gt;%</span> </span>
+<span id="cb350-2"><a href="differential-abundance.html#cb350-2" tabindex="-1"></a>  <span class="fu">filter</span>(Eb<span class="sc">==</span><span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb350-3"><a href="differential-abundance.html#cb350-3" tabindex="-1"></a>  <span class="fu">nrow</span>()</span></code></pre></div>
 <pre class="script-output"><code>[1] 3</code></pre>
-<div class="sourceCode" id="cb340"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb340-1"><a href="differential-abundance.html#cb340-1" tabindex="-1"></a>structural_zero_groups <span class="sc">%&gt;%</span> </span>
-<span id="cb340-2"><a href="differential-abundance.html#cb340-2" tabindex="-1"></a>  <span class="fu">filter</span>(Eb<span class="sc">==</span><span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb340-3"><a href="differential-abundance.html#cb340-3" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(., <span class="st">&quot;phylum&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb340-4"><a href="differential-abundance.html#cb340-4" tabindex="-1"></a>  <span class="fu">select</span>(phylum) <span class="sc">%&gt;%</span> </span>
-<span id="cb340-5"><a href="differential-abundance.html#cb340-5" tabindex="-1"></a>  <span class="fu">pull</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb352"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb352-1"><a href="differential-abundance.html#cb352-1" tabindex="-1"></a>structural_zero_groups <span class="sc">%&gt;%</span> </span>
+<span id="cb352-2"><a href="differential-abundance.html#cb352-2" tabindex="-1"></a>  <span class="fu">filter</span>(Eb<span class="sc">==</span><span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb352-3"><a href="differential-abundance.html#cb352-3" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(., <span class="st">&quot;phylum&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb352-4"><a href="differential-abundance.html#cb352-4" tabindex="-1"></a>  <span class="fu">select</span>(phylum) <span class="sc">%&gt;%</span> </span>
+<span id="cb352-5"><a href="differential-abundance.html#cb352-5" tabindex="-1"></a>  <span class="fu">pull</span>()</span></code></pre></div>
 <pre class="script-output"><code>[1] &quot;Spirochaetota&quot;   &quot;Actinomycetota&quot;  &quot;Cyanobacteriota&quot;</code></pre>
 <p><strong><em>Structural zeros in Ha</em></strong></p>
-<div class="sourceCode" id="cb342"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb342-1"><a href="differential-abundance.html#cb342-1" tabindex="-1"></a>structural_zero_groups <span class="sc">%&gt;%</span> </span>
-<span id="cb342-2"><a href="differential-abundance.html#cb342-2" tabindex="-1"></a>  <span class="fu">filter</span>(Ha<span class="sc">==</span><span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb342-3"><a href="differential-abundance.html#cb342-3" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(., <span class="st">&quot;phylum&quot;</span>)<span class="sc">%&gt;%</span> </span>
-<span id="cb342-4"><a href="differential-abundance.html#cb342-4" tabindex="-1"></a>  <span class="fu">select</span>(phylum) <span class="sc">%&gt;%</span> </span>
-<span id="cb342-5"><a href="differential-abundance.html#cb342-5" tabindex="-1"></a>  <span class="fu">pull</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb354"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb354-1"><a href="differential-abundance.html#cb354-1" tabindex="-1"></a>structural_zero_groups <span class="sc">%&gt;%</span> </span>
+<span id="cb354-2"><a href="differential-abundance.html#cb354-2" tabindex="-1"></a>  <span class="fu">filter</span>(Ha<span class="sc">==</span><span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb354-3"><a href="differential-abundance.html#cb354-3" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(., <span class="st">&quot;phylum&quot;</span>)<span class="sc">%&gt;%</span> </span>
+<span id="cb354-4"><a href="differential-abundance.html#cb354-4" tabindex="-1"></a>  <span class="fu">select</span>(phylum) <span class="sc">%&gt;%</span> </span>
+<span id="cb354-5"><a href="differential-abundance.html#cb354-5" tabindex="-1"></a>  <span class="fu">pull</span>()</span></code></pre></div>
 <pre class="script-output"><code>[1] &quot;Desulfobacterota&quot; &quot;Campylobacterota&quot; &quot;Elusimicrobiota&quot;  &quot;Fusobacteriota&quot;   &quot;Deferribacterota&quot; &quot;Planctomycetota&quot;  &quot;Cyanobacteriota&quot;  &quot;Synergistota&quot;    </code></pre>
 <p><strong><em>Structural zeros in Pk</em></strong></p>
-<div class="sourceCode" id="cb344"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb344-1"><a href="differential-abundance.html#cb344-1" tabindex="-1"></a>structural_zero_groups <span class="sc">%&gt;%</span> </span>
-<span id="cb344-2"><a href="differential-abundance.html#cb344-2" tabindex="-1"></a>  <span class="fu">filter</span>(Pk<span class="sc">==</span><span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb344-3"><a href="differential-abundance.html#cb344-3" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(., <span class="st">&quot;phylum&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb344-4"><a href="differential-abundance.html#cb344-4" tabindex="-1"></a>  <span class="fu">select</span>(phylum) <span class="sc">%&gt;%</span> </span>
-<span id="cb344-5"><a href="differential-abundance.html#cb344-5" tabindex="-1"></a>  <span class="fu">pull</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb356"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb356-1"><a href="differential-abundance.html#cb356-1" tabindex="-1"></a>structural_zero_groups <span class="sc">%&gt;%</span> </span>
+<span id="cb356-2"><a href="differential-abundance.html#cb356-2" tabindex="-1"></a>  <span class="fu">filter</span>(Pk<span class="sc">==</span><span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb356-3"><a href="differential-abundance.html#cb356-3" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(., <span class="st">&quot;phylum&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb356-4"><a href="differential-abundance.html#cb356-4" tabindex="-1"></a>  <span class="fu">select</span>(phylum) <span class="sc">%&gt;%</span> </span>
+<span id="cb356-5"><a href="differential-abundance.html#cb356-5" tabindex="-1"></a>  <span class="fu">pull</span>()</span></code></pre></div>
 <pre class="script-output"><code>[1] &quot;Elusimicrobiota&quot;  &quot;Deferribacterota&quot; &quot;Planctomycetota&quot;  &quot;Spirochaetota&quot;    &quot;Actinomycetota&quot;  </code></pre>
 </div>
 <div id="enriched-data" class="section level4 hasAnchor" number="7.1.1.2">
 <h4><span class="header-section-number">7.1.1.2</span> Enriched data<a href="differential-abundance.html#enriched-data" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<div class="sourceCode" id="cb346"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb346-1"><a href="differential-abundance.html#cb346-1" tabindex="-1"></a>res_pair_phylum <span class="ot">&lt;-</span> ancom_rand_output_phylum_metagen<span class="sc">$</span>res_pair</span>
-<span id="cb346-2"><a href="differential-abundance.html#cb346-2" tabindex="-1"></a><span class="co"># Get log-fold change and q-value columns</span></span>
-<span id="cb346-3"><a href="differential-abundance.html#cb346-3" tabindex="-1"></a>lfc_cols <span class="ot">&lt;-</span> <span class="fu">grep</span>(<span class="st">&quot;^lfc_&quot;</span>, <span class="fu">colnames</span>(res_pair_phylum), <span class="at">value =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb346-4"><a href="differential-abundance.html#cb346-4" tabindex="-1"></a>q_cols   <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;^lfc_&quot;</span>, <span class="st">&quot;q_&quot;</span>, lfc_cols)</span>
-<span id="cb346-5"><a href="differential-abundance.html#cb346-5" tabindex="-1"></a></span>
-<span id="cb346-6"><a href="differential-abundance.html#cb346-6" tabindex="-1"></a><span class="co"># Build long table by pairing lfc and q for each contrast</span></span>
-<span id="cb346-7"><a href="differential-abundance.html#cb346-7" tabindex="-1"></a>plot_data_phylum <span class="ot">&lt;-</span> lfc_cols <span class="sc">%&gt;%</span></span>
-<span id="cb346-8"><a href="differential-abundance.html#cb346-8" tabindex="-1"></a>  <span class="fu">setNames</span>(<span class="at">nm =</span> .) <span class="sc">%&gt;%</span></span>
-<span id="cb346-9"><a href="differential-abundance.html#cb346-9" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">imap_dfr</span>(<span class="cf">function</span>(lfc_col, name) {</span>
-<span id="cb346-10"><a href="differential-abundance.html#cb346-10" tabindex="-1"></a>    q_col <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;^lfc_&quot;</span>, <span class="st">&quot;q_&quot;</span>, lfc_col)</span>
-<span id="cb346-11"><a href="differential-abundance.html#cb346-11" tabindex="-1"></a>    </span>
-<span id="cb346-12"><a href="differential-abundance.html#cb346-12" tabindex="-1"></a>    res_pair_phylum <span class="sc">%&gt;%</span></span>
-<span id="cb346-13"><a href="differential-abundance.html#cb346-13" tabindex="-1"></a>      <span class="fu">select</span>(taxon, <span class="sc">!!</span>lfc_col, <span class="sc">!!</span>q_col) <span class="sc">%&gt;%</span></span>
-<span id="cb346-14"><a href="differential-abundance.html#cb346-14" tabindex="-1"></a>      <span class="fu">rename</span>(</span>
-<span id="cb346-15"><a href="differential-abundance.html#cb346-15" tabindex="-1"></a>        <span class="at">lfc =</span> <span class="sc">!!</span>lfc_col,</span>
-<span id="cb346-16"><a href="differential-abundance.html#cb346-16" tabindex="-1"></a>        <span class="at">q   =</span> <span class="sc">!!</span>q_col</span>
-<span id="cb346-17"><a href="differential-abundance.html#cb346-17" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span></span>
-<span id="cb346-18"><a href="differential-abundance.html#cb346-18" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">contrast_key =</span> name)</span>
-<span id="cb346-19"><a href="differential-abundance.html#cb346-19" tabindex="-1"></a>  }) <span class="sc">%&gt;%</span></span>
-<span id="cb346-20"><a href="differential-abundance.html#cb346-20" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(lfc), <span class="sc">!</span><span class="fu">is.na</span>(q), q <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb346-21"><a href="differential-abundance.html#cb346-21" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb346-22"><a href="differential-abundance.html#cb346-22" tabindex="-1"></a>    <span class="co"># Manually re-label contrasts for clarity</span></span>
-<span id="cb346-23"><a href="differential-abundance.html#cb346-23" tabindex="-1"></a>    <span class="at">contrast =</span> <span class="fu">case_when</span>(</span>
-<span id="cb346-24"><a href="differential-abundance.html#cb346-24" tabindex="-1"></a>      contrast_key <span class="sc">==</span> <span class="st">&quot;lfc_SpeciesHa&quot;</span> <span class="sc">~</span> <span class="st">&quot;H. ariel vs C. bottae&quot;</span>,</span>
-<span id="cb346-25"><a href="differential-abundance.html#cb346-25" tabindex="-1"></a>      contrast_key <span class="sc">==</span> <span class="st">&quot;lfc_SpeciesPk&quot;</span> <span class="sc">~</span> <span class="st">&quot;P. kuhlii vs C. bottae&quot;</span>,</span>
-<span id="cb346-26"><a href="differential-abundance.html#cb346-26" tabindex="-1"></a>      contrast_key <span class="sc">==</span> <span class="st">&quot;lfc_SpeciesPk_SpeciesHa&quot;</span> <span class="sc">~</span> <span class="st">&quot;P. kuhlii vs H. ariel&quot;</span>,</span>
-<span id="cb346-27"><a href="differential-abundance.html#cb346-27" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> contrast_key</span>
-<span id="cb346-28"><a href="differential-abundance.html#cb346-28" tabindex="-1"></a>    ),</span>
-<span id="cb346-29"><a href="differential-abundance.html#cb346-29" tabindex="-1"></a>    <span class="at">direction =</span> <span class="fu">ifelse</span>(lfc <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">paste</span>(<span class="st">&quot;Enriched in&quot;</span>, <span class="fu">sub</span>(<span class="st">&quot; vs.*&quot;</span>, <span class="st">&quot;&quot;</span>, contrast)),</span>
-<span id="cb346-30"><a href="differential-abundance.html#cb346-30" tabindex="-1"></a>                             <span class="fu">paste</span>(<span class="st">&quot;Enriched in&quot;</span>, <span class="fu">sub</span>(<span class="st">&quot;.*vs &quot;</span>, <span class="st">&quot;&quot;</span>, contrast)))</span>
-<span id="cb346-31"><a href="differential-abundance.html#cb346-31" tabindex="-1"></a>  )</span>
-<span id="cb346-32"><a href="differential-abundance.html#cb346-32" tabindex="-1"></a>plot_data_phylum</span></code></pre></div>
+<div class="sourceCode" id="cb358"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb358-1"><a href="differential-abundance.html#cb358-1" tabindex="-1"></a>res_pair_phylum <span class="ot">&lt;-</span> ancom_rand_output_phylum_metagen<span class="sc">$</span>res_pair</span>
+<span id="cb358-2"><a href="differential-abundance.html#cb358-2" tabindex="-1"></a><span class="co"># Get log-fold change and q-value columns</span></span>
+<span id="cb358-3"><a href="differential-abundance.html#cb358-3" tabindex="-1"></a>lfc_cols <span class="ot">&lt;-</span> <span class="fu">grep</span>(<span class="st">&quot;^lfc_&quot;</span>, <span class="fu">colnames</span>(res_pair_phylum), <span class="at">value =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb358-4"><a href="differential-abundance.html#cb358-4" tabindex="-1"></a>q_cols   <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;^lfc_&quot;</span>, <span class="st">&quot;q_&quot;</span>, lfc_cols)</span>
+<span id="cb358-5"><a href="differential-abundance.html#cb358-5" tabindex="-1"></a></span>
+<span id="cb358-6"><a href="differential-abundance.html#cb358-6" tabindex="-1"></a><span class="co"># Build long table by pairing lfc and q for each contrast</span></span>
+<span id="cb358-7"><a href="differential-abundance.html#cb358-7" tabindex="-1"></a>plot_data_phylum <span class="ot">&lt;-</span> lfc_cols <span class="sc">%&gt;%</span></span>
+<span id="cb358-8"><a href="differential-abundance.html#cb358-8" tabindex="-1"></a>  <span class="fu">setNames</span>(<span class="at">nm =</span> .) <span class="sc">%&gt;%</span></span>
+<span id="cb358-9"><a href="differential-abundance.html#cb358-9" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">imap_dfr</span>(<span class="cf">function</span>(lfc_col, name) {</span>
+<span id="cb358-10"><a href="differential-abundance.html#cb358-10" tabindex="-1"></a>    q_col <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;^lfc_&quot;</span>, <span class="st">&quot;q_&quot;</span>, lfc_col)</span>
+<span id="cb358-11"><a href="differential-abundance.html#cb358-11" tabindex="-1"></a>    </span>
+<span id="cb358-12"><a href="differential-abundance.html#cb358-12" tabindex="-1"></a>    res_pair_phylum <span class="sc">%&gt;%</span></span>
+<span id="cb358-13"><a href="differential-abundance.html#cb358-13" tabindex="-1"></a>      <span class="fu">select</span>(taxon, <span class="sc">!!</span>lfc_col, <span class="sc">!!</span>q_col) <span class="sc">%&gt;%</span></span>
+<span id="cb358-14"><a href="differential-abundance.html#cb358-14" tabindex="-1"></a>      <span class="fu">rename</span>(</span>
+<span id="cb358-15"><a href="differential-abundance.html#cb358-15" tabindex="-1"></a>        <span class="at">lfc =</span> <span class="sc">!!</span>lfc_col,</span>
+<span id="cb358-16"><a href="differential-abundance.html#cb358-16" tabindex="-1"></a>        <span class="at">q   =</span> <span class="sc">!!</span>q_col</span>
+<span id="cb358-17"><a href="differential-abundance.html#cb358-17" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span></span>
+<span id="cb358-18"><a href="differential-abundance.html#cb358-18" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">contrast_key =</span> name)</span>
+<span id="cb358-19"><a href="differential-abundance.html#cb358-19" tabindex="-1"></a>  }) <span class="sc">%&gt;%</span></span>
+<span id="cb358-20"><a href="differential-abundance.html#cb358-20" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(lfc), <span class="sc">!</span><span class="fu">is.na</span>(q), q <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb358-21"><a href="differential-abundance.html#cb358-21" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb358-22"><a href="differential-abundance.html#cb358-22" tabindex="-1"></a>    <span class="co"># Manually re-label contrasts for clarity</span></span>
+<span id="cb358-23"><a href="differential-abundance.html#cb358-23" tabindex="-1"></a>    <span class="at">contrast =</span> <span class="fu">case_when</span>(</span>
+<span id="cb358-24"><a href="differential-abundance.html#cb358-24" tabindex="-1"></a>      contrast_key <span class="sc">==</span> <span class="st">&quot;lfc_SpeciesHa&quot;</span> <span class="sc">~</span> <span class="st">&quot;H. ariel vs C. bottae&quot;</span>,</span>
+<span id="cb358-25"><a href="differential-abundance.html#cb358-25" tabindex="-1"></a>      contrast_key <span class="sc">==</span> <span class="st">&quot;lfc_SpeciesPk&quot;</span> <span class="sc">~</span> <span class="st">&quot;P. kuhlii vs C. bottae&quot;</span>,</span>
+<span id="cb358-26"><a href="differential-abundance.html#cb358-26" tabindex="-1"></a>      contrast_key <span class="sc">==</span> <span class="st">&quot;lfc_SpeciesPk_SpeciesHa&quot;</span> <span class="sc">~</span> <span class="st">&quot;P. kuhlii vs H. ariel&quot;</span>,</span>
+<span id="cb358-27"><a href="differential-abundance.html#cb358-27" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> contrast_key</span>
+<span id="cb358-28"><a href="differential-abundance.html#cb358-28" tabindex="-1"></a>    ),</span>
+<span id="cb358-29"><a href="differential-abundance.html#cb358-29" tabindex="-1"></a>    <span class="at">direction =</span> <span class="fu">ifelse</span>(lfc <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">paste</span>(<span class="st">&quot;Enriched in&quot;</span>, <span class="fu">sub</span>(<span class="st">&quot; vs.*&quot;</span>, <span class="st">&quot;&quot;</span>, contrast)),</span>
+<span id="cb358-30"><a href="differential-abundance.html#cb358-30" tabindex="-1"></a>                             <span class="fu">paste</span>(<span class="st">&quot;Enriched in&quot;</span>, <span class="fu">sub</span>(<span class="st">&quot;.*vs &quot;</span>, <span class="st">&quot;&quot;</span>, contrast)))</span>
+<span id="cb358-31"><a href="differential-abundance.html#cb358-31" tabindex="-1"></a>  )</span>
+<span id="cb358-32"><a href="differential-abundance.html#cb358-32" tabindex="-1"></a>plot_data_phylum</span></code></pre></div>
 <pre class="script-output"><code>         taxon       lfc          q            contrast_key              contrast             direction
 1 Bacteroidota -2.469488 0.01595184           lfc_SpeciesHa H. ariel vs C. bottae Enriched in C. bottae
 2 Bacteroidota  2.599867 0.01595184 lfc_SpeciesPk_SpeciesHa P. kuhlii vs H. ariel Enriched in P. kuhlii</code></pre>
@@ -2444,112 +2447,112 @@ color: #a52929;
 </div>
 <div id="metabarcoding-1" class="section level3 hasAnchor" number="7.1.2">
 <h3><span class="header-section-number">7.1.2</span> Metabarcoding<a href="differential-abundance.html#metabarcoding-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb348"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb348-1"><a href="differential-abundance.html#cb348-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;resources/amplicon/data_standard_filt.Rdata&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb349"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb349-1"><a href="differential-abundance.html#cb349-1" tabindex="-1"></a>phylo_samples <span class="ot">&lt;-</span> sample_metadata_amplicon <span class="sc">%&gt;%</span> </span>
-<span id="cb349-2"><a href="differential-abundance.html#cb349-2" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb349-3"><a href="differential-abundance.html#cb349-3" tabindex="-1"></a>  <span class="fu">sample_data</span>()</span>
-<span id="cb349-4"><a href="differential-abundance.html#cb349-4" tabindex="-1"></a></span>
-<span id="cb349-5"><a href="differential-abundance.html#cb349-5" tabindex="-1"></a>phylo_genome <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span> </span>
-<span id="cb349-6"><a href="differential-abundance.html#cb349-6" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(., <span class="st">&quot;genome&quot;</span>)<span class="sc">%&gt;%</span></span>
-<span id="cb349-7"><a href="differential-abundance.html#cb349-7" tabindex="-1"></a>  <span class="fu">rename_with</span>(<span class="sc">~</span> <span class="fu">paste0</span>(., <span class="st">&quot;_ampli&quot;</span>))<span class="sc">%&gt;%</span></span>
-<span id="cb349-8"><a href="differential-abundance.html#cb349-8" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(., <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb349-9"><a href="differential-abundance.html#cb349-9" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">one_of</span>(<span class="fu">c</span>(<span class="st">&quot;genome&quot;</span>, <span class="fu">rownames</span>(phylo_samples)))) <span class="sc">%&gt;%</span></span>
-<span id="cb349-10"><a href="differential-abundance.html#cb349-10" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb349-11"><a href="differential-abundance.html#cb349-11" tabindex="-1"></a>  <span class="fu">otu_table</span>(., <span class="at">taxa_are_rows =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb349-12"><a href="differential-abundance.html#cb349-12" tabindex="-1"></a></span>
-<span id="cb349-13"><a href="differential-abundance.html#cb349-13" tabindex="-1"></a>phylo_taxonomy <span class="ot">&lt;-</span> genome_metadata_ampli <span class="sc">%&gt;%</span> </span>
-<span id="cb349-14"><a href="differential-abundance.html#cb349-14" tabindex="-1"></a>  <span class="fu">filter</span>(genome <span class="sc">%in%</span> <span class="fu">rownames</span>(phylo_genome)) <span class="sc">%&gt;%</span> </span>
-<span id="cb349-15"><a href="differential-abundance.html#cb349-15" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb349-16"><a href="differential-abundance.html#cb349-16" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(domain,phylum,class,order,family,genus,species) <span class="sc">%&gt;%</span> </span>
-<span id="cb349-17"><a href="differential-abundance.html#cb349-17" tabindex="-1"></a>  <span class="fu">as.matrix</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb349-18"><a href="differential-abundance.html#cb349-18" tabindex="-1"></a>  <span class="fu">tax_table</span>()</span>
-<span id="cb349-19"><a href="differential-abundance.html#cb349-19" tabindex="-1"></a></span>
-<span id="cb349-20"><a href="differential-abundance.html#cb349-20" tabindex="-1"></a>physeq_genome_phylum_metab <span class="ot">&lt;-</span> <span class="fu">phyloseq</span>(phylo_genome, phylo_samples, phylo_taxonomy)</span></code></pre></div>
-<div class="sourceCode" id="cb350"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb350-1"><a href="differential-abundance.html#cb350-1" tabindex="-1"></a>ancom_rand_output_phylum_metab <span class="ot">=</span> <span class="fu">ancombc2</span>(</span>
-<span id="cb350-2"><a href="differential-abundance.html#cb350-2" tabindex="-1"></a>  <span class="at">data =</span> physeq_genome_phylum_metab,</span>
-<span id="cb350-3"><a href="differential-abundance.html#cb350-3" tabindex="-1"></a>  <span class="at">assay_name =</span> <span class="st">&quot;counts&quot;</span>,</span>
-<span id="cb350-4"><a href="differential-abundance.html#cb350-4" tabindex="-1"></a>  <span class="at">tax_level =</span> <span class="st">&quot;phylum&quot;</span>,</span>
-<span id="cb350-5"><a href="differential-abundance.html#cb350-5" tabindex="-1"></a>  <span class="at">fix_formula =</span> <span class="st">&quot;Species&quot;</span>,</span>
-<span id="cb350-6"><a href="differential-abundance.html#cb350-6" tabindex="-1"></a>  <span class="at">p_adj_method =</span> <span class="st">&quot;holm&quot;</span>,</span>
-<span id="cb350-7"><a href="differential-abundance.html#cb350-7" tabindex="-1"></a>  <span class="at">pseudo_sens =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb350-8"><a href="differential-abundance.html#cb350-8" tabindex="-1"></a>  <span class="at">prv_cut =</span> <span class="dv">0</span>,</span>
-<span id="cb350-9"><a href="differential-abundance.html#cb350-9" tabindex="-1"></a>  <span class="at">lib_cut =</span> <span class="dv">0</span>,</span>
-<span id="cb350-10"><a href="differential-abundance.html#cb350-10" tabindex="-1"></a>  <span class="at">s0_perc =</span> <span class="fl">0.05</span>,</span>
-<span id="cb350-11"><a href="differential-abundance.html#cb350-11" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">&quot;Species&quot;</span>,</span>
-<span id="cb350-12"><a href="differential-abundance.html#cb350-12" tabindex="-1"></a>  <span class="at">struc_zero =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb350-13"><a href="differential-abundance.html#cb350-13" tabindex="-1"></a>  <span class="at">neg_lb =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb350-14"><a href="differential-abundance.html#cb350-14" tabindex="-1"></a>  <span class="at">alpha =</span> <span class="fl">0.05</span>,</span>
-<span id="cb350-15"><a href="differential-abundance.html#cb350-15" tabindex="-1"></a>  <span class="at">n_cl =</span> <span class="dv">2</span>,</span>
-<span id="cb350-16"><a href="differential-abundance.html#cb350-16" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb350-17"><a href="differential-abundance.html#cb350-17" tabindex="-1"></a>  <span class="at">global =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb350-18"><a href="differential-abundance.html#cb350-18" tabindex="-1"></a>  <span class="at">pairwise =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb350-19"><a href="differential-abundance.html#cb350-19" tabindex="-1"></a>  <span class="at">dunnet =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb350-20"><a href="differential-abundance.html#cb350-20" tabindex="-1"></a>  <span class="at">trend =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb350-21"><a href="differential-abundance.html#cb350-21" tabindex="-1"></a>  <span class="at">iter_control =</span> <span class="fu">list</span>(</span>
-<span id="cb350-22"><a href="differential-abundance.html#cb350-22" tabindex="-1"></a>    <span class="at">tol =</span> <span class="fl">1e-5</span>,</span>
-<span id="cb350-23"><a href="differential-abundance.html#cb350-23" tabindex="-1"></a>    <span class="at">max_iter =</span> <span class="dv">20</span>,</span>
-<span id="cb350-24"><a href="differential-abundance.html#cb350-24" tabindex="-1"></a>    <span class="at">verbose =</span> <span class="cn">FALSE</span></span>
-<span id="cb350-25"><a href="differential-abundance.html#cb350-25" tabindex="-1"></a>  ),</span>
-<span id="cb350-26"><a href="differential-abundance.html#cb350-26" tabindex="-1"></a>  <span class="at">em_control =</span> <span class="fu">list</span>(<span class="at">tol =</span> <span class="fl">1e-5</span>, <span class="at">max_iter =</span> <span class="dv">100</span>),</span>
-<span id="cb350-27"><a href="differential-abundance.html#cb350-27" tabindex="-1"></a>  <span class="at">mdfdr_control =</span> <span class="fu">list</span>(<span class="at">fwer_ctrl_method =</span> <span class="st">&quot;holm&quot;</span>, <span class="at">B =</span> <span class="dv">100</span>),</span>
-<span id="cb350-28"><a href="differential-abundance.html#cb350-28" tabindex="-1"></a>  <span class="at">trend_control =</span> <span class="cn">NULL</span></span>
-<span id="cb350-29"><a href="differential-abundance.html#cb350-29" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb360"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb360-1"><a href="differential-abundance.html#cb360-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;resources/amplicon/data_standard_filt.Rdata&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb361"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb361-1"><a href="differential-abundance.html#cb361-1" tabindex="-1"></a>phylo_samples <span class="ot">&lt;-</span> sample_metadata_amplicon <span class="sc">%&gt;%</span> </span>
+<span id="cb361-2"><a href="differential-abundance.html#cb361-2" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb361-3"><a href="differential-abundance.html#cb361-3" tabindex="-1"></a>  <span class="fu">sample_data</span>()</span>
+<span id="cb361-4"><a href="differential-abundance.html#cb361-4" tabindex="-1"></a></span>
+<span id="cb361-5"><a href="differential-abundance.html#cb361-5" tabindex="-1"></a>phylo_genome <span class="ot">&lt;-</span> genome_counts_filt <span class="sc">%&gt;%</span> </span>
+<span id="cb361-6"><a href="differential-abundance.html#cb361-6" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(., <span class="st">&quot;genome&quot;</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb361-7"><a href="differential-abundance.html#cb361-7" tabindex="-1"></a>  <span class="fu">rename_with</span>(<span class="sc">~</span> <span class="fu">paste0</span>(., <span class="st">&quot;_ampli&quot;</span>))<span class="sc">%&gt;%</span></span>
+<span id="cb361-8"><a href="differential-abundance.html#cb361-8" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(., <span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb361-9"><a href="differential-abundance.html#cb361-9" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">one_of</span>(<span class="fu">c</span>(<span class="st">&quot;genome&quot;</span>, <span class="fu">rownames</span>(phylo_samples)))) <span class="sc">%&gt;%</span></span>
+<span id="cb361-10"><a href="differential-abundance.html#cb361-10" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb361-11"><a href="differential-abundance.html#cb361-11" tabindex="-1"></a>  <span class="fu">otu_table</span>(., <span class="at">taxa_are_rows =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb361-12"><a href="differential-abundance.html#cb361-12" tabindex="-1"></a></span>
+<span id="cb361-13"><a href="differential-abundance.html#cb361-13" tabindex="-1"></a>phylo_taxonomy <span class="ot">&lt;-</span> genome_metadata_ampli <span class="sc">%&gt;%</span> </span>
+<span id="cb361-14"><a href="differential-abundance.html#cb361-14" tabindex="-1"></a>  <span class="fu">filter</span>(genome <span class="sc">%in%</span> <span class="fu">rownames</span>(phylo_genome)) <span class="sc">%&gt;%</span> </span>
+<span id="cb361-15"><a href="differential-abundance.html#cb361-15" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;genome&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb361-16"><a href="differential-abundance.html#cb361-16" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(domain,phylum,class,order,family,genus,species) <span class="sc">%&gt;%</span> </span>
+<span id="cb361-17"><a href="differential-abundance.html#cb361-17" tabindex="-1"></a>  <span class="fu">as.matrix</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb361-18"><a href="differential-abundance.html#cb361-18" tabindex="-1"></a>  <span class="fu">tax_table</span>()</span>
+<span id="cb361-19"><a href="differential-abundance.html#cb361-19" tabindex="-1"></a></span>
+<span id="cb361-20"><a href="differential-abundance.html#cb361-20" tabindex="-1"></a>physeq_genome_phylum_metab <span class="ot">&lt;-</span> <span class="fu">phyloseq</span>(phylo_genome, phylo_samples, phylo_taxonomy)</span></code></pre></div>
+<div class="sourceCode" id="cb362"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb362-1"><a href="differential-abundance.html#cb362-1" tabindex="-1"></a>ancom_rand_output_phylum_metab <span class="ot">=</span> <span class="fu">ancombc2</span>(</span>
+<span id="cb362-2"><a href="differential-abundance.html#cb362-2" tabindex="-1"></a>  <span class="at">data =</span> physeq_genome_phylum_metab,</span>
+<span id="cb362-3"><a href="differential-abundance.html#cb362-3" tabindex="-1"></a>  <span class="at">assay_name =</span> <span class="st">&quot;counts&quot;</span>,</span>
+<span id="cb362-4"><a href="differential-abundance.html#cb362-4" tabindex="-1"></a>  <span class="at">tax_level =</span> <span class="st">&quot;phylum&quot;</span>,</span>
+<span id="cb362-5"><a href="differential-abundance.html#cb362-5" tabindex="-1"></a>  <span class="at">fix_formula =</span> <span class="st">&quot;Species&quot;</span>,</span>
+<span id="cb362-6"><a href="differential-abundance.html#cb362-6" tabindex="-1"></a>  <span class="at">p_adj_method =</span> <span class="st">&quot;holm&quot;</span>,</span>
+<span id="cb362-7"><a href="differential-abundance.html#cb362-7" tabindex="-1"></a>  <span class="at">pseudo_sens =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb362-8"><a href="differential-abundance.html#cb362-8" tabindex="-1"></a>  <span class="at">prv_cut =</span> <span class="dv">0</span>,</span>
+<span id="cb362-9"><a href="differential-abundance.html#cb362-9" tabindex="-1"></a>  <span class="at">lib_cut =</span> <span class="dv">0</span>,</span>
+<span id="cb362-10"><a href="differential-abundance.html#cb362-10" tabindex="-1"></a>  <span class="at">s0_perc =</span> <span class="fl">0.05</span>,</span>
+<span id="cb362-11"><a href="differential-abundance.html#cb362-11" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">&quot;Species&quot;</span>,</span>
+<span id="cb362-12"><a href="differential-abundance.html#cb362-12" tabindex="-1"></a>  <span class="at">struc_zero =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb362-13"><a href="differential-abundance.html#cb362-13" tabindex="-1"></a>  <span class="at">neg_lb =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb362-14"><a href="differential-abundance.html#cb362-14" tabindex="-1"></a>  <span class="at">alpha =</span> <span class="fl">0.05</span>,</span>
+<span id="cb362-15"><a href="differential-abundance.html#cb362-15" tabindex="-1"></a>  <span class="at">n_cl =</span> <span class="dv">2</span>,</span>
+<span id="cb362-16"><a href="differential-abundance.html#cb362-16" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb362-17"><a href="differential-abundance.html#cb362-17" tabindex="-1"></a>  <span class="at">global =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb362-18"><a href="differential-abundance.html#cb362-18" tabindex="-1"></a>  <span class="at">pairwise =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb362-19"><a href="differential-abundance.html#cb362-19" tabindex="-1"></a>  <span class="at">dunnet =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb362-20"><a href="differential-abundance.html#cb362-20" tabindex="-1"></a>  <span class="at">trend =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb362-21"><a href="differential-abundance.html#cb362-21" tabindex="-1"></a>  <span class="at">iter_control =</span> <span class="fu">list</span>(</span>
+<span id="cb362-22"><a href="differential-abundance.html#cb362-22" tabindex="-1"></a>    <span class="at">tol =</span> <span class="fl">1e-5</span>,</span>
+<span id="cb362-23"><a href="differential-abundance.html#cb362-23" tabindex="-1"></a>    <span class="at">max_iter =</span> <span class="dv">20</span>,</span>
+<span id="cb362-24"><a href="differential-abundance.html#cb362-24" tabindex="-1"></a>    <span class="at">verbose =</span> <span class="cn">FALSE</span></span>
+<span id="cb362-25"><a href="differential-abundance.html#cb362-25" tabindex="-1"></a>  ),</span>
+<span id="cb362-26"><a href="differential-abundance.html#cb362-26" tabindex="-1"></a>  <span class="at">em_control =</span> <span class="fu">list</span>(<span class="at">tol =</span> <span class="fl">1e-5</span>, <span class="at">max_iter =</span> <span class="dv">100</span>),</span>
+<span id="cb362-27"><a href="differential-abundance.html#cb362-27" tabindex="-1"></a>  <span class="at">mdfdr_control =</span> <span class="fu">list</span>(<span class="at">fwer_ctrl_method =</span> <span class="st">&quot;holm&quot;</span>, <span class="at">B =</span> <span class="dv">100</span>),</span>
+<span id="cb362-28"><a href="differential-abundance.html#cb362-28" tabindex="-1"></a>  <span class="at">trend_control =</span> <span class="cn">NULL</span></span>
+<span id="cb362-29"><a href="differential-abundance.html#cb362-29" tabindex="-1"></a>)</span></code></pre></div>
 <div id="structural-zeros-1" class="section level4 hasAnchor" number="7.1.2.1">
 <h4><span class="header-section-number">7.1.2.1</span> Structural zeros<a href="differential-abundance.html#structural-zeros-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><strong><em>Total number of structural zeros</em></strong></p>
-<div class="sourceCode" id="cb351"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb351-1"><a href="differential-abundance.html#cb351-1" tabindex="-1"></a><span class="co"># Extract structural zeros</span></span>
-<span id="cb351-2"><a href="differential-abundance.html#cb351-2" tabindex="-1"></a>structural_zeros <span class="ot">&lt;-</span> ancom_rand_output_phylum_metab<span class="sc">$</span>zero_ind</span>
-<span id="cb351-3"><a href="differential-abundance.html#cb351-3" tabindex="-1"></a></span>
-<span id="cb351-4"><a href="differential-abundance.html#cb351-4" tabindex="-1"></a><span class="co"># Convert to a data frame for better readability</span></span>
-<span id="cb351-5"><a href="differential-abundance.html#cb351-5" tabindex="-1"></a>structural_zeros_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(structural_zeros) <span class="sc">%&gt;%</span> </span>
-<span id="cb351-6"><a href="differential-abundance.html#cb351-6" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(., <span class="st">&quot;taxon&quot;</span>)</span>
-<span id="cb351-7"><a href="differential-abundance.html#cb351-7" tabindex="-1"></a></span>
-<span id="cb351-8"><a href="differential-abundance.html#cb351-8" tabindex="-1"></a>structural_zero_taxa <span class="ot">&lt;-</span> <span class="fu">rownames</span>(structural_zeros_df)[<span class="fu">apply</span>(structural_zeros_df, <span class="dv">1</span>, any)]</span>
-<span id="cb351-9"><a href="differential-abundance.html#cb351-9" tabindex="-1"></a></span>
-<span id="cb351-10"><a href="differential-abundance.html#cb351-10" tabindex="-1"></a><span class="co"># Identify in which groups each taxon is a structural zero</span></span>
-<span id="cb351-11"><a href="differential-abundance.html#cb351-11" tabindex="-1"></a>structural_zero_groups <span class="ot">&lt;-</span> structural_zeros_df[structural_zero_taxa, , drop <span class="ot">=</span> <span class="cn">FALSE</span>] <span class="sc">%&gt;%</span> </span>
-<span id="cb351-12"><a href="differential-abundance.html#cb351-12" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">&quot;Eb&quot;</span><span class="ot">=</span><span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb351-13"><a href="differential-abundance.html#cb351-13" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">&quot;Ha&quot;</span><span class="ot">=</span><span class="dv">2</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb351-14"><a href="differential-abundance.html#cb351-14" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">&quot;Pk&quot;</span><span class="ot">=</span><span class="dv">3</span>) </span>
-<span id="cb351-15"><a href="differential-abundance.html#cb351-15" tabindex="-1"></a></span>
-<span id="cb351-16"><a href="differential-abundance.html#cb351-16" tabindex="-1"></a><span class="co"># Total number of structural zeros</span></span>
-<span id="cb351-17"><a href="differential-abundance.html#cb351-17" tabindex="-1"></a><span class="fu">nrow</span>(structural_zero_groups)</span></code></pre></div>
+<div class="sourceCode" id="cb363"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb363-1"><a href="differential-abundance.html#cb363-1" tabindex="-1"></a><span class="co"># Extract structural zeros</span></span>
+<span id="cb363-2"><a href="differential-abundance.html#cb363-2" tabindex="-1"></a>structural_zeros <span class="ot">&lt;-</span> ancom_rand_output_phylum_metab<span class="sc">$</span>zero_ind</span>
+<span id="cb363-3"><a href="differential-abundance.html#cb363-3" tabindex="-1"></a></span>
+<span id="cb363-4"><a href="differential-abundance.html#cb363-4" tabindex="-1"></a><span class="co"># Convert to a data frame for better readability</span></span>
+<span id="cb363-5"><a href="differential-abundance.html#cb363-5" tabindex="-1"></a>structural_zeros_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(structural_zeros) <span class="sc">%&gt;%</span> </span>
+<span id="cb363-6"><a href="differential-abundance.html#cb363-6" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(., <span class="st">&quot;taxon&quot;</span>)</span>
+<span id="cb363-7"><a href="differential-abundance.html#cb363-7" tabindex="-1"></a></span>
+<span id="cb363-8"><a href="differential-abundance.html#cb363-8" tabindex="-1"></a>structural_zero_taxa <span class="ot">&lt;-</span> <span class="fu">rownames</span>(structural_zeros_df)[<span class="fu">apply</span>(structural_zeros_df, <span class="dv">1</span>, any)]</span>
+<span id="cb363-9"><a href="differential-abundance.html#cb363-9" tabindex="-1"></a></span>
+<span id="cb363-10"><a href="differential-abundance.html#cb363-10" tabindex="-1"></a><span class="co"># Identify in which groups each taxon is a structural zero</span></span>
+<span id="cb363-11"><a href="differential-abundance.html#cb363-11" tabindex="-1"></a>structural_zero_groups <span class="ot">&lt;-</span> structural_zeros_df[structural_zero_taxa, , drop <span class="ot">=</span> <span class="cn">FALSE</span>] <span class="sc">%&gt;%</span> </span>
+<span id="cb363-12"><a href="differential-abundance.html#cb363-12" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">&quot;Eb&quot;</span><span class="ot">=</span><span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb363-13"><a href="differential-abundance.html#cb363-13" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">&quot;Ha&quot;</span><span class="ot">=</span><span class="dv">2</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb363-14"><a href="differential-abundance.html#cb363-14" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">&quot;Pk&quot;</span><span class="ot">=</span><span class="dv">3</span>) </span>
+<span id="cb363-15"><a href="differential-abundance.html#cb363-15" tabindex="-1"></a></span>
+<span id="cb363-16"><a href="differential-abundance.html#cb363-16" tabindex="-1"></a><span class="co"># Total number of structural zeros</span></span>
+<span id="cb363-17"><a href="differential-abundance.html#cb363-17" tabindex="-1"></a><span class="fu">nrow</span>(structural_zero_groups)</span></code></pre></div>
 <pre class="script-output"><code>[1] 12</code></pre>
 </div>
 <div id="enriched-data-1" class="section level4 hasAnchor" number="7.1.2.2">
 <h4><span class="header-section-number">7.1.2.2</span> Enriched data<a href="differential-abundance.html#enriched-data-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<div class="sourceCode" id="cb353"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb353-1"><a href="differential-abundance.html#cb353-1" tabindex="-1"></a>res_pair_phylum <span class="ot">&lt;-</span> ancom_rand_output_phylum_metab<span class="sc">$</span>res_pair</span>
-<span id="cb353-2"><a href="differential-abundance.html#cb353-2" tabindex="-1"></a><span class="co"># Get log-fold change and q-value columns</span></span>
-<span id="cb353-3"><a href="differential-abundance.html#cb353-3" tabindex="-1"></a>lfc_cols <span class="ot">&lt;-</span> <span class="fu">grep</span>(<span class="st">&quot;^lfc_&quot;</span>, <span class="fu">colnames</span>(res_pair_phylum), <span class="at">value =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb353-4"><a href="differential-abundance.html#cb353-4" tabindex="-1"></a>q_cols   <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;^lfc_&quot;</span>, <span class="st">&quot;q_&quot;</span>, lfc_cols)</span>
-<span id="cb353-5"><a href="differential-abundance.html#cb353-5" tabindex="-1"></a></span>
-<span id="cb353-6"><a href="differential-abundance.html#cb353-6" tabindex="-1"></a><span class="co"># Build long table by pairing lfc and q for each contrast</span></span>
-<span id="cb353-7"><a href="differential-abundance.html#cb353-7" tabindex="-1"></a>plot_data_phylum <span class="ot">&lt;-</span> lfc_cols <span class="sc">%&gt;%</span></span>
-<span id="cb353-8"><a href="differential-abundance.html#cb353-8" tabindex="-1"></a>  <span class="fu">setNames</span>(<span class="at">nm =</span> .) <span class="sc">%&gt;%</span></span>
-<span id="cb353-9"><a href="differential-abundance.html#cb353-9" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">imap_dfr</span>(<span class="cf">function</span>(lfc_col, name) {</span>
-<span id="cb353-10"><a href="differential-abundance.html#cb353-10" tabindex="-1"></a>    q_col <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;^lfc_&quot;</span>, <span class="st">&quot;q_&quot;</span>, lfc_col)</span>
-<span id="cb353-11"><a href="differential-abundance.html#cb353-11" tabindex="-1"></a>    </span>
-<span id="cb353-12"><a href="differential-abundance.html#cb353-12" tabindex="-1"></a>    res_pair_phylum <span class="sc">%&gt;%</span></span>
-<span id="cb353-13"><a href="differential-abundance.html#cb353-13" tabindex="-1"></a>      <span class="fu">select</span>(taxon, <span class="sc">!!</span>lfc_col, <span class="sc">!!</span>q_col) <span class="sc">%&gt;%</span></span>
-<span id="cb353-14"><a href="differential-abundance.html#cb353-14" tabindex="-1"></a>      <span class="fu">rename</span>(</span>
-<span id="cb353-15"><a href="differential-abundance.html#cb353-15" tabindex="-1"></a>        <span class="at">lfc =</span> <span class="sc">!!</span>lfc_col,</span>
-<span id="cb353-16"><a href="differential-abundance.html#cb353-16" tabindex="-1"></a>        <span class="at">q   =</span> <span class="sc">!!</span>q_col</span>
-<span id="cb353-17"><a href="differential-abundance.html#cb353-17" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span></span>
-<span id="cb353-18"><a href="differential-abundance.html#cb353-18" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">contrast_key =</span> name)</span>
-<span id="cb353-19"><a href="differential-abundance.html#cb353-19" tabindex="-1"></a>  }) <span class="sc">%&gt;%</span></span>
-<span id="cb353-20"><a href="differential-abundance.html#cb353-20" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(lfc), <span class="sc">!</span><span class="fu">is.na</span>(q), q <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb353-21"><a href="differential-abundance.html#cb353-21" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb353-22"><a href="differential-abundance.html#cb353-22" tabindex="-1"></a>    <span class="co"># Manually re-label contrasts for clarity</span></span>
-<span id="cb353-23"><a href="differential-abundance.html#cb353-23" tabindex="-1"></a>    <span class="at">contrast =</span> <span class="fu">case_when</span>(</span>
-<span id="cb353-24"><a href="differential-abundance.html#cb353-24" tabindex="-1"></a>      contrast_key <span class="sc">==</span> <span class="st">&quot;lfc_SpeciesHa&quot;</span> <span class="sc">~</span> <span class="st">&quot;H. ariel vs C. bottae&quot;</span>,</span>
-<span id="cb353-25"><a href="differential-abundance.html#cb353-25" tabindex="-1"></a>      contrast_key <span class="sc">==</span> <span class="st">&quot;lfc_SpeciesPk&quot;</span> <span class="sc">~</span> <span class="st">&quot;P. kuhlii vs C. bottae&quot;</span>,</span>
-<span id="cb353-26"><a href="differential-abundance.html#cb353-26" tabindex="-1"></a>      contrast_key <span class="sc">==</span> <span class="st">&quot;lfc_SpeciesPk_SpeciesHa&quot;</span> <span class="sc">~</span> <span class="st">&quot;P. kuhlii vs H. ariel&quot;</span>,</span>
-<span id="cb353-27"><a href="differential-abundance.html#cb353-27" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> contrast_key</span>
-<span id="cb353-28"><a href="differential-abundance.html#cb353-28" tabindex="-1"></a>    ),</span>
-<span id="cb353-29"><a href="differential-abundance.html#cb353-29" tabindex="-1"></a>    <span class="at">direction =</span> <span class="fu">ifelse</span>(lfc <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">paste</span>(<span class="st">&quot;Enriched in&quot;</span>, <span class="fu">sub</span>(<span class="st">&quot; vs.*&quot;</span>, <span class="st">&quot;&quot;</span>, contrast)),</span>
-<span id="cb353-30"><a href="differential-abundance.html#cb353-30" tabindex="-1"></a>                             <span class="fu">paste</span>(<span class="st">&quot;Enriched in&quot;</span>, <span class="fu">sub</span>(<span class="st">&quot;.*vs &quot;</span>, <span class="st">&quot;&quot;</span>, contrast)))</span>
-<span id="cb353-31"><a href="differential-abundance.html#cb353-31" tabindex="-1"></a>  )</span>
-<span id="cb353-32"><a href="differential-abundance.html#cb353-32" tabindex="-1"></a>plot_data_phylum</span></code></pre></div>
+<div class="sourceCode" id="cb365"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb365-1"><a href="differential-abundance.html#cb365-1" tabindex="-1"></a>res_pair_phylum <span class="ot">&lt;-</span> ancom_rand_output_phylum_metab<span class="sc">$</span>res_pair</span>
+<span id="cb365-2"><a href="differential-abundance.html#cb365-2" tabindex="-1"></a><span class="co"># Get log-fold change and q-value columns</span></span>
+<span id="cb365-3"><a href="differential-abundance.html#cb365-3" tabindex="-1"></a>lfc_cols <span class="ot">&lt;-</span> <span class="fu">grep</span>(<span class="st">&quot;^lfc_&quot;</span>, <span class="fu">colnames</span>(res_pair_phylum), <span class="at">value =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb365-4"><a href="differential-abundance.html#cb365-4" tabindex="-1"></a>q_cols   <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;^lfc_&quot;</span>, <span class="st">&quot;q_&quot;</span>, lfc_cols)</span>
+<span id="cb365-5"><a href="differential-abundance.html#cb365-5" tabindex="-1"></a></span>
+<span id="cb365-6"><a href="differential-abundance.html#cb365-6" tabindex="-1"></a><span class="co"># Build long table by pairing lfc and q for each contrast</span></span>
+<span id="cb365-7"><a href="differential-abundance.html#cb365-7" tabindex="-1"></a>plot_data_phylum <span class="ot">&lt;-</span> lfc_cols <span class="sc">%&gt;%</span></span>
+<span id="cb365-8"><a href="differential-abundance.html#cb365-8" tabindex="-1"></a>  <span class="fu">setNames</span>(<span class="at">nm =</span> .) <span class="sc">%&gt;%</span></span>
+<span id="cb365-9"><a href="differential-abundance.html#cb365-9" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">imap_dfr</span>(<span class="cf">function</span>(lfc_col, name) {</span>
+<span id="cb365-10"><a href="differential-abundance.html#cb365-10" tabindex="-1"></a>    q_col <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;^lfc_&quot;</span>, <span class="st">&quot;q_&quot;</span>, lfc_col)</span>
+<span id="cb365-11"><a href="differential-abundance.html#cb365-11" tabindex="-1"></a>    </span>
+<span id="cb365-12"><a href="differential-abundance.html#cb365-12" tabindex="-1"></a>    res_pair_phylum <span class="sc">%&gt;%</span></span>
+<span id="cb365-13"><a href="differential-abundance.html#cb365-13" tabindex="-1"></a>      <span class="fu">select</span>(taxon, <span class="sc">!!</span>lfc_col, <span class="sc">!!</span>q_col) <span class="sc">%&gt;%</span></span>
+<span id="cb365-14"><a href="differential-abundance.html#cb365-14" tabindex="-1"></a>      <span class="fu">rename</span>(</span>
+<span id="cb365-15"><a href="differential-abundance.html#cb365-15" tabindex="-1"></a>        <span class="at">lfc =</span> <span class="sc">!!</span>lfc_col,</span>
+<span id="cb365-16"><a href="differential-abundance.html#cb365-16" tabindex="-1"></a>        <span class="at">q   =</span> <span class="sc">!!</span>q_col</span>
+<span id="cb365-17"><a href="differential-abundance.html#cb365-17" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span></span>
+<span id="cb365-18"><a href="differential-abundance.html#cb365-18" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">contrast_key =</span> name)</span>
+<span id="cb365-19"><a href="differential-abundance.html#cb365-19" tabindex="-1"></a>  }) <span class="sc">%&gt;%</span></span>
+<span id="cb365-20"><a href="differential-abundance.html#cb365-20" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(lfc), <span class="sc">!</span><span class="fu">is.na</span>(q), q <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb365-21"><a href="differential-abundance.html#cb365-21" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb365-22"><a href="differential-abundance.html#cb365-22" tabindex="-1"></a>    <span class="co"># Manually re-label contrasts for clarity</span></span>
+<span id="cb365-23"><a href="differential-abundance.html#cb365-23" tabindex="-1"></a>    <span class="at">contrast =</span> <span class="fu">case_when</span>(</span>
+<span id="cb365-24"><a href="differential-abundance.html#cb365-24" tabindex="-1"></a>      contrast_key <span class="sc">==</span> <span class="st">&quot;lfc_SpeciesHa&quot;</span> <span class="sc">~</span> <span class="st">&quot;H. ariel vs C. bottae&quot;</span>,</span>
+<span id="cb365-25"><a href="differential-abundance.html#cb365-25" tabindex="-1"></a>      contrast_key <span class="sc">==</span> <span class="st">&quot;lfc_SpeciesPk&quot;</span> <span class="sc">~</span> <span class="st">&quot;P. kuhlii vs C. bottae&quot;</span>,</span>
+<span id="cb365-26"><a href="differential-abundance.html#cb365-26" tabindex="-1"></a>      contrast_key <span class="sc">==</span> <span class="st">&quot;lfc_SpeciesPk_SpeciesHa&quot;</span> <span class="sc">~</span> <span class="st">&quot;P. kuhlii vs H. ariel&quot;</span>,</span>
+<span id="cb365-27"><a href="differential-abundance.html#cb365-27" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> contrast_key</span>
+<span id="cb365-28"><a href="differential-abundance.html#cb365-28" tabindex="-1"></a>    ),</span>
+<span id="cb365-29"><a href="differential-abundance.html#cb365-29" tabindex="-1"></a>    <span class="at">direction =</span> <span class="fu">ifelse</span>(lfc <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">paste</span>(<span class="st">&quot;Enriched in&quot;</span>, <span class="fu">sub</span>(<span class="st">&quot; vs.*&quot;</span>, <span class="st">&quot;&quot;</span>, contrast)),</span>
+<span id="cb365-30"><a href="differential-abundance.html#cb365-30" tabindex="-1"></a>                             <span class="fu">paste</span>(<span class="st">&quot;Enriched in&quot;</span>, <span class="fu">sub</span>(<span class="st">&quot;.*vs &quot;</span>, <span class="st">&quot;&quot;</span>, contrast)))</span>
+<span id="cb365-31"><a href="differential-abundance.html#cb365-31" tabindex="-1"></a>  )</span>
+<span id="cb365-32"><a href="differential-abundance.html#cb365-32" tabindex="-1"></a>plot_data_phylum</span></code></pre></div>
 <pre class="script-output"><code>            taxon       lfc          q            contrast_key               contrast             direction
 1 Cyanobacteriota -1.606842 0.04418075           lfc_SpeciesHa  H. ariel vs C. bottae Enriched in C. bottae
 2    Synergistota -2.144107 0.01274277           lfc_SpeciesHa  H. ariel vs C. bottae Enriched in C. bottae
@@ -2562,91 +2565,21 @@ color: #a52929;
 </div>
 <div id="differences-between-methods-accross-species" class="section level3 hasAnchor" number="7.1.3">
 <h3><span class="header-section-number">7.1.3</span> Differences between methods accross species<a href="differential-abundance.html#differences-between-methods-accross-species" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<div class="sourceCode" id="cb355"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb355-1"><a href="differential-abundance.html#cb355-1" tabindex="-1"></a>phylo_genome <span class="ot">&lt;-</span> merged_table_phylum <span class="sc">%&gt;%</span></span>
-<span id="cb355-2"><a href="differential-abundance.html#cb355-2" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;phylum&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb355-3"><a href="differential-abundance.html#cb355-3" tabindex="-1"></a>  <span class="fu">otu_table</span>(., <span class="at">taxa_are_rows =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb355-4"><a href="differential-abundance.html#cb355-4" tabindex="-1"></a></span>
-<span id="cb355-5"><a href="differential-abundance.html#cb355-5" tabindex="-1"></a>phylo_samples <span class="ot">&lt;-</span> all_samples<span class="sc">%&gt;%</span> </span>
-<span id="cb355-6"><a href="differential-abundance.html#cb355-6" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">individual=</span>sample)<span class="sc">%&gt;%</span></span>
-<span id="cb355-7"><a href="differential-abundance.html#cb355-7" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb355-8"><a href="differential-abundance.html#cb355-8" tabindex="-1"></a>  <span class="fu">sample_data</span>()</span>
-<span id="cb355-9"><a href="differential-abundance.html#cb355-9" tabindex="-1"></a></span>
-<span id="cb355-10"><a href="differential-abundance.html#cb355-10" tabindex="-1"></a>merged_physeq_phylum <span class="ot">&lt;-</span> <span class="fu">phyloseq</span>(phylo_genome, phylo_samples)</span></code></pre></div>
+<div class="sourceCode" id="cb367"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb367-1"><a href="differential-abundance.html#cb367-1" tabindex="-1"></a>phylo_genome <span class="ot">&lt;-</span> merged_table_phylum <span class="sc">%&gt;%</span></span>
+<span id="cb367-2"><a href="differential-abundance.html#cb367-2" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;phylum&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb367-3"><a href="differential-abundance.html#cb367-3" tabindex="-1"></a>  <span class="fu">otu_table</span>(., <span class="at">taxa_are_rows =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb367-4"><a href="differential-abundance.html#cb367-4" tabindex="-1"></a></span>
+<span id="cb367-5"><a href="differential-abundance.html#cb367-5" tabindex="-1"></a>phylo_samples <span class="ot">&lt;-</span> all_samples<span class="sc">%&gt;%</span> </span>
+<span id="cb367-6"><a href="differential-abundance.html#cb367-6" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">individual=</span>sample)<span class="sc">%&gt;%</span></span>
+<span id="cb367-7"><a href="differential-abundance.html#cb367-7" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb367-8"><a href="differential-abundance.html#cb367-8" tabindex="-1"></a>  <span class="fu">sample_data</span>()</span>
+<span id="cb367-9"><a href="differential-abundance.html#cb367-9" tabindex="-1"></a></span>
+<span id="cb367-10"><a href="differential-abundance.html#cb367-10" tabindex="-1"></a>merged_physeq_phylum <span class="ot">&lt;-</span> <span class="fu">phyloseq</span>(phylo_genome, phylo_samples)</span></code></pre></div>
 <div id="eptesicus" class="section level4 hasAnchor" number="7.1.3.1">
 <h4><span class="header-section-number">7.1.3.1</span> Eptesicus<a href="differential-abundance.html#eptesicus" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<div class="sourceCode" id="cb356"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb356-1"><a href="differential-abundance.html#cb356-1" tabindex="-1"></a>physeq_eb <span class="ot">&lt;-</span> <span class="fu">subset_samples</span>(merged_physeq_phylum, Species <span class="sc">==</span> <span class="st">&quot;Eb&quot;</span>)</span>
-<span id="cb356-2"><a href="differential-abundance.html#cb356-2" tabindex="-1"></a>physeq_eb <span class="ot">&lt;-</span> <span class="fu">prune_taxa</span>(<span class="fu">taxa_sums</span>(physeq_eb)<span class="sc">&gt;</span><span class="dv">0</span>, physeq_eb)</span></code></pre></div>
-<div class="sourceCode" id="cb357"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb357-1"><a href="differential-abundance.html#cb357-1" tabindex="-1"></a>ancom_rand_output_struc_eb <span class="ot">=</span> <span class="fu">ancombc2</span>(<span class="at">data =</span> physeq_eb, </span>
-<span id="cb357-2"><a href="differential-abundance.html#cb357-2" tabindex="-1"></a>                  <span class="at">assay_name =</span> <span class="st">&quot;counts&quot;</span>, </span>
-<span id="cb357-3"><a href="differential-abundance.html#cb357-3" tabindex="-1"></a>                  <span class="at">tax_level =</span> <span class="cn">NULL</span>,</span>
-<span id="cb357-4"><a href="differential-abundance.html#cb357-4" tabindex="-1"></a>                  <span class="at">fix_formula =</span> <span class="st">&quot;method&quot;</span>,</span>
-<span id="cb357-5"><a href="differential-abundance.html#cb357-5" tabindex="-1"></a>                  <span class="at">p_adj_method =</span> <span class="st">&quot;holm&quot;</span>, </span>
-<span id="cb357-6"><a href="differential-abundance.html#cb357-6" tabindex="-1"></a>                  <span class="at">pseudo_sens =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb357-7"><a href="differential-abundance.html#cb357-7" tabindex="-1"></a>                  <span class="at">prv_cut =</span><span class="dv">0</span>, </span>
-<span id="cb357-8"><a href="differential-abundance.html#cb357-8" tabindex="-1"></a>                  <span class="at">lib_cut =</span> <span class="dv">0</span>, </span>
-<span id="cb357-9"><a href="differential-abundance.html#cb357-9" tabindex="-1"></a>                  <span class="at">s0_perc =</span> <span class="fl">0.05</span>,</span>
-<span id="cb357-10"><a href="differential-abundance.html#cb357-10" tabindex="-1"></a>                  <span class="at">group =</span> <span class="st">&quot;method&quot;</span>, </span>
-<span id="cb357-11"><a href="differential-abundance.html#cb357-11" tabindex="-1"></a>                  <span class="at">struc_zero =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb357-12"><a href="differential-abundance.html#cb357-12" tabindex="-1"></a>                  <span class="at">neg_lb =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb357-13"><a href="differential-abundance.html#cb357-13" tabindex="-1"></a>                  <span class="at">alpha =</span> <span class="fl">0.05</span>, </span>
-<span id="cb357-14"><a href="differential-abundance.html#cb357-14" tabindex="-1"></a>                  <span class="at">n_cl =</span> <span class="dv">2</span>, </span>
-<span id="cb357-15"><a href="differential-abundance.html#cb357-15" tabindex="-1"></a>                  <span class="at">verbose =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb357-16"><a href="differential-abundance.html#cb357-16" tabindex="-1"></a>                  <span class="at">global =</span> <span class="cn">FALSE</span>, </span>
-<span id="cb357-17"><a href="differential-abundance.html#cb357-17" tabindex="-1"></a>                  <span class="at">pairwise =</span> <span class="cn">FALSE</span>, </span>
-<span id="cb357-18"><a href="differential-abundance.html#cb357-18" tabindex="-1"></a>                  <span class="at">dunnet =</span> <span class="cn">FALSE</span>, </span>
-<span id="cb357-19"><a href="differential-abundance.html#cb357-19" tabindex="-1"></a>                  <span class="at">trend =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb357-20"><a href="differential-abundance.html#cb357-20" tabindex="-1"></a>                  <span class="at">iter_control =</span> <span class="fu">list</span>(<span class="at">tol =</span> <span class="fl">1e-5</span>, <span class="at">max_iter =</span> <span class="dv">20</span>, <span class="at">verbose =</span> <span class="cn">FALSE</span>),</span>
-<span id="cb357-21"><a href="differential-abundance.html#cb357-21" tabindex="-1"></a>                  <span class="at">em_control =</span> <span class="fu">list</span>(<span class="at">tol =</span> <span class="fl">1e-5</span>, <span class="at">max_iter =</span> <span class="dv">100</span>),</span>
-<span id="cb357-22"><a href="differential-abundance.html#cb357-22" tabindex="-1"></a>                  <span class="at">mdfdr_control =</span> <span class="fu">list</span>(<span class="at">fwer_ctrl_method =</span> <span class="st">&quot;holm&quot;</span>, <span class="at">B =</span> <span class="dv">100</span>), </span>
-<span id="cb357-23"><a href="differential-abundance.html#cb357-23" tabindex="-1"></a>                  <span class="at">trend_control =</span> <span class="cn">NULL</span>)</span></code></pre></div>
-<p><strong><em>Total structural zeros</em></strong></p>
-<div class="sourceCode" id="cb358"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb358-1"><a href="differential-abundance.html#cb358-1" tabindex="-1"></a>structural_zeros <span class="ot">&lt;-</span> ancom_rand_output_struc_eb<span class="sc">$</span>zero_ind</span>
-<span id="cb358-2"><a href="differential-abundance.html#cb358-2" tabindex="-1"></a></span>
-<span id="cb358-3"><a href="differential-abundance.html#cb358-3" tabindex="-1"></a>structural_zeros_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(structural_zeros) <span class="sc">%&gt;%</span> </span>
-<span id="cb358-4"><a href="differential-abundance.html#cb358-4" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(., <span class="st">&quot;taxon&quot;</span>)</span>
-<span id="cb358-5"><a href="differential-abundance.html#cb358-5" tabindex="-1"></a></span>
-<span id="cb358-6"><a href="differential-abundance.html#cb358-6" tabindex="-1"></a>structural_zero_taxa <span class="ot">&lt;-</span> <span class="fu">rownames</span>(structural_zeros_df)[<span class="fu">apply</span>(structural_zeros_df, <span class="dv">1</span>, any)]</span>
-<span id="cb358-7"><a href="differential-abundance.html#cb358-7" tabindex="-1"></a></span>
-<span id="cb358-8"><a href="differential-abundance.html#cb358-8" tabindex="-1"></a>structural_zero_groups <span class="ot">&lt;-</span> structural_zeros_df[structural_zero_taxa, , drop <span class="ot">=</span> <span class="cn">FALSE</span>] <span class="sc">%&gt;%</span> </span>
-<span id="cb358-9"><a href="differential-abundance.html#cb358-9" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">&quot;amplicon&quot;</span><span class="ot">=</span><span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb358-10"><a href="differential-abundance.html#cb358-10" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">&quot;shotgun&quot;</span><span class="ot">=</span><span class="dv">2</span>)</span>
-<span id="cb358-11"><a href="differential-abundance.html#cb358-11" tabindex="-1"></a></span>
-<span id="cb358-12"><a href="differential-abundance.html#cb358-12" tabindex="-1"></a><span class="fu">nrow</span>(structural_zero_groups)</span></code></pre></div>
-<pre class="script-output"><code>[1] 8</code></pre>
-<p><strong><em>Structural zeros in amplicon</em></strong></p>
-<div class="sourceCode" id="cb360"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb360-1"><a href="differential-abundance.html#cb360-1" tabindex="-1"></a>structural_zero_groups <span class="sc">%&gt;%</span> </span>
-<span id="cb360-2"><a href="differential-abundance.html#cb360-2" tabindex="-1"></a>  <span class="fu">filter</span>(amplicon<span class="sc">==</span><span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb360-3"><a href="differential-abundance.html#cb360-3" tabindex="-1"></a>  <span class="fu">nrow</span>()</span></code></pre></div>
-<pre class="script-output"><code>[1] 0</code></pre>
-<div class="sourceCode" id="cb362"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb362-1"><a href="differential-abundance.html#cb362-1" tabindex="-1"></a>structural_zero_groups <span class="sc">%&gt;%</span> </span>
-<span id="cb362-2"><a href="differential-abundance.html#cb362-2" tabindex="-1"></a>  <span class="fu">filter</span>(amplicon<span class="sc">==</span><span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb362-3"><a href="differential-abundance.html#cb362-3" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(., <span class="st">&quot;phylum&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb362-4"><a href="differential-abundance.html#cb362-4" tabindex="-1"></a>  <span class="fu">left_join</span>(., <span class="fu">data.frame</span>(physeq_eb<span class="sc">@</span>tax_table) <span class="sc">%&gt;%</span> <span class="fu">rownames_to_column</span>(., <span class="st">&quot;phylum&quot;</span>), <span class="at">by=</span><span class="st">&quot;phylum&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb362-5"><a href="differential-abundance.html#cb362-5" tabindex="-1"></a>  <span class="fu">select</span>(phylum) <span class="sc">%&gt;%</span> </span>
-<span id="cb362-6"><a href="differential-abundance.html#cb362-6" tabindex="-1"></a>  <span class="fu">pull</span>()</span></code></pre></div>
-<pre class="script-output"><code>character(0)</code></pre>
-<p><strong><em>Structural zeros in shotgun</em></strong></p>
-<div class="sourceCode" id="cb364"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb364-1"><a href="differential-abundance.html#cb364-1" tabindex="-1"></a>structural_zero_groups <span class="sc">%&gt;%</span> </span>
-<span id="cb364-2"><a href="differential-abundance.html#cb364-2" tabindex="-1"></a>  <span class="fu">filter</span>(shotgun<span class="sc">==</span><span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb364-3"><a href="differential-abundance.html#cb364-3" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(., <span class="st">&quot;phylum&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb364-4"><a href="differential-abundance.html#cb364-4" tabindex="-1"></a>  <span class="fu">left_join</span>(., <span class="fu">data.frame</span>(physeq_eb<span class="sc">@</span>tax_table) <span class="sc">%&gt;%</span> <span class="fu">rownames_to_column</span>(., <span class="st">&quot;phylum&quot;</span>), <span class="at">by=</span><span class="st">&quot;phylum&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb364-5"><a href="differential-abundance.html#cb364-5" tabindex="-1"></a>  <span class="fu">select</span>(phylum) <span class="sc">%&gt;%</span> </span>
-<span id="cb364-6"><a href="differential-abundance.html#cb364-6" tabindex="-1"></a>  <span class="fu">pull</span>()</span></code></pre></div>
-<pre class="script-output"><code>[1] &quot;Actinomycetota&quot;       &quot;Apal-E12&quot;             &quot;Cyanobacteriota&quot;      &quot;Halobacterota&quot;        &quot;Patescibacteria&quot;      &quot;Rs-K70 termite group&quot;
-[7] &quot;Spirochaetota&quot;        &quot;Verrucomicrobiota&quot;   </code></pre>
-<p><strong><em>Phyla differentially abundant</em></strong></p>
-<div class="sourceCode" id="cb366"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb366-1"><a href="differential-abundance.html#cb366-1" tabindex="-1"></a>ancom_rand_output_struc_eb<span class="sc">$</span>res <span class="sc">%&gt;%</span> </span>
-<span id="cb366-2"><a href="differential-abundance.html#cb366-2" tabindex="-1"></a>  <span class="fu">filter</span>(q_methodMetagenomics<span class="sc">&lt;</span><span class="fl">0.05</span>)</span></code></pre></div>
-<pre class="script-output"><code> [1] taxon                        lfc_(Intercept)              lfc_methodMetagenomics       se_(Intercept)               se_methodMetagenomics       
- [6] W_(Intercept)                W_methodMetagenomics         p_(Intercept)                p_methodMetagenomics         q_(Intercept)               
-[11] q_methodMetagenomics         diff_(Intercept)             diff_methodMetagenomics      passed_ss_(Intercept)        passed_ss_methodMetagenomics
-&lt;0 rows&gt; (or 0-length row.names)</code></pre>
-</div>
-<div id="pipistrellus" class="section level4 hasAnchor" number="7.1.3.2">
-<h4><span class="header-section-number">7.1.3.2</span> Pipistrellus<a href="differential-abundance.html#pipistrellus" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<div class="sourceCode" id="cb368"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb368-1"><a href="differential-abundance.html#cb368-1" tabindex="-1"></a>physeq_pk <span class="ot">&lt;-</span> <span class="fu">subset_samples</span>(merged_physeq_phylum, Species <span class="sc">==</span> <span class="st">&quot;Pk&quot;</span>)</span>
-<span id="cb368-2"><a href="differential-abundance.html#cb368-2" tabindex="-1"></a>physeq_pk <span class="ot">&lt;-</span> <span class="fu">prune_taxa</span>(<span class="fu">taxa_sums</span>(physeq_pk)<span class="sc">&gt;</span><span class="dv">0</span>, physeq_pk)</span></code></pre></div>
-<div class="sourceCode" id="cb369"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb369-1"><a href="differential-abundance.html#cb369-1" tabindex="-1"></a>ancom_rand_output_struc_pk <span class="ot">=</span> <span class="fu">ancombc2</span>(<span class="at">data =</span> physeq_pk, </span>
+<div class="sourceCode" id="cb368"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb368-1"><a href="differential-abundance.html#cb368-1" tabindex="-1"></a>physeq_eb <span class="ot">&lt;-</span> <span class="fu">subset_samples</span>(merged_physeq_phylum, Species <span class="sc">==</span> <span class="st">&quot;Eb&quot;</span>)</span>
+<span id="cb368-2"><a href="differential-abundance.html#cb368-2" tabindex="-1"></a>physeq_eb <span class="ot">&lt;-</span> <span class="fu">prune_taxa</span>(<span class="fu">taxa_sums</span>(physeq_eb)<span class="sc">&gt;</span><span class="dv">0</span>, physeq_eb)</span></code></pre></div>
+<div class="sourceCode" id="cb369"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb369-1"><a href="differential-abundance.html#cb369-1" tabindex="-1"></a>ancom_rand_output_struc_eb <span class="ot">=</span> <span class="fu">ancombc2</span>(<span class="at">data =</span> physeq_eb, </span>
 <span id="cb369-2"><a href="differential-abundance.html#cb369-2" tabindex="-1"></a>                  <span class="at">assay_name =</span> <span class="st">&quot;counts&quot;</span>, </span>
 <span id="cb369-3"><a href="differential-abundance.html#cb369-3" tabindex="-1"></a>                  <span class="at">tax_level =</span> <span class="cn">NULL</span>,</span>
 <span id="cb369-4"><a href="differential-abundance.html#cb369-4" tabindex="-1"></a>                  <span class="at">fix_formula =</span> <span class="st">&quot;method&quot;</span>,</span>
@@ -2670,7 +2603,7 @@ color: #a52929;
 <span id="cb369-22"><a href="differential-abundance.html#cb369-22" tabindex="-1"></a>                  <span class="at">mdfdr_control =</span> <span class="fu">list</span>(<span class="at">fwer_ctrl_method =</span> <span class="st">&quot;holm&quot;</span>, <span class="at">B =</span> <span class="dv">100</span>), </span>
 <span id="cb369-23"><a href="differential-abundance.html#cb369-23" tabindex="-1"></a>                  <span class="at">trend_control =</span> <span class="cn">NULL</span>)</span></code></pre></div>
 <p><strong><em>Total structural zeros</em></strong></p>
-<div class="sourceCode" id="cb370"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb370-1"><a href="differential-abundance.html#cb370-1" tabindex="-1"></a>structural_zeros <span class="ot">&lt;-</span> ancom_rand_output_struc_pk<span class="sc">$</span>zero_ind</span>
+<div class="sourceCode" id="cb370"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb370-1"><a href="differential-abundance.html#cb370-1" tabindex="-1"></a>structural_zeros <span class="ot">&lt;-</span> ancom_rand_output_struc_eb<span class="sc">$</span>zero_ind</span>
 <span id="cb370-2"><a href="differential-abundance.html#cb370-2" tabindex="-1"></a></span>
 <span id="cb370-3"><a href="differential-abundance.html#cb370-3" tabindex="-1"></a>structural_zeros_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(structural_zeros) <span class="sc">%&gt;%</span> </span>
 <span id="cb370-4"><a href="differential-abundance.html#cb370-4" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(., <span class="st">&quot;taxon&quot;</span>)</span>
@@ -2682,7 +2615,7 @@ color: #a52929;
 <span id="cb370-10"><a href="differential-abundance.html#cb370-10" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">&quot;shotgun&quot;</span><span class="ot">=</span><span class="dv">2</span>)</span>
 <span id="cb370-11"><a href="differential-abundance.html#cb370-11" tabindex="-1"></a></span>
 <span id="cb370-12"><a href="differential-abundance.html#cb370-12" tabindex="-1"></a><span class="fu">nrow</span>(structural_zero_groups)</span></code></pre></div>
-<pre class="script-output"><code>[1] 16</code></pre>
+<pre class="script-output"><code>[1] 8</code></pre>
 <p><strong><em>Structural zeros in amplicon</em></strong></p>
 <div class="sourceCode" id="cb372"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb372-1"><a href="differential-abundance.html#cb372-1" tabindex="-1"></a>structural_zero_groups <span class="sc">%&gt;%</span> </span>
 <span id="cb372-2"><a href="differential-abundance.html#cb372-2" tabindex="-1"></a>  <span class="fu">filter</span>(amplicon<span class="sc">==</span><span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
@@ -2702,28 +2635,21 @@ color: #a52929;
 <span id="cb376-4"><a href="differential-abundance.html#cb376-4" tabindex="-1"></a>  <span class="fu">left_join</span>(., <span class="fu">data.frame</span>(physeq_eb<span class="sc">@</span>tax_table) <span class="sc">%&gt;%</span> <span class="fu">rownames_to_column</span>(., <span class="st">&quot;phylum&quot;</span>), <span class="at">by=</span><span class="st">&quot;phylum&quot;</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb376-5"><a href="differential-abundance.html#cb376-5" tabindex="-1"></a>  <span class="fu">select</span>(phylum) <span class="sc">%&gt;%</span> </span>
 <span id="cb376-6"><a href="differential-abundance.html#cb376-6" tabindex="-1"></a>  <span class="fu">pull</span>()</span></code></pre></div>
-<pre class="script-output"><code> [1] &quot;Actinomycetota&quot;       &quot;Bdellovibrionota&quot;     &quot;Chloroflexi&quot;          &quot;Crenarchaeota&quot;        &quot;Deferribacterota&quot;     &quot;Elusimicrobiota&quot;     
- [7] &quot;Euryarchaeota&quot;        &quot;Halobacterota&quot;        &quot;Myxococcota&quot;          &quot;Patescibacteria&quot;      &quot;Planctomycetota&quot;      &quot;Rs-K70 termite group&quot;
-[13] &quot;Spirochaetota&quot;        &quot;Thermoplasmatota&quot;     &quot;Thermotogota&quot;         &quot;Verrucomicrobiota&quot;   </code></pre>
+<pre class="script-output"><code>[1] &quot;Actinomycetota&quot;       &quot;Apal-E12&quot;             &quot;Cyanobacteriota&quot;      &quot;Halobacterota&quot;        &quot;Patescibacteria&quot;      &quot;Rs-K70 termite group&quot; &quot;Spirochaetota&quot;       
+[8] &quot;Verrucomicrobiota&quot;   </code></pre>
 <p><strong><em>Phyla differentially abundant</em></strong></p>
-<div class="sourceCode" id="cb378"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb378-1"><a href="differential-abundance.html#cb378-1" tabindex="-1"></a>ancom_rand_output_struc_pk<span class="sc">$</span>res <span class="sc">%&gt;%</span> </span>
+<div class="sourceCode" id="cb378"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb378-1"><a href="differential-abundance.html#cb378-1" tabindex="-1"></a>ancom_rand_output_struc_eb<span class="sc">$</span>res <span class="sc">%&gt;%</span> </span>
 <span id="cb378-2"><a href="differential-abundance.html#cb378-2" tabindex="-1"></a>  <span class="fu">filter</span>(q_methodMetagenomics<span class="sc">&lt;</span><span class="fl">0.05</span>)</span></code></pre></div>
-<pre class="script-output"><code>             taxon lfc_(Intercept) lfc_methodMetagenomics se_(Intercept) se_methodMetagenomics W_(Intercept) W_methodMetagenomics p_(Intercept)
-1        Bacillota      1.98449145              -2.314121      0.3442109             0.4565625     5.7653354            -5.068575  1.096998e-06
-2 Campylobacterota      0.09910009               3.343394      0.3448024             0.4075984     0.2874112             8.202667  7.880725e-01
-3   Fusobacteriota      0.64459182              -1.347873      0.2912710             0.3598786     2.2130309            -3.745355  4.401119e-02
-4   Pseudomonadota      2.23959102              -2.653918      0.3878315             0.5573918     5.7746492            -4.761314  9.048058e-07
-  p_methodMetagenomics q_(Intercept) q_methodMetagenomics diff_(Intercept) diff_methodMetagenomics passed_ss_(Intercept) passed_ss_methodMetagenomics
-1         1.008487e-05  7.678986e-06         8.067893e-05             TRUE                    TRUE                  TRUE                         TRUE
-2         1.203594e-03  1.000000e+00         7.221564e-03            FALSE                    TRUE                  TRUE                        FALSE
-3         2.173258e-03  2.640672e-01         1.086629e-02            FALSE                    TRUE                  TRUE                        FALSE
-4         2.408843e-05  7.238446e-06         1.686190e-04             TRUE                    TRUE                  TRUE                         TRUE</code></pre>
+<pre class="script-output"><code> [1] taxon                        lfc_(Intercept)              lfc_methodMetagenomics       se_(Intercept)               se_methodMetagenomics       
+ [6] W_(Intercept)                W_methodMetagenomics         p_(Intercept)                p_methodMetagenomics         q_(Intercept)               
+[11] q_methodMetagenomics         diff_(Intercept)             diff_methodMetagenomics      passed_ss_(Intercept)        passed_ss_methodMetagenomics
+&lt;0 rows&gt; (or 0-length row.names)</code></pre>
 </div>
-<div id="hypsugo" class="section level4 hasAnchor" number="7.1.3.3">
-<h4><span class="header-section-number">7.1.3.3</span> Hypsugo<a href="differential-abundance.html#hypsugo" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<div class="sourceCode" id="cb380"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb380-1"><a href="differential-abundance.html#cb380-1" tabindex="-1"></a>physeq_ha <span class="ot">&lt;-</span> <span class="fu">subset_samples</span>(merged_physeq_phylum, Species <span class="sc">==</span> <span class="st">&quot;Ha&quot;</span>)</span>
-<span id="cb380-2"><a href="differential-abundance.html#cb380-2" tabindex="-1"></a>physeq_ha <span class="ot">&lt;-</span> <span class="fu">prune_taxa</span>(<span class="fu">taxa_sums</span>(physeq_ha)<span class="sc">&gt;</span><span class="dv">0</span>, physeq_ha)</span></code></pre></div>
-<div class="sourceCode" id="cb381"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb381-1"><a href="differential-abundance.html#cb381-1" tabindex="-1"></a>ancom_rand_output_struc_ha <span class="ot">=</span> <span class="fu">ancombc2</span>(<span class="at">data =</span> physeq_ha, </span>
+<div id="pipistrellus" class="section level4 hasAnchor" number="7.1.3.2">
+<h4><span class="header-section-number">7.1.3.2</span> Pipistrellus<a href="differential-abundance.html#pipistrellus" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div class="sourceCode" id="cb380"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb380-1"><a href="differential-abundance.html#cb380-1" tabindex="-1"></a>physeq_pk <span class="ot">&lt;-</span> <span class="fu">subset_samples</span>(merged_physeq_phylum, Species <span class="sc">==</span> <span class="st">&quot;Pk&quot;</span>)</span>
+<span id="cb380-2"><a href="differential-abundance.html#cb380-2" tabindex="-1"></a>physeq_pk <span class="ot">&lt;-</span> <span class="fu">prune_taxa</span>(<span class="fu">taxa_sums</span>(physeq_pk)<span class="sc">&gt;</span><span class="dv">0</span>, physeq_pk)</span></code></pre></div>
+<div class="sourceCode" id="cb381"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb381-1"><a href="differential-abundance.html#cb381-1" tabindex="-1"></a>ancom_rand_output_struc_pk <span class="ot">=</span> <span class="fu">ancombc2</span>(<span class="at">data =</span> physeq_pk, </span>
 <span id="cb381-2"><a href="differential-abundance.html#cb381-2" tabindex="-1"></a>                  <span class="at">assay_name =</span> <span class="st">&quot;counts&quot;</span>, </span>
 <span id="cb381-3"><a href="differential-abundance.html#cb381-3" tabindex="-1"></a>                  <span class="at">tax_level =</span> <span class="cn">NULL</span>,</span>
 <span id="cb381-4"><a href="differential-abundance.html#cb381-4" tabindex="-1"></a>                  <span class="at">fix_formula =</span> <span class="st">&quot;method&quot;</span>,</span>
@@ -2747,7 +2673,7 @@ color: #a52929;
 <span id="cb381-22"><a href="differential-abundance.html#cb381-22" tabindex="-1"></a>                  <span class="at">mdfdr_control =</span> <span class="fu">list</span>(<span class="at">fwer_ctrl_method =</span> <span class="st">&quot;holm&quot;</span>, <span class="at">B =</span> <span class="dv">100</span>), </span>
 <span id="cb381-23"><a href="differential-abundance.html#cb381-23" tabindex="-1"></a>                  <span class="at">trend_control =</span> <span class="cn">NULL</span>)</span></code></pre></div>
 <p><strong><em>Total structural zeros</em></strong></p>
-<div class="sourceCode" id="cb382"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb382-1"><a href="differential-abundance.html#cb382-1" tabindex="-1"></a>structural_zeros <span class="ot">&lt;-</span> ancom_rand_output_struc_ha<span class="sc">$</span>zero_ind</span>
+<div class="sourceCode" id="cb382"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb382-1"><a href="differential-abundance.html#cb382-1" tabindex="-1"></a>structural_zeros <span class="ot">&lt;-</span> ancom_rand_output_struc_pk<span class="sc">$</span>zero_ind</span>
 <span id="cb382-2"><a href="differential-abundance.html#cb382-2" tabindex="-1"></a></span>
 <span id="cb382-3"><a href="differential-abundance.html#cb382-3" tabindex="-1"></a>structural_zeros_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(structural_zeros) <span class="sc">%&gt;%</span> </span>
 <span id="cb382-4"><a href="differential-abundance.html#cb382-4" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(., <span class="st">&quot;taxon&quot;</span>)</span>
@@ -2759,7 +2685,7 @@ color: #a52929;
 <span id="cb382-10"><a href="differential-abundance.html#cb382-10" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">&quot;shotgun&quot;</span><span class="ot">=</span><span class="dv">2</span>)</span>
 <span id="cb382-11"><a href="differential-abundance.html#cb382-11" tabindex="-1"></a></span>
 <span id="cb382-12"><a href="differential-abundance.html#cb382-12" tabindex="-1"></a><span class="fu">nrow</span>(structural_zero_groups)</span></code></pre></div>
-<pre class="script-output"><code>[1] 17</code></pre>
+<pre class="script-output"><code>[1] 16</code></pre>
 <p><strong><em>Structural zeros in amplicon</em></strong></p>
 <div class="sourceCode" id="cb384"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb384-1"><a href="differential-abundance.html#cb384-1" tabindex="-1"></a>structural_zero_groups <span class="sc">%&gt;%</span> </span>
 <span id="cb384-2"><a href="differential-abundance.html#cb384-2" tabindex="-1"></a>  <span class="fu">filter</span>(amplicon<span class="sc">==</span><span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
@@ -2779,20 +2705,97 @@ color: #a52929;
 <span id="cb388-4"><a href="differential-abundance.html#cb388-4" tabindex="-1"></a>  <span class="fu">left_join</span>(., <span class="fu">data.frame</span>(physeq_eb<span class="sc">@</span>tax_table) <span class="sc">%&gt;%</span> <span class="fu">rownames_to_column</span>(., <span class="st">&quot;phylum&quot;</span>), <span class="at">by=</span><span class="st">&quot;phylum&quot;</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb388-5"><a href="differential-abundance.html#cb388-5" tabindex="-1"></a>  <span class="fu">select</span>(phylum) <span class="sc">%&gt;%</span> </span>
 <span id="cb388-6"><a href="differential-abundance.html#cb388-6" tabindex="-1"></a>  <span class="fu">pull</span>()</span></code></pre></div>
-<pre class="script-output"><code> [1] &quot;Bdellovibrionota&quot;     &quot;Campylobacterota&quot;     &quot;Chloroflexi&quot;          &quot;Crenarchaeota&quot;        &quot;Cyanobacteriota&quot;      &quot;Deinococcota&quot;        
- [7] &quot;Desulfobacterota&quot;     &quot;Fusobacteriota&quot;       &quot;Halobacterota&quot;        &quot;Myxococcota&quot;          &quot;Patescibacteria&quot;      &quot;Planctomycetota&quot;     
-[13] &quot;Rs-K70 termite group&quot; &quot;Sumerlaeota&quot;          &quot;Synergistota&quot;         &quot;Thermoplasmatota&quot;     &quot;Verrucomicrobiota&quot;   </code></pre>
+<pre class="script-output"><code> [1] &quot;Actinomycetota&quot;       &quot;Bdellovibrionota&quot;     &quot;Chloroflexi&quot;          &quot;Crenarchaeota&quot;        &quot;Deferribacterota&quot;     &quot;Elusimicrobiota&quot;      &quot;Euryarchaeota&quot;       
+ [8] &quot;Halobacterota&quot;        &quot;Myxococcota&quot;          &quot;Patescibacteria&quot;      &quot;Planctomycetota&quot;      &quot;Rs-K70 termite group&quot; &quot;Spirochaetota&quot;        &quot;Thermoplasmatota&quot;    
+[15] &quot;Thermotogota&quot;         &quot;Verrucomicrobiota&quot;   </code></pre>
 <p><strong><em>Phyla differentially abundant</em></strong></p>
-<div class="sourceCode" id="cb390"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb390-1"><a href="differential-abundance.html#cb390-1" tabindex="-1"></a>ancom_rand_output_struc_ha<span class="sc">$</span>res <span class="sc">%&gt;%</span> </span>
+<div class="sourceCode" id="cb390"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb390-1"><a href="differential-abundance.html#cb390-1" tabindex="-1"></a>ancom_rand_output_struc_pk<span class="sc">$</span>res <span class="sc">%&gt;%</span> </span>
 <span id="cb390-2"><a href="differential-abundance.html#cb390-2" tabindex="-1"></a>  <span class="fu">filter</span>(q_methodMetagenomics<span class="sc">&lt;</span><span class="fl">0.05</span>)</span></code></pre></div>
-<pre class="script-output"><code>           taxon lfc_(Intercept) lfc_methodMetagenomics se_(Intercept) se_methodMetagenomics W_(Intercept) W_methodMetagenomics p_(Intercept)
-1 Actinomycetota      0.02419842               1.393204            NaN             0.3954669           NaN             3.522935             1
-2   Bacteroidota      0.25857020              -1.372544            NaN             0.4422462           NaN            -3.103575             1
-3 Pseudomonadota      2.95514355              -1.463117            NaN             0.2682871           NaN            -5.453549             1
-  p_methodMetagenomics q_(Intercept) q_methodMetagenomics diff_(Intercept) diff_methodMetagenomics passed_ss_(Intercept) passed_ss_methodMetagenomics
-1         2.823405e-03             1         1.129362e-02            FALSE                    TRUE                 FALSE                        FALSE
-2         6.454895e-03             1         1.936469e-02            FALSE                    TRUE                 FALSE                         TRUE
-3         4.058252e-06             1         2.029126e-05            FALSE                    TRUE                 FALSE                         TRUE</code></pre>
+<pre class="script-output"><code>             taxon lfc_(Intercept) lfc_methodMetagenomics se_(Intercept) se_methodMetagenomics W_(Intercept) W_methodMetagenomics p_(Intercept) p_methodMetagenomics
+1        Bacillota      1.98449145              -2.314121      0.3442109             0.4565625     5.7653354            -5.068575  1.096998e-06         1.008487e-05
+2 Campylobacterota      0.09910009               3.343394      0.3448024             0.4075984     0.2874112             8.202667  7.880725e-01         1.203594e-03
+3   Fusobacteriota      0.64459182              -1.347873      0.2912710             0.3598786     2.2130309            -3.745355  4.401119e-02         2.173258e-03
+4   Pseudomonadota      2.23959102              -2.653918      0.3878315             0.5573918     5.7746492            -4.761314  9.048058e-07         2.408843e-05
+  q_(Intercept) q_methodMetagenomics diff_(Intercept) diff_methodMetagenomics passed_ss_(Intercept) passed_ss_methodMetagenomics
+1  7.678986e-06         8.067893e-05             TRUE                    TRUE                  TRUE                         TRUE
+2  1.000000e+00         7.221564e-03            FALSE                    TRUE                  TRUE                        FALSE
+3  2.640672e-01         1.086629e-02            FALSE                    TRUE                  TRUE                        FALSE
+4  7.238446e-06         1.686190e-04             TRUE                    TRUE                  TRUE                         TRUE</code></pre>
+</div>
+<div id="hypsugo" class="section level4 hasAnchor" number="7.1.3.3">
+<h4><span class="header-section-number">7.1.3.3</span> Hypsugo<a href="differential-abundance.html#hypsugo" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div class="sourceCode" id="cb392"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb392-1"><a href="differential-abundance.html#cb392-1" tabindex="-1"></a>physeq_ha <span class="ot">&lt;-</span> <span class="fu">subset_samples</span>(merged_physeq_phylum, Species <span class="sc">==</span> <span class="st">&quot;Ha&quot;</span>)</span>
+<span id="cb392-2"><a href="differential-abundance.html#cb392-2" tabindex="-1"></a>physeq_ha <span class="ot">&lt;-</span> <span class="fu">prune_taxa</span>(<span class="fu">taxa_sums</span>(physeq_ha)<span class="sc">&gt;</span><span class="dv">0</span>, physeq_ha)</span></code></pre></div>
+<div class="sourceCode" id="cb393"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb393-1"><a href="differential-abundance.html#cb393-1" tabindex="-1"></a>ancom_rand_output_struc_ha <span class="ot">=</span> <span class="fu">ancombc2</span>(<span class="at">data =</span> physeq_ha, </span>
+<span id="cb393-2"><a href="differential-abundance.html#cb393-2" tabindex="-1"></a>                  <span class="at">assay_name =</span> <span class="st">&quot;counts&quot;</span>, </span>
+<span id="cb393-3"><a href="differential-abundance.html#cb393-3" tabindex="-1"></a>                  <span class="at">tax_level =</span> <span class="cn">NULL</span>,</span>
+<span id="cb393-4"><a href="differential-abundance.html#cb393-4" tabindex="-1"></a>                  <span class="at">fix_formula =</span> <span class="st">&quot;method&quot;</span>,</span>
+<span id="cb393-5"><a href="differential-abundance.html#cb393-5" tabindex="-1"></a>                  <span class="at">p_adj_method =</span> <span class="st">&quot;holm&quot;</span>, </span>
+<span id="cb393-6"><a href="differential-abundance.html#cb393-6" tabindex="-1"></a>                  <span class="at">pseudo_sens =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb393-7"><a href="differential-abundance.html#cb393-7" tabindex="-1"></a>                  <span class="at">prv_cut =</span><span class="dv">0</span>, </span>
+<span id="cb393-8"><a href="differential-abundance.html#cb393-8" tabindex="-1"></a>                  <span class="at">lib_cut =</span> <span class="dv">0</span>, </span>
+<span id="cb393-9"><a href="differential-abundance.html#cb393-9" tabindex="-1"></a>                  <span class="at">s0_perc =</span> <span class="fl">0.05</span>,</span>
+<span id="cb393-10"><a href="differential-abundance.html#cb393-10" tabindex="-1"></a>                  <span class="at">group =</span> <span class="st">&quot;method&quot;</span>, </span>
+<span id="cb393-11"><a href="differential-abundance.html#cb393-11" tabindex="-1"></a>                  <span class="at">struc_zero =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb393-12"><a href="differential-abundance.html#cb393-12" tabindex="-1"></a>                  <span class="at">neg_lb =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb393-13"><a href="differential-abundance.html#cb393-13" tabindex="-1"></a>                  <span class="at">alpha =</span> <span class="fl">0.05</span>, </span>
+<span id="cb393-14"><a href="differential-abundance.html#cb393-14" tabindex="-1"></a>                  <span class="at">n_cl =</span> <span class="dv">2</span>, </span>
+<span id="cb393-15"><a href="differential-abundance.html#cb393-15" tabindex="-1"></a>                  <span class="at">verbose =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb393-16"><a href="differential-abundance.html#cb393-16" tabindex="-1"></a>                  <span class="at">global =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb393-17"><a href="differential-abundance.html#cb393-17" tabindex="-1"></a>                  <span class="at">pairwise =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb393-18"><a href="differential-abundance.html#cb393-18" tabindex="-1"></a>                  <span class="at">dunnet =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb393-19"><a href="differential-abundance.html#cb393-19" tabindex="-1"></a>                  <span class="at">trend =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb393-20"><a href="differential-abundance.html#cb393-20" tabindex="-1"></a>                  <span class="at">iter_control =</span> <span class="fu">list</span>(<span class="at">tol =</span> <span class="fl">1e-5</span>, <span class="at">max_iter =</span> <span class="dv">20</span>, <span class="at">verbose =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb393-21"><a href="differential-abundance.html#cb393-21" tabindex="-1"></a>                  <span class="at">em_control =</span> <span class="fu">list</span>(<span class="at">tol =</span> <span class="fl">1e-5</span>, <span class="at">max_iter =</span> <span class="dv">100</span>),</span>
+<span id="cb393-22"><a href="differential-abundance.html#cb393-22" tabindex="-1"></a>                  <span class="at">mdfdr_control =</span> <span class="fu">list</span>(<span class="at">fwer_ctrl_method =</span> <span class="st">&quot;holm&quot;</span>, <span class="at">B =</span> <span class="dv">100</span>), </span>
+<span id="cb393-23"><a href="differential-abundance.html#cb393-23" tabindex="-1"></a>                  <span class="at">trend_control =</span> <span class="cn">NULL</span>)</span></code></pre></div>
+<p><strong><em>Total structural zeros</em></strong></p>
+<div class="sourceCode" id="cb394"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb394-1"><a href="differential-abundance.html#cb394-1" tabindex="-1"></a>structural_zeros <span class="ot">&lt;-</span> ancom_rand_output_struc_ha<span class="sc">$</span>zero_ind</span>
+<span id="cb394-2"><a href="differential-abundance.html#cb394-2" tabindex="-1"></a></span>
+<span id="cb394-3"><a href="differential-abundance.html#cb394-3" tabindex="-1"></a>structural_zeros_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(structural_zeros) <span class="sc">%&gt;%</span> </span>
+<span id="cb394-4"><a href="differential-abundance.html#cb394-4" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(., <span class="st">&quot;taxon&quot;</span>)</span>
+<span id="cb394-5"><a href="differential-abundance.html#cb394-5" tabindex="-1"></a></span>
+<span id="cb394-6"><a href="differential-abundance.html#cb394-6" tabindex="-1"></a>structural_zero_taxa <span class="ot">&lt;-</span> <span class="fu">rownames</span>(structural_zeros_df)[<span class="fu">apply</span>(structural_zeros_df, <span class="dv">1</span>, any)]</span>
+<span id="cb394-7"><a href="differential-abundance.html#cb394-7" tabindex="-1"></a></span>
+<span id="cb394-8"><a href="differential-abundance.html#cb394-8" tabindex="-1"></a>structural_zero_groups <span class="ot">&lt;-</span> structural_zeros_df[structural_zero_taxa, , drop <span class="ot">=</span> <span class="cn">FALSE</span>] <span class="sc">%&gt;%</span> </span>
+<span id="cb394-9"><a href="differential-abundance.html#cb394-9" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">&quot;amplicon&quot;</span><span class="ot">=</span><span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb394-10"><a href="differential-abundance.html#cb394-10" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">&quot;shotgun&quot;</span><span class="ot">=</span><span class="dv">2</span>)</span>
+<span id="cb394-11"><a href="differential-abundance.html#cb394-11" tabindex="-1"></a></span>
+<span id="cb394-12"><a href="differential-abundance.html#cb394-12" tabindex="-1"></a><span class="fu">nrow</span>(structural_zero_groups)</span></code></pre></div>
+<pre class="script-output"><code>[1] 17</code></pre>
+<p><strong><em>Structural zeros in amplicon</em></strong></p>
+<div class="sourceCode" id="cb396"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb396-1"><a href="differential-abundance.html#cb396-1" tabindex="-1"></a>structural_zero_groups <span class="sc">%&gt;%</span> </span>
+<span id="cb396-2"><a href="differential-abundance.html#cb396-2" tabindex="-1"></a>  <span class="fu">filter</span>(amplicon<span class="sc">==</span><span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb396-3"><a href="differential-abundance.html#cb396-3" tabindex="-1"></a>  <span class="fu">nrow</span>()</span></code></pre></div>
+<pre class="script-output"><code>[1] 0</code></pre>
+<div class="sourceCode" id="cb398"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb398-1"><a href="differential-abundance.html#cb398-1" tabindex="-1"></a>structural_zero_groups <span class="sc">%&gt;%</span> </span>
+<span id="cb398-2"><a href="differential-abundance.html#cb398-2" tabindex="-1"></a>  <span class="fu">filter</span>(amplicon<span class="sc">==</span><span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb398-3"><a href="differential-abundance.html#cb398-3" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(., <span class="st">&quot;phylum&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb398-4"><a href="differential-abundance.html#cb398-4" tabindex="-1"></a>  <span class="fu">left_join</span>(., <span class="fu">data.frame</span>(physeq_eb<span class="sc">@</span>tax_table) <span class="sc">%&gt;%</span> <span class="fu">rownames_to_column</span>(., <span class="st">&quot;phylum&quot;</span>), <span class="at">by=</span><span class="st">&quot;phylum&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb398-5"><a href="differential-abundance.html#cb398-5" tabindex="-1"></a>  <span class="fu">select</span>(phylum) <span class="sc">%&gt;%</span> </span>
+<span id="cb398-6"><a href="differential-abundance.html#cb398-6" tabindex="-1"></a>  <span class="fu">pull</span>()</span></code></pre></div>
+<pre class="script-output"><code>character(0)</code></pre>
+<p><strong><em>Structural zeros in shotgun</em></strong></p>
+<div class="sourceCode" id="cb400"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb400-1"><a href="differential-abundance.html#cb400-1" tabindex="-1"></a>structural_zero_groups <span class="sc">%&gt;%</span> </span>
+<span id="cb400-2"><a href="differential-abundance.html#cb400-2" tabindex="-1"></a>  <span class="fu">filter</span>(shotgun<span class="sc">==</span><span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb400-3"><a href="differential-abundance.html#cb400-3" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(., <span class="st">&quot;phylum&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb400-4"><a href="differential-abundance.html#cb400-4" tabindex="-1"></a>  <span class="fu">left_join</span>(., <span class="fu">data.frame</span>(physeq_eb<span class="sc">@</span>tax_table) <span class="sc">%&gt;%</span> <span class="fu">rownames_to_column</span>(., <span class="st">&quot;phylum&quot;</span>), <span class="at">by=</span><span class="st">&quot;phylum&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb400-5"><a href="differential-abundance.html#cb400-5" tabindex="-1"></a>  <span class="fu">select</span>(phylum) <span class="sc">%&gt;%</span> </span>
+<span id="cb400-6"><a href="differential-abundance.html#cb400-6" tabindex="-1"></a>  <span class="fu">pull</span>()</span></code></pre></div>
+<pre class="script-output"><code> [1] &quot;Bdellovibrionota&quot;     &quot;Campylobacterota&quot;     &quot;Chloroflexi&quot;          &quot;Crenarchaeota&quot;        &quot;Cyanobacteriota&quot;      &quot;Deinococcota&quot;         &quot;Desulfobacterota&quot;    
+ [8] &quot;Fusobacteriota&quot;       &quot;Halobacterota&quot;        &quot;Myxococcota&quot;          &quot;Patescibacteria&quot;      &quot;Planctomycetota&quot;      &quot;Rs-K70 termite group&quot; &quot;Sumerlaeota&quot;         
+[15] &quot;Synergistota&quot;         &quot;Thermoplasmatota&quot;     &quot;Verrucomicrobiota&quot;   </code></pre>
+<p><strong><em>Phyla differentially abundant</em></strong></p>
+<div class="sourceCode" id="cb402"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb402-1"><a href="differential-abundance.html#cb402-1" tabindex="-1"></a>ancom_rand_output_struc_ha<span class="sc">$</span>res <span class="sc">%&gt;%</span> </span>
+<span id="cb402-2"><a href="differential-abundance.html#cb402-2" tabindex="-1"></a>  <span class="fu">filter</span>(q_methodMetagenomics<span class="sc">&lt;</span><span class="fl">0.05</span>)</span></code></pre></div>
+<pre class="script-output"><code>           taxon lfc_(Intercept) lfc_methodMetagenomics se_(Intercept) se_methodMetagenomics W_(Intercept) W_methodMetagenomics p_(Intercept) p_methodMetagenomics
+1 Actinomycetota      0.02419842               1.393204            NaN             0.3954669           NaN             3.522935             1         2.823405e-03
+2   Bacteroidota      0.25857020              -1.372544            NaN             0.4422462           NaN            -3.103575             1         6.454895e-03
+3 Pseudomonadota      2.95514355              -1.463117            NaN             0.2682871           NaN            -5.453549             1         4.058252e-06
+  q_(Intercept) q_methodMetagenomics diff_(Intercept) diff_methodMetagenomics passed_ss_(Intercept) passed_ss_methodMetagenomics
+1             1         1.129362e-02            FALSE                    TRUE                 FALSE                        FALSE
+2             1         1.936469e-02            FALSE                    TRUE                 FALSE                         TRUE
+3             1         2.029126e-05            FALSE                    TRUE                 FALSE                         TRUE</code></pre>
 
 </div>
 </div>
