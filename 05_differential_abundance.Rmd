@@ -2,98 +2,7 @@
 
 ```{r}
 load("resources/amplicon/data_standard_filt.Rdata")
-
-sample_metadata_amplicon <- sample_metadata[c(1,9,10,13)] %>%
-  mutate(sample = paste0(sample, "_ampli")) %>%
-  mutate(method="Metabarcoding_standard")
-
-genome_metadata_ampli <- genome_metadata %>%
-  mutate(
-    class  = if_else(is.na(class), paste0(phylum, "_Unclassified"), class),
-    order  = if_else(is.na(order),
-                     if_else(str_detect(class, "Unclassified"), class, paste0(class, "_Unclassified")),
-                     order),
-    family = if_else(is.na(family),
-                     if_else(str_detect(order, "Unclassified"), order, paste0(order, "_Unclassified")),
-                     family),
-    genus  = if_else(is.na(genus),
-                     if_else(str_detect(family, "Unclassified"), family, paste0(family, "_Unclassified")),
-                     genus)
-  )
-
-genome_tax_ampli <- genome_counts_filt %>% 
-  column_to_rownames(., "genome")%>%
-  rename_with(~ paste0(., "_ampli")) %>%
-  rownames_to_column(., "genome")%>%
-  left_join(genome_metadata_ampli, by = "genome")
-
-family_level_agg_ampli <- genome_tax_ampli %>%
-  select(-genome) %>%
-  group_by(phylum, class, family) %>%
-  summarise(across(where(is.numeric), \(x) sum(x, na.rm = TRUE)), .groups = "drop")%>% 
-    as.data.frame() %>% 
-  select(-c(phylum,class))
-
-phylum_level_agg_ampli <- genome_tax_ampli %>%
-  select(-genome) %>%
-  group_by(phylum) %>%
-  summarise(across(where(is.numeric), \(x) sum(x, na.rm = TRUE)), .groups = "drop")%>% 
-    as.data.frame()
-```
-
-```{r }
 load("resources/metagenomics/data_filtered.Rdata")
-
-genome_metadata <- genome_metadata %>%
-  mutate(
-    class  = if_else(str_trim(class) == "", paste0(phylum, "_Unclassified"), class),
-    order  = if_else(str_trim(order) == "",
-                     if_else(str_detect(class, "Unclassified"), class, paste0(class, "_Unclassified")),
-                     order),
-    family = if_else(str_trim(family) == "",
-                     if_else(str_detect(order, "Unclassified"), order, paste0(order, "_Unclassified")),
-                     family),
-    genus  = if_else(str_trim(genus) == "",
-                     if_else(str_detect(family, "Unclassified"), family, paste0(family, "_Unclassified")),
-                     genus)
-  )
-
-genome_tax <- genome_counts_filt %>% 
-  left_join(genome_metadata[c(1,3,4,6)], by = "genome")
-
-# Aggregate counts at the Family level
-family_level_agg <- genome_tax %>%
-  select(-genome) %>%
-  group_by(phylum, class, family) %>%
-  summarise(across(where(is.numeric), \(x) sum(x, na.rm = TRUE)), .groups = "drop")%>% 
-  as.data.frame() %>% 
-  select(-c(phylum,class))
-
-# Aggregate counts at the Phylum level
-phylum_level_agg <- genome_tax %>%
-  select(-genome) %>%
-  group_by(phylum) %>%
-  summarise(across(where(is.numeric), \(x) sum(x, na.rm = TRUE)), .groups = "drop")%>% 
-  as.data.frame() 
-```
-
-Merge the table
-```{r}
-merged_table <- full_join(family_level_agg_ampli,family_level_agg, 
-          by = c("family"))%>%
-  mutate(across(where(is.numeric), ~replace_na(., 0)))
-
-merged_table_phylum <- full_join(phylum_level_agg_ampli,phylum_level_agg, 
-          by = c("phylum"))%>%
-  mutate(across(where(is.numeric), ~replace_na(., 0)))
-
-
-sample_shot <- sample_metadata %>% 
-  select(-c(Habitat,Longitude, Latitude, Region))%>%
-  mutate(method="Metagenomics")
-
-all_samples <- rbind(sample_shot, sample_metadata_amplicon)
-
 ```
 
 ## Phylum level
@@ -153,7 +62,7 @@ ancom_rand_output_phylum_metagen = ancombc2(
 
 #### Structural zeros
 
-***Total number of structural zeros***
+**Total number of structural zeros**
 ```{r}
 # Extract structural zeros
 structural_zeros <- ancom_rand_output_phylum_metagen$zero_ind
@@ -175,7 +84,7 @@ nrow(structural_zero_groups)
 
 ```
 
-***Structural zeros in EB***
+**Structural zeros in Cb**
 ```{r}
 structural_zero_groups %>% 
   filter(Eb==TRUE) %>% 
@@ -188,7 +97,7 @@ structural_zero_groups %>%
   pull()
 ```
 
-***Structural zeros in Ha***
+**Structural zeros in Ha**
 ```{r}
 structural_zero_groups %>% 
   filter(Ha==TRUE) %>% 
@@ -197,7 +106,7 @@ structural_zero_groups %>%
   pull()
 ```
 
-***Structural zeros in Pk***
+**Structural zeros in Pk**
 ```{r}
 structural_zero_groups %>% 
   filter(Pk==TRUE) %>% 
@@ -206,7 +115,7 @@ structural_zero_groups %>%
   pull()
 ```
 
-#### Enriched data
+#### Enriched phyla
 ```{r labeling_phyl_metag, comment="", message=FALSE, warning=FALSE, fig.height=20, fig.width=10, fig.fullwidth=TRUE}
 res_pair_phylum <- ancom_rand_output_phylum_metagen$res_pair
 # Get log-fold change and q-value columns
@@ -239,10 +148,10 @@ plot_data_phylum <- lfc_cols %>%
     direction = ifelse(lfc > 0, paste("Enriched in", sub(" vs.*", "", contrast)),
                              paste("Enriched in", sub(".*vs ", "", contrast)))
   )
-plot_data_phylum
+plot_data_phylum %>% select(-contrast_key) %>% tt()
 ```
 
-### Metabarcoding
+### Metabarcoding standard
 ```{r div_load_data_ampli2_metab, comment="", message=FALSE, warning=FALSE}
 load("resources/amplicon/data_standard_filt.Rdata")
 ```
@@ -266,12 +175,12 @@ phylo_taxonomy <- genome_metadata_ampli %>%
   as.matrix() %>% 
   tax_table()
 
-physeq_genome_phylum_metab <- phyloseq(phylo_genome, phylo_samples, phylo_taxonomy)
+physeq_genome_metab <- phyloseq(phylo_genome, phylo_samples, phylo_taxonomy)
 ```
 
 ```{r ancom_rand_phylum_metab, comment="", message=FALSE, warning=FALSE}
 ancom_rand_output_phylum_metab = ancombc2(
-  data = physeq_genome_phylum_metab,
+  data = physeq_genome_metab,
   assay_name = "counts",
   tax_level = "phylum",
   fix_formula = "Species",
@@ -303,7 +212,7 @@ ancom_rand_output_phylum_metab = ancombc2(
 
 #### Structural zeros
 
-***Total number of structural zeros***
+**Total number of structural zeros**
 ```{r}
 # Extract structural zeros
 structural_zeros <- ancom_rand_output_phylum_metab$zero_ind
@@ -324,14 +233,12 @@ structural_zero_groups <- structural_zeros_df[structural_zero_taxa, , drop = FAL
 nrow(structural_zero_groups)
 ```
 
-#### Enriched data
+#### Enriched phyla
 ```{r  labeling_phyl_metab, comment="", message=FALSE, warning=FALSE, fig.height=20, fig.width=10, fig.fullwidth=TRUE}
 res_pair_phylum <- ancom_rand_output_phylum_metab$res_pair
-# Get log-fold change and q-value columns
 lfc_cols <- grep("^lfc_", colnames(res_pair_phylum), value = TRUE)
 q_cols   <- gsub("^lfc_", "q_", lfc_cols)
 
-# Build long table by pairing lfc and q for each contrast
 plot_data_phylum <- lfc_cols %>%
   setNames(nm = .) %>%
   purrr::imap_dfr(function(lfc_col, name) {
@@ -357,257 +264,153 @@ plot_data_phylum <- lfc_cols %>%
     direction = ifelse(lfc > 0, paste("Enriched in", sub(" vs.*", "", contrast)),
                              paste("Enriched in", sub(".*vs ", "", contrast)))
   )
-plot_data_phylum
+plot_data_phylum %>% select(-contrast_key) %>% 
+  tt()
 ```
 
-### Differences between methods accross species
+### Comparison between metagenomics and standard metabarcoding
 
 ```{r}
+load("resources/amplicon/data_standard_filt.Rdata")
+
+sample_metadata_amplicon <- sample_metadata[c(1,9,10,13)] %>%
+  mutate(sample = paste0(sample, "_ampli")) %>%
+  mutate(method="Metabarcoding")
+
+genome_metadata_ampli <- genome_metadata %>%
+  mutate(
+    class  = if_else(is.na(class), paste0(phylum, "_Unclassified"), class),
+    order  = if_else(is.na(order),
+                     if_else(str_detect(class, "Unclassified"), class, paste0(class, "_Unclassified")),
+                     order),
+    family = if_else(is.na(family),
+                     if_else(str_detect(order, "Unclassified"), order, paste0(order, "_Unclassified")),
+                     family),
+    genus  = if_else(is.na(genus),
+                     if_else(str_detect(family, "Unclassified"), family, paste0(family, "_Unclassified")),
+                     genus)
+  )
+
+genome_tax_ampli <- genome_counts_filt %>% 
+  column_to_rownames(., "genome")%>%
+  rename_with(~ paste0(., "_ampli")) %>%
+  rownames_to_column(., "genome")%>%
+  left_join(genome_metadata_ampli, by = "genome")
+
+family_level_agg_ampli <- genome_tax_ampli %>%
+  select(-genome) %>%
+  group_by(phylum, class, family) %>%
+  summarise(across(where(is.numeric), \(x) sum(x, na.rm = TRUE)), .groups = "drop")%>% 
+    as.data.frame() %>% 
+  select(-c(phylum,class))
+
+phylum_level_agg_ampli <- genome_tax_ampli %>%
+  select(-genome) %>%
+  group_by(phylum) %>%
+  summarise(across(where(is.numeric), \(x) sum(x, na.rm = TRUE)), .groups = "drop")%>% 
+    as.data.frame()
+```
+
+```{r load_data_beta_comparison}
+load("resources/metagenomics/data_filtered.Rdata")
+
+genome_metadata <- genome_metadata %>%
+  mutate(
+    class  = if_else(str_trim(class) == "", paste0(phylum, "_Unclassified"), class),
+    order  = if_else(str_trim(order) == "",
+                     if_else(str_detect(class, "Unclassified"), class, paste0(class, "_Unclassified")),
+                     order),
+    family = if_else(str_trim(family) == "",
+                     if_else(str_detect(order, "Unclassified"), order, paste0(order, "_Unclassified")),
+                     family),
+    genus  = if_else(str_trim(genus) == "",
+                     if_else(str_detect(family, "Unclassified"), family, paste0(family, "_Unclassified")),
+                     genus)
+  )
+
+genome_tax <- genome_counts_filt %>% 
+  left_join(genome_metadata[c(1,3,4,6)], by = "genome")
+
+# Aggregate counts at the Family level
+family_level_agg <- genome_tax %>%
+  select(-genome) %>%
+  group_by(phylum, class, family) %>%
+  summarise(across(where(is.numeric), \(x) sum(x, na.rm = TRUE)), .groups = "drop")%>% 
+  as.data.frame() %>% 
+  select(-c(phylum,class))
+
+# Aggregate counts at the Phylum level
+phylum_level_agg <- genome_tax %>%
+  select(-genome) %>%
+  group_by(phylum) %>%
+  summarise(across(where(is.numeric), \(x) sum(x, na.rm = TRUE)), .groups = "drop")%>% 
+  as.data.frame() 
+```
+
+```{r}
+merged_table <- full_join(family_level_agg_ampli,family_level_agg, 
+          by = c("family"))%>%
+  mutate(across(where(is.numeric), ~replace_na(., 0)))
+
+merged_table_phylum <- full_join(phylum_level_agg_ampli,phylum_level_agg, 
+          by = c("phylum"))%>%
+  mutate(across(where(is.numeric), ~replace_na(., 0)))
+
+
+sample_shot <- sample_metadata %>% 
+  select(-c(Habitat,Longitude, Latitude, Region))%>%
+  mutate(method="Metagenomics")
+
+all_samples <- rbind(sample_shot, sample_metadata_amplicon)
+```
+
+```{r zero_phylum, comment="", message=FALSE, warning=FALSE}
+phylo_samples <- all_samples %>%
+  column_to_rownames("sample") %>%
+  sample_data()
 phylo_genome <- merged_table_phylum %>%
-  column_to_rownames("phylum") %>% 
+  select(one_of(c("phylum", rownames(phylo_samples)))) %>%
+  column_to_rownames("phylum") %>%
   otu_table(., taxa_are_rows = TRUE)
 
-phylo_samples <- all_samples%>% 
-  mutate(individual=sample)%>%
-  column_to_rownames("sample") %>% 
-  sample_data()
-
-merged_physeq_phylum <- phyloseq(phylo_genome, phylo_samples)
+physeq_genome_filtered <- phyloseq(phylo_genome, phylo_samples)
 ```
 
-#### Eptesicus
-```{r}
-physeq_eb <- subset_samples(merged_physeq_phylum, Species == "Eb")
-physeq_eb <- prune_taxa(taxa_sums(physeq_eb)>0, physeq_eb)
+```{r ancom_rand_phylum_approach, comment="", message=FALSE, warning=FALSE}
+ancom_rand_output_phylum_appro = ancombc2(
+  data = physeq_genome_filtered,
+  assay_name = "counts",
+  tax_level = NULL,
+  fix_formula = "method",
+  rand_formula = "(1|Species)",
+  p_adj_method = "holm",
+  pseudo_sens = TRUE,
+  prv_cut = 0,
+  lib_cut = 0,
+  s0_perc = 0.05,
+  group = "method",
+  struc_zero = TRUE,
+  neg_lb = FALSE,
+  alpha = 0.05,
+  n_cl = 2,
+  verbose = TRUE,
+  global = TRUE,
+  pairwise = TRUE,
+  dunnet = TRUE,
+  trend = FALSE,
+  iter_control = list(
+    tol = 1e-5,
+    max_iter = 20,
+    verbose = FALSE
+  ),
+  em_control = list(tol = 1e-5, max_iter = 100),
+  mdfdr_control = list(fwer_ctrl_method = "holm", B = 100),
+  lme_control = lme4::lmerControl(),
+  trend_control = NULL
+)
 ```
 
+#### Enriched phyla
 ```{r}
-ancom_rand_output_struc_eb = ancombc2(data = physeq_eb, 
-                  assay_name = "counts", 
-                  tax_level = NULL,
-                  fix_formula = "method",
-                  p_adj_method = "holm", 
-                  pseudo_sens = TRUE,
-                  prv_cut =0, 
-                  lib_cut = 0, 
-                  s0_perc = 0.05,
-                  group = "method", 
-                  struc_zero = TRUE, 
-                  neg_lb = FALSE,
-                  alpha = 0.05, 
-                  n_cl = 2, 
-                  verbose = TRUE,
-                  global = FALSE, 
-                  pairwise = FALSE, 
-                  dunnet = FALSE, 
-                  trend = FALSE,
-                  iter_control = list(tol = 1e-5, max_iter = 20, verbose = FALSE),
-                  em_control = list(tol = 1e-5, max_iter = 100),
-                  mdfdr_control = list(fwer_ctrl_method = "holm", B = 100), 
-                  trend_control = NULL)
-```
-
-
-***Total structural zeros***
-```{r}
-structural_zeros <- ancom_rand_output_struc_eb$zero_ind
-
-structural_zeros_df <- as.data.frame(structural_zeros) %>% 
-  column_to_rownames(., "taxon")
-
-structural_zero_taxa <- rownames(structural_zeros_df)[apply(structural_zeros_df, 1, any)]
-
-structural_zero_groups <- structural_zeros_df[structural_zero_taxa, , drop = FALSE] %>% 
-  rename("amplicon"=1) %>% 
-  rename("shotgun"=2)
-
-nrow(structural_zero_groups)
-
-```
-
-***Structural zeros in amplicon***
-```{r}
-structural_zero_groups %>% 
-  filter(amplicon==TRUE) %>% 
-  nrow()
-
-structural_zero_groups %>% 
-  filter(amplicon==TRUE) %>% 
-  rownames_to_column(., "phylum") %>% 
-  left_join(., data.frame(physeq_eb@tax_table) %>% rownames_to_column(., "phylum"), by="phylum") %>% 
-  select(phylum) %>% 
-  pull()
-```
-
-***Structural zeros in shotgun***
-```{r}
-structural_zero_groups %>% 
-  filter(shotgun==TRUE) %>% 
-  rownames_to_column(., "phylum") %>% 
-  left_join(., data.frame(physeq_eb@tax_table) %>% rownames_to_column(., "phylum"), by="phylum") %>% 
-  select(phylum) %>% 
-  pull()
-```
-
-***Phyla differentially abundant***
-```{r}
-ancom_rand_output_struc_eb$res %>% 
-  filter(q_methodMetagenomics<0.05)
-```
-
-#### Pipistrellus
-```{r}
-physeq_pk <- subset_samples(merged_physeq_phylum, Species == "Pk")
-physeq_pk <- prune_taxa(taxa_sums(physeq_pk)>0, physeq_pk)
-```
-
-```{r}
-ancom_rand_output_struc_pk = ancombc2(data = physeq_pk, 
-                  assay_name = "counts", 
-                  tax_level = NULL,
-                  fix_formula = "method",
-                  p_adj_method = "holm", 
-                  pseudo_sens = TRUE,
-                  prv_cut =0, 
-                  lib_cut = 0, 
-                  s0_perc = 0.05,
-                  group = "method", 
-                  struc_zero = TRUE, 
-                  neg_lb = FALSE,
-                  alpha = 0.05, 
-                  n_cl = 2, 
-                  verbose = TRUE,
-                  global = FALSE, 
-                  pairwise = FALSE, 
-                  dunnet = FALSE, 
-                  trend = FALSE,
-                  iter_control = list(tol = 1e-5, max_iter = 20, verbose = FALSE),
-                  em_control = list(tol = 1e-5, max_iter = 100),
-                  mdfdr_control = list(fwer_ctrl_method = "holm", B = 100), 
-                  trend_control = NULL)
-```
-
-***Total structural zeros***
-```{r}
-structural_zeros <- ancom_rand_output_struc_pk$zero_ind
-
-structural_zeros_df <- as.data.frame(structural_zeros) %>% 
-  column_to_rownames(., "taxon")
-
-structural_zero_taxa <- rownames(structural_zeros_df)[apply(structural_zeros_df, 1, any)]
-
-structural_zero_groups <- structural_zeros_df[structural_zero_taxa, , drop = FALSE] %>% 
-  rename("amplicon"=1) %>% 
-  rename("shotgun"=2)
-
-nrow(structural_zero_groups)
-```
-
-***Structural zeros in amplicon***
-```{r}
-structural_zero_groups %>% 
-  filter(amplicon==TRUE) %>% 
-  nrow()
-
-structural_zero_groups %>% 
-  filter(amplicon==TRUE) %>% 
-  rownames_to_column(., "phylum") %>% 
-  left_join(., data.frame(physeq_eb@tax_table) %>% rownames_to_column(., "phylum"), by="phylum") %>% 
-  select(phylum) %>% 
-  pull()
-```
-
-***Structural zeros in shotgun***
-```{r}
-structural_zero_groups %>% 
-  filter(shotgun==TRUE) %>% 
-  rownames_to_column(., "phylum") %>% 
-  left_join(., data.frame(physeq_eb@tax_table) %>% rownames_to_column(., "phylum"), by="phylum") %>% 
-  select(phylum) %>% 
-  pull()
-```
-
-***Phyla differentially abundant***
-```{r}
-ancom_rand_output_struc_pk$res %>% 
-  filter(q_methodMetagenomics<0.05)
-```
-
-#### Hypsugo
-```{r}
-physeq_ha <- subset_samples(merged_physeq_phylum, Species == "Ha")
-physeq_ha <- prune_taxa(taxa_sums(physeq_ha)>0, physeq_ha)
-```
-
-```{r}
-ancom_rand_output_struc_ha = ancombc2(data = physeq_ha, 
-                  assay_name = "counts", 
-                  tax_level = NULL,
-                  fix_formula = "method",
-                  p_adj_method = "holm", 
-                  pseudo_sens = TRUE,
-                  prv_cut =0, 
-                  lib_cut = 0, 
-                  s0_perc = 0.05,
-                  group = "method", 
-                  struc_zero = TRUE, 
-                  neg_lb = FALSE,
-                  alpha = 0.05, 
-                  n_cl = 2, 
-                  verbose = TRUE,
-                  global = FALSE, 
-                  pairwise = FALSE, 
-                  dunnet = FALSE, 
-                  trend = FALSE,
-                  iter_control = list(tol = 1e-5, max_iter = 20, verbose = FALSE),
-                  em_control = list(tol = 1e-5, max_iter = 100),
-                  mdfdr_control = list(fwer_ctrl_method = "holm", B = 100), 
-                  trend_control = NULL)
-```
-
-***Total structural zeros***
-```{r}
-structural_zeros <- ancom_rand_output_struc_ha$zero_ind
-
-structural_zeros_df <- as.data.frame(structural_zeros) %>% 
-  column_to_rownames(., "taxon")
-
-structural_zero_taxa <- rownames(structural_zeros_df)[apply(structural_zeros_df, 1, any)]
-
-structural_zero_groups <- structural_zeros_df[structural_zero_taxa, , drop = FALSE] %>% 
-  rename("amplicon"=1) %>% 
-  rename("shotgun"=2)
-
-nrow(structural_zero_groups)
-
-```
-
-***Structural zeros in amplicon***
-```{r}
-structural_zero_groups %>% 
-  filter(amplicon==TRUE) %>% 
-  nrow()
-
-structural_zero_groups %>% 
-  filter(amplicon==TRUE) %>% 
-  rownames_to_column(., "phylum") %>% 
-  left_join(., data.frame(physeq_eb@tax_table) %>% rownames_to_column(., "phylum"), by="phylum") %>% 
-  select(phylum) %>% 
-  pull()
-```
-
-***Structural zeros in shotgun***
-```{r}
-structural_zero_groups %>% 
-  filter(shotgun==TRUE) %>% 
-  rownames_to_column(., "phylum") %>% 
-  left_join(., data.frame(physeq_eb@tax_table) %>% rownames_to_column(., "phylum"), by="phylum") %>% 
-  select(phylum) %>% 
-  pull()
-```
-
-***Phyla differentially abundant***
-```{r}
-ancom_rand_output_struc_ha$res %>% 
-  filter(q_methodMetagenomics<0.05)
+ancom_rand_output_phylum_appro$res %>% filter(q_methodMetagenomics<0.05)
 ```
