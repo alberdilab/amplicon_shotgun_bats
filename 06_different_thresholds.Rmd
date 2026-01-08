@@ -762,10 +762,19 @@ genome_counts_filt_amplicon <- genome_counts_filt %>%
   `*`(genome_counts_filt_amplicon_pa %>%
         column_to_rownames("genome")) %>%
   rownames_to_column("genome") %>% 
-  filter(genome %in% genome_metadata$genome) %>% 
+  filter(genome %in% genome_metadata_amplicon$genome) %>% 
   filter(rowSums(across(-genome)) != 0)
 
-save(sample_metadata_amplicon, genome_metadata_amplicon, genome_counts_filt_amplicon, file = "resources/amplicon/selected_filtering.Rdata")
+phylum_colors <- read_tsv("https://raw.githubusercontent.com/earthhologenome/EHI_taxonomy_colour/main/ehi_phylum_colors.tsv") %>%
+  mutate_at(vars(phylum), ~ str_replace(., "[dpcofgs]__", ""))%>%
+    right_join(genome_metadata_amplicon, by=join_by(phylum == phylum)) %>%
+    arrange(match(genome, genome_metadata_amplicon$genome)) %>%
+    select(phylum, colors) %>% 
+    unique() %>%
+    arrange(phylum) %>%
+    pull(colors, name=phylum)
+
+save(sample_metadata_amplicon, genome_metadata_amplicon, genome_counts_filt_amplicon, phylum_colors, file = "resources/amplicon/selected_filtering.Rdata")
 
 ```
 
