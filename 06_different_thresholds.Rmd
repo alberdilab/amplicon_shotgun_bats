@@ -9,16 +9,17 @@ set.seed(24022025)
 ```{r open, comment="", message=FALSE, warning=FALSE}
 load("resources/amplicon/data_nocopyfilt.Rdata")
 load("resources/amplicon/master_table.Rdata")
+species_color <- c("#000000","#e5bd5b", "#6b7398", "#76b183")
 ```
 
 ## Total ASVs
-```{r totalasv, message=FALSE, fig.height=16, fig.width=18, fig.fullwidth=TRUE}
+```{r totalasv, message=FALSE, fig.height=14, fig.width=16, fig.fullwidth=TRUE}
 asv_total <- master_table %>%
   group_by(copy_threshold, prevalence, genome) %>%
   summarise(asv_count = sum(value != 0, na.rm = TRUE)) %>%
   group_by(copy_threshold, prevalence) %>%
   summarise(Total = sum(asv_count != 0, na.rm = TRUE))
-master_table %>%
+p <- master_table %>%
   group_by(Species, copy_threshold, prevalence) %>%
   summarise(asv_count = sum(value != 0, na.rm = TRUE)) %>%
   pivot_wider(names_from = Species, values_from = c(asv_count)) %>%
@@ -30,7 +31,13 @@ master_table %>%
             )) %>%
   pivot_longer(!c(copy_threshold, prevalence),
                names_to = "Species",
-               values_to = "ASVs") %>%
+               values_to = "ASVs") %>%  
+  mutate(
+    Species = factor(
+      Species,
+      levels = c("Total", "Eb", "Pk", "Ha"),
+      labels = c("All bat species", "C. bottae", "P. kuhlii", "H. ariel")
+      ) ) %>% 
   ggplot(aes(
     x = prevalence,
     y = ASVs,
@@ -39,6 +46,13 @@ master_table %>%
   )) +
   geom_line(size = 1) +
   geom_point(size = 2) +
+  scale_color_manual(values = species_color,
+                     labels = c(
+                       expression(italic("All bat species")),
+                       expression(italic("C. bottae")),
+                       expression(italic("H. ariel")),
+                       expression(italic("P. kuhlii"))
+                     ))+
   facet_wrap( ~ factor(
     copy_threshold,
     labels = c(
@@ -52,22 +66,23 @@ master_table %>%
   labs(x = "Prevalence threshold (%)", y = "Total ASVs", color = "Bat species") +
   theme_minimal() +
   theme(
-    axis.text.x = element_text(size = 12),
-    axis.text.y = element_text(size = 12),
-    axis.title = element_text(size = 20, face = "bold"),
-    axis.text = element_text(face = "bold", size = 18),
+    axis.text.x = element_text(size = 12,face = "bold"),
+    axis.text.y = element_text(size = 12,face = "bold"),
+    axis.title = element_text(size = 14, face = "bold"),
     panel.background = element_blank(),
     axis.line = element_line(
       size = 0.5,
       linetype = "solid",
       colour = "black"
     ),
-    strip.text = element_text(size = 20),
-    legend.text = element_text(size = 16),
-    legend.title = element_text(size = 18),
+    strip.text = element_text(size = 14,face = "bold"),
+    legend.text = element_text(size = 14),
+    legend.title = element_text(size = 16),
     legend.position = "bottom",
     legend.box = "horizontal"
   )
+ggsave("filtering_thresholds_general.png", plot = p, width = 10, height = 8)
+
 ```
 
 ## Total archaeal ASVs
@@ -125,7 +140,7 @@ master_table %>%
       linetype = "solid",
       colour = "black"
     ),
-    strip.text = element_text(size = 20),
+    strip.text = element_text(size = 20, face = "bold"),
     legend.text = element_text(size = 16),
     legend.title = element_text(size = 18),
     legend.position = "bottom",
@@ -330,7 +345,8 @@ for (copy in copy_threshold) {
 } 
 
 results <- results %>%
-  mutate(across(everything(), ~ ifelse(is.na(.), 0, .)))
+  mutate(across(everything(), ~ ifelse(is.na(.), 0, .))) %>% 
+  tt()
   
 ```
 
@@ -340,7 +356,12 @@ results %>%
   pivot_longer(!c(alpha, Prevalence, Copy_threshold),
                names_to = "Species",
                values_to = "value") %>%
-  filter(alpha == "richness") %>%
+  filter(alpha == "richness") %>%  mutate(
+    Species = factor(
+      Species,
+      levels = c("Total", "Eptesicus", "Pipistrellus", "Hypsugo"),
+      labels = c("All bat species", "C. bottae", "P. kuhlii", "H. ariel")
+      ) ) %>% 
   ggplot(.,
          aes(
            x = Prevalence,
@@ -350,6 +371,13 @@ results %>%
          )) +
   geom_line(size = 1) +
   geom_point(size = 2) +
+  scale_color_manual(values = species_color,
+                     labels = c(
+                       expression(italic("All bat species")),
+                       expression(italic("C. bottae")),
+                       expression(italic("H. ariel")),
+                       expression(italic("P. kuhlii"))
+                     ))+
   facet_wrap( ~ factor(
     Copy_threshold,
     labels = c(
@@ -367,17 +395,16 @@ results %>%
   ) +
   theme_minimal() +
   theme(
-    axis.text.x = element_text(size = 12),
-    axis.text.y = element_text(size = 12),
-    axis.title = element_text(size = 20, face = "bold"),
-    axis.text = element_text(face = "bold", size = 18),
+    axis.text.x = element_text(size = 12, face = "bold"),
+    axis.text.y = element_text(size = 12, face = "bold"),
+    axis.title = element_text(size = 16, face = "bold"),
     panel.background = element_blank(),
     axis.line = element_line(
       size = 0.5,
       linetype = "solid",
       colour = "black"
     ),
-    strip.text = element_text(size = 20),
+    strip.text = element_text(size = 16, face = "bold"),
     legend.text = element_text(size = 16),
     legend.title = element_text(size = 18),
     legend.position = "bottom",
@@ -391,6 +418,12 @@ results %>%
                names_to = "Species",
                values_to = "value") %>%
   filter(alpha == "neutral") %>%
+  mutate(
+    Species = factor(
+      Species,
+      levels = c("Total", "Eptesicus", "Pipistrellus", "Hypsugo"),
+      labels = c("All bat species", "C. bottae", "P. kuhlii", "H. ariel")
+      ) ) %>% 
   ggplot(.,
          aes(
            x = Prevalence,
@@ -400,6 +433,13 @@ results %>%
          )) +
   geom_line(size = 1) +
   geom_point(size = 2) +
+  scale_color_manual(values = species_color,
+                     labels = c(
+                       expression(italic("All bat species")),
+                       expression(italic("C. bottae")),
+                       expression(italic("H. ariel")),
+                       expression(italic("P. kuhlii"))
+                     ))+
   facet_wrap( ~ factor(
     Copy_threshold,
     labels = c(
@@ -411,26 +451,24 @@ results %>%
     )
   ), scales = "free_y") +
   labs(
-    title = "Alpha Diversity Across Copy filtering and Prevalence Thresholds",
     x = "Prevalence Threshold",
     y = "Neutral",
     color = "Species"
   ) +
   theme_minimal() +
   theme(
-    axis.text.x = element_text(size = 12),
-    axis.text.y = element_text(size = 12),
-    axis.title = element_text(size = 20, face = "bold"),
-    axis.text = element_text(face = "bold", size = 18),
+    axis.text.x = element_text(size = 12, face = "bold"),
+    axis.text.y = element_text(size = 12, face = "bold"),
+    axis.title = element_text(size = 14, face = "bold"),
     panel.background = element_blank(),
     axis.line = element_line(
       size = 0.5,
       linetype = "solid",
       colour = "black"
     ),
-    strip.text = element_text(size = 20),
-    legend.text = element_text(size = 16),
-    legend.title = element_text(size = 18),
+    strip.text = element_text(size = 14, face = "bold"),
+    legend.text = element_text(size = 14),
+    legend.title = element_text(size = 16),
     legend.position = "bottom",
     legend.box = "horizontal"
   )
@@ -680,23 +718,82 @@ pca_result <- prcomp(numeric_data, scale. = TRUE)
 pca_df <- as.data.frame(pca_result$x) %>%
   mutate(filter = metadata) %>% 
   separate(filter, into = c("copy", "prevalence"), sep = "_", fill = "right", remove = FALSE) %>% 
-  left_join(diversity_average,by="filter")
+  left_join(diversity_average,by="filter") %>% 
+  mutate(
+    copy = case_when(
+      copy == "metagenomics" ~ "Metagenomics",
+      copy == "t0" ~ "No filtering",
+      copy == "t1" ~ "< 0.0001",
+      copy == "t2" ~ "< 0.001",
+      copy == "t3" ~ "< 0.01",
+      copy == "t4" ~ "< 0.1",
+      TRUE ~ copy
+    )
+  ) %>%
+  mutate(
+    prevalence = case_when(
+      prevalence == "metagenomics" ~ NA_character_,
+      prevalence == "p0" ~ "No filtering",
+      prevalence == "p10" ~ "< 10%",
+      prevalence == "p20" ~ "< 20%",
+      prevalence == "p30" ~ "< 30%",
+      prevalence == "p40" ~ "< 40%",
+      TRUE ~ prevalence
+    )
+  ) %>%
+  mutate(
+    copy = factor(
+      copy,
+      levels = c("Metagenomics", "No filtering", "< 0.0001", "< 0.001", "< 0.01", "< 0.1"),
+      ) )%>%
+  mutate(
+    prevalence = factor(
+      prevalence,
+      levels = c("No filtering", "< 10%", "< 20%", "< 30%", "< 40%"),
+      ) ) %>%
+  mutate(is_meta = copy == "Metagenomics")
 
-ggplot(pca_df, aes(x = PC1, y = PC2, color = copy, shape=prevalence, size=mean_diversity, label=filter)) +
-  geom_point(size=5) +
+
+ggplot(pca_df, aes(x = PC1, y = PC2, color = copy, shape=prevalence, label=filter)) +
+  geom_point(
+    data = subset(pca_df, !is_meta),
+    aes(color = copy, shape = prevalence),
+    alpha = 0.6, size=5
+  ) +
+  geom_point(
+    data = subset(pca_df, is_meta),
+    shape = 21,
+    fill = "red",
+    color = "black", size=7
+  ) +
+  geom_label_repel(
+    data = subset(pca_df, is_meta),
+    aes(label = "Metagenomics"),
+    color = "black",
+    fontface = "bold",
+    size = 4,
+    label.size = 0.4,
+    nudge_x = 0.05, 
+  nudge_y = 0.18 
+  )+
+  scale_shape_discrete(na.translate = FALSE) +
   theme_minimal() +
     theme(
       axis.text.x = element_text(size = 12),
       axis.text.y = element_text(size = 12),
-      axis.title = element_text(size = 20, face = "bold"),
+      axis.title = element_text(size = 18, face = "bold"),
       panel.background = element_blank(),
       axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"),
       legend.text = element_text(size = 16),
       legend.title = element_text(size = 18)
     )+
-  labs(title = "PCA of Diversity Data",
+  labs(
        x = paste0("PC1 (", round(summary(pca_result)$importance[2,1] * 100, 2), "% variance)"),
-       y = paste0("PC2 (", round(summary(pca_result)$importance[2,2] * 100, 2), "% variance)"))
+       y = paste0("PC2 (", round(summary(pca_result)$importance[2,2] * 100, 2), "% variance)"),
+    color = "Read fraction",
+    shape = "Prevalence"
+  )
+
 
 pca_scores <- as.data.frame(pca_result$x)
 reference_row <- pca_scores[diversity_master$filter == "metagenomics_metagenomics", ]
@@ -707,9 +804,36 @@ weighted_distances <- apply(pca_result$x, 1, function(row) {
 })
 
 tibble(filter=diversity_master$filter,distance=weighted_distances) %>% 
+    mutate(distance = round(distance, 2)) %>%
+  separate(filter, into = c("copy", "prevalence"), sep = "_", fill = "right", remove = FALSE) %>% 
+  mutate(
+    copy = case_when(
+      copy == "metagenomics" ~ "Metagenomics",
+      copy == "t0" ~ "No filtering",
+      copy == "t1" ~ "< 0.0001",
+      copy == "t2" ~ "< 0.001",
+      copy == "t3" ~ "< 0.01",
+      copy == "t4" ~ "< 0.1",
+      TRUE ~ copy
+    )
+  )%>%
+  mutate(
+    prevalence = case_when(
+      prevalence == "metagenomics" ~ NA_character_,
+      prevalence == "p0" ~ "No filtering",
+      prevalence == "p10" ~ "< 10%",
+      prevalence == "p20" ~ "< 20%",
+      prevalence == "p30" ~ "< 30%",
+      prevalence == "p40" ~ "< 40%",
+      TRUE ~ prevalence
+    )
+  ) %>% 
+  select(-filter) %>% 
   arrange(distance) %>% 
   tt()
 ```
+
+
 ```{r}
 diversity_master %>% 
   filter(filter %in% c("metagenomics_metagenomics","t3_p10")) %>%
