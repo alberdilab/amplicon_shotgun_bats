@@ -1616,9 +1616,6 @@ beta_q1n$S %>%
     legend.box = "vertical"
   ) +
   labs(color = "Methodological approach",shape="Species")
-
-#ggsave("Figures_ms/beta_family_neutral_three_shapes.pdf", plot = p1, width = 12, height = 6)
-  
 ```
 
 #### Phylum level
