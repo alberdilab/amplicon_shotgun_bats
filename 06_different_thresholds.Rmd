@@ -345,8 +345,7 @@ for (copy in copy_threshold) {
 } 
 
 results <- results %>%
-  mutate(across(everything(), ~ ifelse(is.na(.), 0, .))) %>% 
-  tt()
+  mutate(across(everything(), ~ ifelse(is.na(.), 0, .)))
   
 ```
 
