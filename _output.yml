@@ -4,12 +4,12 @@ bookdown::gitbook:
   config:
     toc:
       before: |
-        <li class="toc-logo"><a href="index.html" target="blank"><img src="alberdilab_minilogo.png" alt="AlberdiLab logo"></a></li>
-        <li align="center"><b>Aizpurua et al. 2025</b></li>
+        <li class="toc-logo">Anonymised</li>
+        <li align="center"><b>Anonymised</b></li>
       after: |
-        <li><a href="https://www.alberdilab.dk" target="blank"><b>www.alberdilab.dk</b></a></li>
-        <li><a href="https://www.earthhologenome.org" target="blank"><b>www.earthhologenome.org</b></a></li>
-        <li><a href="https://www.holo-omics.science" target="blank"><b>www.holo-omics.science</b></a></li>
+        <li>Anonymised</li>
+        <li>Anonymised</li>
+        <li>Anonymised</li>
     download: ["pdf", "epub"]
   fig_width: 8
 bookdown::pdf_book:

@@ -1,18 +1,17 @@
 ---
-title: "AlberdiLab | Aizpurua et al. 2025"
+title: "Anonymised"
 subtitle: "Comparing 16S metabarcoding and genome-resolved metagenomics to reveal functional insights into bat microbiomes"
 author:
-  - Ostaizka Aizpurua^[University of Copenhagen, ostaizka.aizpurua@sund.ku.dk]
-  - Antton Alberdi^[University of Copenhagen, antton.alberdi@sund.ku.dk]
+  - Anonymised
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 documentclass: book
 bibliography: [book.bib, packages.bib]
-url: https://alberdilab.github.io/amplicon_shotgun_bats
+url: Anonymised
 description: |
   Data analysis code for the manuscript titled: Comparing 16S metabarcoding and genome-resolved metagenomics to reveal functional insights into bat microbiomes.
 link-citations: yes
-github-repo: alberdilab/amplicon_shotgun_bats
+github-repo: Anonymised
 ---
 
 ```{r knitr_opts, echo=FALSE}
@@ -38,7 +37,7 @@ RStudio > New Project > Version Control > Git
 
 And indicating the following git repository:
 
-> https://github.com/alberdilab/amplicon_shotgun_bats.git
+> Anonymised
 
 Once the R project has been created, follow the instructions and code chunks shown in this webbook.
 
@@ -79,7 +78,6 @@ library(spaa)
 library(vegan)
 library(Rtsne)
 library(geiger)
-library(hilldiv)
 library(hilldiv2)
 library(distillR)
 library(ANCOMBC)

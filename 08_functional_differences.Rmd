@@ -3,6 +3,7 @@
 ## Metagenomics
 
 ```{r load_data_func_met,comment="", message=FALSE, warning=FALSE}
+Sys.setenv(VROOM_CONNECTION_SIZE = 131072 * 10)
 load("resources/metagenomics/data_filtered.Rdata")
 ```
 
@@ -177,14 +178,14 @@ picrust2_pipeline.py -s resources/amplicon/picrust/sequences.fa \
 
 ### Analyse functions
 
-```{r load_functions,comment="", message=FALSE, warning=FALSE, eval=FALSE}
-amplicon_ko <- read_tsv("resources/amplicon/picrust/results/combined_KO_predicted.tsv")
-amplicon_ec <- read_tsv("resources/amplicon/picrust/results/combined_EC_predicted.tsv")
+```{r load_functions,comment="", message=FALSE, warning=FALSE}
+amplicon_ko <- read_tsv("resources/amplicon/picrust/results/combined_KO_predicted.tsv.xz")
+amplicon_ec <- read_tsv("resources/amplicon/picrust/results/combined_EC_predicted.tsv.xz")
 
 tree_bacteria <- read.tree("resources/amplicon/picrust/results/bac_reduced.tre")
 ```
 
-```{r distillr_functions,comment="", message=FALSE, warning=FALSE, eval=FALSE}
+```{r distillr_functions,comment="", message=FALSE, warning=FALSE}
 amplicon_ko_long <- amplicon_ko  %>% 
   pivot_longer(!sequence,names_to="kegg",values_to="value") %>% 
   filter(value>0) %>% 
@@ -203,18 +204,18 @@ amplicon_ec_distil <- distill(amplicon_ec_long,GIFT_db,genomecol=1,annotcol=2, v
 amplicon_ko_distil %>% 
   as.data.frame() %>% 
   rownames_to_column("genome") %>% 
-  write_tsv("resources/amplicon/picrust/results/gifts_ko.tsv")
+  write_tsv("resources/amplicon/picrust/results/gifts_ko.tsv.xz")
 
 amplicon_ec_distil %>% 
   as.data.frame() %>% 
   rownames_to_column("genome") %>% 
-  write_tsv("resources/amplicon/picrust/results/gifts_ec.tsv")
+  write_tsv("resources/amplicon/picrust/results/gifts_ec.tsv.xz")
 ```
 
 ```{r distillr_functions_merge, comment="", message=FALSE, warning=FALSE}
 # Merge distilled tables
-amplicon_ko_distil <- read_tsv("resources/amplicon/picrust/results/gifts_ko.tsv") %>% column_to_rownames(var="genome")
-amplicon_ec_distil <- read_tsv("resources/amplicon/picrust/results/gifts_ec.tsv") %>% column_to_rownames(var="genome")
+amplicon_ko_distil <- read_tsv("resources/amplicon/picrust/results/gifts_ko.tsv.xz") %>% column_to_rownames(var="genome")
+amplicon_ec_distil <- read_tsv("resources/amplicon/picrust/results/gifts_ec.tsv.xz") %>% column_to_rownames(var="genome")
 
 amplicon_distil <- pmax(amplicon_ko_distil, amplicon_ec_distil)
 amplicon_elements <- to.elements(amplicon_distil,GIFT_db)
