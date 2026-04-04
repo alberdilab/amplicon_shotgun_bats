@@ -2,4 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
-resources/amplicon/picrust/*
+resources/amplicon/picrust/*Figures/
+*.png
+*.pdf
+.DS_Store
