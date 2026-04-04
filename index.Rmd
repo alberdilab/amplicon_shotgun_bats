@@ -1,7 +1,6 @@
 ---
 title: "AlberdiLab | Aizpurua et al. 2025"
 subtitle: "Impact of sequencing approach on ecological inference from highly variable gut microbiomes"
-
 author:
   - Ostaizka Aizpurua^[University of Copenhagen, ostaizka.aizpurua@sund.ku.dk]
   - Antton Alberdi^[University of Copenhagen, antton.alberdi@sund.ku.dk]
@@ -39,7 +38,7 @@ RStudio > New Project > Version Control > Git
 
 And indicating the following git repository:
 
-> Anonymised
+> https://github.com/alberdilab/amplicon_shotgun_bats.git
 
 Once the R project has been created, follow the instructions and code chunks shown in this webbook.
 
