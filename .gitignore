@@ -7,3 +7,4 @@ resources/amplicon/picrust/*Figures/
 *.pdf
 .DS_Store
 resources/amplicon/picrust/results/*.tsv
+resources/amplicon/picrust/results/*.tsv
