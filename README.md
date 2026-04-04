@@ -1,4 +1,4 @@
-# Amplicon sequencing vs. genome-resolved metagenomics in bats
+# Impact of sequencing approach on ecological inference from highly variable gut microbiomes 
 
 ## Analysis procedures
 

@@ -962,18 +962,39 @@ beta_q0n$S %>%
 ```{r permanova_rich_both_fig_family, comment="", message=FALSE, warning=FALSE}
 betadisper(beta_q0n$S, all_samples %>% filter(sample %in% labels(beta_q0n$S)) %>% arrange(match(sample, labels(beta_q0n$S))) %>% pull(Species)) %>% permutest(.)
 
-adonis2(beta_q0n$S ~ Species*method, data = all_samples %>% filter(sample %in% labels(beta_q0n$S)) %>% arrange(match(sample, labels(beta_q0n$S))), permutations = 999) %>%
+all_samples <- all_samples %>% 
+  mutate(id=sample) %>% 
+  mutate(id = str_remove(id, "_ampli$"))
+
+adonis2(
+  beta_q0n$S ~ Species*method,
+  data = all_samples %>%
+    filter(sample %in% labels(beta_q0n$S)) %>%
+    arrange(match(sample, labels(beta_q0n$S))),
+  permutations = 999, 
+  strata = all_samples %>% filter(sample %in% labels(beta_q0n$S)) %>% arrange(match(sample,labels(beta_q0n$S))) %>% pull(id)) %>%
   broom::tidy() %>%
   tt()
 
 adonis2(
   beta_q0n$S ~ Species*method,
-  by = "terms",
+  by = "term",
   data = all_samples %>%
     filter(sample %in% labels(beta_q0n$S)) %>%
     arrange(match(sample, labels(beta_q0n$S))),
-  permutations = 999
-) %>%
+  permutations = 999, 
+  strata = all_samples %>% filter(sample %in% labels(beta_q0n$S)) %>% arrange(match(sample,labels(beta_q0n$S))) %>% pull(id)) %>%
+  broom::tidy() %>%
+  tt()
+
+adonis2(
+  beta_q0n$S ~ Species+method,
+  by = "margin",
+  data = all_samples %>%
+    filter(sample %in% labels(beta_q0n$S)) %>%
+    arrange(match(sample, labels(beta_q0n$S))),
+  permutations = 999, 
+  strata = all_samples %>% filter(sample %in% labels(beta_q0n$S)) %>% arrange(match(sample,labels(beta_q0n$S))) %>% pull(id)) %>%
   broom::tidy() %>%
   tt()
 ```
@@ -1031,28 +1052,33 @@ betadisper(
   all_samples %>%
     filter(sample %in% labels(beta_q1n$S)) %>%
     arrange(match(sample, labels(beta_q1n$S))) %>%
-    pull(Species)
+    pull(method)
 ) %>%
   permutest(.)
 
 adonis2(
   beta_q1n$S ~ Species*method,
-  data = all_samples %>%
-    filter(sample %in% labels(beta_q1n$S)) %>%
-    arrange(match(sample, labels(beta_q1n$S))),
-  permutations = 999
-) %>%
+  data = all_samples %>% filter(sample %in% labels(beta_q1n$S)) %>% arrange(match(sample, labels(beta_q1n$S))),
+  permutations = 999,
+  strata = all_samples %>% filter(sample %in% labels(beta_q1n$S)) %>% arrange(match(sample,labels(beta_q1n$S))) %>% pull(id)) %>%
   broom::tidy() %>%
   tt()
 
 adonis2(
   beta_q1n$S ~ Species*method,
   by = "terms",
-  data = all_samples %>%
-    filter(sample %in% labels(beta_q1n$S)) %>%
-    arrange(match(sample, labels(beta_q1n$S))),
-  permutations = 999
-) %>%
+  data = all_samples %>% filter(sample %in% labels(beta_q1n$S)) %>% arrange(match(sample, labels(beta_q1n$S))),
+  permutations = 999,
+  strata = all_samples %>% filter(sample %in% labels(beta_q1n$S)) %>% arrange(match(sample,labels(beta_q1n$S))) %>% pull(id)) %>%
+  broom::tidy() %>%
+  tt()
+
+adonis2(
+  beta_q1n$S ~ Species+method,
+  by = "margin",
+  data = all_samples %>% filter(sample %in% labels(beta_q1n$S)) %>% arrange(match(sample, labels(beta_q1n$S))),
+  permutations = 999,
+  strata = all_samples %>% filter(sample %in% labels(beta_q1n$S)) %>% arrange(match(sample,labels(beta_q1n$S))) %>% pull(id)) %>%
   broom::tidy() %>%
   tt()
 ```
@@ -1095,7 +1121,18 @@ beta_q0n_phylum$S %>%
 ```{r permanova_rich_both_phylum_fig2, comment="", message=FALSE, warning=FALSE}
 betadisper(beta_q0n_phylum$S, all_samples %>% filter(sample %in% labels(beta_q0n_phylum$S)) %>% arrange(match(sample, labels(beta_q0n_phylum$S))) %>% pull(Species)) %>% permutest(.)
 
-adonis2(beta_q0n_phylum$S ~ Species*method, data = all_samples %>% filter(sample %in% labels(beta_q0n_phylum$S)) %>% arrange(match(sample, labels(beta_q0n_phylum$S))), permutations = 999) %>%
+adonis2(beta_q0n_phylum$S ~ Species*method, 
+        data = all_samples %>% filter(sample %in% labels(beta_q0n_phylum$S)) %>% arrange(match(sample, labels(beta_q0n_phylum$S))), permutations = 999) %>%
+  broom::tidy() %>%
+  tt()
+
+adonis2(
+  beta_q0n_phylum$S ~ Species*method,
+  data = all_samples %>%
+    filter(sample %in% labels(beta_q0n_phylum$S)) %>%
+    arrange(match(sample, labels(beta_q0n_phylum$S))),
+  permutations = 999,
+  strata = all_samples %>% filter(sample %in% labels(beta_q0n_phylum$S)) %>% arrange(match(sample,labels(beta_q0n_phylum$S))) %>% pull(id)) %>%
   broom::tidy() %>%
   tt()
 
@@ -1105,8 +1142,19 @@ adonis2(
   data = all_samples %>%
     filter(sample %in% labels(beta_q0n_phylum$S)) %>%
     arrange(match(sample, labels(beta_q0n_phylum$S))),
-  permutations = 999
-) %>%
+  permutations = 999,
+  strata = all_samples %>% filter(sample %in% labels(beta_q0n_phylum$S)) %>% arrange(match(sample,labels(beta_q0n_phylum$S))) %>% pull(id)) %>%
+  broom::tidy() %>%
+  tt()
+
+adonis2(
+  beta_q0n_phylum$S ~ Species+method,
+  by = "margin",
+  data = all_samples %>%
+    filter(sample %in% labels(beta_q0n_phylum$S)) %>%
+    arrange(match(sample, labels(beta_q0n_phylum$S))),
+  permutations = 999,
+  strata = all_samples %>% filter(sample %in% labels(beta_q0n_phylum$S)) %>% arrange(match(sample,labels(beta_q0n_phylum$S))) %>% pull(id)) %>%
   broom::tidy() %>%
   tt()
 ```
@@ -1173,8 +1221,17 @@ adonis2(
   data = all_samples %>%
     filter(sample %in% labels(beta_q1n_phylum$S)) %>%
     arrange(match(sample, labels(beta_q1n_phylum$S))),
-  permutations = 999
-) %>%
+  permutations = 999) %>%
+  broom::tidy() %>%
+  tt()
+
+adonis2(
+  beta_q1n_phylum$S ~ Species*method,
+  data = all_samples %>%
+    filter(sample %in% labels(beta_q1n_phylum$S)) %>%
+    arrange(match(sample, labels(beta_q1n_phylum$S))),
+  permutations = 999,
+  strata = all_samples %>% filter(sample %in% labels(beta_q1n_phylum$S)) %>% arrange(match(sample,labels(beta_q1n_phylum$S))) %>% pull(id)) %>%
   broom::tidy() %>%
   tt()
 
@@ -1184,8 +1241,19 @@ adonis2(
   data = all_samples %>%
     filter(sample %in% labels(beta_q1n_phylum$S)) %>%
     arrange(match(sample, labels(beta_q1n_phylum$S))),
-  permutations = 999
-) %>%
+  permutations = 999,
+  strata = all_samples %>% filter(sample %in% labels(beta_q1n_phylum$S)) %>% arrange(match(sample,labels(beta_q1n_phylum$S))) %>% pull(id)) %>%
+  broom::tidy() %>%
+  tt()
+
+adonis2(
+  beta_q1n_phylum$S ~ Species+method,
+  by = "margin",
+  data = all_samples %>%
+    filter(sample %in% labels(beta_q1n_phylum$S)) %>%
+    arrange(match(sample, labels(beta_q1n_phylum$S))),
+  permutations = 999,
+  strata = all_samples %>% filter(sample %in% labels(beta_q1n_phylum$S)) %>% arrange(match(sample,labels(beta_q1n_phylum$S))) %>% pull(id)) %>%
   broom::tidy() %>%
   tt()
 ```

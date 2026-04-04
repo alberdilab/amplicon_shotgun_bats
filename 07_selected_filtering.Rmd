@@ -61,6 +61,63 @@ genome_counts_filt_amplicon %>%
   guides(fill = guide_legend(ncol = 1))
 ```
 
+**Grouping low-abundance bacteria**
+```{r group_plot, fig.height=6, fig.width=10, fig.fullwidth=TRUE}
+p1 <- genome_counts_filt %>%
+  mutate_at(vars(-genome), ~ . / sum(.)) %>% 
+  pivot_longer(-genome, names_to = "sample", values_to = "count") %>% 
+  left_join(genome_metadata, by = join_by(genome == genome)) %>% 
+  left_join(sample_metadata, by = join_by(sample == sample)) %>% 
+  filter(count > 0) %>%
+group_by(sample, phylum) %>%
+  mutate(total_abundance = sum(count)) %>%
+  ungroup() %>%
+  mutate(phylum = if_else(total_abundance < 0.01, "Other", phylum)) %>%
+  group_by(sample, phylum, Species) %>%
+  summarise(count = sum(count), .groups = "drop") %>%
+   ggplot(aes(
+    x = sample,
+    y = count,
+    fill = phylum,
+    group = phylum
+  )) + 
+  geom_bar(stat = "identity",
+           colour = "white",
+           linewidth = 0.1) + 
+  scale_fill_manual(values = c(phylum_colors, "Other" = "grey50"),
+                    drop = FALSE)+
+  facet_nested(~ factor(
+    Species,
+    labels = c("Eb" = "Cnephaeus", "Ha" = "Hypsugo", "Pk" = "Pipistrellus")
+  ), scales = "free") + 
+  guides(fill = guide_legend(ncol = 1)) +
+  theme(
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.title.x = element_blank(),
+    panel.background = element_blank(),
+    panel.border = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    legend.text = element_text(size = 10),
+    strip.background = element_rect(fill = "white"),
+    strip.text = element_text(
+      size = 12,
+      lineheight = 0.6,
+      face = "bold"
+    ),
+    axis.line = element_line(
+      linewidth = 0.5,
+      linetype = "solid",
+      colour = "black"
+    )
+  ) +
+  labs(fill = "Phylum", y = "Relative abundance", x = "Samples")+
+  guides(fill = guide_legend(ncol = 1))
+
+#ggsave("community_plot_grouped_selected.pdf", plot = p1, width = 12, height = 6)
+p1
+```
 **Phylum relative abundances**
 ```{r taxonomy_phylum_selected, warning=FALSE, comments="", message=FALSE}
 phylum_summary <- genome_counts_filt_amplicon %>%

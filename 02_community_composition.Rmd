@@ -7,6 +7,12 @@ load("resources/metagenomics/data_filtered.Rdata")
 ```
 
 ### Taxonomy overview 
+**Number of MAGs**
+```{r mag_number, comment="", message=FALSE, warning=FALSE}
+genome_metadata %>% 
+  nrow()%>% 
+  cat()
+```
 
 **Number of Archaea phyla**
 ```{r arch_phyla, comment="", message=FALSE, warning=FALSE}
@@ -74,6 +80,52 @@ genome_counts_filt %>%
     )
   ) +
   labs(fill = "Phylum", y = "Relative abundance", x = "Samples")
+```
+**Grouping low-abundance bacteria**
+```{r}
+p1 <- genome_counts_filt %>%
+  mutate_at(vars(-genome), ~ . / sum(.)) %>% 
+  pivot_longer(-genome, names_to = "sample", values_to = "count") %>% 
+  left_join(genome_metadata, by = join_by(genome == genome)) %>% 
+  left_join(sample_metadata, by = join_by(sample == sample)) %>% 
+  filter(count > 0) %>%
+group_by(sample, phylum) %>%
+  mutate(total_abundance = sum(count)) %>%
+  ungroup() %>%
+  mutate(phylum = if_else(total_abundance < 0.01, "Other", phylum)) %>%
+  group_by(sample, phylum, Species) %>%
+  summarise(count = sum(count), .groups = "drop") %>%
+   ggplot(aes(
+    x = sample,
+    y = count,
+    fill = phylum,
+    group = phylum
+  )) + 
+  geom_bar(stat = "identity",
+           colour = "white",
+           linewidth = 0.1) + 
+  scale_fill_manual(values = c(phylum_colors, "Other" = "grey50"),
+                    drop = FALSE)+
+  facet_nested(~ factor(
+    Species,
+    labels = c("Eb" = "Cnephaeus", "Ha" = "Hypsugo", "Pk" = "Pipistrellus")
+  ), scales = "free") + 
+  guides(fill = guide_legend(ncol = 1)) +
+  theme(
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.title.x = element_blank(),
+    panel.background = element_blank(),
+    panel.border = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    strip.background = element_rect(fill = "white"),
+    strip.text = element_text(size = 12, lineheight = 0.6, face = "bold"),
+    axis.line = element_line(linewidth = 0.5, linetype = "solid", colour = "black")
+  ) +
+  labs(fill = "Phylum", y = "Relative abundance", x = "Samples")
+#ggsave("community_plot_grouped_metagenomics.pdf", plot = p1, width = 12, height = 6)
+p1
 ```
 
 **Phylum relative abundances**
@@ -600,127 +652,24 @@ microbial_fraction %>%
 load("resources/amplicon/data_standard_filt.Rdata")
 ```
 
-#### Archaea
+**Number of ASV**
 ```{r}
 genome_metadata %>% 
-  filter(domain == "Archaea")%>%
-  dplyr::select(phylum) %>%
-  unique() %>%
-  pull() %>%
-  length()%>% 
+  nrow() %>% 
   cat()
 ```
+
+**Number of phyla**
 ```{r}
 genome_metadata %>% 
-  filter(domain == "Archaea")%>%
-  dplyr::select(phylum) %>%
-  unique() %>%
-  pull() 
+  distinct(phylum) %>% 
+  nrow() %>% 
+  cat()
 ```
 
-```{r}
-archaea_taxa <- taxa_names(phyloseq_16S_stand)[tax_table(phyloseq_16S_stand)[, "domain"] == "Archaea"]
-phyloseq_16S_archaea <- prune_taxa(archaea_taxa, phyloseq_16S_stand)
-phyloseq_16S_archaea <- prune_taxa(taxa_sums(phyloseq_16S_archaea)>0, phyloseq_16S_archaea)
 
-#phyloseq_16S_archaea_pa <- transform_sample_counts(phyloseq_16S_archaea, function(x) as.integer(x > 0))
 
-# Extract OTU table as a matrix
-otu_pa <- otu_table(phyloseq_16S_archaea)
 
-# Convert to presence-absence (1 if present, 0 if absent)
-otu_pa[otu_pa > 0] <- 1
-
-# Assign back to the phyloseq object, preserving taxa orientation
-otu_table(phyloseq_16S_archaea) <- otu_table(otu_pa, taxa_are_rows = taxa_are_rows(phyloseq_16S_archaea))
-phyloseq_16S_archaea <- prune_taxa(taxa_sums(phyloseq_16S_archaea)>0, phyloseq_16S_archaea)
-
-otu_table(phyloseq_16S_archaea) %>% 
-  rowSums()%>% 
-  as.data.frame()  %>% 
-  rename(count=1) %>% 
-  rownames_to_column(., "genome") %>% 
-  left_join(., genome_metadata, by="genome") %>% 
-  group_by(phylum, genome) %>% 
-  summarise(total_count=sum(count)) %>% 
-  filter(total_count>1) %>% 
-  tt()
-
-otu_table(phyloseq_16S_archaea) %>% 
-  rowSums()%>% 
-  as.data.frame()  %>% 
-  rename(count=1) %>% 
-  rownames_to_column(., "genome") %>% 
-  left_join(., genome_metadata, by="genome") %>% 
-  group_by(phylum, genus) %>% 
-  summarise(total_count=sum(count)) %>% 
-  filter(total_count>1) %>% 
-  arrange(-total_count) %>% 
-  tt()
-  
-sample_sums(phyloseq_16S_archaea) %>% 
-  as.data.frame() %>% 
-  rename(count=1) %>% 
-  filter(count>0) %>% 
-  arrange(-count)%>% 
-  tt()
-
-#filtering
-sample_sums(phyloseq_16S_archaea) %>% 
-  as.data.frame() %>% 
-  rename(count=1) %>% 
-  filter(count>0) %>% 
-  arrange(-count) %>% 
-  summarise(mean=mean(count),sd=sd(count))%>% 
-  tt()
-
-#without filtering
-sample_sums(phyloseq_16S_archaea) %>% 
-  as.data.frame() %>% 
-  rename(count=1) %>% 
-  arrange(-count) %>% 
-  summarise(mean=mean(count),sd=sd(count))%>% 
-  tt()
-```
-```{r}
-sample_sums(phyloseq_16S_archaea) %>% 
-  as.data.frame() %>% 
-  rename(count=1) %>% 
-  filter(count>0) %>% 
-  arrange(-count) %>%
-  mutate(across(everything(), ~ as.integer(. > 0)))%>% 
-  rownames_to_column(., "sample") %>% 
-  left_join(., sample_metadata, by="sample") %>%
-  mutate(Species = factor(Species, levels = c("Eb", "Ha", "Pk"), labels = c("Cnephaeus bottae", "Hypsugo ariel", "Pipistrellus kuhlii"))) %>% 
-  group_by(Species) %>% 
-  summarise(n_individuals=sum(count))%>% 
-  tt()
-```
-
-```{r}
-sample_sums(phyloseq_16S_archaea) %>% 
-  as.data.frame() %>% 
-  rename(count=1) %>% 
-  filter(count>0) %>% 
-  arrange(-count) %>% 
-  rownames_to_column(., "sample") %>% 
-  left_join(., sample_metadata, by="sample") %>%
-  mutate(Species = factor(Species, levels = c("Eb", "Ha", "Pk"), labels = c("Cnephaeus bottae", "Hypsugo ariel", "Pipistrellus kuhlii"))) %>% 
-  group_by(Species) %>% 
-  summarise(total_count=sum(count))%>% 
-  tt()
-```
-
-Archaeal ASVs present in more than 1 individual
-```{r}
-data.frame(phyloseq_16S_archaea@otu_table) %>% 
-  rowSums() %>% 
-  as.data.frame() %>% 
-  rename(Archaea=".") %>% 
-  filter(Archaea>1) %>% 
-  arrange(-Archaea) %>% 
-  tt()
-```
 
 
 #### Phylum level
@@ -771,6 +720,63 @@ genome_counts_filt %>%
   guides(fill = guide_legend(ncol = 2))
 ```
 
+**Grouping low-abundance bacteria**
+```{r group_plot_metab, fig.height=6, fig.width=10, fig.fullwidth=TRUE}
+p1 <- genome_counts_filt %>%
+  mutate_at(vars(-genome), ~ . / sum(.)) %>% 
+  pivot_longer(-genome, names_to = "sample", values_to = "count") %>% 
+  left_join(genome_metadata, by = join_by(genome == genome)) %>% 
+  left_join(sample_metadata, by = join_by(sample == sample)) %>% 
+  filter(count > 0) %>%
+group_by(sample, phylum) %>%
+  mutate(total_abundance = sum(count)) %>%
+  ungroup() %>%
+  mutate(phylum = if_else(total_abundance < 0.01, "Other", phylum)) %>%
+  group_by(sample, phylum, Species) %>%
+  summarise(count = sum(count), .groups = "drop") %>%
+   ggplot(aes(
+    x = sample,
+    y = count,
+    fill = phylum,
+    group = phylum
+  )) + 
+  geom_bar(stat = "identity",
+           colour = "white",
+           linewidth = 0.1) + 
+  scale_fill_manual(values = c(phylum_colors, "Other" = "grey50"),
+                    drop = FALSE)+
+  facet_nested(~ factor(
+    Species,
+    labels = c("Eb" = "Cnephaeus", "Ha" = "Hypsugo", "Pk" = "Pipistrellus")
+  ), scales = "free") + 
+  guides(fill = guide_legend(ncol = 1)) +
+  theme(
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.title.x = element_blank(),
+    panel.background = element_blank(),
+    panel.border = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    legend.text = element_text(size = 6),
+    strip.background = element_rect(fill = "white"),
+    strip.text = element_text(
+      size = 12,
+      lineheight = 0.6,
+      face = "bold"
+    ),
+    axis.line = element_line(
+      linewidth = 0.5,
+      linetype = "solid",
+      colour = "black"
+    )
+  ) +
+  labs(fill = "Phylum", y = "Relative abundance", x = "Samples")+
+  guides(fill = guide_legend(ncol = 2))
+
+#ggsave("community_plot_grouped_standard.pdf", plot = p1, width = 12, height = 6)
+p1
+```
 
 **Phylum relative abundances**
 ```{r taxonomy_phylum_summary_ampli1, warning=FALSE, comments="", message=FALSE}
@@ -807,6 +813,9 @@ phylum_summary %>%
   tt()
 ```
 
+
+
+
 **Number of phyla in each bat species**
 ```{r}
 phylum_summary <- genome_counts_filt %>%
@@ -834,13 +843,13 @@ family_summary <- genome_counts_filt %>%
   pivot_longer(-genome, names_to = "sample", values_to = "count") %>% 
   left_join(sample_metadata, by = join_by(sample == sample)) %>% 
   left_join(., genome_metadata, by = join_by(genome == genome)) %>% 
-  group_by(sample, family, Species) %>%
+  group_by(sample, phylum, family, Species) %>%
   summarise(relabun = sum(count))
 ```
 
 ```{r taxonomy_family_summary_ampli1, warning=FALSE, comments="", message=FALSE}
 family_summary %>%
-  group_by(family) %>%
+  group_by(phylum,family) %>%
   summarise(
     Eb_mean = mean(relabun[Species == "Eb"] * 100, na.rm = T),
     Eb_sd = sd(relabun[Species == "Eb"] * 100, na.rm = T),
@@ -856,35 +865,7 @@ family_summary %>%
   ) %>%
   arrange(-Pk_mean) %>%
   dplyr::select(family, Cnephaeus, Hypsugo, Pipistrellus) %>%
-  left_join(., genome_metadata[c(3, 6)] %>% unique(), by = join_by(family == family)) %>% 
   tt()
-```
-```{r taxonomy_jitterplot_family_ampli, warning=FALSE, comments="", message=FALSE, fig.height=8, fig.width=10, fig.fullwidth=TRUE}
-family_arrange <- family_summary %>%
-  group_by(family) %>%
-  summarise(mean = sum(relabun)) %>%
-  arrange(-mean) %>%
-  select(family) %>%
-  pull()
-
-family_summary %>%
-  left_join(genome_metadata %>% select(family, phylum) %>% unique(),
-            by = join_by(family == family)) %>%
-  mutate(Species = factor(Species, levels = c("Eb", "Ha", "Pk"), labels = c("Cnephaeus bottae", "Hypsugo ariel", "Pipistrellus kuhlii"))) %>% 
-  filter(family %in% family_arrange[1:20]) %>%
-  mutate(family = factor(family, levels = rev(family_arrange[1:20]))) %>%
-  filter(relabun > 0) %>%
-  ggplot(aes(
-    x = relabun,
-    y = family,
-    group = family,
-    color = phylum
-  )) +
-  scale_color_manual(values = phylum_colors[-8]) +
-  geom_jitter(alpha = 0.5) +
-  facet_grid(. ~ Species) +
-  theme_minimal() +
-  labs(y = "Family", x = "Relative abundance", color = "Phylum")
 ```
 
 #### Genus level
@@ -1144,8 +1125,8 @@ bats = c("Eb", "Pk", "Ha")
 
 single_sp <- data.frame(Bat = character(), Single_species = numeric())
 
-bacteria <- genome_metadata %>% 
-  filter(domain=="Bacteria")
+bacteria <- genome_metadata %>%
+ filter(domain=="Bacteria")
 
 table_upset_analysis <- genome_counts_filt %>%
   mutate(across(-genome, ~ . / sum(.))) %>%
@@ -1257,6 +1238,165 @@ summary_table_ampli %>%
   mutate(Single_individual_per_unique=round(Single_individual*100/Single_species, 2)) %>% 
   select(1,7:12) %>% 
   tt()
+```
+
+#### Archaea
+
+**Number of ASV**
+```{r}
+genome_metadata %>% 
+  filter(domain == "Archaea")%>%
+  nrow() %>% 
+  cat()
+```
+
+**Number of archael phyla**
+```{r}
+genome_metadata %>% 
+  filter(domain == "Archaea")%>%
+  dplyr::select(phylum) %>%
+  unique() %>%
+  pull() %>%
+  length()%>% 
+  cat()
+```
+```{r}
+genome_metadata %>% 
+  filter(domain == "Archaea")%>%
+  dplyr::select(phylum) %>%
+  unique() %>%
+  pull() 
+```
+
+```{r}
+genome_archaea <- genome_metadata %>% 
+  filter(domain=="Archaea")
+
+more <- genome_counts_filt %>% 
+  filter(genome %in% genome_archaea$genome) %>%
+  mutate(across(-genome, ~ ifelse(. > 0, 1, 0)))%>%
+  mutate(count = rowSums(across(-genome))) %>% 
+  select(genome, count) %>% 
+  filter(count>1) %>% 
+  nrow()
+
+total_arc <- genome_metadata %>% 
+  filter(domain=="Archaea") %>% 
+  nrow()
+
+100-(more*100/total_arc)
+
+```
+
+**Archaeal ASVs present in more than one individual**
+```{r}
+genome_counts_filt %>% 
+  filter(genome %in% genome_archaea$genome) %>%
+  mutate(across(-genome, ~ ifelse(. > 0, 1, 0)))%>%
+  mutate(count = rowSums(across(-genome))) %>% 
+  select(genome, count) %>% 
+  filter(count>1)
+```
+
+**Presence of archaeal ASVs**
+```{r}
+genome_counts_filt %>% 
+  filter(genome %in% genome_archaea$genome) %>% 
+  select(
+    genome,
+    where(~ sum(. > 0) > 0)
+  ) %>%
+  mutate(across(-genome, ~ ifelse(. > 0, 1, 0))) %>% 
+  select(-genome) %>% 
+  colSums() %>% 
+  as.data.frame() %>% 
+  rename(archaea=1) %>% 
+  rownames_to_column("sample") %>% 
+  left_join(., sample_metadata[c(1,6)], by="sample") %>% 
+  tt()
+```
+
+**Number of archaeal ASVs in each species**
+```{r}
+genome_counts_filt %>% 
+  filter(genome %in% genome_archaea$genome) %>% 
+  select(
+    genome,
+    where(~ sum(. > 0) > 0)
+  ) %>%
+  mutate(across(-genome, ~ ifelse(. > 0, 1, 0))) %>% 
+  select(-genome) %>% 
+  colSums() %>% 
+  as.data.frame() %>% 
+  rename(archaea=1) %>% 
+  rownames_to_column("sample") %>% 
+  left_join(., sample_metadata[c(1,6)], by="sample") %>% 
+  group_by(species_name) %>% 
+  summarise(asv=sum(archaea))
+```
+
+**Number of individuals with archaeal ASVs**
+```{r}
+genome_counts_filt %>% 
+  filter(genome %in% genome_archaea$genome) %>% 
+  select(
+    genome,
+    where(~ sum(. > 0) > 0)
+  ) %>%
+  mutate(across(-genome, ~ ifelse(. > 0, 1, 0))) %>% 
+  select(-genome) %>% 
+  colSums() %>% 
+  as.data.frame() %>% 
+  rename(archaea=1) %>% 
+  rownames_to_column("sample") %>% 
+  left_join(., sample_metadata[c(1,6)], by="sample") %>% 
+  group_by(species_name) %>% 
+  summarise(indiv=n())
+```
+**Mean presence of archaeal ASVs**
+```{r}
+genome_counts_filt %>% 
+  filter(genome %in% genome_archaea$genome) %>% 
+  mutate(across(-genome, ~ ifelse(. > 0, 1, 0))) %>% 
+  select(-genome) %>% 
+  colSums() %>% 
+  as.data.frame() %>% 
+  rename(archaea=1) %>% 
+  rownames_to_column("sample") %>% 
+  left_join(., sample_metadata[c(1,6)], by="sample") %>% 
+  summarise(mean=mean(archaea), sd=sd(archaea))
+```
+
+**Mean presence of archaeal ASVs per species**
+```{r}
+genome_counts_filt %>% 
+  filter(genome %in% genome_archaea$genome) %>% 
+  mutate(across(-genome, ~ ifelse(. > 0, 1, 0))) %>% 
+  select(-genome) %>% 
+  colSums() %>% 
+  as.data.frame() %>% 
+  rename(archaea=1) %>% 
+  rownames_to_column("sample") %>% 
+  left_join(., sample_metadata[c(1,6)], by="sample") %>% 
+  group_by(species_name) %>% 
+  summarise(mean=mean(archaea), sd=sd(archaea))
+```
+
+```{r}
+genome_archaea %>% 
+  distinct(genus)
+```
+```{r}
+genome_counts_filt %>% 
+  filter(genome %in% genome_archaea$genome) %>% 
+  select(
+    genome,
+    where(~ sum(. > 0) > 0)
+  ) %>%
+  mutate(across(-genome, ~ ifelse(. > 0, 1, 0))) %>%
+  mutate(count = rowSums(across(-genome))) %>% 
+  select(genome, count) %>% 
+  arrange(-count)
 ```
 
 ## Differences in top phyla between methods

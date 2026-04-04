@@ -26,9 +26,10 @@ phylo_taxonomy <- genome_metadata %>%
   tax_table()
 
 physeq_genome_phylum_metagen <- phyloseq(phylo_genome, phylo_samples, phylo_taxonomy)
+load("resources/ancom_rand_output_phylum_metagen.Rdata")
 ```
 
-```{r ancom_rand_phylum_metag, comment="", message=FALSE, warning=FALSE}
+```{r ancom_rand_phylum_metag, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 ancom_rand_output_phylum_metagen = ancombc2(
   data = physeq_genome_phylum_metagen,
   assay_name = "counts",
@@ -58,6 +59,9 @@ ancom_rand_output_phylum_metagen = ancombc2(
   mdfdr_control = list(fwer_ctrl_method = "holm", B = 100),
   trend_control = NULL
 )
+
+save(ancom_rand_output_phylum_metagen, 
+     file = "resources/ancom_rand_output_phylum_metagen.Rdata")
 ```
 
 #### Structural zeros
@@ -81,7 +85,6 @@ structural_zero_groups <- structural_zeros_df[structural_zero_taxa, , drop = FAL
 
 # Total number of structural zeros
 nrow(structural_zero_groups)
-
 ```
 
 **Structural zeros in Cb**
@@ -118,11 +121,10 @@ structural_zero_groups %>%
 #### Enriched phyla
 ```{r labeling_phyl_metag, comment="", message=FALSE, warning=FALSE, fig.height=20, fig.width=10, fig.fullwidth=TRUE}
 res_pair_phylum <- ancom_rand_output_phylum_metagen$res_pair
-# Get log-fold change and q-value columns
+
 lfc_cols <- grep("^lfc_", colnames(res_pair_phylum), value = TRUE)
 q_cols   <- gsub("^lfc_", "q_", lfc_cols)
 
-# Build long table by pairing lfc and q for each contrast
 plot_data_phylum <- lfc_cols %>%
   setNames(nm = .) %>%
   purrr::imap_dfr(function(lfc_col, name) {
@@ -138,7 +140,6 @@ plot_data_phylum <- lfc_cols %>%
   }) %>%
   filter(!is.na(lfc), !is.na(q), q < 0.05) %>%
   mutate(
-    # Manually re-label contrasts for clarity
     contrast = case_when(
       contrast_key == "lfc_SpeciesHa" ~ "H. ariel vs C. bottae",
       contrast_key == "lfc_SpeciesPk" ~ "P. kuhlii vs C. bottae",
@@ -154,8 +155,7 @@ plot_data_phylum %>% select(-contrast_key) %>% tt()
 ### Metabarcoding standard
 ```{r div_load_data_ampli2_metab, comment="", message=FALSE, warning=FALSE}
 load("resources/amplicon/data_standard_filt.Rdata")
-```
-```{r zero_phylo1_metab, comment="", message=FALSE, warning=FALSE}
+
 phylo_samples <- sample_metadata_amplicon %>% 
   column_to_rownames("sample") %>%
   sample_data()
@@ -176,9 +176,11 @@ phylo_taxonomy <- genome_metadata_ampli %>%
   tax_table()
 
 physeq_genome_metab <- phyloseq(phylo_genome, phylo_samples, phylo_taxonomy)
+
+load("resources/ancom_rand_output_phylum_metab.Rdata")
 ```
 
-```{r ancom_rand_phylum_metab, comment="", message=FALSE, warning=FALSE}
+```{r ancom_rand_phylum_metab, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 ancom_rand_output_phylum_metab = ancombc2(
   data = physeq_genome_metab,
   assay_name = "counts",
@@ -208,6 +210,9 @@ ancom_rand_output_phylum_metab = ancombc2(
   mdfdr_control = list(fwer_ctrl_method = "holm", B = 100),
   trend_control = NULL
 )
+
+save(ancom_rand_output_phylum_metab, 
+     file = "resources/ancom_rand_output_phylum_metab.Rdata")
 ```
 
 #### Structural zeros
@@ -254,7 +259,6 @@ plot_data_phylum <- lfc_cols %>%
   }) %>%
   filter(!is.na(lfc), !is.na(q), q < 0.05) %>%
   mutate(
-    # Manually re-label contrasts for clarity
     contrast = case_when(
       contrast_key == "lfc_SpeciesHa" ~ "H. ariel vs C. bottae",
       contrast_key == "lfc_SpeciesPk" ~ "P. kuhlii vs C. bottae",
@@ -356,7 +360,6 @@ merged_table_phylum <- full_join(phylum_level_agg_ampli,phylum_level_agg,
           by = c("phylum"))%>%
   mutate(across(where(is.numeric), ~replace_na(., 0)))
 
-
 sample_shot <- sample_metadata %>% 
   select(-c(Habitat,Longitude, Latitude, Region))%>%
   mutate(method="Metagenomics")
@@ -374,9 +377,10 @@ phylo_genome <- merged_table_phylum %>%
   otu_table(., taxa_are_rows = TRUE)
 
 physeq_genome_filtered <- phyloseq(phylo_genome, phylo_samples)
+load("resources/ancom_rand_output_phylum_appro.Rdata")
 ```
 
-```{r ancom_rand_phylum_approach, comment="", message=FALSE, warning=FALSE}
+```{r ancom_rand_phylum_approach, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 ancom_rand_output_phylum_appro = ancombc2(
   data = physeq_genome_filtered,
   assay_name = "counts",
@@ -408,6 +412,9 @@ ancom_rand_output_phylum_appro = ancombc2(
   lme_control = lme4::lmerControl(),
   trend_control = NULL
 )
+
+save(ancom_rand_output_phylum_appro, 
+     file = "resources/ancom_rand_output_phylum_appro.Rdata")
 ```
 
 #### Enriched phyla

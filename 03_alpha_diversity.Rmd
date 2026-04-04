@@ -147,7 +147,8 @@ alpha_div_meta %>%
 
 **Richness**
 ```{r rich_MM_general, comment="", message=FALSE, warning=FALSE}
-Model_richness <- lm(formula = richness ~ Species, data = metagenome_alpha_div)
+Model_richness <- MASS::glm.nb(richness ~ Species, data = metagenome_alpha_div,trace=TRUE)
+summary(Model_richness)
 anova(Model_richness)
 emmeans(Model_richness, pairwise ~ Species)
 ```
@@ -252,7 +253,7 @@ alpha_div_f_metag %>%
 
 **Richness**
 ```{r rich_MM_general_metag_indiv, comment="", message=FALSE, warning=FALSE}
-Model_richness <- lm(formula = richness ~ Species, data = alpha_div_f_metag_data)
+Model_richness <- MASS::glm.nb(richness ~ Species, data = alpha_div_f_metag_data,trace=TRUE)
 anova(Model_richness)
 emmeans(Model_richness, pairwise ~ Species)
 ```
@@ -320,9 +321,9 @@ alpha_div_phylum_metag %>%
 
 **Richness**
 ```{r rich_MM_phylum_metag_indiv, comment="", message=FALSE, warning=FALSE}
-Model_richness <- lm(formula = richness ~ Species, data = alpha_div_phylum_metag_data)
-anova(Model_richness)
-emmeans(Model_richness, pairwise ~ Species)
+Model_richness_p <- MASS::glm.nb(richness ~ Species, data = alpha_div_phylum_metag_data,trace=TRUE)
+anova(Model_richness_p)
+emmeans(Model_richness_p, pairwise ~ Species)
 ```
 
 **Neutral**
@@ -382,7 +383,6 @@ cor.test(fraction_ampli$read_fraction, fraction_ampli$neutral, method = "spearma
 ```
 
 ```{r fraction_ampli_fig, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
-
 p1_ampli <- ggplot(fraction_ampli, aes(x = read_fraction, y = richness)) +
   geom_point(size = 3, color = "#2E86AB") +
   geom_smooth(method = "lm", se = TRUE, color = "black") +
@@ -435,8 +435,8 @@ saveRDS(amplicon_alpha_div_data, "resources/amplicon/amplicon_alpha_div.rds")
 
 **Richness**
 ```{r rich_MM_ampli_species_sp, comment="", message=FALSE, warning=FALSE}
-Model_richness <- lm(formula = richness ~ Species, data = amplicon_alpha_div_data)
-anova(Model_richness)
+Model_richness_ampli <- MASS::glm.nb(richness ~ Species, data = amplicon_alpha_div_data,trace=TRUE)
+anova(Model_richness_ampli)
 ```
 
 **Neutral**
@@ -543,14 +543,14 @@ alpha_div_f_ampli %>%
 
 **Richness**
 ```{r rich_MM_family_indiv_ampli, comment="", message=FALSE, warning=FALSE}
-Model_richness <- lm(formula = richness ~ Species, data = alpha_div_f_ampli_data)
-anova(Model_richness)
+Model_richness_ampli_f <- MASS::glm.nb(richness ~ Species, data = alpha_div_f_ampli_data,trace=TRUE)
+anova(Model_richness_ampli_f)
 ```
 
 **Neutral**
 ```{r neutral_MM_family_indiv_ampli, comment="", message=FALSE, warning=FALSE}
-Model_neutral <- lm(formula = neutral ~ Species, data = alpha_div_f_ampli_data)
-anova(Model_neutral)
+Model_neutral_ampli_f <- lm(formula = neutral ~ Species, data = alpha_div_f_ampli_data)
+anova(Model_neutral_ampli_f)
 ```
 
 #### Phylum level
@@ -609,14 +609,14 @@ alpha_div_phylum_ampli %>%
 
 **Richness**
 ```{r rich_MM_phylum_indiv_ampli, comment="", message=FALSE, warning=FALSE}
-Model_richness <- lm(formula = richness ~ Species, data = alpha_div_phylum_ampli_data)
-anova(Model_richness)
+Model_richness_ampli_p <- MASS::glm.nb(richness ~ Species, data = alpha_div_phylum_ampli_data,trace=TRUE)
+anova(Model_richness_ampli_p)
 ```
 
 **Neutral**
 ```{r neutral_MM_phylum_indiv_ampli, comment="", message=FALSE, warning=FALSE}
-Model_neutral <- lm(formula = neutral ~ Species, data = alpha_div_phylum_ampli_data)
-anova(Model_neutral)
+Model_neutral_ampli_p <- lm(formula = neutral ~ Species, data = alpha_div_phylum_ampli_data)
+anova(Model_neutral_ampli_p)
 ```
 
 ## Comparison
@@ -807,17 +807,30 @@ alpha_div_family_data %>%
 
 **Richness**
 ```{r rich_MM_ampli_species_family, comment="", message=FALSE, warning=FALSE}
-Model_richness <- lm(formula = richness ~ Species*method, data = alpha_div_family_data)
-anova(Model_richness)
+# Model_richness <- lm(formula = richness ~ Species*method, data = alpha_div_family_data)
+# anova(Model_richness)
+# summary(Model_richness)
+Modelq0GLMMNB <- MASS::glm.nb(richness ~ Species*method, data = alpha_div_family_data,trace=TRUE)
+summary(Modelq0GLMMNB)
+```
+```{r}
+Model_richness <- glmer.nb(richness ~ Species*method+(1|sample), data = alpha_div_family_data)
 summary(Model_richness)
+anova(Model_richness)
 ```
 
 **Neutral**
 ```{r neutral_MM_ampli_species_family, comment="", message=FALSE, warning=FALSE}
-Model_neutral <- lm(formula = neutral ~ Species*method, data = alpha_div_family_data)
+Model_neutral <- lm(formula = neutral ~ Species+method, data = alpha_div_family_data)
 anova(Model_neutral)
 summary(Model_neutral)
-emmeans(Model_neutral, pairwise ~ Species)
+#emmeans(Model_neutral, pairwise ~ Species)
+```
+```{r}
+Modelq1 <- lme(fixed = neutral ~ Species*method, data = alpha_div_family_data,
+               random = ~ 1 | sample)
+summary(Modelq1)
+anova(Modelq1)
 ```
 
 #### Phylum level
@@ -909,6 +922,26 @@ anova(Model_richness_phylum)
 summary(Model_richness_phylum)
 emmeans(Model_richness_phylum, pairwise ~ Species)
 ```
+```{r}
+Model_richness_random <- glmer.nb(richness ~ Species*method+(1|sample), data = alpha_div_phylum_data)
+summary(Model_richness_random)
+anova(Model_richness_random)
+```
+```{r}
+AIC(Model_richness_phylum, Model_richness_random)
+#check if the model actually converged
+summary(Model_richness_random)$optinfo$conv$lme4$messages #NULL: no serious issue
+#Check for singular fit
+isSingular(Model_richness_random, tol = 1e-4) #FALSE: random structure is fine
+
+#Check overdispersion
+overdisp_fun <- function(model) {
+  rdf <- df.residual(model)
+  rp <- residuals(model, type = "pearson")
+  sqrt(sum(rp^2) / rdf)
+}
+overdisp_fun(Model_richness_random) #~1: good (1.2 → overdispersion, <0.8: possible underdispersion) 
+```
 
 **Neutral**
 ```{r neutral_alpha_phylum_comp, comment="", message=FALSE, warning=FALSE}
@@ -918,3 +951,9 @@ summary(Model_neutral_phylum)
 emmeans(Model_neutral_phylum, pairwise ~ Species)
 ```
 
+```{r}
+Modelq1_random <- lme(fixed = neutral ~ Species*method, data = alpha_div_phylum_data,
+               random = ~ 1 | sample)
+summary(Modelq1_random )
+anova(Modelq1_random )
+```

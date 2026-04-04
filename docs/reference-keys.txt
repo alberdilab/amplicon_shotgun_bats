@@ -40,12 +40,12 @@ estimated-vs-recovered-proportion
 domain-adjusted-mapping-rate
 amplicon-1
 taxonomy-overview-1
-archaea
 phylum-level-1
 family-level-1
 genus-level-1
 asvs
 summary-table-1
+archaea
 differences-in-top-phyla-between-methods
 alpha-diversity
 metagenomics-2
