@@ -4,24 +4,23 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 6 Differential abundance | AlberdiLab | Aizpurua et al. 2026</title>
+  <title>Chapter 6 Differential abundance | Anonymised</title>
   <meta name="description" content="&lt;p&gt;Data analysis code for the manuscript titled: Impact of sequencing approach on ecological inference from highly variable gut microbiomes.&lt;/p&gt;" />
   <meta name="generator" content="bookdown 0.42 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 6 Differential abundance | AlberdiLab | Aizpurua et al. 2026" />
+  <meta property="og:title" content="Chapter 6 Differential abundance | Anonymised" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="&lt;p&gt;Data analysis code for the manuscript titled: Impact of sequencing approach on ecological inference from highly variable gut microbiomes.&lt;/p&gt;" />
-  <meta name="github-repo" content="alberdilab/amplicon_shotgun_bats" />
+  <meta name="github-repo" content="Chapter 6 Differential abundance | Anonymised" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 6 Differential abundance | AlberdiLab | Aizpurua et al. 2026" />
+  <meta name="twitter:title" content="Chapter 6 Differential abundance | Anonymised" />
   
   <meta name="twitter:description" content="&lt;p&gt;Data analysis code for the manuscript titled: Impact of sequencing approach on ecological inference from highly variable gut microbiomes.&lt;/p&gt;" />
   
 
-<meta name="author" content="Ostaizka Aizpurua" />
-<meta name="author" content="Antton Alberdi" />
+<meta name="author" content="Chapter 6 Differential abundance | Anonymised" />
 
 
 <meta name="date" content="2026-04-07" />
@@ -2255,7 +2254,7 @@ color: #a52929;
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">AlberdiLab | Aizpurua et al. 2026</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Anonymised</a>
           </h1>
         </div>
 
@@ -2892,10 +2891,10 @@ color: #a52929;
 <div id="enriched-phyla-2" class="section level4 hasAnchor" number="6.1.3.1">
 <h4><span class="header-section-number">6.1.3.1</span> Enriched phyla<a href="differential-abundance.html#enriched-phyla-2" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <div class="sourceCode" id="cb353"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb353-1"><a href="differential-abundance.html#cb353-1" tabindex="-1"></a>ancom_rand_output_phylum_appro<span class="sc">$</span>res <span class="sc">%&gt;%</span> <span class="fu">filter</span>(q_methodMetagenomics<span class="sc">&lt;</span><span class="fl">0.05</span>)</span></code></pre></div>
-<pre class="script-output"><code>           taxon lfc_(Intercept) lfc_methodMetagenomics se_(Intercept) se_methodMetagenomics W_(Intercept) W_methodMetagenomics p_(Intercept) p_methodMetagenomics q_(Intercept) q_methodMetagenomics
-1 Pseudomonadota        2.279875               -1.95287      0.4412564              0.601319      5.166781            -3.247644   0.001679214          0.001601129    0.02080063           0.02081467
-  diff_(Intercept) diff_methodMetagenomics passed_ss_(Intercept) passed_ss_methodMetagenomics
-1             TRUE                    TRUE                  TRUE                         TRUE</code></pre>
+<pre class="script-output"><code>           taxon lfc_(Intercept) lfc_methodMetagenomics se_(Intercept) se_methodMetagenomics W_(Intercept) W_methodMetagenomics p_(Intercept) p_methodMetagenomics
+1 Pseudomonadota        2.279875               -1.95287      0.4412564              0.601319      5.166781            -3.247644   0.001679214          0.001601129
+  q_(Intercept) q_methodMetagenomics diff_(Intercept) diff_methodMetagenomics passed_ss_(Intercept) passed_ss_methodMetagenomics
+1    0.02080063           0.02081467             TRUE                    TRUE                  TRUE                         TRUE</code></pre>
 
 </div>
 </div>
