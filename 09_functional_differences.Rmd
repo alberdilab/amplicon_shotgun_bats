@@ -178,14 +178,15 @@ picrust2_pipeline.py -s resources/amplicon/picrust/sequences.fa \
 
 ### Analyse functions
 
-```{r load_functions,comment="", message=FALSE, warning=FALSE}
+```{r load_functions,comment="", message=FALSE, warning=FALSE, eval=FALSE}
 amplicon_ko <- read_tsv("resources/amplicon/picrust/results/combined_KO_predicted.tsv.xz")
 amplicon_ec <- read_tsv("resources/amplicon/picrust/results/combined_EC_predicted.tsv.xz")
 
 tree_bacteria <- read.tree("resources/amplicon/picrust/results/bac_reduced.tre")
+save(amplicon_ko,amplicon_ec,tree_bacteria, file="resources/functional_files.Rdata")
 ```
 
-```{r distillr_functions,comment="", message=FALSE, warning=FALSE}
+```{r distillr_functions,comment="", message=FALSE, warning=FALSE, eval=FALSE}
 amplicon_ko_long <- amplicon_ko  %>% 
   pivot_longer(!sequence,names_to="kegg",values_to="value") %>% 
   filter(value>0) %>% 

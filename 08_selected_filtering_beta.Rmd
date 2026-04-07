@@ -1,20 +1,20 @@
-# Metabarcoding selected filtering based on alpha diversity (t3_p10)
+# Metabarcoding selected filtering based on beta diversity (t4_p0)
 
-```{r knitr_options_comp, include=FALSE}
+```{r knitr_options_select_beta, include=FALSE}
 knitr::opts_chunk$set(fig.width=10, fig.height=7, fig.fullwidth=TRUE,
 fig.path='Figures/', warning=FALSE,
 message=FALSE)
 set.seed(24022025)
 ```
 
-```{r load_both, warning=FALSE, comments="", message=FALSE}
+```{r load_both_select_beta, warning=FALSE, comments="", message=FALSE}
 load("resources/metagenomics/data_filtered.Rdata")
-load("resources/amplicon/selected_filtering.Rdata")
+load("resources/amplicon/selected_filtering_beta.Rdata")
 species_color <- c("#e5bd5b", "#6b7398", "#76b183")
 ```
 
 ## Taxonomy
-```{r taxonomy_barplot_selec_filt, fig.height=6, fig.width=10, fig.fullwidth=TRUE}
+```{r taxonomy_barplot_selec_filt_beta, fig.height=6, fig.width=10, fig.fullwidth=TRUE}
 genome_counts_filt_amplicon %>%
   mutate_at(vars(-genome),  ~ . / sum(.)) %>% 
   pivot_longer(-genome, names_to = "sample", values_to = "count") %>% 
@@ -62,7 +62,7 @@ genome_counts_filt_amplicon %>%
 ```
 
 **Grouping low-abundance bacteria**
-```{r group_plot, fig.height=6, fig.width=10, fig.fullwidth=TRUE}
+```{r group_plot_beta, fig.height=6, fig.width=10, fig.fullwidth=TRUE}
 p1 <- genome_counts_filt %>%
   mutate_at(vars(-genome), ~ . / sum(.)) %>% 
   pivot_longer(-genome, names_to = "sample", values_to = "count") %>% 
@@ -119,7 +119,7 @@ group_by(sample, phylum) %>%
 p1
 ```
 **Phylum relative abundances**
-```{r taxonomy_phylum_selected, warning=FALSE, comments="", message=FALSE}
+```{r taxonomy_phylum_selected_beta, warning=FALSE, comments="", message=FALSE}
 phylum_summary <- genome_counts_filt_amplicon %>%
   mutate_at(vars(-genome),~./sum(.)) %>%
   pivot_longer(-genome, names_to = "sample", values_to = "count") %>%
@@ -129,7 +129,7 @@ phylum_summary <- genome_counts_filt_amplicon %>%
   summarise(relabun=sum(count))
 ```
 
-```{r taxonomy_phylum_summary_selected, warning=FALSE, comments="", message=FALSE}
+```{r taxonomy_phylum_summary_selected_beta, warning=FALSE, comments="", message=FALSE}
 phylum_summary %>%
   group_by(phylum) %>%
   summarise(
@@ -156,7 +156,7 @@ phylum_summary %>%
                 Pipistrellus) %>%
   tt()
 ```
-```{r dist_ASv_ampli, warning=FALSE, comments="", message=FALSE}
+```{r dist_ASv_ampli_beta, warning=FALSE, comments="", message=FALSE}
 bats = c("Eb", "Pk", "Ha")
 
 total_asvs <- data.frame(
@@ -237,7 +237,7 @@ for (bat in bats) {
 }
 ```
 
-```{r total_annot_ampli_species, warning=FALSE, comments="", message=FALSE}
+```{r total_annot_ampli_species_beta, warning=FALSE, comments="", message=FALSE}
 bats = c("Eb", "Pk", "Ha")
 
 no_annotation <- data.frame(Bat = character(),
@@ -298,7 +298,7 @@ for (bat in bats) {
 ```
 
 **Total percentage of ASVs without genus-level annotation**
-```{r genon_percet_ampli, comment="", message=FALSE, warning=FALSE}
+```{r genon_percet_ampli_beta, comment="", message=FALSE, warning=FALSE}
 nongenera <- genome_metadata_amplicon %>%
   filter(domain=="Bacteria") %>%
   filter(is.na(genus)) %>% 
@@ -313,7 +313,7 @@ cat(perct)
 ```
 
 **Percentage of ASVs without genus-level annotation by phylum**
-```{r nongene_phylum_ampli, comment="", message=FALSE, warning=FALSE}
+```{r nongene_phylum_ampli_beta, comment="", message=FALSE, warning=FALSE}
 total_asv_phylum <- genome_metadata_amplicon %>%
   filter(domain=="Bacteria") %>%
   group_by(phylum) %>%
@@ -328,7 +328,7 @@ genome_metadata_amplicon %>%
 ```
 
 **Number of bacterial species**
-```{r phyla_ampli_bacteria, comment="", message=FALSE, warning=FALSE}
+```{r phyla_ampli_bacteria_beta, comment="", message=FALSE, warning=FALSE}
 genome_metadata_amplicon %>% 
   filter(domain == "Bacteria")%>%
   dplyr::select(species) %>%
@@ -340,7 +340,7 @@ genome_metadata_amplicon %>%
 ```
 
 **Total percentage of ASVs without species-level annotation**
-```{r sp_percet_ampli_filt, comment="", message=FALSE, warning=FALSE}
+```{r sp_percet_ampli_filt_beta, comment="", message=FALSE, warning=FALSE}
 nonspecies <- genome_metadata_amplicon %>%
   filter(domain=="Bacteria") %>%
   filter(is.na(species)) %>%
@@ -351,7 +351,7 @@ cat(perct)
 ```
 
 **ASVs without species-level annotation**
-```{r nonspe_phylum_ampli_filt, comment="", message=FALSE, warning=FALSE}
+```{r nonspe_phylum_ampli_filt_beta, comment="", message=FALSE, warning=FALSE}
 total_mag_phylum <- genome_metadata_amplicon %>%
   filter(domain=="Bacteria") %>%
   group_by(phylum) %>%
@@ -371,7 +371,7 @@ genome_metadata_amplicon %>%
 
 ### Summary table
 
-```{r single_sp_ampli_filt, comment="", message=FALSE, warning=FALSE}
+```{r single_sp_ampli_filt_beta, comment="", message=FALSE, warning=FALSE}
 bats = c("Eb", "Pk", "Ha")
 
 single_sp <- data.frame(Bat = character(), Single_species = numeric())
@@ -413,7 +413,7 @@ for (bat in bats) {
 }
 ```
 
-```{r single_ind_ampli_filt, comment="", message=FALSE, warning=FALSE}
+```{r single_ind_ampli_filt_beta, comment="", message=FALSE, warning=FALSE}
 single_ind <- data.frame(Bat = character(), Single_individual = numeric())
 
 freq_table <- genome_counts_filt_amplicon %>%
@@ -460,7 +460,7 @@ for (bat in bats) {
 }
 ```
 
-```{r merge_ampli_filt, comment="", message=FALSE, warning=FALSE}
+```{r merge_ampli_filt_beta, comment="", message=FALSE, warning=FALSE}
 summary_table_ampli <- total_asvs %>%
   left_join(., no_annotation, by = "Bat") %>%
   left_join(., single_ind, by = "Bat") %>%
@@ -473,7 +473,7 @@ summary_table_ampli %>%
   tt()
 ```
 
-```{r summary_table_ampli_sel, comment="", message=FALSE, warning=FALSE}
+```{r summary_table_ampli_sel_beta, comment="", message=FALSE, warning=FALSE}
 total_asv <- nrow(genome_metadata_amplicon)
 summary_table_ampli %>% 
   select(-Phylum,-Family, -Genus) %>% 
@@ -562,182 +562,11 @@ genome_metadata_amplicon %>%
   filter(!family %in% meta_family$family)
 ```
 
-### Differences in top ASVs and MAGs
-Top 20 MAGs
-```{r top_mags, comment="", message=FALSE, warning=FALSE}
-genome_counts_filt %>%
-  mutate(across(-genome, ~ . / sum(.))) %>%
-  mutate(total = rowSums(across(-genome))) %>%
-  arrange(desc(total)) %>%
-  slice_head(n = 20) %>% 
-  select(genome, total) %>% 
-  left_join(genome_metadata[1:8])
-```
-
-Top 20 ASVs
-```{r top_asv, comment="", message=FALSE, warning=FALSE}
-genome_counts_filt_amplicon %>%
-  mutate(across(-genome, ~ . / sum(.))) %>%
-  mutate(total = rowSums(across(-genome))) %>%
-  arrange(desc(total)) %>%
-  slice_head(n = 20) %>% 
-  select(genome, total) %>% 
-  left_join(genome_metadata_amplicon)
-```
-
-Phylum level
-```{r top_mags_phylum, comment="", message=FALSE, warning=FALSE}
-topMAG <- genome_counts_filt %>%
-  mutate(across(-genome, ~ . / sum(.))) %>%
-  left_join(genome_metadata[c(1, 3, 6, 7)], by="genome") %>% 
-  select(-genome) %>% 
-  group_by(phylum) %>% 
-  summarize(across(where(is.numeric), sum), .groups = "drop") %>% 
-  mutate(total_mag = rowSums(across(where(is.numeric)))) %>% 
-  select(total_mag, phylum) %>% 
-  arrange(desc(total_mag))%>%
-  slice_head(n = 10)
-```
-
-```{r top_asv_phylum, comment="", message=FALSE, warning=FALSE}
-topASV <- genome_counts_filt_amplicon %>%
-  mutate(across(-genome, ~ . / sum(.))) %>%
-  left_join(genome_metadata_amplicon, by="genome") %>% 
-  select(-genome) %>% 
-  group_by(phylum) %>% 
-  summarize(across(where(is.numeric), sum), .groups = "drop") %>% 
-  mutate(total_asv = rowSums(across(where(is.numeric)))) %>% 
-  select(total_asv, phylum) %>% 
-  arrange(desc(total_asv)) %>%
-  slice_head(n = 10)
-
-table <- full_join(topMAG,topASV, by="phylum") %>% 
-    mutate(ASV = replace_na(total_asv, 0)) %>% 
-    mutate(MAG = replace_na(total_mag, 0)) %>% 
-  select(-total_asv, -total_mag) %>% 
-  pivot_longer(cols = c(MAG, ASV),
-               names_to = "source",
-               values_to = "abundance")
-```
-
-```{r figure_bubble_phylum_filt, comment="", message=FALSE, warning=FALSE, fig.height=6, fig.width=12, fig.fullwidth=TRUE}
-ggplot(table, aes(x = source, y = phylum, size = abundance, color = phylum)) +
-  geom_point(alpha = 0.7) +
-  scale_size_continuous(
-    name = "Abundance",
-    range = c(0.01, 30),   # 0 ensures no bubble at abundance = 0
-    breaks = seq(0, 35, by = 5),   # Controls legend labels (your 0–5–10–...–30)
-    limits = c(0.01, NA)   # keep full range of values
-  )  +
-    scale_color_manual(values = phylum_colors) +
-    coord_flip()+
-  theme_minimal()+
-  theme(axis.text.x = element_text(angle = 45,hjust = 1, size=12),
-        axis.text.y = element_text(size = 12),
-        axis.title = element_text(size = 14, face = "bold"),
-        panel.background = element_blank(),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.line = element_line(size = 0.5, linetype = "solid", colour = "black"),
-        legend.text = element_text(size = 10),
-        legend.title = element_text(size = 12))+
-  labs(x = "Source", y = "Phylum",
-    title = "Metabarcoding with selected threshold")+
-  guides(color = "none", size = guide_legend(
-      override.aes = list(size = c(2, 4, 6, 8, 10, 12)) # smaller bubbles in legend
-    )
-  )
-```
-```{r figure_scat_phylum_filt, comment="", message=FALSE, warning=FALSE, fig.height=6, fig.width=12, fig.fullwidth=TRUE}
-full_join(topMAG,topASV, by="phylum") %>% 
-    mutate(ASV = replace_na(total_asv, 0)) %>% 
-    mutate(MAG = replace_na(total_mag, 0)) %>% 
-  ggplot(., aes(x = MAG, y = ASV, color = phylum, label = phylum)) +
-  geom_point(size = 3, alpha = 0.8) +
-  geom_text_repel(max.overlaps = 20) +
-  geom_smooth(method = "lm", se = FALSE, color = "grey50") +
-  labs(
-    x = "MAG abundance",
-    y = "ASV abundance",
-    color = "Phylum",
-    title = "Comparison of MAG and ASV abundances by phylum"
-  ) +
-  theme_minimal()
-```
-
-Family level
-```{r family_top_mag, comment="", message=FALSE, warning=FALSE}
-topFMAG <- genome_counts_filt %>%
-  mutate(across(-genome, ~ . / sum(.))) %>%
-  left_join(genome_metadata[c(1:7)], by="genome") %>%
-  mutate(
-    class  = if_else(str_trim(class) == "", paste0(phylum, "_Unclassified"), class),
-    order  = if_else(str_trim(order) == "",
-                     if_else(str_detect(class, "Unclassified"), class, paste0(class, "_Unclassified")),
-                     order),
-    family = if_else(str_trim(family) == "",
-                     if_else(str_detect(order, "Unclassified"), order, paste0(order, "_Unclassified")),
-                     family),
-    genus  = if_else(str_trim(genus) == "",
-                     if_else(str_detect(family, "Unclassified"), family, paste0(family, "_Unclassified")),
-                     genus)
-  )%>% 
-  select(-genome) %>% 
-  group_by(phylum, family) %>% 
-  summarize(across(where(is.numeric), sum), .groups = "drop") %>% 
-  mutate(total_mag = rowSums(across(where(is.numeric)))) %>% 
-  select(total_mag, phylum, family) %>% 
-  arrange(desc(total_mag)) %>%
-  slice_head(n = 20)
-```
-```{r family_top_asv, echo=FALSE}
-topFASV <-genome_counts_filt_amplicon %>%
-  mutate(across(-genome, ~ . / sum(.))) %>%
-  left_join(genome_metadata_amplicon, by="genome") %>%
-  mutate(
-    class  = if_else(is.na(class), paste0(phylum, "_Unclassified"), class),
-    order  = if_else(is.na(order),
-                     if_else(str_detect(class, "Unclassified"), class, paste0(class, "_Unclassified")),
-                     order),
-    family = if_else(is.na(family),
-                     if_else(str_detect(order, "Unclassified"), order, paste0(order, "_Unclassified")),
-                     family),
-    genus  = if_else(is.na(genus),
-                     if_else(str_detect(family, "Unclassified"), family, paste0(family, "_Unclassified")),
-                     genus)
-  ) %>% 
-  select(-genome) %>% 
-  group_by(phylum, family) %>% 
-  summarize(across(where(is.numeric), sum), .groups = "drop") %>% 
-  mutate(total_asv = rowSums(across(where(is.numeric)))) %>% 
-  select(total_asv, phylum, family) %>% 
-  arrange(desc(total_asv)) %>%
-  slice_head(n = 20)
-```
-
-```{r figure_scat_family_top, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=12, fig.fullwidth=TRUE}
-full_join(topFMAG,topFASV, by="family") %>% 
-    mutate(ASV = replace_na(total_asv, 0)) %>% 
-    mutate(MAG = replace_na(total_mag, 0)) %>% 
-    mutate(phylum_mag = coalesce(phylum.x, phylum.y))%>%
-  ggplot(., aes(x = MAG, y = ASV, color = phylum_mag, label = family)) +
-  geom_point(size = 3, alpha = 0.8) +
-  geom_text_repel(max.overlaps = 10) +
-  geom_smooth(method = "lm", se = FALSE, color = "grey50") +
-      scale_color_manual(values = phylum_colors) +
-  labs(
-    x = "MAG abundance",
-    y = "ASV abundance",
-    color = "Phylum",
-    title = "Metabarcoding with selected filtering"
-  ) +
-  theme_minimal()
-```
 
 ## Alpha Diversity
 
 ### ASV level
-```{r alpha_cal_filt_selected, comment="", message=FALSE, warning=FALSE}
+```{r alpha_cal_filt_selected_beta, comment="", message=FALSE, warning=FALSE}
 richness <- genome_counts_filt_amplicon %>%
   column_to_rownames(var = "genome") %>%
   dplyr::select(where( ~ !all(. == 0))) %>%
@@ -762,7 +591,7 @@ metabarcoding_selected_alpha_div <- richness %>%
 ```
 
 **Correlation between diversity and estimate microbial fraction**
-```{r fraction_selected, comment="", message=FALSE, warning=FALSE}
+```{r fraction_selected_beta, comment="", message=FALSE, warning=FALSE}
 fraction_ampli <- microbial_fraction %>% 
   select(sample, estimated_microbial_fraction) %>% 
   right_join(metabarcoding_selected_alpha_div, by="sample") %>% 
@@ -772,7 +601,7 @@ cor.test(fraction_ampli$estimated_microbial_fraction, fraction_ampli$richness, m
 cor.test(fraction_ampli$estimated_microbial_fraction, fraction_ampli$neutral, method = "spearman")
 ```
 
-```{r fraction_ampli_fig_selected, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+```{r fraction_ampli_fig_selected_beta, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
 p1_ampli <- ggplot(fraction_ampli, aes(x = estimated_microbial_fraction, y = richness)) +
   geom_point(size = 3, color = "#2E86AB") +
   geom_smooth(method = "lm", se = TRUE, color = "black") +
@@ -787,7 +616,7 @@ p2_ampli <- ggplot(fraction_ampli, aes(x = estimated_microbial_fraction, y = neu
 
 p1_ampli + p2_ampli 
 ```
-```{r alpha_div_selected, comment="", message=FALSE, warning=FALSE}
+```{r alpha_div_selected_beta, comment="", message=FALSE, warning=FALSE}
 richness %>%
   full_join(neutral, by = join_by(sample == sample))  %>%
   pivot_longer(-sample, names_to = "alpha", values_to = "value") %>%
@@ -855,7 +684,7 @@ phylum_level_agg_ampli <- genome_tax_ampli %>%
 ```
 
 #### Family level
-```{r alpha_family_indiv_fil, comment="", message=FALSE, warning=FALSE}
+```{r alpha_family_indiv_fil_beta, comment="", message=FALSE, warning=FALSE}
 richness_f_ampli <- family_level_agg_ampli %>%
   column_to_rownames(var = "family") %>%
   dplyr::select(where( ~ !all(. == 0))) %>%
@@ -882,7 +711,7 @@ alpha_div_f_ampli_data <- alpha_div_f_ampli %>%
 ```
 
 **Diversity values**
-```{r alpha_div_fam_summary_all_ampli_sel, comment="", message=FALSE, warning=FALSE}
+```{r alpha_div_fam_summary_all_ampli_sel_beta, comment="", message=FALSE, warning=FALSE}
 alpha_div_f_ampli %>%
   pivot_longer(-sample, names_to = "alpha", values_to = "value") %>%
   left_join(sample_metadata_amplicon, by = join_by(sample == sample)) %>%
@@ -909,8 +738,7 @@ alpha_div_f_ampli %>%
 ```
 
 **Richness**
-
-```{r rich_MM_general_indiv_fil, comment="", message=FALSE, warning=FALSE}
+```{r rich_MM_general_indiv_fil_beta, comment="", message=FALSE, warning=FALSE}
 Model_richness <- MASS::glm.nb(richness ~ Species, data = alpha_div_f_ampli_data,trace=TRUE)
 summary(Model_richness)
 anova(Model_richness)
@@ -918,14 +746,14 @@ emmeans(Model_richness, pairwise ~ Species)
 ```
 
 **Neutral**
-```{r neutral_MM_general_indiv_fil, comment="", message=FALSE, warning=FALSE}
+```{r neutral_MM_general_indiv_fil_beta, comment="", message=FALSE, warning=FALSE}
 Model_neutral <- lm(formula = neutral ~ Species, data = alpha_div_f_ampli_data)
 anova(Model_neutral)
 emmeans(Model_neutral, pairwise ~ Species)
 ```
 
 #### Phylum level
-```{r alpha_family_indiv, comment="", message=FALSE, warning=FALSE}
+```{r alpha_family_indiv_beta, comment="", message=FALSE, warning=FALSE}
 richness_p_ampli <- phylum_level_agg_ampli %>%
   column_to_rownames(var = "phylum") %>%
   dplyr::select(where( ~ !all(. == 0))) %>%
@@ -952,7 +780,7 @@ alpha_div_phylum_ampli_data <- alpha_div_phylum_ampli %>%
 ```
 
 **Diversity values**
-```{r alpha_div_phy_summary_all_ampli_sel, comment="", message=FALSE, warning=FALSE}
+```{r alpha_div_phy_summary_all_ampli_sel_beta, comment="", message=FALSE, warning=FALSE}
 alpha_div_phylum_ampli %>%
   pivot_longer(-sample, names_to = "alpha", values_to = "value") %>%
   left_join(sample_metadata_amplicon, by = join_by(sample == sample)) %>%
@@ -979,7 +807,7 @@ alpha_div_phylum_ampli %>%
 ```
 
 **Richness**
-```{r rich_MM_general_indiv, comment="", message=FALSE, warning=FALSE}
+```{r rich_MM_general_indiv_beta, comment="", message=FALSE, warning=FALSE}
 Model_richness <- MASS::glm.nb(richness ~ Species, data = alpha_div_phylum_ampli_data,trace=TRUE)
 summary(Model_richness)
 anova(Model_richness)
@@ -987,7 +815,7 @@ emmeans(Model_richness, pairwise ~ Species)
 ```
 
 **Neutral**
-```{r neutral_MM_general_indiv, comment="", message=FALSE, warning=FALSE}
+```{r neutral_MM_general_indiv_beta, comment="", message=FALSE, warning=FALSE}
 Model_neutral <- lm(formula = neutral ~ Species, data = alpha_div_phylum_ampli_data)
 anova(Model_neutral)
 ```
@@ -1012,7 +840,7 @@ all_samples <- rbind(all_samples, sample_metadata_amplicon)
 ```
 
 #### Family level
-```{r alpha_family, comment="", message=FALSE, warning=FALSE}
+```{r alpha_family_beta, comment="", message=FALSE, warning=FALSE}
 richness <- merged_table_family_methods %>%
   column_to_rownames(var = "family") %>%
   dplyr::select(where( ~ !all(. == 0))) %>%
@@ -1039,7 +867,7 @@ alpha_div_family_data <- alpha_div_family %>%
 ```
 
 **Richness**
-```{r rich_MM_ampli_sel_species_family, comment="", message=FALSE, warning=FALSE}
+```{r rich_MM_ampli_sel_species_family_beta, comment="", message=FALSE, warning=FALSE}
 alpha_div_family_data_filt <- alpha_div_family_data %>% 
   filter(method!="Metabarcoding_standard")
 Model_richness <- lm(formula = richness ~ Species*method, data = alpha_div_family_data_filt)
@@ -1053,15 +881,21 @@ anova(Model_richness_random)
 ```
 
 **Neutral**
-```{r neutral_MM_ampli_sel_species_family, comment="", message=FALSE, warning=FALSE}
+```{r neutral_MM_ampli_sel_species_family_beta, comment="", message=FALSE, warning=FALSE}
 Model_neutral <- lm(formula = neutral ~ Species*method, data = alpha_div_family_data_filt)
 anova(Model_neutral)
 summary(Model_neutral)
 emmeans(Model_neutral, pairwise ~ Species)
 ```
+```{r}
+Modelq1_random <- lme(fixed = neutral ~ Species*method, data = alpha_div_family_data_filt,
+               random = ~ 1 | sample)
+summary(Modelq1_random )
+anova(Modelq1_random )
+```
 
 #### Phylum level
-```{r alpha_phylum_sel, comment="", message=FALSE, warning=FALSE}
+```{r alpha_phylum_sel_beta, comment="", message=FALSE, warning=FALSE}
 richness_phylum <- merged_table_phylum_methods %>%
   column_to_rownames(var = "phylum") %>%
   dplyr::select(where( ~ !all(. == 0))) %>%
@@ -1087,7 +921,7 @@ alpha_div_phylum_data <- alpha_div_phylum %>%
 ```
 
 **Richness**
-```{r rich_alpha_phylum, comment="", message=FALSE, warning=FALSE}
+```{r rich_alpha_phylum_beta, comment="", message=FALSE, warning=FALSE}
 alpha_div_phylum_data_filt <- alpha_div_phylum_data %>% 
   filter(method!="Metabarcoding_standard")
 Model_richness_phylum <- lm(formula = richness ~ Species*method, data = alpha_div_phylum_data_filt)
@@ -1096,22 +930,30 @@ summary(Model_richness_phylum)
 emmeans(Model_richness_phylum, pairwise ~ Species)
 ```
 ```{r}
-Model_richness_phylum_random <- glmer.nb(richness ~ Species*method+(1|sample), data = alpha_div_phylum_data_filt)
-summary(Model_richness_phylum_random)
-anova(Model_richness_phylum_random)
+Model_richness_random_phy <- glmer.nb(richness ~ Species*method+(1|sample), data = alpha_div_phylum_data_filt)
+summary(Model_richness_random_phy)
+anova(Model_richness_random_phy)
 ```
 
+
 **Neutral**
-```{r neutral_alpha_phylum, comment="", message=FALSE, warning=FALSE}
+```{r neutral_alpha_phylum_beta, comment="", message=FALSE, warning=FALSE}
 Model_neutral_phylum <- lm(formula = neutral ~ Species*method, data = alpha_div_phylum_data_filt)
 anova(Model_neutral_phylum)
 summary(Model_neutral_phylum)
 emmeans(Model_neutral_phylum, pairwise ~ Species)
 ```
 
+```{r}
+Modelq1_random_phy <- lme(fixed = neutral ~ Species*method, data = alpha_div_phylum_data_filt,
+               random = ~ 1 | sample)
+summary(Modelq1_random_phy )
+anova(Modelq1_random_phy )
+```
+
 ### Alpha diversity figure (three methods)
 
-```{r fig_family, comment="", message=FALSE, warning=FALSE, fig.height=6, fig.width=16, fig.fullwidth=TRUE}
+```{r fig_family_beta, comment="", message=FALSE, warning=FALSE, fig.height=6, fig.width=16, fig.fullwidth=TRUE}
 alpha_div_family_data %>%
   select(-sample, -Life_stage, -Sex) %>%
   pivot_longer(
@@ -1173,7 +1015,7 @@ alpha_div_family_data %>%
   )
 ```
 
-```{r gif_phylum_sel, comment="", message=FALSE, warning=FALSE, fig.height=6, fig.width=16, fig.fullwidth=TRUE}
+```{r gif_phylum_sel_beta, comment="", message=FALSE, warning=FALSE, fig.height=6, fig.width=16, fig.fullwidth=TRUE}
 alpha_div_phylum_data %>%
   select(-sample, -Life_stage, -Sex) %>%
   pivot_longer(
@@ -1238,7 +1080,7 @@ alpha_div_phylum_data %>%
 ## Beta diversity
 
 ### At different taxonomic level
-```{r beta_div_selected_family_merged, comment="", message=FALSE, warning=FALSE, eval=FALSE}
+```{r beta_div_selected_family_merged_beta, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 beta_q0n <- family_level_agg_ampli %>%
   column_to_rownames(., "family") %>% 
   hillpair(., q = 0)
@@ -1256,16 +1098,16 @@ beta_q1n_phylum <- phylum_level_agg_ampli %>%
   hillpair(., q = 1)
 ```
 
-```{r save_beta_sele, comment="", message=FALSE, warning=FALSE, eval=FALSE}
+```{r save_beta_sele_beta, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 save(beta_q0n,
      beta_q1n,
      beta_q0n_phylum,
      beta_q1n_phylum,
-     file = "resources/beta_tax_sele.Rdata")
+     file = "resources/beta_tax_sele_beta.Rdata")
 ```
 
-```{r load_beta_selec, comment="", message=FALSE, warning=FALSE}
-load("resources/beta_tax_sele.Rdata")
+```{r load_beta_selec_beta, comment="", message=FALSE, warning=FALSE}
+load("resources/beta_tax_sele_beta.Rdata")
 ```
 
 #### Family
@@ -1364,7 +1206,7 @@ pairwise.adonis(
 
 ### Comparison between metabarcoding selected and metagenomics
 
-```{r beta_div_together_family_merged, comment="", message=FALSE, warning=FALSE, eval=FALSE}
+```{r beta_div_together_family_merged_beta, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 beta_q0n <- merged_table_family_methods %>%
   select(-H19, -H20) %>% 
   column_to_rownames(., "family") %>% 
@@ -1386,22 +1228,22 @@ beta_q1n_phylum <- merged_table_phylum_methods %>%
   hillpair(., q = 1)
 ```
 
-```{r save_beta, comment="", message=FALSE, warning=FALSE, eval=FALSE}
+```{r save_beta_beta, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 save(beta_q0n,
      beta_q1n,
      beta_q0n_phylum,
      beta_q1n_phylum,
-     file = "resources/beta_tax.Rdata")
+     file = "resources/beta_tax_beta.Rdata")
 ```
 
-```{r load_beta, comment="", message=FALSE, warning=FALSE}
-load("resources/beta_tax.Rdata")
+```{r load_beta_beta, comment="", message=FALSE, warning=FALSE}
+load("resources/beta_tax_beta.Rdata")
 methods_colors <- c("#d15aa9","#d4b9ed", "#c7c5c6")
 ```
 
 #### Family level
 **Richness**
-```{r permanova_rich_both_fig_family_fil, comment="", message=FALSE, warning=FALSE}
+```{r permanova_rich_both_fig_family_fil_beta, comment="", message=FALSE, warning=FALSE}
 m <- as.matrix(beta_q0n$S)
 samples <- rownames(m)
 to_remove <- grepl("_ampli$", samples) & !grepl("_ampli_Select$", samples)
@@ -1428,7 +1270,7 @@ adonis2(
 ```
 
 **Neutral**
-```{r permanova_neutral_tog_Family_fil, comment="", message=FALSE, warning=FALSE}
+```{r permanova_neutral_tog_Family_fil_beta, comment="", message=FALSE, warning=FALSE}
 m <- as.matrix(beta_q1n$S)
 samples <- rownames(m)
 to_remove <- grepl("_ampli$", samples) & !grepl("_ampli_Select$", samples)
@@ -1457,7 +1299,7 @@ adonis2(
 
 #### Phylum level
 **Richness**
-```{r permanova_rich_both_phylum_fig2_fil, comment="", message=FALSE, warning=FALSE}
+```{r permanova_rich_both_phylum_fig2_fil_beta, comment="", message=FALSE, warning=FALSE}
 m <- as.matrix(beta_q0n_phylum$S)
 samples <- rownames(m)
 to_remove <- grepl("_ampli$", samples) & !grepl("_ampli_Select$", samples)
@@ -1484,7 +1326,7 @@ adonis2(
 ```
 
 **Neutral**
-```{r permanova_neutral_tog_phylum_fil, comment="", message=FALSE, warning=FALSE}
+```{r permanova_neutral_tog_phylum_fil_beta, comment="", message=FALSE, warning=FALSE}
 m <- as.matrix(beta_q1n_phylum$S)
 samples <- rownames(m)
 to_remove <- grepl("_ampli$", samples) & !grepl("_ampli_Select$", samples)
@@ -1513,7 +1355,7 @@ adonis2(
 ### Three methodological approaches together
 #### Family
 **Richness**
-```{r beta_richness_Family_three1, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+```{r beta_richness_Family_three1_beta, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
 beta_q0n$S %>%
   vegan::metaMDS(.,
                  trymax = 500,
@@ -1565,7 +1407,7 @@ beta_q0n$S %>%
   )#+labs(color = "method") +geom_text_repel(aes(label = sample), size=3)
   
 ```
-```{r beta_richness_Family_three2, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+```{r beta_richness_Family_three2_beta, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
 beta_q0n$S %>%
   vegan::metaMDS(.,
                  trymax = 500,
@@ -1604,7 +1446,7 @@ beta_q0n$S %>%
 ```
 
 **Neutral**
-```{r beta_neutral_Family_three1, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+```{r beta_neutral_Family_three1_beta, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
 beta_q1n$S %>%
   vegan::metaMDS(.,
                  trymax = 500,
@@ -1648,7 +1490,7 @@ beta_q1n$S %>%
   ) +
   labs(shape = "Methodological approach")
 ```
-```{r beta_neutral_Family_three2, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+```{r beta_neutral_Family_three2_beta, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
 beta_q1n$S %>%
   vegan::metaMDS(.,
                  trymax = 500,
@@ -1690,7 +1532,7 @@ beta_q1n$S %>%
 
 #### Phylum level
 **Richness**
-```{r beta_div1_both_fig_phylum_fil, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+```{r beta_div1_both_fig_phylum_fil_beta, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
 beta_q0n_phylum$S %>%
   vegan::metaMDS(.,
                  trymax = 500,
@@ -1739,7 +1581,7 @@ beta_q0n_phylum$S %>%
 ```
 
 **Neutral**
-```{r beta_div1_both_fig3_phylum_fil, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+```{r beta_div1_both_fig3_phylum_fil_beta, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
 beta_q1n_phylum$S %>%
   vegan::metaMDS(.,
                  trymax = 500,
@@ -1781,10 +1623,10 @@ beta_q1n_phylum$S %>%
 ## Differential abundance
 
 ### Metabarcoding selected
-```{r div_load_data_metab_sel, comment="", message=FALSE, warning=FALSE}
-load("resources/amplicon/selected_filtering.Rdata")
+```{r div_load_data_metab_sel_beta, comment="", message=FALSE, warning=FALSE}
+load("resources/amplicon/selected_filtering_beta.Rdata")
 ```
-```{r zero_phylo1_metab_sel, comment="", message=FALSE, warning=FALSE}
+```{r zero_phylo1_metab_sel_beta, comment="", message=FALSE, warning=FALSE}
 phylo_samples <- sample_metadata_amplicon %>% 
   column_to_rownames("sample") %>%
   sample_data()
@@ -1804,8 +1646,8 @@ phylo_taxonomy <- genome_metadata_amplicon %>%
 physeq_genome_metab_sel <- phyloseq(phylo_genome, phylo_samples, phylo_taxonomy)
 ```
 
-```{r ancom_rand_phylum_metab_sel, comment="", message=FALSE, warning=FALSE}
-ancom_rand_output_phylum_metab_sel = ancombc2(
+```{r ancom_rand_phylum_metab_sel_beta, comment="", message=FALSE, warning=FALSE}
+ancom_rand_output_phylum_metab_sel_beta = ancombc2(
   data = physeq_genome_metab_sel,
   assay_name = "counts",
   tax_level = "phylum",
@@ -1841,7 +1683,7 @@ ancom_rand_output_phylum_metab_sel = ancombc2(
 ***Total number of structural zeros***
 ```{r}
 # Extract structural zeros
-structural_zeros <- ancom_rand_output_phylum_metab_sel$zero_ind
+structural_zeros <- ancom_rand_output_phylum_metab_sel_beta$zero_ind
 
 # Convert to a data frame for better readability
 structural_zeros_df <- as.data.frame(structural_zeros) %>% 
@@ -1860,8 +1702,8 @@ nrow(structural_zero_groups)
 ```
 
 #### Enriched data
-```{r  labeling_phyl_metab_sel, comment="", message=FALSE, warning=FALSE}
-res_pair_phylum <- ancom_rand_output_phylum_metab_sel$res_pair
+```{r  labeling_phyl_metab_sel_beta, comment="", message=FALSE, warning=FALSE}
+res_pair_phylum <- ancom_rand_output_phylum_metab_sel_beta$res_pair
 # Get log-fold change and q-value columns
 lfc_cols <- grep("^lfc_", colnames(res_pair_phylum), value = TRUE)
 q_cols   <- gsub("^lfc_", "q_", lfc_cols)
@@ -1898,7 +1740,7 @@ plot_data_phylum %>% select(-contrast_key)
 ### Differences with metagenomics at phylum level across species
 
 ```{r}
-load("resources/amplicon/selected_filtering.Rdata")
+load("resources/amplicon/selected_filtering_beta.Rdata")
 
 sample_metadata_amplicon <- sample_metadata_amplicon[c(1,9,10,13)] %>%
   mutate(sample = paste0(sample, "_ampli")) %>%
@@ -1938,7 +1780,7 @@ phylum_level_agg_ampli <- genome_tax_ampli %>%
     as.data.frame()
 ```
 
-```{r load_data_beta_comparison_sel}
+```{r load_data_beta_comparison_sel_beta}
 load("resources/metagenomics/data_filtered.Rdata")
 
 genome_metadata <- genome_metadata %>%
@@ -2004,11 +1846,11 @@ phylo_samples <- all_samples%>%
 merged_physeq_phylum <- phyloseq(phylo_genome, phylo_samples)
 ```
 ```{r}
-ancom_rand_output_struc_approach_rand = ancombc2(data = merged_physeq_phylum, 
+ancom_rand_output_struc_approach_rand_beta = ancombc2(data = merged_physeq_phylum, 
                   assay_name = "counts", 
                   tax_level = NULL,
                   fix_formula = "method",
-                  rand_formula = "(1|Species)",
+ #                 rand_formula = "(1|Species)",
                   p_adj_method = "holm", 
                   pseudo_sens = TRUE,
                   prv_cut =0, 
@@ -2026,14 +1868,14 @@ ancom_rand_output_struc_approach_rand = ancombc2(data = merged_physeq_phylum,
                   trend = FALSE,
                   iter_control = list(tol = 1e-5, max_iter = 20, verbose = FALSE),
                   em_control = list(tol = 1e-5, max_iter = 100),
-                  lme_control = lme4::lmerControl(),
+  #               lme_control = lme4::lmerControl(),
                   mdfdr_control = list(fwer_ctrl_method = "holm", B = 100), 
                   trend_control = NULL)
 ```
 
 ***Enriched phyla***
 ```{r}
-ancom_rand_output_struc_approach_rand$res %>% 
+ancom_rand_output_struc_approach_rand_beta$res %>% 
   filter(q_methodMetagenomics<0.05) %>%
   tt()
 ```

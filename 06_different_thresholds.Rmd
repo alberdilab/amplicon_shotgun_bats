@@ -867,6 +867,7 @@ genome_metadata_amplicon <- genome_metadata %>%
 
 save(sample_metadata_amplicon, genome_metadata_amplicon, genome_counts_filt_amplicon, file = "resources/amplicon/selected_filtering_rel.Rdata")
 ```
+
 ```{r}
 load("resources/amplicon/data_nocopyfilt.Rdata")
 load("resources/amplicon/selected_filtering_rel.Rdata")
@@ -921,4 +922,284 @@ genome_metadata_amplicon <- genome_metadata %>%
 
 save(sample_metadata_amplicon, genome_metadata_amplicon, genome_counts_filt_amplicon,file = "resources/amplicon/second_filtering_t0_p30.Rdata")
 ```
+
+
+
+## Based on beta diversity
+
+```{r}
+load("resources/metagenomics/data_filtered.Rdata")
+meta_dist <- genome_counts_filt %>%
+  column_to_rownames("genome") %>%
+  hillpair(q = 1)
+
+filters <- master_table %>%
+  mutate(filter = str_c(copy_threshold, "_", prevalence)) %>%
+  distinct(filter) %>%
+  pull(filter)
+```
+
+```{r beta_list, comment="", message=FALSE, warning=FALSE, eval=FALSE}
+beta_list <- list()
+
+for (f in filters) {
+  
+  cat("Processing:", f, "\n")  # 👈 helpful debug
+  
+  df_subset <- master_table %>%
+    mutate(filter = str_c(copy_threshold, "_", prevalence)) %>%
+    filter(filter == f)
+  
+  df <- df_subset %>%
+    mutate(value = ifelse(!is.finite(value), 0, value)) %>%
+    select(sample, genome, value) %>%   # 👈 replace genome if needed
+    group_by(genome, sample) %>%
+    summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
+    pivot_wider(
+      names_from = sample,
+      values_from = value,
+      values_fill = list(value = 0)
+    )
+  
+  mat <- df %>%
+    column_to_rownames("genome") 
+  
+  beta_list[[f]] <- hillpair(mat, q = 1)
+}
+save(beta_list, file="resources/amplicon/distance_thresholds.Rdata")
+
+```
+
+```{r}
+load("resources/amplicon/distance_thresholds.Rdata")
+
+# Make sure your metagenomics similarity matrix is a proper matrix
+meta_S <- as.matrix(meta_dist$S)
+
+mantel_results <- map_dfr(seq_along(beta_list), function(i) {
+  
+  # Extract similarity matrix for this filter
+  S_amp <- as.matrix(beta_list[[i]]$S)
+  
+  # Find common samples
+  common_samples <- intersect(colnames(meta_S), colnames(S_amp))
+  
+  # Skip if fewer than 2 shared samples (Mantel requires >=2)
+  if(length(common_samples) < 2) {
+    return(tibble(
+      filter = names(beta_list)[i],
+      correlation = NA_real_,
+      p_value = NA_real_,
+      n_samples = length(common_samples)
+    ))
+  }
+  
+  # Align both matrices in the same order
+  meta_aligned <- meta_S[common_samples, common_samples, drop = FALSE]
+  amp_aligned  <- S_amp[common_samples, common_samples, drop = FALSE]
+  
+print(names(beta_list)[i])
+print(common_samples)
+print(all(rownames(meta_aligned) == rownames(amp_aligned)))  # should be TRUE
+print(all(colnames(meta_aligned) == colnames(amp_aligned)))  # should be TRUE
+  
+  # Convert similarity to distance
+  meta_dist_mat <- meta_aligned
+  amp_dist_mat  <- amp_aligned
+  
+  # Run Mantel test
+  test <- vegan::mantel(
+    as.dist(meta_dist_mat),
+    as.dist(amp_dist_mat),
+    method = "spearman"
+  )
+  
+  # Return results
+  tibble(
+    filter = names(beta_list)[i],
+    correlation = test$statistic,
+    p_value = test$signif,
+    n_samples = length(common_samples)
+  )
+})
+
+# Inspect results, ordered by best correlation
+mantel_results %>%
+  arrange(desc(correlation)) %>% 
+  tt()
+```
+
+```{r}
+genome_counts_row <- genome_counts_filt %>% 
+  column_to_rownames("genome")
+
+# Metagenomics similarity matrix
+meta_S_matrix <- as.matrix(meta_dist$S)
+colnames(meta_S_matrix) <- rownames(meta_S_matrix) <- colnames(genome_counts_row)  # assign your sample names
+
+# Create aligned list for each amplicon filter
+aligned_list <- purrr::map(names(beta_list), function(filter_name) {
+  
+  # Amplicon similarity matrix
+  S_amp <- as.matrix(beta_list[[filter_name]]$S)
+  
+  # Assign sample names from master_table
+  samples_for_filter <- master_table %>%
+    mutate(filter = str_c(copy_threshold, "_", prevalence)) %>%
+    filter(filter == filter_name) %>%
+    pull(sample) %>% 
+    unique()
+  
+  rownames(S_amp) <- colnames(S_amp) <- samples_for_filter
+  
+  # Subset metagenomics matrix to same samples
+  meta_S_aligned <- meta_S_matrix[samples_for_filter, samples_for_filter, drop = FALSE]
+  
+  list(meta = meta_S_aligned, amp = S_amp)
+})
+names(aligned_list) <- names(beta_list)
+
+```
+
+```{r}
+pca_data <- map_dfr(names(aligned_list), function(filter_name) {
+  
+  mat_amp  <- aligned_list[[filter_name]]$amp
+  mat_meta <- aligned_list[[filter_name]]$meta
+  
+  # Convert similarity to distance
+  dist_amp  <- 1 - mat_amp
+  dist_meta <- 1 - mat_meta
+  
+  # Flatten upper triangle to a vector
+  vec_amp  <- dist_amp[upper.tri(dist_amp)]
+  vec_meta <- dist_meta[upper.tri(dist_meta)]
+  
+  # Return separate rows for amplicon and metagenomics
+  tibble(
+    filter = filter_name,
+    type = "amplicon",
+    distances = list(vec_amp)
+  ) %>% 
+    bind_rows(
+      tibble(
+        filter = filter_name,
+        type = "metagenomics",
+        distances = list(vec_meta)
+      )
+    )
+})
+```
+
+```{r}
+# Convert distances column into numeric vectors
+dist_list <- lapply(pca_data$distances, function(x) {
+  as.numeric(unlist(x))
+})
+
+# Combine into a data frame / matrix for PCA
+pca_matrix <- do.call(rbind, dist_list)
+
+# Assign rownames
+rownames(pca_matrix) <- paste(pca_data$filter, pca_data$type, sep = "_")
+```
+```{r}
+pca_result <- prcomp(pca_matrix, scale. = TRUE)
+
+pca_df <- as.data.frame(pca_result$x) %>%
+  rownames_to_column("filter_type") %>%
+  separate(filter_type, into = c("filter", "type"), sep = "_")
+```
+
+```{r pca_distance, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
+pca_result <- prcomp(pca_matrix, scale. = TRUE)
+
+pca_df <- as.data.frame(pca_result$x) %>%
+  rownames_to_column("filter_type") %>%
+  separate(filter_type, into = c("copy", "prevalence", "type"), sep = "_", fill = "right") %>%
+  mutate(
+    copy = factor(copy, levels = c("t0","t1","t2","t3","t4")),
+    prevalence = factor(prevalence, levels = c("p0","p10","p20","p30","p40")),
+    type = factor(type, levels = c("amplicon","metagenomics"))
+  )
+
+ggplot(pca_df, aes(x = PC1, y = PC2, color = copy, shape = type)) +
+  geom_point(size = 4, alpha = 0.7) +
+  geom_text_repel(aes(label = paste(copy, prevalence, sep="_")), size = 3) +
+  theme_minimal(base_size = 14) +
+  labs(
+    title = "PCA of Beta Diversity: Amplicon vs Metagenomics",
+    x = paste0("PC1 (", round(summary(pca_result)$importance[2,1]*100,2), "% variance)"),
+    y = paste0("PC2 (", round(summary(pca_result)$importance[2,2]*100,2), "% variance)"),
+    color = "Copy threshold",
+    shape = "Data type"
+  ) +
+  scale_shape_manual(values = c(16, 17)) +  # circle for amp, triangle for meta
+  theme(
+    legend.position = "right",
+    panel.grid.major = element_line(color = "gray90"),
+    panel.grid.minor = element_blank()
+  )
+```
+
+
+**Save the table with selected filtering thresholds***
+
+```{r selected_table_beta, comment="", message=FALSE, warning=FALSE, eval=FALSE}
+load("resources/amplicon/data_nocopyfilt.Rdata")
+load("resources/amplicon/master_table.Rdata")
+
+genome_counts_filt_amplicon <- master_table %>%
+  mutate(filter = str_c(copy_threshold, "_", prevalence)) %>%
+  filter(filter == "t4_p0") %>%
+  select(-copy_threshold, -prevalence, -filter, -pa, -Species) %>%
+  pivot_wider(names_from = sample, values_from = value) %>%
+  mutate(across(everything(), ~ replace_na(., 0))) %>%
+  select(genome, where( ~ is.numeric(.) && sum(.) > 0)) %>%
+  filter(rowSums(across(-genome, ~ . != 0)) > 0)
+
+sample_metadata_amplicon <- sample_metadata %>%
+  filter(sample %in% colnames(genome_counts_filt_amplicon))
+
+genome_metadata_amplicon <- genome_metadata %>%
+  filter(genome %in% genome_counts_filt_amplicon$genome)
+
+save(sample_metadata_amplicon, genome_metadata_amplicon, genome_counts_filt_amplicon, file = "resources/amplicon/selected_filtering_beta_rel.Rdata")
+```
+
+```{r selected_table_raw_beta, comment="", message=FALSE, warning=FALSE, eval=FALSE}
+load("resources/amplicon/data_nocopyfilt.Rdata")
+load("resources/amplicon/selected_filtering_beta_rel.Rdata")
+
+genome_counts_filt <- genome_counts_filt %>% 
+  filter(genome %in% genome_counts_filt_amplicon$genome) %>% 
+  filter(rowSums(across(-genome)) != 0) %>% 
+  select(genome, where(~ !all(. == 0))) %>% 
+  select(all_of(colnames(genome_counts_filt_amplicon)))
+
+genome_counts_filt_amplicon_pa <- genome_counts_filt_amplicon %>% 
+  mutate(across(-genome, ~ if_else(. > 0, 1, 0)))
+
+genome_counts_filt_amplicon <- genome_counts_filt %>%
+  column_to_rownames("genome") %>%
+  `*`(genome_counts_filt_amplicon_pa %>%
+        column_to_rownames("genome")) %>%
+  rownames_to_column("genome") %>% 
+  filter(genome %in% genome_metadata_amplicon$genome) %>% 
+  filter(rowSums(across(-genome)) != 0)
+
+phylum_colors <- read_tsv("https://raw.githubusercontent.com/earthhologenome/EHI_taxonomy_colour/main/ehi_phylum_colors.tsv") %>%
+  mutate_at(vars(phylum), ~ str_replace(., "[dpcofgs]__", ""))%>%
+    right_join(genome_metadata_amplicon, by=join_by(phylum == phylum)) %>%
+    arrange(match(genome, genome_metadata_amplicon$genome)) %>%
+    select(phylum, colors) %>% 
+    unique() %>%
+    arrange(phylum) %>%
+    pull(colors, name=phylum)
+
+save(sample_metadata_amplicon, genome_metadata_amplicon, genome_counts_filt_amplicon, phylum_colors, file = "resources/amplicon/selected_filtering_beta.Rdata")
+
+```
+
+
 
