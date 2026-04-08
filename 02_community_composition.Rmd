@@ -1274,6 +1274,9 @@ genome_metadata %>%
 
 **Archaeal ASVs present in more than one individual**
 ```{r}
+genome_archaea <- genome_metadata %>% 
+  filter(domain == "Archaea")
+
 genome_counts_filt %>% 
   filter(genome %in% genome_archaea$genome) %>%
   mutate(across(-genome, ~ ifelse(. > 0, 1, 0)))%>%

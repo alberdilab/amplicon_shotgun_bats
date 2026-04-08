@@ -4,35 +4,34 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 5 Remove contaminants | AlberdiLab | Aizpurua et al. 2025</title>
-  <meta name="description" content="&lt;p&gt;Data analysis code for the study on the study of gut microbiomes of Pyrenean brook salamanders in high and low altitudes.&lt;/p&gt;" />
-  <meta name="generator" content="bookdown 0.41 and GitBook 2.6.7" />
+  <title>Anonymised</title>
+  <meta name="description" content="&lt;p&gt;Data analysis code for the manuscript titled: Impact of sequencing approach on ecological inference from highly variable gut microbiomes.&lt;/p&gt;" />
+  <meta name="generator" content="bookdown 0.42 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 5 Remove contaminants | AlberdiLab | Aizpurua et al. 2025" />
+  <meta property="og:title" content="Anonymised" />
   <meta property="og:type" content="book" />
   
-  <meta property="og:description" content="&lt;p&gt;Data analysis code for the study on the study of gut microbiomes of Pyrenean brook salamanders in high and low altitudes.&lt;/p&gt;" />
-  <meta name="github-repo" content="alberdilab/amplicon_shotgun_bats" />
+  <meta property="og:description" content="&lt;p&gt;Data analysis code for the manuscript titled: Impact of sequencing approach on ecological inference from highly variable gut microbiomes.&lt;/p&gt;" />
+  <meta name="github-repo" content="Anonymised" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 5 Remove contaminants | AlberdiLab | Aizpurua et al. 2025" />
+  <meta name="twitter:title" content="Anonymised" />
   
-  <meta name="twitter:description" content="&lt;p&gt;Data analysis code for the study on the study of gut microbiomes of Pyrenean brook salamanders in high and low altitudes.&lt;/p&gt;" />
+  <meta name="twitter:description" content="&lt;p&gt;Data analysis code for the manuscript titled: Impact of sequencing approach on ecological inference from highly variable gut microbiomes.&lt;/p&gt;" />
   
 
-<meta name="author" content="Ostaizka Aizpurua" />
-<meta name="author" content="Antton Alberdi" />
+<meta name="author" content="Anonymised" />
 
 
-<meta name="date" content="2025-02-05" />
+<meta name="date" content="2026-04-07" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="create-a-phyloseq-object.html"/>
-<link rel="next" href="merging-amplicon-and-shotgun-data.html"/>
+
+<link rel="next" href="prepare-data.html"/>
 
 
 
@@ -1852,6 +1851,29 @@ visibility: visible;
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <style type="text/css">
 a.anchor-section {margin-left: 10px; visibility: hidden; color: inherit;}
 .hasAnchor:hover a.anchor-section {visibility: visible;}
@@ -1876,7 +1898,7 @@ a.anchor-section::before {content: '#';font-size: 80%;}
 
 <style type="text/css">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -1886,7 +1908,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
 { counter-reset: source-line 0; }
@@ -2023,8 +2045,8 @@ color: #a52929;
       <nav role="navigation">
 
 <ul class="summary">
-<li class="toc-logo"><a href="index.html" target="blank"><img src="alberdilab_minilogo.png" alt="AlberdiLab logo"></a></li>
-<li align="center"><b>Aizpurua et al. 2025</b></li>
+<li class="toc-logo">Anonymised</li>
+<li align="center"><b>Anonymised</b></li>
 
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
@@ -2035,85 +2057,193 @@ color: #a52929;
 <li class="chapter" data-level="1.1.2" data-path="index.html"><a href="index.html#libraries"><i class="fa fa-check"></i><b>1.1.2</b> Libraries</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="2" data-path="metagenomics.html"><a href="metagenomics.html"><i class="fa fa-check"></i><b>2</b> Metagenomics</a>
+<li class="chapter" data-level="2" data-path="prepare-data.html"><a href="prepare-data.html"><i class="fa fa-check"></i><b>2</b> Prepare data</a>
 <ul>
-<li class="chapter" data-level="2.1" data-path="metagenomics.html"><a href="metagenomics.html#load-raw-data"><i class="fa fa-check"></i><b>2.1</b> Load raw data</a></li>
-<li class="chapter" data-level="2.2" data-path="metagenomics.html"><a href="metagenomics.html#read-counts"><i class="fa fa-check"></i><b>2.2</b> Read counts</a></li>
-<li class="chapter" data-level="2.3" data-path="metagenomics.html"><a href="metagenomics.html#genome-counts"><i class="fa fa-check"></i><b>2.3</b> Genome counts</a></li>
-<li class="chapter" data-level="2.4" data-path="metagenomics.html"><a href="metagenomics.html#sample-metadata"><i class="fa fa-check"></i><b>2.4</b> Sample metadata</a></li>
-<li class="chapter" data-level="2.5" data-path="metagenomics.html"><a href="metagenomics.html#genome-metadata"><i class="fa fa-check"></i><b>2.5</b> Genome metadata</a></li>
-<li class="chapter" data-level="2.6" data-path="metagenomics.html"><a href="metagenomics.html#genome-tree"><i class="fa fa-check"></i><b>2.6</b> Genome tree</a></li>
-<li class="chapter" data-level="2.7" data-path="metagenomics.html"><a href="metagenomics.html#preprocessing-info"><i class="fa fa-check"></i><b>2.7</b> Preprocessing info</a></li>
-<li class="chapter" data-level="2.8" data-path="metagenomics.html"><a href="metagenomics.html#genome-annotations"><i class="fa fa-check"></i><b>2.8</b> Genome annotations</a></li>
-<li class="chapter" data-level="2.9" data-path="metagenomics.html"><a href="metagenomics.html#genome-functions-distillation"><i class="fa fa-check"></i><b>2.9</b> Genome functions distillation</a></li>
-<li class="chapter" data-level="2.10" data-path="metagenomics.html"><a href="metagenomics.html#phyloseq-object"><i class="fa fa-check"></i><b>2.10</b> Phyloseq object</a></li>
-<li class="chapter" data-level="2.11" data-path="metagenomics.html"><a href="metagenomics.html#prepare-color-scheme"><i class="fa fa-check"></i><b>2.11</b> Prepare color scheme</a></li>
+<li class="chapter" data-level="2.1" data-path="prepare-data.html"><a href="prepare-data.html#metagenomics"><i class="fa fa-check"></i><b>2.1</b> Metagenomics</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="prepare-data.html"><a href="prepare-data.html#load-raw-data"><i class="fa fa-check"></i><b>2.1.1</b> Load raw data</a></li>
+<li class="chapter" data-level="2.1.2" data-path="prepare-data.html"><a href="prepare-data.html#read-counts"><i class="fa fa-check"></i><b>2.1.2</b> Read counts</a></li>
+<li class="chapter" data-level="2.1.3" data-path="prepare-data.html"><a href="prepare-data.html#genome-counts"><i class="fa fa-check"></i><b>2.1.3</b> Genome counts</a></li>
+<li class="chapter" data-level="2.1.4" data-path="prepare-data.html"><a href="prepare-data.html#sample-metadata"><i class="fa fa-check"></i><b>2.1.4</b> Sample metadata</a></li>
+<li class="chapter" data-level="2.1.5" data-path="prepare-data.html"><a href="prepare-data.html#genome-metadata"><i class="fa fa-check"></i><b>2.1.5</b> Genome metadata</a></li>
+<li class="chapter" data-level="2.1.6" data-path="prepare-data.html"><a href="prepare-data.html#genome-tree"><i class="fa fa-check"></i><b>2.1.6</b> Genome tree</a></li>
+<li class="chapter" data-level="2.1.7" data-path="prepare-data.html"><a href="prepare-data.html#preprocessing-info"><i class="fa fa-check"></i><b>2.1.7</b> Preprocessing info</a></li>
+<li class="chapter" data-level="2.1.8" data-path="prepare-data.html"><a href="prepare-data.html#genome-annotations"><i class="fa fa-check"></i><b>2.1.8</b> Genome annotations</a></li>
+<li class="chapter" data-level="2.1.9" data-path="prepare-data.html"><a href="prepare-data.html#phyloseq-object"><i class="fa fa-check"></i><b>2.1.9</b> Phyloseq object</a></li>
+<li class="chapter" data-level="2.1.10" data-path="prepare-data.html"><a href="prepare-data.html#prepare-color-scheme"><i class="fa fa-check"></i><b>2.1.10</b> Prepare color scheme</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="amplicon.html"><a href="amplicon.html"><i class="fa fa-check"></i><b>3</b> Amplicon</a>
+<li class="chapter" data-level="2.2" data-path="prepare-data.html"><a href="prepare-data.html#amplicon"><i class="fa fa-check"></i><b>2.2</b> Amplicon</a>
 <ul>
-<li class="chapter" data-level="3.1" data-path="amplicon.html"><a href="amplicon.html#load-data"><i class="fa fa-check"></i><b>3.1</b> Load data</a></li>
+<li class="chapter" data-level="2.2.1" data-path="prepare-data.html"><a href="prepare-data.html#load-data"><i class="fa fa-check"></i><b>2.2.1</b> Load data</a></li>
+<li class="chapter" data-level="2.2.2" data-path="prepare-data.html"><a href="prepare-data.html#create-a-phyloseq-object"><i class="fa fa-check"></i><b>2.2.2</b> Create a phyloseq object</a></li>
+<li class="chapter" data-level="2.2.3" data-path="prepare-data.html"><a href="prepare-data.html#remove-contaminants"><i class="fa fa-check"></i><b>2.2.3</b> Remove contaminants</a></li>
+<li class="chapter" data-level="2.2.4" data-path="prepare-data.html"><a href="prepare-data.html#basic-filtering"><i class="fa fa-check"></i><b>2.2.4</b> Basic filtering</a></li>
+<li class="chapter" data-level="2.2.5" data-path="prepare-data.html"><a href="prepare-data.html#removing-chloroplast-and-mitochondria"><i class="fa fa-check"></i><b>2.2.5</b> Removing chloroplast and mitochondria</a></li>
+<li class="chapter" data-level="2.2.6" data-path="prepare-data.html"><a href="prepare-data.html#save"><i class="fa fa-check"></i><b>2.2.6</b> Save</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="create-a-phyloseq-object.html"><a href="create-a-phyloseq-object.html"><i class="fa fa-check"></i><b>4</b> Create a phyloseq object</a></li>
-<li class="chapter" data-level="5" data-path="remove-contaminants.html"><a href="remove-contaminants.html"><i class="fa fa-check"></i><b>5</b> Remove contaminants</a>
+<li class="chapter" data-level="2.3" data-path="prepare-data.html"><a href="prepare-data.html#merging-amplicon-and-metagenomic-data"><i class="fa fa-check"></i><b>2.3</b> Merging amplicon and metagenomic data</a>
 <ul>
-<li class="chapter" data-level="5.1" data-path="remove-contaminants.html"><a href="remove-contaminants.html#basic-filtering"><i class="fa fa-check"></i><b>5.1</b> Basic filtering</a></li>
-<li class="chapter" data-level="5.2" data-path="remove-contaminants.html"><a href="remove-contaminants.html#removing-chloroplast-and-mitochondria"><i class="fa fa-check"></i><b>5.2</b> Removing chloroplast and mitochondria</a></li>
-<li class="chapter" data-level="5.3" data-path="remove-contaminants.html"><a href="remove-contaminants.html#save"><i class="fa fa-check"></i><b>5.3</b> Save</a></li>
-</ul></li>
-<li class="chapter" data-level="6" data-path="merging-amplicon-and-shotgun-data.html"><a href="merging-amplicon-and-shotgun-data.html"><i class="fa fa-check"></i><b>6</b> Merging amplicon and shotgun data</a>
-<ul>
-<li class="chapter" data-level="6.1" data-path="merging-amplicon-and-shotgun-data.html"><a href="merging-amplicon-and-shotgun-data.html#prepare-the-metagenomic-data"><i class="fa fa-check"></i><b>6.1</b> Prepare the metagenomic data</a></li>
-<li class="chapter" data-level="6.2" data-path="merging-amplicon-and-shotgun-data.html"><a href="merging-amplicon-and-shotgun-data.html#prepare-the-16s-data"><i class="fa fa-check"></i><b>6.2</b> Prepare the 16S data</a></li>
-<li class="chapter" data-level="6.3" data-path="merging-amplicon-and-shotgun-data.html"><a href="merging-amplicon-and-shotgun-data.html#create-master-table-for-amplicon-data"><i class="fa fa-check"></i><b>6.3</b> Create master table for amplicon data</a></li>
-</ul></li>
-<li class="chapter" data-level="7" data-path="community-composition.html"><a href="community-composition.html"><i class="fa fa-check"></i><b>7</b> Community composition</a>
-<ul>
-<li class="chapter" data-level="7.1" data-path="community-composition.html"><a href="community-composition.html#metagenomics-1"><i class="fa fa-check"></i><b>7.1</b> Metagenomics</a>
-<ul>
-<li class="chapter" data-level="7.1.1" data-path="community-composition.html"><a href="community-composition.html#taxonomy-overview"><i class="fa fa-check"></i><b>7.1.1</b> Taxonomy overview</a></li>
-</ul></li>
-<li class="chapter" data-level="7.2" data-path="community-composition.html"><a href="community-composition.html#summary-table"><i class="fa fa-check"></i><b>7.2</b> Summary table</a></li>
-<li class="chapter" data-level="7.3" data-path="community-composition.html"><a href="community-composition.html#amplicon-1"><i class="fa fa-check"></i><b>7.3</b> Amplicon</a>
-<ul>
-<li class="chapter" data-level="7.3.1" data-path="community-composition.html"><a href="community-composition.html#taxonomy-overview-1"><i class="fa fa-check"></i><b>7.3.1</b> Taxonomy overview</a></li>
-</ul></li>
-<li class="chapter" data-level="7.4" data-path="community-composition.html"><a href="community-composition.html#summary-table-1"><i class="fa fa-check"></i><b>7.4</b> Summary table</a></li>
-</ul></li>
-<li class="chapter" data-level="8" data-path="alpha-diversity.html"><a href="alpha-diversity.html"><i class="fa fa-check"></i><b>8</b> Alpha diversity</a>
-<ul>
-<li class="chapter" data-level="8.1" data-path="alpha-diversity.html"><a href="alpha-diversity.html#metagenomics-2"><i class="fa fa-check"></i><b>8.1</b> Metagenomics</a>
-<ul>
-<li class="chapter" data-level="8.1.1" data-path="alpha-diversity.html"><a href="alpha-diversity.html#mixed-models"><i class="fa fa-check"></i><b>8.1.1</b> Mixed models</a></li>
-</ul></li>
-<li class="chapter" data-level="8.2" data-path="alpha-diversity.html"><a href="alpha-diversity.html#amplicon-2"><i class="fa fa-check"></i><b>8.2</b> Amplicon</a></li>
-</ul></li>
-<li class="chapter" data-level="9" data-path="beta-diversity.html"><a href="beta-diversity.html"><i class="fa fa-check"></i><b>9</b> Beta diversity</a>
-<ul>
-<li class="chapter" data-level="9.1" data-path="beta-diversity.html"><a href="beta-diversity.html#metagenomics-3"><i class="fa fa-check"></i><b>9.1</b> Metagenomics</a>
-<ul>
-<li class="chapter" data-level="9.1.1" data-path="beta-diversity.html"><a href="beta-diversity.html#permanova"><i class="fa fa-check"></i><b>9.1.1</b> Permanova</a></li>
-<li class="chapter" data-level="9.1.2" data-path="beta-diversity.html"><a href="beta-diversity.html#nmds"><i class="fa fa-check"></i><b>9.1.2</b> NMDS</a></li>
-</ul></li>
-<li class="chapter" data-level="9.2" data-path="beta-diversity.html"><a href="beta-diversity.html#amplicon-3"><i class="fa fa-check"></i><b>9.2</b> Amplicon</a>
-<ul>
-<li class="chapter" data-level="9.2.1" data-path="beta-diversity.html"><a href="beta-diversity.html#permanova-1"><i class="fa fa-check"></i><b>9.2.1</b> Permanova</a></li>
-<li class="chapter" data-level="9.2.2" data-path="beta-diversity.html"><a href="beta-diversity.html#nmds-1"><i class="fa fa-check"></i><b>9.2.2</b> NMDS</a></li>
+<li class="chapter" data-level="2.3.1" data-path="prepare-data.html"><a href="prepare-data.html#filtering-the-metagenomic-data-to-match-amplicon-data"><i class="fa fa-check"></i><b>2.3.1</b> Filtering the metagenomic data to match amplicon data</a></li>
+<li class="chapter" data-level="2.3.2" data-path="prepare-data.html"><a href="prepare-data.html#matching-the-16s-data-to-metagenomic-data"><i class="fa fa-check"></i><b>2.3.2</b> Matching the 16S data to metagenomic data</a></li>
+<li class="chapter" data-level="2.3.3" data-path="prepare-data.html"><a href="prepare-data.html#standard-data-filtering-criteria"><i class="fa fa-check"></i><b>2.3.3</b> Standard data filtering criteria</a></li>
+<li class="chapter" data-level="2.3.4" data-path="prepare-data.html"><a href="prepare-data.html#create-master-table-for-amplicon-data"><i class="fa fa-check"></i><b>2.3.4</b> Create master table for amplicon data</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="10" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html"><i class="fa fa-check"></i><b>10</b> Copy filtering &amp; prevalence</a>
+<li class="chapter" data-level="3" data-path="community-composition.html"><a href="community-composition.html"><i class="fa fa-check"></i><b>3</b> Community composition</a>
 <ul>
-<li class="chapter" data-level="10.1" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#total-asvs"><i class="fa fa-check"></i><b>10.1</b> Total ASVs</a></li>
-<li class="chapter" data-level="10.2" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#single-to-individuals"><i class="fa fa-check"></i><b>10.2</b> Single to individuals</a></li>
-<li class="chapter" data-level="10.3" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#single-to-species"><i class="fa fa-check"></i><b>10.3</b> Single to species</a></li>
-<li class="chapter" data-level="10.4" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#alpha-diversity-1"><i class="fa fa-check"></i><b>10.4</b> Alpha Diversity</a>
+<li class="chapter" data-level="3.1" data-path="community-composition.html"><a href="community-composition.html#metagenomics-1"><i class="fa fa-check"></i><b>3.1</b> Metagenomics</a>
 <ul>
-<li class="chapter" data-level="10.4.1" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#comparison-alpha-diversity-amplicom-different-threshold-vs-metagenomics"><i class="fa fa-check"></i><b>10.4.1</b> Comparison alpha diversity: amplicom different threshold vs metagenomics</a></li>
+<li class="chapter" data-level="3.1.1" data-path="community-composition.html"><a href="community-composition.html#taxonomy-overview"><i class="fa fa-check"></i><b>3.1.1</b> Taxonomy overview</a></li>
+<li class="chapter" data-level="3.1.2" data-path="community-composition.html"><a href="community-composition.html#mags"><i class="fa fa-check"></i><b>3.1.2</b> MAGs</a></li>
+<li class="chapter" data-level="3.1.3" data-path="community-composition.html"><a href="community-composition.html#summary-table"><i class="fa fa-check"></i><b>3.1.3</b> Summary table</a></li>
+<li class="chapter" data-level="3.1.4" data-path="community-composition.html"><a href="community-composition.html#read-fractions"><i class="fa fa-check"></i><b>3.1.4</b> Read fractions</a></li>
+<li class="chapter" data-level="3.1.5" data-path="community-composition.html"><a href="community-composition.html#estimated-vs-recovered-proportion"><i class="fa fa-check"></i><b>3.1.5</b> Estimated vs recovered proportion</a></li>
+<li class="chapter" data-level="3.1.6" data-path="community-composition.html"><a href="community-composition.html#domain-adjusted-mapping-rate"><i class="fa fa-check"></i><b>3.1.6</b> Domain-adjusted mapping rate</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="community-composition.html"><a href="community-composition.html#amplicon-1"><i class="fa fa-check"></i><b>3.2</b> Amplicon</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="community-composition.html"><a href="community-composition.html#taxonomy-overview-1"><i class="fa fa-check"></i><b>3.2.1</b> Taxonomy overview</a></li>
+<li class="chapter" data-level="3.2.2" data-path="community-composition.html"><a href="community-composition.html#asvs"><i class="fa fa-check"></i><b>3.2.2</b> ASVs</a></li>
+<li class="chapter" data-level="3.2.3" data-path="community-composition.html"><a href="community-composition.html#summary-table-1"><i class="fa fa-check"></i><b>3.2.3</b> Summary table</a></li>
+<li class="chapter" data-level="3.2.4" data-path="community-composition.html"><a href="community-composition.html#archaea"><i class="fa fa-check"></i><b>3.2.4</b> Archaea</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="alpha-diversity.html"><a href="alpha-diversity.html"><i class="fa fa-check"></i><b>4</b> Alpha diversity</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="alpha-diversity.html"><a href="alpha-diversity.html#metagenomics-2"><i class="fa fa-check"></i><b>4.1</b> Metagenomics</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="alpha-diversity.html"><a href="alpha-diversity.html#mag-level"><i class="fa fa-check"></i><b>4.1.1</b> MAG level</a></li>
+<li class="chapter" data-level="4.1.2" data-path="alpha-diversity.html"><a href="alpha-diversity.html#at-different-taxonomic-levels"><i class="fa fa-check"></i><b>4.1.2</b> At different taxonomic levels</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="alpha-diversity.html"><a href="alpha-diversity.html#amplicon-2"><i class="fa fa-check"></i><b>4.2</b> Amplicon</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="alpha-diversity.html"><a href="alpha-diversity.html#asv-level"><i class="fa fa-check"></i><b>4.2.1</b> ASV level</a></li>
+<li class="chapter" data-level="4.2.2" data-path="alpha-diversity.html"><a href="alpha-diversity.html#at-different-taxonomic-level"><i class="fa fa-check"></i><b>4.2.2</b> At different taxonomic level</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="alpha-diversity.html"><a href="alpha-diversity.html#comparison"><i class="fa fa-check"></i><b>4.3</b> Comparison</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="alpha-diversity.html"><a href="alpha-diversity.html#at-family-and-phylum-level"><i class="fa fa-check"></i><b>4.3.1</b> At family and phylum level</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="beta-diversity.html"><a href="beta-diversity.html"><i class="fa fa-check"></i><b>5</b> Beta diversity</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="beta-diversity.html"><a href="beta-diversity.html#metagenomics-3"><i class="fa fa-check"></i><b>5.1</b> Metagenomics</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="beta-diversity.html"><a href="beta-diversity.html#mag-level-1"><i class="fa fa-check"></i><b>5.1.1</b> MAG level</a></li>
+<li class="chapter" data-level="5.1.2" data-path="beta-diversity.html"><a href="beta-diversity.html#at-different-taxonomic-level-1"><i class="fa fa-check"></i><b>5.1.2</b> At different taxonomic level</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="beta-diversity.html"><a href="beta-diversity.html#amplicon-3"><i class="fa fa-check"></i><b>5.2</b> Amplicon</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="beta-diversity.html"><a href="beta-diversity.html#asv-level-1"><i class="fa fa-check"></i><b>5.2.1</b> ASV level</a></li>
+<li class="chapter" data-level="5.2.2" data-path="beta-diversity.html"><a href="beta-diversity.html#at-different-taxonomic-level-2"><i class="fa fa-check"></i><b>5.2.2</b> At different taxonomic level</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="beta-diversity.html"><a href="beta-diversity.html#comparison-1"><i class="fa fa-check"></i><b>5.3</b> Comparison</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="beta-diversity.html"><a href="beta-diversity.html#family-1"><i class="fa fa-check"></i><b>5.3.1</b> Family</a></li>
+<li class="chapter" data-level="5.3.2" data-path="beta-diversity.html"><a href="beta-diversity.html#phylum-1"><i class="fa fa-check"></i><b>5.3.2</b> Phylum</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="differential-abundance.html"><a href="differential-abundance.html"><i class="fa fa-check"></i><b>6</b> Differential abundance</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="differential-abundance.html"><a href="differential-abundance.html#phylum-level-6"><i class="fa fa-check"></i><b>6.1</b> Phylum level</a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="differential-abundance.html"><a href="differential-abundance.html#metagenomics-4"><i class="fa fa-check"></i><b>6.1.1</b> Metagenomics</a></li>
+<li class="chapter" data-level="6.1.2" data-path="differential-abundance.html"><a href="differential-abundance.html#metabarcoding-standard"><i class="fa fa-check"></i><b>6.1.2</b> Metabarcoding standard</a></li>
+<li class="chapter" data-level="6.1.3" data-path="differential-abundance.html"><a href="differential-abundance.html#comparison-between-metagenomics-and-standard-metabarcoding"><i class="fa fa-check"></i><b>6.1.3</b> Comparison between metagenomics and standard metabarcoding</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html"><i class="fa fa-check"></i><b>7</b> Copy filtering &amp; prevalence</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#total-asvs"><i class="fa fa-check"></i><b>7.1</b> Total ASVs</a></li>
+<li class="chapter" data-level="7.2" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#total-archaeal-asvs"><i class="fa fa-check"></i><b>7.2</b> Total archaeal ASVs</a></li>
+<li class="chapter" data-level="7.3" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#single-to-individuals"><i class="fa fa-check"></i><b>7.3</b> Single to individuals</a></li>
+<li class="chapter" data-level="7.4" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#single-to-species"><i class="fa fa-check"></i><b>7.4</b> Single to species</a></li>
+<li class="chapter" data-level="7.5" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#alpha-diversity-1"><i class="fa fa-check"></i><b>7.5</b> Alpha Diversity</a>
+<ul>
+<li class="chapter" data-level="7.5.1" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#comparison-alpha-diversity-amplicom-different-threshold-vs-metagenomics"><i class="fa fa-check"></i><b>7.5.1</b> Comparison alpha diversity: amplicom different threshold vs metagenomics</a></li>
+<li class="chapter" data-level="7.5.2" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#finding-the-threshold-that-gives-results-most-similar-to-metagenomics"><i class="fa fa-check"></i><b>7.5.2</b> Finding the threshold that gives results most similar to metagenomics</a></li>
+</ul></li>
+<li class="chapter" data-level="7.6" data-path="copy-filtering-prevalence.html"><a href="copy-filtering-prevalence.html#based-on-beta-diversity"><i class="fa fa-check"></i><b>7.6</b> Based on beta diversity</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html"><a href="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html"><i class="fa fa-check"></i><b>8</b> Metabarcoding selected filtering based on alpha diversity (t3_p10)</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html"><a href="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html#taxonomy"><i class="fa fa-check"></i><b>8.1</b> Taxonomy</a>
+<ul>
+<li class="chapter" data-level="8.1.1" data-path="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html"><a href="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html#summary-table-2"><i class="fa fa-check"></i><b>8.1.1</b> Summary table</a></li>
+<li class="chapter" data-level="8.1.2" data-path="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html"><a href="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html#differences-at-family-level"><i class="fa fa-check"></i><b>8.1.2</b> Differences at family level</a></li>
+<li class="chapter" data-level="8.1.3" data-path="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html"><a href="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html#differences-in-top-asvs-and-mags"><i class="fa fa-check"></i><b>8.1.3</b> Differences in top ASVs and MAGs</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html"><a href="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html#alpha-diversity-2"><i class="fa fa-check"></i><b>8.2</b> Alpha Diversity</a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html"><a href="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html#asv-level-2"><i class="fa fa-check"></i><b>8.2.1</b> ASV level</a></li>
+<li class="chapter" data-level="8.2.2" data-path="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html"><a href="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html#different-taxonomic-level"><i class="fa fa-check"></i><b>8.2.2</b> Different taxonomic level</a></li>
+<li class="chapter" data-level="8.2.3" data-path="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html"><a href="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html#comparison-metabarcoding-selected-vs-metagenomics"><i class="fa fa-check"></i><b>8.2.3</b> Comparison (metabarcoding selected vs metagenomics)</a></li>
+<li class="chapter" data-level="8.2.4" data-path="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html"><a href="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html#alpha-diversity-figure-three-methods"><i class="fa fa-check"></i><b>8.2.4</b> Alpha diversity figure (three methods)</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html"><a href="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html#beta-diversity-1"><i class="fa fa-check"></i><b>8.3</b> Beta diversity</a>
+<ul>
+<li class="chapter" data-level="8.3.1" data-path="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html"><a href="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html#at-different-taxonomic-level-3"><i class="fa fa-check"></i><b>8.3.1</b> At different taxonomic level</a></li>
+<li class="chapter" data-level="8.3.2" data-path="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html"><a href="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html#comparison-between-metabarcoding-selected-and-metagenomics"><i class="fa fa-check"></i><b>8.3.2</b> Comparison between metabarcoding selected and metagenomics</a></li>
+<li class="chapter" data-level="8.3.3" data-path="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html"><a href="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html#three-methodological-approaches-together"><i class="fa fa-check"></i><b>8.3.3</b> Three methodological approaches together</a></li>
+</ul></li>
+<li class="chapter" data-level="8.4" data-path="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html"><a href="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html#differential-abundance-1"><i class="fa fa-check"></i><b>8.4</b> Differential abundance</a>
+<ul>
+<li class="chapter" data-level="8.4.1" data-path="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html"><a href="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html#metabarcoding-selected"><i class="fa fa-check"></i><b>8.4.1</b> Metabarcoding selected</a></li>
+<li class="chapter" data-level="8.4.2" data-path="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html"><a href="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html#differences-with-metagenomics-at-phylum-level-across-species"><i class="fa fa-check"></i><b>8.4.2</b> Differences with metagenomics at phylum level across species</a></li>
+<li class="chapter" data-level="8.4.3" data-path="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html"><a href="metabarcoding-selected-filtering-based-on-alpha-diversity-t3_p10.html#differences-with-metagenomics-at-phylum-level-within-each-species"><i class="fa fa-check"></i><b>8.4.3</b> Differences with metagenomics at phylum level within each species</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html"><a href="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html"><i class="fa fa-check"></i><b>9</b> Metabarcoding selected filtering based on beta diversity (t4_p0)</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html"><a href="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html#taxonomy-1"><i class="fa fa-check"></i><b>9.1</b> Taxonomy</a>
+<ul>
+<li class="chapter" data-level="9.1.1" data-path="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html"><a href="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html#summary-table-3"><i class="fa fa-check"></i><b>9.1.1</b> Summary table</a></li>
+<li class="chapter" data-level="9.1.2" data-path="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html"><a href="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html#differences-at-family-level-1"><i class="fa fa-check"></i><b>9.1.2</b> Differences at family level</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html"><a href="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html#alpha-diversity-3"><i class="fa fa-check"></i><b>9.2</b> Alpha Diversity</a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html"><a href="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html#asv-level-3"><i class="fa fa-check"></i><b>9.2.1</b> ASV level</a></li>
+<li class="chapter" data-level="9.2.2" data-path="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html"><a href="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html#different-taxonomic-level-1"><i class="fa fa-check"></i><b>9.2.2</b> Different taxonomic level</a></li>
+<li class="chapter" data-level="9.2.3" data-path="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html"><a href="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html#comparison-metabarcoding-selected-vs-metagenomics-1"><i class="fa fa-check"></i><b>9.2.3</b> Comparison (metabarcoding selected vs metagenomics)</a></li>
+<li class="chapter" data-level="9.2.4" data-path="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html"><a href="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html#alpha-diversity-figure-three-methods-1"><i class="fa fa-check"></i><b>9.2.4</b> Alpha diversity figure (three methods)</a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html"><a href="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html#beta-diversity-2"><i class="fa fa-check"></i><b>9.3</b> Beta diversity</a>
+<ul>
+<li class="chapter" data-level="9.3.1" data-path="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html"><a href="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html#at-different-taxonomic-level-4"><i class="fa fa-check"></i><b>9.3.1</b> At different taxonomic level</a></li>
+<li class="chapter" data-level="9.3.2" data-path="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html"><a href="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html#comparison-between-metabarcoding-selected-and-metagenomics-1"><i class="fa fa-check"></i><b>9.3.2</b> Comparison between metabarcoding selected and metagenomics</a></li>
+<li class="chapter" data-level="9.3.3" data-path="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html"><a href="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html#three-methodological-approaches-together-1"><i class="fa fa-check"></i><b>9.3.3</b> Three methodological approaches together</a></li>
+</ul></li>
+<li class="chapter" data-level="9.4" data-path="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html"><a href="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html#differential-abundance-2"><i class="fa fa-check"></i><b>9.4</b> Differential abundance</a>
+<ul>
+<li class="chapter" data-level="9.4.1" data-path="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html"><a href="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html#metabarcoding-selected-1"><i class="fa fa-check"></i><b>9.4.1</b> Metabarcoding selected</a></li>
+<li class="chapter" data-level="9.4.2" data-path="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html"><a href="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html#differences-with-metagenomics-at-phylum-level-across-species-1"><i class="fa fa-check"></i><b>9.4.2</b> Differences with metagenomics at phylum level across species</a></li>
+<li class="chapter" data-level="9.4.3" data-path="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html"><a href="metabarcoding-selected-filtering-based-on-beta-diversity-t4_p0.html#differences-with-metagenomics-at-phylum-level-within-each-species-1"><i class="fa fa-check"></i><b>9.4.3</b> Differences with metagenomics at phylum level within each species</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="functional-differences.html"><a href="functional-differences.html"><i class="fa fa-check"></i><b>10</b> Functional differences</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="functional-differences.html"><a href="functional-differences.html#metagenomics-5"><i class="fa fa-check"></i><b>10.1</b> Metagenomics</a>
+<ul>
+<li class="chapter" data-level="10.1.1" data-path="functional-differences.html"><a href="functional-differences.html#functional-capacity-of-the-mags"><i class="fa fa-check"></i><b>10.1.1</b> Functional capacity of the MAGs</a></li>
+<li class="chapter" data-level="10.1.2" data-path="functional-differences.html"><a href="functional-differences.html#mci"><i class="fa fa-check"></i><b>10.1.2</b> MCI</a></li>
+<li class="chapter" data-level="10.1.3" data-path="functional-differences.html"><a href="functional-differences.html#differences-in-functional-traits-considering-the-three-species"><i class="fa fa-check"></i><b>10.1.3</b> Differences in functional traits considering the three species</a></li>
+</ul></li>
+<li class="chapter" data-level="10.2" data-path="functional-differences.html"><a href="functional-differences.html#metabarcoding-standard-1"><i class="fa fa-check"></i><b>10.2</b> Metabarcoding Standard</a>
+<ul>
+<li class="chapter" data-level="10.2.1" data-path="functional-differences.html"><a href="functional-differences.html#prepare-for-picrust"><i class="fa fa-check"></i><b>10.2.1</b> Prepare for PicrusT</a></li>
+<li class="chapter" data-level="10.2.2" data-path="functional-differences.html"><a href="functional-differences.html#run-picrust"><i class="fa fa-check"></i><b>10.2.2</b> Run Picrust</a></li>
+<li class="chapter" data-level="10.2.3" data-path="functional-differences.html"><a href="functional-differences.html#analyse-functions"><i class="fa fa-check"></i><b>10.2.3</b> Analyse functions</a></li>
+<li class="chapter" data-level="10.2.4" data-path="functional-differences.html"><a href="functional-differences.html#mci-1"><i class="fa fa-check"></i><b>10.2.4</b> MCI</a></li>
+<li class="chapter" data-level="10.2.5" data-path="functional-differences.html"><a href="functional-differences.html#differences-in-functional-traits-considering-the-three-species-1"><i class="fa fa-check"></i><b>10.2.5</b> Differences in functional traits considering the three species</a></li>
+<li class="chapter" data-level="10.2.6" data-path="functional-differences.html"><a href="functional-differences.html#metabarcoding-selected-2"><i class="fa fa-check"></i><b>10.2.6</b> Metabarcoding selected</a></li>
+<li class="chapter" data-level="10.2.7" data-path="functional-differences.html"><a href="functional-differences.html#mci-2"><i class="fa fa-check"></i><b>10.2.7</b> MCI</a></li>
+<li class="chapter" data-level="10.2.8" data-path="functional-differences.html"><a href="functional-differences.html#differences-in-functional-traits-considering-the-three-species-2"><i class="fa fa-check"></i><b>10.2.8</b> Differences in functional traits considering the three species</a></li>
 </ul></li>
 </ul></li>
 <li class="divider"></li>
-<li><a href="https://www.alberdilab.dk" target="blank"><b>www.alberdilab.dk</b></a></li>
-<li><a href="https://www.earthhologenome.org" target="blank"><b>www.earthhologenome.org</b></a></li>
-<li><a href="https://www.holo-omics.science" target="blank"><b>www.holo-omics.science</b></a></li>
+<li>Anonymised</li>
+<li>Anonymised</li>
+<li>Anonymised</li>
 
 </ul>
 
@@ -2124,7 +2254,7 @@ color: #a52929;
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">AlberdiLab | Aizpurua et al. 2025</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Anonymised</a>
           </h1>
         </div>
 
@@ -2132,49 +2262,71 @@ color: #a52929;
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="remove-contaminants" class="section level1 hasAnchor" number="5">
-<h1><span class="header-section-number">Chapter 5</span> Remove contaminants<a href="remove-contaminants.html#remove-contaminants" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb17-1"><a href="remove-contaminants.html#cb17-1" tabindex="-1"></a><span class="fu">sample_data</span>(physeq.raw)<span class="sc">$</span>is.neg <span class="ot">&lt;-</span> <span class="fu">sample_data</span>(physeq.raw)<span class="sc">$</span>Control <span class="sc">==</span> <span class="st">&quot;Control sample&quot;</span></span>
-<span id="cb17-2"><a href="remove-contaminants.html#cb17-2" tabindex="-1"></a>contamdf.prev <span class="ot">&lt;-</span> <span class="fu">isContaminant</span>(physeq.raw, <span class="at">method=</span><span class="st">&quot;prevalence&quot;</span>, <span class="at">neg=</span><span class="st">&quot;is.neg&quot;</span>)</span>
-<span id="cb17-3"><a href="remove-contaminants.html#cb17-3" tabindex="-1"></a><span class="fu">table</span>(contamdf.prev<span class="sc">$</span>contaminant)</span>
-<span id="cb17-4"><a href="remove-contaminants.html#cb17-4" tabindex="-1"></a>contam_asvs <span class="ot">&lt;-</span> <span class="fu">row.names</span>(contamdf.prev[contamdf.prev<span class="sc">$</span>contaminant <span class="sc">==</span> <span class="cn">TRUE</span>, ])</span>
-<span id="cb17-5"><a href="remove-contaminants.html#cb17-5" tabindex="-1"></a>contaminants <span class="ot">&lt;-</span> asv_tax.m[<span class="fu">row.names</span>(asv_tax.m) <span class="sc">%in%</span> contam_asvs, ]</span></code></pre></div>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb18-1"><a href="remove-contaminants.html#cb18-1" tabindex="-1"></a><span class="co"># making new phyloseq object without ASV contaminats</span></span>
-<span id="cb18-2"><a href="remove-contaminants.html#cb18-2" tabindex="-1"></a>physeq <span class="ot">&lt;-</span> <span class="fu">subset_samples</span>(physeq.raw, Control <span class="sc">==</span> <span class="st">&quot;True sample&quot;</span>)</span>
-<span id="cb18-3"><a href="remove-contaminants.html#cb18-3" tabindex="-1"></a>physeq <span class="ot">&lt;-</span> <span class="fu">prune_taxa</span>(<span class="fu">taxa_sums</span>(physeq)<span class="sc">&gt;</span><span class="dv">0</span>, physeq)</span>
-<span id="cb18-4"><a href="remove-contaminants.html#cb18-4" tabindex="-1"></a>goodTaxa <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">taxa_names</span>(physeq), contam_asvs)</span>
-<span id="cb18-5"><a href="remove-contaminants.html#cb18-5" tabindex="-1"></a>physeq.final <span class="ot">&lt;-</span> <span class="fu">prune_taxa</span>(goodTaxa, physeq)</span></code></pre></div>
-<div id="basic-filtering" class="section level2 hasAnchor" number="5.1">
-<h2><span class="header-section-number">5.1</span> Basic filtering<a href="remove-contaminants.html#basic-filtering" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb19-1"><a href="remove-contaminants.html#cb19-1" tabindex="-1"></a>read_counts_final <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(physeq.final<span class="sc">@</span>otu_table) </span>
-<span id="cb19-2"><a href="remove-contaminants.html#cb19-2" tabindex="-1"></a>count_filtdepth <span class="ot">&lt;-</span> read_counts_final[,<span class="fu">colSums</span>(read_counts_final)<span class="sc">&gt;</span><span class="dv">1000</span>]</span>
-<span id="cb19-3"><a href="remove-contaminants.html#cb19-3" tabindex="-1"></a>count_phy_filt <span class="ot">&lt;-</span> <span class="fu">otu_table</span>(count_filtdepth, <span class="at">taxa_are_rows=</span>T)</span>
-<span id="cb19-4"><a href="remove-contaminants.html#cb19-4" tabindex="-1"></a></span>
-<span id="cb19-5"><a href="remove-contaminants.html#cb19-5" tabindex="-1"></a><span class="fu">otu_table</span>(physeq.final) <span class="ot">&lt;-</span> count_phy_filt</span>
-<span id="cb19-6"><a href="remove-contaminants.html#cb19-6" tabindex="-1"></a></span>
-<span id="cb19-7"><a href="remove-contaminants.html#cb19-7" tabindex="-1"></a><span class="co">#TAXONOMY filtering</span></span>
-<span id="cb19-8"><a href="remove-contaminants.html#cb19-8" tabindex="-1"></a>physeq_bacteria <span class="ot">&lt;-</span> <span class="fu">subset_taxa</span>(physeq.final, Kingdom <span class="sc">==</span> <span class="st">&quot;Bacteria&quot;</span>)</span>
-<span id="cb19-9"><a href="remove-contaminants.html#cb19-9" tabindex="-1"></a>physeq_others <span class="ot">&lt;-</span> <span class="fu">subset_taxa</span>(physeq.final, Kingdom <span class="sc">!=</span> <span class="st">&quot;Bacteria&quot;</span>)</span>
-<span id="cb19-10"><a href="remove-contaminants.html#cb19-10" tabindex="-1"></a>physeq_archaea <span class="ot">&lt;-</span> <span class="fu">subset_taxa</span>(physeq.final, Kingdom <span class="sc">==</span> <span class="st">&quot;Archaea&quot;</span>)</span>
-<span id="cb19-11"><a href="remove-contaminants.html#cb19-11" tabindex="-1"></a>physeq_phylum <span class="ot">&lt;-</span> <span class="fu">subset_taxa</span>(physeq_bacteria, <span class="sc">!</span><span class="fu">is.na</span>(Phylum))</span>
-<span id="cb19-12"><a href="remove-contaminants.html#cb19-12" tabindex="-1"></a>physeq_phylumNA <span class="ot">&lt;-</span> <span class="fu">subset_taxa</span>(physeq_bacteria, <span class="fu">is.na</span>(Phylum))</span>
-<span id="cb19-13"><a href="remove-contaminants.html#cb19-13" tabindex="-1"></a>physeq_class <span class="ot">&lt;-</span> <span class="fu">subset_taxa</span>(physeq_phylum, <span class="sc">!</span><span class="fu">is.na</span>(Class))</span>
-<span id="cb19-14"><a href="remove-contaminants.html#cb19-14" tabindex="-1"></a>physeq_classNA <span class="ot">&lt;-</span> <span class="fu">subset_taxa</span>(physeq_phylum, <span class="fu">is.na</span>(Class))</span></code></pre></div>
+<div id="header">
+<h1 class="title">Anonymised</h1>
+<h2 class="subtitle"><em>Impact of sequencing approach on ecological inference from highly variable gut microbiomes</em></h2>
+<p class="author"><em>Anonymised</em></p>
+<p class="date"><em>2026-04-07</em></p>
 </div>
-<div id="removing-chloroplast-and-mitochondria" class="section level2 hasAnchor" number="5.2">
-<h2><span class="header-section-number">5.2</span> Removing chloroplast and mitochondria<a href="remove-contaminants.html#removing-chloroplast-and-mitochondria" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb20-1"><a href="remove-contaminants.html#cb20-1" tabindex="-1"></a>taxonomy <span class="ot">&lt;-</span> physeq.final<span class="sc">@</span>tax_table</span>
-<span id="cb20-2"><a href="remove-contaminants.html#cb20-2" tabindex="-1"></a>is.mitochondria <span class="ot">&lt;-</span> physeq.final<span class="sc">@</span>tax_table[,<span class="st">&quot;Family&quot;</span>] <span class="sc">%in%</span> <span class="st">&quot;Mitochondria&quot;</span></span>
-<span id="cb20-3"><a href="remove-contaminants.html#cb20-3" tabindex="-1"></a>taxonomy <span class="ot">&lt;-</span> taxonomy[<span class="sc">!</span>is.mitochondria,]</span>
-<span id="cb20-4"><a href="remove-contaminants.html#cb20-4" tabindex="-1"></a>is.chloroplast <span class="ot">&lt;-</span> taxonomy[,<span class="st">&quot;Order&quot;</span>] <span class="sc">%in%</span> <span class="st">&quot;Chloroplast&quot;</span></span>
-<span id="cb20-5"><a href="remove-contaminants.html#cb20-5" tabindex="-1"></a>taxonomy <span class="ot">&lt;-</span> taxonomy[<span class="sc">!</span>is.chloroplast,]</span>
-<span id="cb20-6"><a href="remove-contaminants.html#cb20-6" tabindex="-1"></a>taxonomy.m <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(taxonomy)</span>
-<span id="cb20-7"><a href="remove-contaminants.html#cb20-7" tabindex="-1"></a><span class="fu">tax_table</span>(physeq.final) <span class="ot">&lt;-</span> taxonomy.m</span>
-<span id="cb20-8"><a href="remove-contaminants.html#cb20-8" tabindex="-1"></a>physeq.final.filt <span class="ot">&lt;-</span> <span class="fu">prune_taxa</span>(<span class="fu">taxa_sums</span>(physeq.final)<span class="sc">&gt;</span><span class="dv">0</span>, physeq.final)</span></code></pre></div>
+<div id="introduction" class="section level1 hasAnchor" number="1">
+<h1><span class="header-section-number">Chapter 1</span> Introduction<a href="index.html#introduction" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>This webbook contains all the code used for data analysis in study of gut microbiomes of newts across ponds included in a restoration plan.</p>
+<div id="prepare-the-r-environment" class="section level2 hasAnchor" number="1.1">
+<h2><span class="header-section-number">1.1</span> Prepare the R environment<a href="index.html#prepare-the-r-environment" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="environment" class="section level3 hasAnchor" number="1.1.1">
+<h3><span class="header-section-number">1.1.1</span> Environment<a href="index.html#environment" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>To reproduce all the analyses locally, clone this repository in your computer using:</p>
+<pre><code>RStudio &gt; New Project &gt; Version Control &gt; Git</code></pre>
+<p>And indicating the following git repository:</p>
+<blockquote>
+<p>Anonymised</p>
+</blockquote>
+<p>Once the R project has been created, follow the instructions and code chunks shown in this webbook.</p>
 </div>
-<div id="save" class="section level2 hasAnchor" number="5.3">
-<h2><span class="header-section-number">5.3</span> Save<a href="remove-contaminants.html#save" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb21-1"><a href="remove-contaminants.html#cb21-1" tabindex="-1"></a><span class="fu">saveRDS</span>(physeq.final.filt,<span class="st">&quot;resources/amplicon/physeq_final_nocopyfilter.RData&quot;</span>)</span></code></pre></div>
+<div id="libraries" class="section level3 hasAnchor" number="1.1.2">
+<h3><span class="header-section-number">1.1.2</span> Libraries<a href="index.html#libraries" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The following R packages are required for the data analysis.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb2-1"><a href="index.html#cb2-1" tabindex="-1"></a><span class="co"># Base</span></span>
+<span id="cb2-2"><a href="index.html#cb2-2" tabindex="-1"></a><span class="fu">library</span>(R.utils)</span>
+<span id="cb2-3"><a href="index.html#cb2-3" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb2-4"><a href="index.html#cb2-4" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb2-5"><a href="index.html#cb2-5" tabindex="-1"></a><span class="fu">library</span>(devtools)</span>
+<span id="cb2-6"><a href="index.html#cb2-6" tabindex="-1"></a><span class="fu">library</span>(tinytable)</span>
+<span id="cb2-7"><a href="index.html#cb2-7" tabindex="-1"></a><span class="fu">library</span>(rairtable)</span>
+<span id="cb2-8"><a href="index.html#cb2-8" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
+<span id="cb2-9"><a href="index.html#cb2-9" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="index.html#cb2-10" tabindex="-1"></a><span class="co"># For tree handling</span></span>
+<span id="cb2-11"><a href="index.html#cb2-11" tabindex="-1"></a><span class="fu">library</span>(ape)</span>
+<span id="cb2-12"><a href="index.html#cb2-12" tabindex="-1"></a><span class="fu">library</span>(phyloseq)</span>
+<span id="cb2-13"><a href="index.html#cb2-13" tabindex="-1"></a><span class="fu">library</span>(phytools)</span>
+<span id="cb2-14"><a href="index.html#cb2-14" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="index.html#cb2-15" tabindex="-1"></a><span class="co"># For plotting</span></span>
+<span id="cb2-16"><a href="index.html#cb2-16" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb2-17"><a href="index.html#cb2-17" tabindex="-1"></a><span class="fu">library</span>(ggrepel)</span>
+<span id="cb2-18"><a href="index.html#cb2-18" tabindex="-1"></a><span class="fu">library</span>(ggpubr)</span>
+<span id="cb2-19"><a href="index.html#cb2-19" tabindex="-1"></a><span class="fu">library</span>(ggnewscale)</span>
+<span id="cb2-20"><a href="index.html#cb2-20" tabindex="-1"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb2-21"><a href="index.html#cb2-21" tabindex="-1"></a><span class="fu">library</span>(ggtreeExtra)</span>
+<span id="cb2-22"><a href="index.html#cb2-22" tabindex="-1"></a><span class="fu">library</span>(ggtree)</span>
+<span id="cb2-23"><a href="index.html#cb2-23" tabindex="-1"></a><span class="fu">library</span>(ggh4x)</span>
+<span id="cb2-24"><a href="index.html#cb2-24" tabindex="-1"></a><span class="fu">library</span>(UpSetR)</span>
+<span id="cb2-25"><a href="index.html#cb2-25" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span>
+<span id="cb2-26"><a href="index.html#cb2-26" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="index.html#cb2-27" tabindex="-1"></a><span class="co"># For statistics</span></span>
+<span id="cb2-28"><a href="index.html#cb2-28" tabindex="-1"></a><span class="fu">library</span>(decontam)</span>
+<span id="cb2-29"><a href="index.html#cb2-29" tabindex="-1"></a><span class="fu">library</span>(spaa)</span>
+<span id="cb2-30"><a href="index.html#cb2-30" tabindex="-1"></a><span class="fu">library</span>(vegan)</span>
+<span id="cb2-31"><a href="index.html#cb2-31" tabindex="-1"></a><span class="fu">library</span>(Rtsne)</span>
+<span id="cb2-32"><a href="index.html#cb2-32" tabindex="-1"></a><span class="fu">library</span>(geiger)</span>
+<span id="cb2-33"><a href="index.html#cb2-33" tabindex="-1"></a><span class="fu">library</span>(hilldiv2)</span>
+<span id="cb2-34"><a href="index.html#cb2-34" tabindex="-1"></a><span class="fu">library</span>(distillR)</span>
+<span id="cb2-35"><a href="index.html#cb2-35" tabindex="-1"></a><span class="fu">library</span>(ANCOMBC)</span>
+<span id="cb2-36"><a href="index.html#cb2-36" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb2-37"><a href="index.html#cb2-37" tabindex="-1"></a><span class="fu">library</span>(nlme)</span>
+<span id="cb2-38"><a href="index.html#cb2-38" tabindex="-1"></a><span class="fu">library</span>(pairwiseAdonis)</span>
+<span id="cb2-39"><a href="index.html#cb2-39" tabindex="-1"></a><span class="fu">library</span>(emmeans)</span></code></pre></div>
+
+</div>
 </div>
 </div>
             </section>
@@ -2182,8 +2334,8 @@ color: #a52929;
           </div>
         </div>
       </div>
-<a href="create-a-phyloseq-object.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="merging-amplicon-and-shotgun-data.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+
+<a href="prepare-data.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script>/*! jQuery v3.6.0 | (c) OpenJS Foundation and other contributors | jquery.org/license */
@@ -2658,6 +2810,13 @@ var e,t;e=this,t=function(){"use strict";function e(t){return(e="function"==type
         saveFontSettings();
     };
 
+    // Increase or decrease line spacing
+    function changeSpacing(e, inc = true) {
+        e.preventDefault();
+        inc ? fontState.spacing++ : (fontState.spacing > 10 && fontState.spacing--);
+        saveFontSettings();
+    }
+
     function update() {
         var $book = gitbook.state.$book;
 
@@ -2672,6 +2831,9 @@ var e,t;e=this,t=function(){"use strict";function e(t){return(e="function"==type
             $book[0].className = $book[0].className.replace(/\bcolor-theme-\S+/g, '');
             $book.addClass("color-theme-"+fontState.theme);
         }
+        var lineHeight = fontState.spacing / 10;
+        $book.find('section').css('line-height', lineHeight);
+        $('.font-settings .spacing-reduce').prop('disabled', lineHeight <= 1);
     };
 
     function init(config) {
@@ -2685,7 +2847,8 @@ var e,t;e=this,t=function(){"use strict";function e(t){return(e="function"==type
         fontState = gitbook.storage.get("fontState", {
             size: config.size || 2,
             family: FAMILY[config.family || "sans"],
-            theme: THEMES[config.theme || "white"]
+            theme: THEMES[config.theme || "white"],
+            spacing: config.spacing || 17,
         });
 
         update();
@@ -2736,6 +2899,18 @@ var e,t;e=this,t=function(){"use strict";function e(t){return(e="function"==type
                     {
                         text: 'Night',
                         onClick: _.partial(changeColorTheme, 2)
+                    }
+                
+                ],
+                [
+                    {
+                    className: 'spacing-reduce',
+                    text: 'Spacing -',
+                    onClick: e => changeSpacing(e, false)
+                    },
+                    {
+                    text: 'Spacing +',
+                    onClick: changeSpacing
                     }
                 ]
             ]
@@ -3145,42 +3320,42 @@ jQuery.fn.highlight = function (words, options) {
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
-"sharing": {
-"github": false,
-"facebook": true,
-"twitter": true,
-"linkedin": false,
-"weibo": false,
-"instapaper": false,
-"vk": false,
-"whatsapp": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
-},
-"fontsettings": {
-"theme": "white",
-"family": "sans",
-"size": 2
-},
-"edit": {
-"link": null,
-"text": null
-},
-"history": {
-"link": null,
-"text": null
-},
-"view": {
-"link": null,
-"text": null
-},
-"download": ["_main.pdf", "_main.epub"],
-"search": {
-"engine": "fuse",
-"options": null
-},
-"toc": {
-"collapse": "subsection"
-}
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": null,
+    "text": null
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": ["_main.pdf", "_main.epub"],
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  }
 });
 });
 </script>

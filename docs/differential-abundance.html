@@ -23,7 +23,7 @@
 <meta name="author" content="Chapter 6 Differential abundance | Anonymised" />
 
 
-<meta name="date" content="2026-04-07" />
+<meta name="date" content="2026-04-08" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -2891,10 +2891,10 @@ color: #a52929;
 <div id="enriched-phyla-2" class="section level4 hasAnchor" number="6.1.3.1">
 <h4><span class="header-section-number">6.1.3.1</span> Enriched phyla<a href="differential-abundance.html#enriched-phyla-2" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <div class="sourceCode" id="cb353"><pre class="sourceCode r script-source"><code class="sourceCode r"><span id="cb353-1"><a href="differential-abundance.html#cb353-1" tabindex="-1"></a>ancom_rand_output_phylum_appro<span class="sc">$</span>res <span class="sc">%&gt;%</span> <span class="fu">filter</span>(q_methodMetagenomics<span class="sc">&lt;</span><span class="fl">0.05</span>)</span></code></pre></div>
-<pre class="script-output"><code>           taxon lfc_(Intercept) lfc_methodMetagenomics se_(Intercept) se_methodMetagenomics W_(Intercept) W_methodMetagenomics p_(Intercept) p_methodMetagenomics
-1 Pseudomonadota        2.279875               -1.95287      0.4412564              0.601319      5.166781            -3.247644   0.001679214          0.001601129
-  q_(Intercept) q_methodMetagenomics diff_(Intercept) diff_methodMetagenomics passed_ss_(Intercept) passed_ss_methodMetagenomics
-1    0.02080063           0.02081467             TRUE                    TRUE                  TRUE                         TRUE</code></pre>
+<pre class="script-output"><code>           taxon lfc_(Intercept) lfc_methodMetagenomics se_(Intercept) se_methodMetagenomics W_(Intercept) W_methodMetagenomics p_(Intercept)
+1 Pseudomonadota        2.279875               -1.95287      0.4412564              0.601319      5.166781            -3.247644   0.001679214
+  p_methodMetagenomics q_(Intercept) q_methodMetagenomics diff_(Intercept) diff_methodMetagenomics passed_ss_(Intercept) passed_ss_methodMetagenomics
+1          0.001601129    0.02080063           0.02081467             TRUE                    TRUE                  TRUE                         TRUE</code></pre>
 
 </div>
 </div>

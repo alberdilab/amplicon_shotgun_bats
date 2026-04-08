@@ -868,26 +868,32 @@ genome_metadata_amplicon <- genome_metadata %>%
 save(sample_metadata_amplicon, genome_metadata_amplicon, genome_counts_filt_amplicon, file = "resources/amplicon/selected_filtering_rel.Rdata")
 ```
 
-```{r}
+```{r selected_data, comment="", message=FALSE, warning=FALSE, eval=FALSE}
 load("resources/amplicon/data_nocopyfilt.Rdata")
-load("resources/amplicon/selected_filtering_rel.Rdata")
+load("resources/amplicon/selected_filtering.Rdata")
 
-genome_counts_filt <- genome_counts_filt %>% 
+genome_counts_filt_amplicon <- genome_counts_filt %>% 
   filter(genome %in% genome_counts_filt_amplicon$genome) %>% 
   filter(rowSums(across(-genome)) != 0) %>% 
   select(genome, where(~ !all(. == 0))) %>% 
   select(all_of(colnames(genome_counts_filt_amplicon)))
 
-genome_counts_filt_amplicon_pa <- genome_counts_filt_amplicon %>% 
-  mutate(across(-genome, ~ if_else(. > 0, 1, 0)))
+# genome_counts_filt_amplicon_pa <- genome_counts_filt_amplicon %>% 
+#   mutate(across(-genome, ~ if_else(. > 0, 1, 0)))
+# 
+# genome_counts_filt_amplicon <- genome_counts_filt %>%
+#   column_to_rownames("genome") %>%
+#   `*`(genome_counts_filt_amplicon_pa %>%
+#         column_to_rownames("genome")) %>%
+#   rownames_to_column("genome") %>% 
+#   filter(genome %in% genome_metadata_amplicon$genome) %>% 
+#   filter(rowSums(across(-genome)) != 0)
 
-genome_counts_filt_amplicon <- genome_counts_filt %>%
-  column_to_rownames("genome") %>%
-  `*`(genome_counts_filt_amplicon_pa %>%
-        column_to_rownames("genome")) %>%
-  rownames_to_column("genome") %>% 
-  filter(genome %in% genome_metadata_amplicon$genome) %>% 
-  filter(rowSums(across(-genome)) != 0)
+sample_metadata_amplicon <- sample_metadata %>%
+  filter(sample %in% colnames(genome_counts_filt_amplicon))
+
+genome_metadata_amplicon <- genome_metadata %>%
+  filter(genome %in% genome_counts_filt_amplicon$genome)
 
 phylum_colors <- read_tsv("https://raw.githubusercontent.com/earthhologenome/EHI_taxonomy_colour/main/ehi_phylum_colors.tsv") %>%
   mutate_at(vars(phylum), ~ str_replace(., "[dpcofgs]__", ""))%>%
@@ -899,7 +905,6 @@ phylum_colors <- read_tsv("https://raw.githubusercontent.com/earthhologenome/EHI
     pull(colors, name=phylum)
 
 save(sample_metadata_amplicon, genome_metadata_amplicon, genome_counts_filt_amplicon, phylum_colors, file = "resources/amplicon/selected_filtering.Rdata")
-
 ```
 
 ```{r selected_table1, comment="", message=FALSE, warning=FALSE, eval=FALSE}
@@ -926,52 +931,149 @@ save(sample_metadata_amplicon, genome_metadata_amplicon, genome_counts_filt_ampl
 
 
 ## Based on beta diversity
+*Aggregate counts at family or phylum level in both datasets*
 
-```{r}
+```{r }
 load("resources/metagenomics/data_filtered.Rdata")
-meta_dist <- genome_counts_filt %>%
-  column_to_rownames("genome") %>%
-  hillpair(q = 1)
 
-filters <- master_table %>%
-  mutate(filter = str_c(copy_threshold, "_", prevalence)) %>%
-  distinct(filter) %>%
-  pull(filter)
+genome_metadata <- genome_metadata %>%
+  mutate(
+    class  = if_else(str_trim(class) == "", paste0(phylum, "_Unclassified"), class),
+    order  = if_else(str_trim(order) == "",
+                     if_else(str_detect(class, "Unclassified"), class, paste0(class, "_Unclassified")),
+                     order),
+    family = if_else(str_trim(family) == "",
+                     if_else(str_detect(order, "Unclassified"), order, paste0(order, "_Unclassified")),
+                     family),
+    genus  = if_else(str_trim(genus) == "",
+                     if_else(str_detect(family, "Unclassified"), family, paste0(family, "_Unclassified")),
+                     genus)
+  )
+
+genome_tax <- genome_counts_filt %>% 
+  left_join(genome_metadata[c(1,3,4,6)], by = "genome")
+
+# Aggregate counts at the Family level
+family_level_agg <- genome_tax %>%
+  select(-genome) %>%
+  group_by(phylum, class, family) %>%
+  summarise(across(where(is.numeric), \(x) sum(x, na.rm = TRUE)), .groups = "drop")%>% 
+  as.data.frame() %>% 
+  select(-c(phylum,class))
+
+meta_dist <- family_level_agg %>%
+  column_to_rownames("family") %>%
+  hillpair(q = 1)
 ```
 
 ```{r beta_list, comment="", message=FALSE, warning=FALSE, eval=FALSE}
+load("resources/amplicon/data_nocopyfilt.Rdata")
+load("resources/amplicon/master_table.Rdata")
+
+filters <- master_table  %>%
+  mutate(filter = str_c(copy_threshold, "_", prevalence)) %>%
+  distinct(filter) %>%
+  pull(filter)
+
+genome_metadata_ampli <- genome_metadata %>%
+  mutate(
+    class  = if_else(is.na(class), paste0(phylum, "_Unclassified"), class),
+    order  = if_else(is.na(order),
+                     if_else(str_detect(class, "Unclassified"), class, paste0(class, "_Unclassified")),
+                     order),
+    family = if_else(is.na(family),
+                     if_else(str_detect(order, "Unclassified"), order, paste0(order, "_Unclassified")),
+                     family),
+    genus  = if_else(is.na(genus),
+                     if_else(str_detect(family, "Unclassified"), family, paste0(family, "_Unclassified")),
+                     genus)
+  )
+
 beta_list <- list()
+filter_stats <- tibble()
+
+min_taxa <- 5
+min_samples <- 51
 
 for (f in filters) {
   
-  cat("Processing:", f, "\n")  # 👈 helpful debug
+  cat("Processing:", f, "\n")  
   
   df_subset <- master_table %>%
+    mutate(value = ifelse(is.na(value), 0, value)) %>%
     mutate(filter = str_c(copy_threshold, "_", prevalence)) %>%
-    filter(filter == f)
+    filter(filter == f) 
   
   df <- df_subset %>%
-    mutate(value = ifelse(!is.finite(value), 0, value)) %>%
-    select(sample, genome, value) %>%   # 👈 replace genome if needed
+    select(sample, genome, value) %>%  
     group_by(genome, sample) %>%
     summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
     pivot_wider(
       names_from = sample,
       values_from = value,
       values_fill = list(value = 0)
-    )
+    ) %>% 
+    filter(rowSums(across(-genome)) != 0) %>% 
+    select(genome, where(~ !all(. == 0)))
   
   mat <- df %>%
-    column_to_rownames("genome") 
+    left_join(genome_metadata_ampli[c(1, 3, 4, 6)], by = "genome") %>%
+    select(-genome) %>%
+    group_by(phylum, class, family) %>%
+    summarise(across(where(is.numeric), \(x) sum(x, na.rm = TRUE)), .groups = "drop") %>%
+    as.data.frame() %>%
+    select(-c(phylum, class)) %>%
+    select(family, everything()) %>%
+    column_to_rownames("family") 
   
-  beta_list[[f]] <- hillpair(mat, q = 1)
+    # Count stats BEFORE filtering out
+  taxa_count <- nrow(mat)
+  sample_count <- ncol(mat)
+  
+  # QC filters
+  if (taxa_count < min_taxa) next
+  if (sample_count < min_samples) next
+  
+  # # 1. Minimum number of families
+  # if (nrow(mat) < min_taxa) {
+  #   cat("Skipping", f, "- too few taxa:", nrow(mat), "\n")
+  #   next
+  # }
+  # # 2. Require all samples (51)
+  # min_samples <- 50
+  # if (ncol(mat) < min_samples) {
+  #   cat("Skipping", f, "- missing samples:", ncol(mat), "/", expected_samples, "\n")
+  #   next
+  # }
+  # # 3. Remove empty samples (safety)
+  # mat <- mat[, colSums(mat) > 0, drop = FALSE]
+  
+  # 4. Compute beta diversity
+  beta <- hillpair(mat, q = 1)
+    
+  # 5. Check variance in distance matrix
+  dist_mat <- 1 - as.matrix(beta$S)
+  if (sd(dist_mat[upper.tri(dist_mat)]) == 0) {
+    cat("Skipping", f, "- no variation in beta diversity\n")
+    next
+  }
+  
+  beta_list[[f]] <- beta
+  
+  filter_stats <- bind_rows(
+    filter_stats,
+    tibble(
+      filter = f,
+      taxa = taxa_count,
+      samples = sample_count)
+  )
 }
-save(beta_list, file="resources/amplicon/distance_thresholds.Rdata")
-
+save(beta_list,filter_stats, file="resources/amplicon/distance_thresholds_beta_family.Rdata")#distance_thresholds_beta_family50.Rdata
 ```
 
+
 ```{r}
-load("resources/amplicon/distance_thresholds.Rdata")
+load("resources/amplicon/distance_thresholds_beta_family.Rdata")
 
 # Make sure your metagenomics similarity matrix is a proper matrix
 meta_S <- as.matrix(meta_dist$S)
@@ -1018,20 +1120,15 @@ print(all(colnames(meta_aligned) == colnames(amp_aligned)))  # should be TRUE
   tibble(
     filter = names(beta_list)[i],
     correlation = test$statistic,
-    p_value = test$signif,
-    n_samples = length(common_samples)
+    p_value = test$signif
   )
 })
-
-# Inspect results, ordered by best correlation
-mantel_results %>%
-  arrange(desc(correlation)) %>% 
-  tt()
 ```
 
+
 ```{r}
-genome_counts_row <- genome_counts_filt %>% 
-  column_to_rownames("genome")
+genome_counts_row <- family_level_agg %>% 
+  column_to_rownames("family")
 
 # Metagenomics similarity matrix
 meta_S_matrix <- as.matrix(meta_dist$S)
@@ -1059,9 +1156,6 @@ aligned_list <- purrr::map(names(beta_list), function(filter_name) {
 })
 names(aligned_list) <- names(beta_list)
 
-```
-
-```{r}
 pca_data <- map_dfr(names(aligned_list), function(filter_name) {
   
   mat_amp  <- aligned_list[[filter_name]]$amp
@@ -1089,9 +1183,7 @@ pca_data <- map_dfr(names(aligned_list), function(filter_name) {
       )
     )
 })
-```
 
-```{r}
 # Convert distances column into numeric vectors
 dist_list <- lapply(pca_data$distances, function(x) {
   as.numeric(unlist(x))
@@ -1102,16 +1194,7 @@ pca_matrix <- do.call(rbind, dist_list)
 
 # Assign rownames
 rownames(pca_matrix) <- paste(pca_data$filter, pca_data$type, sep = "_")
-```
-```{r}
-pca_result <- prcomp(pca_matrix, scale. = TRUE)
 
-pca_df <- as.data.frame(pca_result$x) %>%
-  rownames_to_column("filter_type") %>%
-  separate(filter_type, into = c("filter", "type"), sep = "_")
-```
-
-```{r pca_distance, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
 pca_result <- prcomp(pca_matrix, scale. = TRUE)
 
 pca_df <- as.data.frame(pca_result$x) %>%
@@ -1123,6 +1206,9 @@ pca_df <- as.data.frame(pca_result$x) %>%
     type = factor(type, levels = c("amplicon","metagenomics"))
   )
 
+```
+
+```{r pca_distance, comment="", message=FALSE, warning=FALSE, fig.height=8, fig.width=16, fig.fullwidth=TRUE}
 ggplot(pca_df, aes(x = PC1, y = PC2, color = copy, shape = type)) +
   geom_point(size = 4, alpha = 0.7) +
   geom_text_repel(aes(label = paste(copy, prevalence, sep="_")), size = 3) +
@@ -1141,7 +1227,61 @@ ggplot(pca_df, aes(x = PC1, y = PC2, color = copy, shape = type)) +
     panel.grid.minor = element_blank()
   )
 ```
+```{r}
+pca_scores <- as.data.frame(pca_result$x)
+pca_scores_unique <- pca_scores[
+  !grepl("metagenomics", rownames(pca_scores)) | 
+  rownames(pca_scores) == rownames(pca_scores)[grepl("metagenomics", rownames(pca_scores))][1],
+]
 
+reference_row <- pca_scores_unique[grepl("_metagenomics", rownames(pca_scores_unique)), ]
+#reference_row <- reference_rows[1, ]
+
+variance_explained <- summary(pca_result)$importance[2, ]
+
+weighted_distances <- apply(pca_scores_unique, 1, function(row) {
+  sum(((row - reference_row)^2) * variance_explained)
+})
+
+pca_table <- tibble(
+  filter_type = rownames(pca_scores_unique),
+  distance = weighted_distances
+) %>% 
+  as.data.frame() %>% 
+  rename(filter=filter_type) %>% 
+  filter(filter != "t0_p0_metagenomics") %>% 
+  mutate(filter = gsub("_amplicon", "", filter))
+```
+
+**Summary_table**
+```{r}
+filter_stats %>%
+  left_join(mantel_results, by = "filter") %>%
+  left_join(pca_table, by = "filter") %>%
+  arrange(distance,desc(correlation)) %>% 
+  separate(filter, into = c("copy", "prevalence"), sep = "_", fill = "right") %>%
+  mutate(
+    copy = case_when(
+      copy == "t0" ~ "No filtering",
+      copy == "t1" ~ "< 0.0001",
+      copy == "t2" ~ "< 0.001",
+      copy == "t3" ~ "< 0.01",
+      copy == "t4" ~ "< 0.1",
+      TRUE ~ copy
+    )
+  ) %>%
+  mutate(
+    prevalence = case_when(
+      prevalence == "p0" ~ "No filtering",
+      prevalence == "p10" ~ "< 10%",
+      prevalence == "p20" ~ "< 20%",
+      prevalence == "p30" ~ "< 30%",
+      prevalence == "p40" ~ "< 40%",
+      TRUE ~ prevalence
+    )
+  )  %>% 
+  tt()
+```
 
 **Save the table with selected filtering thresholds***
 
@@ -1171,23 +1311,17 @@ save(sample_metadata_amplicon, genome_metadata_amplicon, genome_counts_filt_ampl
 load("resources/amplicon/data_nocopyfilt.Rdata")
 load("resources/amplicon/selected_filtering_beta_rel.Rdata")
 
-genome_counts_filt <- genome_counts_filt %>% 
+genome_counts_filt_amplicon <- genome_counts_filt %>% 
   filter(genome %in% genome_counts_filt_amplicon$genome) %>% 
   filter(rowSums(across(-genome)) != 0) %>% 
   select(genome, where(~ !all(. == 0))) %>% 
   select(all_of(colnames(genome_counts_filt_amplicon)))
 
-genome_counts_filt_amplicon_pa <- genome_counts_filt_amplicon %>% 
-  mutate(across(-genome, ~ if_else(. > 0, 1, 0)))
+sample_metadata_amplicon <- sample_metadata %>%
+  filter(sample %in% colnames(genome_counts_filt_amplicon))
 
-genome_counts_filt_amplicon <- genome_counts_filt %>%
-  column_to_rownames("genome") %>%
-  `*`(genome_counts_filt_amplicon_pa %>%
-        column_to_rownames("genome")) %>%
-  rownames_to_column("genome") %>% 
-  filter(genome %in% genome_metadata_amplicon$genome) %>% 
-  filter(rowSums(across(-genome)) != 0)
-
+genome_metadata_amplicon <- genome_metadata %>%
+  filter(genome %in% genome_counts_filt_amplicon$genome)
 phylum_colors <- read_tsv("https://raw.githubusercontent.com/earthhologenome/EHI_taxonomy_colour/main/ehi_phylum_colors.tsv") %>%
   mutate_at(vars(phylum), ~ str_replace(., "[dpcofgs]__", ""))%>%
     right_join(genome_metadata_amplicon, by=join_by(phylum == phylum)) %>%
@@ -1198,8 +1332,4 @@ phylum_colors <- read_tsv("https://raw.githubusercontent.com/earthhologenome/EHI
     pull(colors, name=phylum)
 
 save(sample_metadata_amplicon, genome_metadata_amplicon, genome_counts_filt_amplicon, phylum_colors, file = "resources/amplicon/selected_filtering_beta.Rdata")
-
 ```
-
-
-

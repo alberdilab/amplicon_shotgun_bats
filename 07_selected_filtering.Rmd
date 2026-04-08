@@ -2033,9 +2033,7 @@ ancom_rand_output_struc_approach_rand = ancombc2(data = merged_physeq_phylum,
 
 ***Enriched phyla***
 ```{r}
-ancom_rand_output_struc_approach_rand$res %>% 
-  filter(q_methodMetagenomics<0.05) %>%
-  tt()
+ancom_rand_output_struc_approach_rand$res
 ```
 
 ### Differences with metagenomics at phylum level within each species
@@ -2114,9 +2112,7 @@ structural_zero_groups %>%
 
 ***Enriched phyla***
 ```{r}
-ancom_rand_output_struc_eb$res %>% 
-  filter(q_methodMetagenomics<0.05) %>%
-  tt()
+ancom_rand_output_struc_eb$res 
 ```
 
 #### Pipistrellus
