@@ -745,13 +745,14 @@ alpha_div_family <- richness %>%
   full_join(neutral, by = join_by(sample == sample))
 
 alpha_div_family_data <- alpha_div_family %>%
-  left_join(all_samples, by = join_by(sample == sample))
+  left_join(all_samples, by = join_by(sample == sample)) %>% 
+  mutate(sampleid = str_remove(sample, "_ampli"))
 ```
 
 #### Family level
 ```{r fig_family_comp, comment="", message=FALSE, warning=FALSE, fig.height=6, fig.width=16, fig.fullwidth=TRUE}
 alpha_div_family_data %>%
-  select(-sample, -Life_stage, -Sex) %>%
+  select(-sample,-sampleid, -Life_stage, -Sex) %>%
   pivot_longer(
     cols = -c(method, Species),
     names_to = "metric",
@@ -802,35 +803,25 @@ alpha_div_family_data %>%
     y = "Alpha diversity at family level",
     color = "Species"
   )
-
 ```
 
 **Richness**
 ```{r rich_MM_ampli_species_family, comment="", message=FALSE, warning=FALSE}
-# Model_richness <- lm(formula = richness ~ Species*method, data = alpha_div_family_data)
-# anova(Model_richness)
-# summary(Model_richness)
-Modelq0GLMMNB <- MASS::glm.nb(richness ~ Species*method, data = alpha_div_family_data,trace=TRUE)
-summary(Modelq0GLMMNB)
-```
-```{r}
-Model_richness <- glmer.nb(richness ~ Species*method+(1|sample), data = alpha_div_family_data)
-summary(Model_richness)
-anova(Model_richness)
+Model_richness_stand <- glmer.nb(richness ~ Species*method+(1|sampleid), data = alpha_div_family_data)
+summary(Model_richness_stand)
+anova(Model_richness_stand)
+emmeans(Model_richness_stand, pairwise ~ Species)
+emmeans(Model_richness_stand, pairwise ~ method | Species)
 ```
 
 **Neutral**
 ```{r neutral_MM_ampli_species_family, comment="", message=FALSE, warning=FALSE}
-Model_neutral <- lm(formula = neutral ~ Species+method, data = alpha_div_family_data)
-anova(Model_neutral)
-summary(Model_neutral)
-#emmeans(Model_neutral, pairwise ~ Species)
-```
-```{r}
 Modelq1 <- lme(fixed = neutral ~ Species*method, data = alpha_div_family_data,
-               random = ~ 1 | sample)
+               random = ~ 1 | sampleid)
 summary(Modelq1)
 anova(Modelq1)
+emmeans(Modelq1, pairwise ~ Species)
+emmeans(Modelq1, pairwise ~ method | Species)
 ```
 
 #### Phylum level
@@ -856,12 +847,13 @@ neutral_phylum <- merged_table_phylum %>%
 alpha_div_phylum <- richness_phylum %>%
   full_join(neutral_phylum, by = join_by(sample == sample))
 alpha_div_phylum_data <- alpha_div_phylum %>%
-  left_join(all_samples, by = join_by(sample == sample))
+  left_join(all_samples, by = join_by(sample == sample)) %>% 
+  mutate(sampleid = str_remove(sample, "_ampli"))
 ```
 
 ```{r gif_phylum_amp, comment="", message=FALSE, warning=FALSE, fig.height=6, fig.width=16, fig.fullwidth=TRUE}
 alpha_div_phylum_data %>%
-  select(-sample, -Life_stage, -Sex) %>%
+  select(-sample, -sampleid, -Life_stage, -Sex) %>%
   pivot_longer(
     cols = -c(method, Species),
     names_to = "metric",
@@ -917,43 +909,19 @@ alpha_div_phylum_data %>%
 
 **Richness**
 ```{r rich_alpha_phylum_comp, comment="", message=FALSE, warning=FALSE}
-Model_richness_phylum <- lm(formula = richness ~ Species*method, data = alpha_div_phylum_data)
-anova(Model_richness_phylum)
-summary(Model_richness_phylum)
-emmeans(Model_richness_phylum, pairwise ~ Species)
-```
-```{r}
-Model_richness_random <- glmer.nb(richness ~ Species*method+(1|sample), data = alpha_div_phylum_data)
+Model_richness_random <- glmer.nb(richness ~ Species*method+(1|sampleid), data = alpha_div_phylum_data)
 summary(Model_richness_random)
 anova(Model_richness_random)
-```
-```{r}
-AIC(Model_richness_phylum, Model_richness_random)
-#check if the model actually converged
-summary(Model_richness_random)$optinfo$conv$lme4$messages #NULL: no serious issue
-#Check for singular fit
-isSingular(Model_richness_random, tol = 1e-4) #FALSE: random structure is fine
-
-#Check overdispersion
-overdisp_fun <- function(model) {
-  rdf <- df.residual(model)
-  rp <- residuals(model, type = "pearson")
-  sqrt(sum(rp^2) / rdf)
-}
-overdisp_fun(Model_richness_random) #~1: good (1.2 → overdispersion, <0.8: possible underdispersion) 
+emmeans(Model_richness_random, pairwise ~ Species)
+emmeans(Model_richness_random, pairwise ~ method | Species)
 ```
 
 **Neutral**
 ```{r neutral_alpha_phylum_comp, comment="", message=FALSE, warning=FALSE}
-Model_neutral_phylum <- lm(formula = neutral ~ Species*method, data = alpha_div_phylum_data)
-anova(Model_neutral_phylum)
-summary(Model_neutral_phylum)
-emmeans(Model_neutral_phylum, pairwise ~ Species)
-```
-
-```{r}
 Modelq1_random <- lme(fixed = neutral ~ Species*method, data = alpha_div_phylum_data,
-               random = ~ 1 | sample)
-summary(Modelq1_random )
-anova(Modelq1_random )
+               random = ~ 1 | sampleid)
+summary(Modelq1_random)
+anova(Modelq1_random)
+emmeans(Modelq1_random, pairwise ~ Species)
+emmeans(Modelq1_random, pairwise ~ method | Species)
 ```

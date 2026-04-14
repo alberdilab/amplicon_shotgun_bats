@@ -13,6 +13,35 @@ load("resources/amplicon/selected_filtering_beta.Rdata")
 species_color <- c("#e5bd5b", "#6b7398", "#76b183")
 ```
 
+**Number of MAGs**
+```{r mag_number_sel_beta, comment="", message=FALSE, warning=FALSE}
+genome_metadata_amplicon %>% 
+  nrow()%>% 
+  cat()
+```
+
+**Number of Archaea phyla**
+```{r arch_phyla_meta_sel_beta, comment="", message=FALSE, warning=FALSE}
+genome_metadata_amplicon %>% 
+  filter(domain == "Archaea")%>%
+  dplyr::select(phylum) %>%
+  unique() %>%
+  pull() %>%
+  length()%>% 
+  cat()
+```
+
+**Number of Bacteria phyla**
+```{r bact_meta_sel_beta, comment="", message=FALSE, warning=FALSE}
+genome_metadata_amplicon %>% 
+  filter(domain == "Bacteria")%>%
+  dplyr::select(phylum) %>%
+  unique() %>%
+  pull() %>%
+  length()%>% 
+  cat()
+```
+
 ## Taxonomy
 ```{r taxonomy_barplot_selec_filt_beta, fig.height=6, fig.width=10, fig.fullwidth=TRUE}
 genome_counts_filt_amplicon %>%
@@ -148,7 +177,7 @@ phylum_summary %>%
     Hypsugo = str_c(round(Ha_mean, 3), "±", round(Ha_sd, 3)),
     Pipistrellus = str_c(round(Pk_mean, 3), "±", round(Pk_sd, 3))
   ) %>%
-  arrange(-Eb_mean) %>%
+  arrange(-Total_mean) %>%
   dplyr::select(phylum,
                 Total,
                 Cnephaeus,
@@ -181,8 +210,9 @@ preabs_table <- genome_counts_filt_amplicon %>%
   t() %>%
   as.data.frame() %>%
   rownames_to_column("genome")  %>%
-  left_join(genome_metadata_amplicon, by = join_by("genome" == "genome")) %>% 
-  filter(domain=="Bacteria")
+  left_join(genome_metadata_amplicon, by = join_by("genome" == "genome")) 
+# %>% 
+#   filter(domain=="Bacteria")
 
 phylum <- preabs_table %>%
   distinct(phylum)
@@ -258,8 +288,9 @@ preabs_table <- genome_counts_filt_amplicon %>%
   t() %>%
   as.data.frame() %>%
   rownames_to_column("genome")  %>%
-  left_join(genome_metadata_amplicon, by = join_by("genome" == "genome")) %>% 
-  filter(domain=="Bacteria")
+  left_join(genome_metadata_amplicon, by = join_by("genome" == "genome")) 
+# %>% 
+#   filter(domain=="Bacteria")
 
 genus <- preabs_table  %>%
   filter(is.na(genus))
@@ -376,12 +407,12 @@ bats = c("Eb", "Pk", "Ha")
 
 single_sp <- data.frame(Bat = character(), Single_species = numeric())
 
-bacteria <- genome_metadata_amplicon %>% 
-  filter(domain=="Bacteria")
+# bacteria <- genome_metadata_amplicon %>% 
+#   filter(domain=="Bacteria")
 
 table_upset_analysis <- genome_counts_filt_amplicon %>%
   mutate(across(-genome, ~ . / sum(.))) %>%
-  filter(genome %in% bacteria$genome) %>% 
+#  filter(genome %in% bacteria$genome) %>% 
   column_to_rownames("genome") %>%
   mutate(across(everything(), ~ as.integer(. > 0))) %>%
   t() %>%
@@ -418,7 +449,7 @@ single_ind <- data.frame(Bat = character(), Single_individual = numeric())
 
 freq_table <- genome_counts_filt_amplicon %>%
   mutate(across(-genome, ~ . / sum(.))) %>%
-  filter(genome %in% bacteria$genome) %>%
+#  filter(genome %in% bacteria$genome) %>%
   column_to_rownames("genome") %>%
   mutate(across(everything(), ~ as.integer(. > 0))) %>%
   t() %>%
@@ -587,7 +618,7 @@ neutral <- genome_counts_filt_amplicon %>%
 
 metabarcoding_selected_alpha_div <- richness %>%
   full_join(neutral, by = join_by(sample == sample)) %>% 
-  mutate(method="Metabarcoding_selected")
+  mutate(method="Metabarcoding_selected_beta")
 ```
 
 **Correlation between diversity and estimate microbial fraction**
@@ -647,7 +678,7 @@ richness %>%
 ```{r}
 sample_metadata_amplicon <- sample_metadata_amplicon[c(1,9,10,13)] %>%
   mutate(sample = paste0(sample, "_ampli_selec")) %>%
-  mutate(method="Metabarcoding_selected")
+  mutate(method="Metabarcoding_selected_beta")
 
 genome_metadata_amplicon <- genome_metadata_amplicon %>%
   mutate(
@@ -826,7 +857,6 @@ anova(Model_neutral)
 load("resources/alpha_together.Rdata")
 ```
 
-Merge the table
 ```{r}
 merged_table_family_methods <- full_join(family_level_agg_ampli,merged_table, 
           by = c("family"))%>%
@@ -864,34 +894,28 @@ alpha_div_family <- richness %>%
 
 alpha_div_family_data <- alpha_div_family %>%
   left_join(all_samples, by = join_by(sample == sample))
+
+alpha_div_family_data_filt <- alpha_div_family_data %>% 
+  filter(method!="Metabarcoding_standard") %>% 
+  mutate(sampleid = str_remove(sample, "_ampli_selec"))
 ```
 
 **Richness**
 ```{r rich_MM_ampli_sel_species_family_beta, comment="", message=FALSE, warning=FALSE}
-alpha_div_family_data_filt <- alpha_div_family_data %>% 
-  filter(method!="Metabarcoding_standard")
-Model_richness <- lm(formula = richness ~ Species*method, data = alpha_div_family_data_filt)
-anova(Model_richness)
-summary(Model_richness)
-```
-```{r}
-Model_richness_random <- glmer.nb(richness ~ Species*method+(1|sample), data = alpha_div_family_data_filt)
+Model_richness_random <- glmer.nb(richness ~ Species*method+(1|sampleid), data = alpha_div_family_data_filt)
 summary(Model_richness_random)
 anova(Model_richness_random)
+emmeans(Model_richness_random, pairwise ~ Species)
+emmeans(Model_richness_random, pairwise ~ method | Species)
 ```
 
 **Neutral**
 ```{r neutral_MM_ampli_sel_species_family_beta, comment="", message=FALSE, warning=FALSE}
-Model_neutral <- lm(formula = neutral ~ Species*method, data = alpha_div_family_data_filt)
+Model_neutral <- lme(fixed = neutral ~ Species*method, data = alpha_div_family_data_filt,
+               random = ~ 1 | sampleid)
 anova(Model_neutral)
 summary(Model_neutral)
-emmeans(Model_neutral, pairwise ~ Species)
-```
-```{r}
-Modelq1_random <- lme(fixed = neutral ~ Species*method, data = alpha_div_family_data_filt,
-               random = ~ 1 | sample)
-summary(Modelq1_random )
-anova(Modelq1_random )
+emmeans(Model_neutral, pairwise ~ method | Species)
 ```
 
 #### Phylum level
@@ -918,38 +942,31 @@ alpha_div_phylum <- richness_phylum %>%
   full_join(neutral_phylum, by = join_by(sample == sample))
 alpha_div_phylum_data <- alpha_div_phylum %>%
   left_join(all_samples, by = join_by(sample == sample))
+alpha_div_phylum_data_filt <- alpha_div_phylum_data %>% 
+  filter(method!="Metabarcoding_standard") %>% 
+  mutate(sampleid = str_remove(sample, "_ampli_selec"))
 ```
 
 **Richness**
 ```{r rich_alpha_phylum_beta, comment="", message=FALSE, warning=FALSE}
-alpha_div_phylum_data_filt <- alpha_div_phylum_data %>% 
-  filter(method!="Metabarcoding_standard")
-Model_richness_phylum <- lm(formula = richness ~ Species*method, data = alpha_div_phylum_data_filt)
-anova(Model_richness_phylum)
-summary(Model_richness_phylum)
-emmeans(Model_richness_phylum, pairwise ~ Species)
-```
-```{r}
-Model_richness_random_phy <- glmer.nb(richness ~ Species*method+(1|sample), data = alpha_div_phylum_data_filt)
+Model_richness_random_phy <- glmer.nb(richness ~ Species*method+(1|sampleid), data = alpha_div_phylum_data_filt)
 summary(Model_richness_random_phy)
 anova(Model_richness_random_phy)
+emmeans(Model_richness_random_phy, pairwise ~ Species)
+emmeans(Model_richness_random_phy, pairwise ~ method | Species)
 ```
 
 
 **Neutral**
 ```{r neutral_alpha_phylum_beta, comment="", message=FALSE, warning=FALSE}
-Model_neutral_phylum <- lm(formula = neutral ~ Species*method, data = alpha_div_phylum_data_filt)
+Model_neutral_phylum <- lme(fixed = neutral ~ Species*method, data = alpha_div_phylum_data_filt,
+               random = ~ 1 | sampleid)
 anova(Model_neutral_phylum)
 summary(Model_neutral_phylum)
 emmeans(Model_neutral_phylum, pairwise ~ Species)
+emmeans(Model_neutral_phylum, pairwise ~ method | Species)
 ```
 
-```{r}
-Modelq1_random_phy <- lme(fixed = neutral ~ Species*method, data = alpha_div_phylum_data_filt,
-               random = ~ 1 | sample)
-summary(Modelq1_random_phy )
-anova(Modelq1_random_phy )
-```
 
 ### Alpha diversity figure (three methods)
 
@@ -974,8 +991,8 @@ alpha_div_family_data %>%
       ),
     method = factor(
       method,
-      levels = c("Metabarcoding_standard", "Metabarcoding_selected", "Metagenomics"),
-      labels = c("Metabarcoding Standard", "Metabarcoding Selected", "Metagenomics")
+      levels = c("Metabarcoding_standard", "Metabarcoding_selected_beta", "Metagenomics"),
+      labels = c("Metabarcoding Standard", "Metabarcoding Selected Beta", "Metagenomics")
   )) %>%   
   ggplot(aes(y = value, x = method, color = Species, fill = Species)) +
   geom_boxplot(
@@ -1036,8 +1053,8 @@ alpha_div_phylum_data %>%
       ),
     method = factor(
       method,
-      levels = c("Metabarcoding_standard", "Metabarcoding_selected", "Metagenomics"),
-      labels = c("Metabarcoding Standard", "Metabarcoding Selected", "Metagenomics")
+      levels = c("Metabarcoding_standard", "Metabarcoding_selected_beta", "Metagenomics"),
+      labels = c("Metabarcoding Standard", "Metabarcoding Selected Beta", "Metagenomics")
   )) %>%   
   ggplot(aes(y = value, x = method, color = Species, fill = Species)) +
   geom_boxplot(
@@ -1113,94 +1130,42 @@ load("resources/beta_tax_sele_beta.Rdata")
 #### Family
 **Richness**
 ```{r}
-adonis2(
-  beta_q0n$S ~ Species,
-  by = "terms",
-  data = sample_metadata_amplicon %>%
-    filter(sample %in% labels(beta_q0n$S)) %>%
-    arrange(match(sample, labels(beta_q0n$S))),
-  permutations = 999
-) %>%
+adonis2(beta_q0n$S ~ Species, data = sample_metadata_amplicon %>% filter(sample %in% labels(beta_q0n$S)) %>% arrange(match(sample, labels(beta_q0n$S))),
+  permutations = 999) %>%
   broom::tidy() %>%
   tt()
 
-pairwise.adonis(
-  beta_q0n$S,
-  sample_metadata_amplicon %>%
-    filter(sample %in% labels(beta_q0n$S)) %>%
-    arrange(match(sample, labels(beta_q0n$S))) %>%
-    pull(Species),
+pairwise.adonis(beta_q0n$S, sample_metadata_amplicon %>% filter(sample %in% labels(beta_q0n$S)) %>% arrange(match(sample, labels(beta_q0n$S))) %>% pull(Species),
   perm = 999) %>%
   tt()
 ```
 
 **Neutral**
 ```{r}
-adonis2(
-  beta_q1n$S ~ Species,
-  by = "terms",
-  data = sample_metadata_amplicon %>%
-    filter(sample %in% labels(beta_q1n$S)) %>%
-    arrange(match(sample, labels(beta_q1n$S))),
-  permutations = 999
-) %>%
+adonis2(beta_q1n$S ~ Species,  data = sample_metadata_amplicon %>% filter(sample %in% labels(beta_q1n$S)) %>% arrange(match(sample, labels(beta_q1n$S))), permutations = 999) %>%
   broom::tidy() %>%
   tt()
 
-pairwise.adonis(
-  beta_q1n$S,
-  sample_metadata_amplicon %>%
-    filter(sample %in% labels(beta_q1n$S)) %>%
-    arrange(match(sample, labels(beta_q1n$S))) %>%
-    pull(Species),
-  perm = 999) %>%
+pairwise.adonis(beta_q1n$S, sample_metadata_amplicon %>% filter(sample %in% labels(beta_q1n$S)) %>% arrange(match(sample, labels(beta_q1n$S))) %>% pull(Species), perm = 999) %>%
   tt()
 ```
 
 #### Phylum
 **Richness**
 ```{r}
-adonis2(
-  beta_q0n_phylum$S ~ Species,
-  by = "terms",
-  data = sample_metadata_amplicon %>%
-    filter(sample %in% labels(beta_q0n_phylum$S)) %>%
-    arrange(match(sample, labels(beta_q0n_phylum$S))),
-  permutations = 999
-) %>%
+adonis2(beta_q0n_phylum$S ~ Species, data = sample_metadata_amplicon %>% filter(sample %in% labels(beta_q0n_phylum$S)) %>% arrange(match(sample, labels(beta_q0n_phylum$S))), permutations = 999) %>%
   broom::tidy() %>%
-  tt()
-
-pairwise.adonis(
-  beta_q0n_phylum$S,
-  sample_metadata_amplicon %>%
-    filter(sample %in% labels(beta_q0n_phylum$S)) %>%
-    arrange(match(sample, labels(beta_q0n_phylum$S))) %>%
-    pull(Species),
-  perm = 999) %>%
   tt()
 ```
 
 **Neutral**
 ```{r}
-adonis2(
-  beta_q1n_phylum$S ~ Species,
-  by = "terms",
-  data = sample_metadata_amplicon %>%
+adonis2(beta_q1n_phylum$S ~ Species,data = sample_metadata_amplicon %>%
     filter(sample %in% labels(beta_q1n_phylum$S)) %>%
     arrange(match(sample, labels(beta_q1n_phylum$S))),
   permutations = 999
 ) %>%
   broom::tidy() %>%
-  tt()
-
-pairwise.adonis(
-  beta_q1n_phylum$S,
-  sample_metadata_amplicon %>%
-    filter(sample %in% labels(beta_q1n_phylum$S)) %>%
-    arrange(match(sample, labels(beta_q1n_phylum$S))) %>%
-    pull(Species),
-  perm = 999) %>%
   tt()
 ```
 
@@ -1250,21 +1215,22 @@ to_remove <- grepl("_ampli$", samples) & !grepl("_ampli_Select$", samples)
 m_filtered <- m[!to_remove, !to_remove]
 beta_q0n_S_filtered <- as.dist(m_filtered)
 
+samples_sel <- all_samples %>%
+  mutate(sampleid = str_remove(sample, "_ampli_selec"))
 
-betadisper(beta_q0n_S_filtered, all_samples %>% filter(sample %in% labels(beta_q0n_S_filtered)) %>% arrange(match(sample, labels(beta_q0n_S_filtered))) %>% pull(Species)) %>% permutest(.)
+samples_q0 <- samples_sel %>% filter(sample %in% labels(beta_q0n_S_filtered)) %>% arrange(match(sample, labels(beta_q0n_S_filtered)))
 
-adonis2(beta_q0n_S_filtered ~ Species*method, data = all_samples %>% filter(sample %in% labels(beta_q0n_S_filtered)) %>% arrange(match(sample, labels(beta_q0n_S_filtered))), permutations = 999) %>%
+betadisper(beta_q0n_S_filtered, samples_q0 %>% pull(Species)) %>% permutest(.)
+
+adonis2(beta_q0n_S_filtered ~ Species*method, data = samples_q0, permutations = 999, strata = samples_q0$sampleid) %>%
   broom::tidy() %>%
   tt()
 
-adonis2(
-  beta_q0n_S_filtered ~ Species*method,
-  by = "terms",
-  data = all_samples %>%
-    filter(sample %in% labels(beta_q0n_S_filtered)) %>%
-    arrange(match(sample, labels(beta_q0n_S_filtered))),
-  permutations = 999
-) %>%
+adonis2(beta_q0n_S_filtered ~ Species+method, by = "margin", data = samples_q0, permutations = 999, strata = samples_q0$sampleid) %>%
+  broom::tidy() %>%
+  tt()
+
+adonis2(beta_q0n_S_filtered ~ Species*method, by = "margin", data = samples_q0, permutations = 999, strata = samples_q0$sampleid) %>%
   broom::tidy() %>%
   tt()
 ```
@@ -1277,24 +1243,21 @@ to_remove <- grepl("_ampli$", samples) & !grepl("_ampli_Select$", samples)
 m_filtered <- m[!to_remove, !to_remove]
 beta_q1n_S_filtered <- as.dist(m_filtered)
 
+samples_q1 <- samples_sel %>% filter(sample %in% labels(beta_q1n_S_filtered)) %>% arrange(match(sample, labels(beta_q1n_S_filtered)))
 
-betadisper(beta_q1n_S_filtered, all_samples %>% filter(sample %in% labels(beta_q1n_S_filtered)) %>% arrange(match(sample, labels(beta_q1n_S_filtered))) %>% pull(Species)) %>% permutest(.)
+betadisper(beta_q1n_S_filtered, samples_q1 %>% pull(Species)) %>% permutest(.)
 
-adonis2(beta_q1n_S_filtered ~ Species*method, data = all_samples %>% filter(sample %in% labels(beta_q1n_S_filtered)) %>% arrange(match(sample, labels(beta_q1n_S_filtered))), permutations = 999) %>%
+adonis2(beta_q1n_S_filtered ~ Species*method, data = samples_q1, permutations = 999, strata = samples_q1$sampleid) %>%
   broom::tidy() %>%
   tt()
 
-adonis2(
-  beta_q1n_S_filtered ~ Species*method,
-  by = "terms",
-  data = all_samples %>%
-    filter(sample %in% labels(beta_q1n_S_filtered)) %>%
-    arrange(match(sample, labels(beta_q1n_S_filtered))),
-  permutations = 999
-) %>%
+adonis2(beta_q1n_S_filtered ~ Species+method, by = "margin", data = samples_q1, permutations = 999, strata = samples_q1$sampleid) %>%
   broom::tidy() %>%
   tt()
 
+adonis2(beta_q1n_S_filtered ~ Species*method, by = "margin", data = samples_q1, permutations = 999, strata = samples_q1$sampleid) %>%
+  broom::tidy() %>%
+  tt()
 ```
 
 #### Phylum level
@@ -1306,21 +1269,19 @@ to_remove <- grepl("_ampli$", samples) & !grepl("_ampli_Select$", samples)
 m_filtered <- m[!to_remove, !to_remove]
 beta_q0n_phylum_S_filtered <- as.dist(m_filtered)
 
+samples_q0 <- samples_sel %>% filter(sample %in% labels(beta_q0n_phylum_S_filtered)) %>% arrange(match(sample, labels(beta_q0n_phylum_S_filtered)))
 
-betadisper(beta_q0n_phylum_S_filtered, all_samples %>% filter(sample %in% labels(beta_q0n_phylum_S_filtered)) %>% arrange(match(sample, labels(beta_q0n_phylum_S_filtered))) %>% pull(Species)) %>% permutest(.)
+betadisper(beta_q0n_phylum_S_filtered, samples_q0 %>% pull(Species)) %>% permutest(.)
 
-adonis2(beta_q0n_phylum_S_filtered ~ Species*method, data = all_samples %>% filter(sample %in% labels(beta_q0n_phylum_S_filtered)) %>% arrange(match(sample, labels(beta_q0n_phylum_S_filtered))), permutations = 999) %>%
+adonis2(beta_q0n_phylum_S_filtered ~ Species*method, data = samples_q0, permutations = 999, strata = samples_q0$sampleid) %>%
   broom::tidy() %>%
   tt()
 
-adonis2(
-  beta_q0n_phylum_S_filtered ~ Species*method,
-  by = "terms",
-  data = all_samples %>%
-    filter(sample %in% labels(beta_q0n_phylum_S_filtered)) %>%
-    arrange(match(sample, labels(beta_q0n_phylum_S_filtered))),
-  permutations = 999
-) %>%
+adonis2(beta_q0n_phylum_S_filtered ~ Species+method, by = "margin", data = samples_q0, permutations = 999, strata = samples_q0$sampleid) %>%
+  broom::tidy() %>%
+  tt()
+
+adonis2(beta_q0n_phylum_S_filtered ~ Species*method, by = "margin", data = samples_q0, permutations = 999, strata = samples_q0$sampleid) %>%
   broom::tidy() %>%
   tt()
 ```
@@ -1333,21 +1294,11 @@ to_remove <- grepl("_ampli$", samples) & !grepl("_ampli_Select$", samples)
 m_filtered <- m[!to_remove, !to_remove]
 beta_q1n_phylum_S_filtered <- as.dist(m_filtered)
 
+samples_q1 <- samples_sel %>% filter(sample %in% labels(beta_q1n_phylum_S_filtered)) %>% arrange(match(sample, labels(beta_q1n_phylum_S_filtered)))
 
-betadisper(beta_q1n_phylum_S_filtered, all_samples %>% filter(sample %in% labels(beta_q1n_phylum_S_filtered)) %>% arrange(match(sample, labels(beta_q1n_phylum_S_filtered))) %>% pull(Species)) %>% permutest(.)
+betadisper(beta_q1n_phylum_S_filtered, samples_q1 %>% pull(Species)) %>% permutest(.)
 
-adonis2(beta_q1n_phylum_S_filtered ~ Species*method, data = all_samples %>% filter(sample %in% labels(beta_q1n_phylum_S_filtered)) %>% arrange(match(sample, labels(beta_q1n_phylum_S_filtered))), permutations = 999) %>%
-  broom::tidy() %>%
-  tt()
-
-adonis2(
-  beta_q1n_phylum_S_filtered ~ Species*method,
-  by = "terms",
-  data = all_samples %>%
-    filter(sample %in% labels(beta_q1n_phylum_S_filtered)) %>%
-    arrange(match(sample, labels(beta_q1n_phylum_S_filtered))),
-  permutations = 999
-) %>%
+adonis2(beta_q1n_phylum_S_filtered ~ Species*method, data = samples_q1, permutations = 999, strata = samples_q1$sampleid) %>%
   broom::tidy() %>%
   tt()
 ```
@@ -1375,8 +1326,8 @@ beta_q0n$S %>%
       labels = c("C. bottae", "H. ariel", "P. kuhlii")),
       method = factor(
       method,
-      levels = c("Metabarcoding_standard", "Metabarcoding_selected", "Metagenomics"),
-      labels = c("Metabarcoding Standard", "Metabarcoding Selected", "Metagenomics")
+      levels = c("Metabarcoding_standard", "Metabarcoding_selected_beta", "Metagenomics"),
+      labels = c("Metabarcoding Standard", "Metabarcoding Selected Beta", "Metagenomics")
       )
   ) %>% 
   ggplot(aes(x = NMDS1, y = NMDS2, color = Species, shape=method)) +
@@ -1421,8 +1372,8 @@ beta_q0n$S %>%
   mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
   ungroup() %>%
   mutate(method = factor(method,
-      levels = c("Metabarcoding_standard", "Metabarcoding_selected", "Metagenomics"),
-      labels = c("Metabarcoding Standard", "Metabarcoding Selected", "Metagenomics")
+      levels = c("Metabarcoding_standard", "Metabarcoding_selected_beta", "Metagenomics"),
+      labels = c("Metabarcoding Standard", "Metabarcoding Selected Beta", "Metagenomics")
       )
   ) %>% 
   ggplot(aes(x = NMDS1, y = NMDS2, color = method)) +
@@ -1505,8 +1456,8 @@ beta_q1n$S %>%
   mutate(y_cen = mean(NMDS2, na.rm = TRUE)) %>%
   ungroup() %>%
     mutate(method = factor(method,
-      levels = c("Metabarcoding_standard", "Metabarcoding_selected", "Metagenomics"),
-      labels = c("Metabarcoding Standard", "Metabarcoding Selected", "Metagenomics")
+      levels = c("Metabarcoding_standard", "Metabarcoding_selected_beta", "Metagenomics"),
+      labels = c("Metabarcoding Standard", "Metabarcoding Selected Beta", "Metagenomics")
       )
   ) %>% 
   ggplot(aes(x = NMDS1, y = NMDS2, color = method)) + 
@@ -1832,14 +1783,15 @@ sample_shot <- sample_metadata %>%
 
 all_samples <- rbind(sample_shot, sample_metadata_amplicon)
 
-```
-```{r}
+samples_sel <- all_samples %>%
+  mutate(sampleid = str_remove(sample, "_ampli"))
+
 phylo_genome <- merged_table_phylum %>%
   column_to_rownames("phylum") %>% 
   otu_table(., taxa_are_rows = TRUE)
 
-phylo_samples <- all_samples%>% 
-  mutate(individual=sample)%>%
+phylo_samples <- samples_sel %>% 
+  mutate(individual=sample) %>%
   column_to_rownames("sample") %>% 
   sample_data()
 
@@ -1850,7 +1802,7 @@ ancom_rand_output_struc_approach_rand_beta = ancombc2(data = merged_physeq_phylu
                   assay_name = "counts", 
                   tax_level = NULL,
                   fix_formula = "method",
- #                 rand_formula = "(1|Species)",
+ #                 rand_formula = "(1|sampleid)",
                   p_adj_method = "holm", 
                   pseudo_sens = TRUE,
                   prv_cut =0, 
@@ -1875,8 +1827,8 @@ ancom_rand_output_struc_approach_rand_beta = ancombc2(data = merged_physeq_phylu
 
 ***Enriched phyla***
 ```{r}
-ancom_rand_output_struc_approach_rand_beta$res %>% 
-  filter(q_methodMetagenomics<0.05) %>%
+ancom_rand_output_struc_approach_rand_beta$res %>%
+  filter(q_methodMetagenomics < 0.05) %>%
   tt()
 ```
 

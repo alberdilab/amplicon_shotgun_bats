@@ -953,8 +953,9 @@ preabs_table <- genome_counts_filt %>%
   t() %>%
   as.data.frame() %>%
   rownames_to_column("genome")  %>%
-  left_join(genome_metadata, by = join_by("genome" == "genome")) %>% 
-  filter(domain=="Bacteria")
+  left_join(genome_metadata, by = join_by("genome" == "genome")) 
+# %>% 
+#   filter(domain=="Bacteria")
 
 phylum <- preabs_table %>%
   distinct(phylum)
@@ -1030,8 +1031,9 @@ preabs_table <- genome_counts_filt %>%
   t() %>%
   as.data.frame() %>%
   rownames_to_column("genome")  %>%
-  left_join(genome_metadata, by = join_by("genome" == "genome"))%>% 
-  filter(domain=="Bacteria")
+  left_join(genome_metadata, by = join_by("genome" == "genome"))
+# %>% 
+#   filter(domain=="Bacteria")
 
 genus <- preabs_table  %>%
   filter(is.na(genus))
@@ -1072,7 +1074,7 @@ for (bat in bats) {
 **Total percentage of ASVs without genus-level annotation**
 ```{r gen_percet_ampli, comment="", message=FALSE, warning=FALSE}
 nongenera <- genome_metadata %>% 
-  filter(domain=="Bacteria") %>%
+#  filter(domain=="Bacteria") %>%
   filter(is.na(genus)) %>% 
   summarize(ASV_nogenera = n()) %>%
   pull()
@@ -1087,11 +1089,11 @@ cat(perct)
 **Percentage of ASVs without genus-level annotation by phylum**
 ```{r nongene_phylum_gut_ampli, comment="", message=FALSE, warning=FALSE}
 total_asv_phylum <- genome_metadata %>% 
-  filter(domain=="Bacteria") %>%
+#  filter(domain=="Bacteria") %>%
   group_by(phylum) %>%
   summarize(Total_ASVs = n())
 genome_metadata %>% 
-  filter(domain=="Bacteria") %>%
+ # filter(domain=="Bacteria") %>%
   filter(is.na(genus)) %>% 
   group_by(phylum) %>%
   summarize(ASVs_nogenus = n()) %>%
@@ -1114,7 +1116,7 @@ genome_metadata %>%
 **Total percentage of MAGs without species-level annotation**
 ```{r sp_percet_ampli, comment="", message=FALSE, warning=FALSE}
 nonspecies <- genome_metadata %>% 
-  filter(domain=="Bacteria")%>%
+#  filter(domain=="Bacteria")%>%
   filter(is.na(species)) %>%
   summarize(ASV_nospecies = n()) %>%
   pull()
@@ -1125,12 +1127,12 @@ cat(perct)
 **ASVs without species-level annotation**
 ```{r nonspe_phylum_ampli, comment="", message=FALSE, warning=FALSE}
 total_mag_phylum <- genome_metadata %>% 
-  filter(domain=="Bacteria") %>%
+#  filter(domain=="Bacteria") %>%
   group_by(phylum) %>%
   summarize(ASVs_total = n())
 
 genome_metadata %>% 
-  filter(domain=="Bacteria")%>%
+#  filter(domain=="Bacteria")%>%
   filter(is.na(species)) %>%
   group_by(phylum) %>%
   summarize(ASVs_nospecies = n()) %>%
@@ -1148,12 +1150,12 @@ bats = c("Eb", "Pk", "Ha")
 
 single_sp <- data.frame(Bat = character(), Single_species = numeric())
 
-bacteria <- genome_metadata %>%
- filter(domain=="Bacteria")
+# bacteria <- genome_metadata %>%
+#  filter(domain=="Bacteria")
 
 table_upset_analysis <- genome_counts_filt %>%
   mutate(across(-genome, ~ . / sum(.))) %>%
-  filter(genome %in% bacteria$genome) %>% 
+#  filter(genome %in% bacteria$genome) %>% 
   column_to_rownames("genome") %>%
   mutate(across(everything(), ~ as.integer(. > 0))) %>%
   t() %>%
@@ -1190,7 +1192,7 @@ single_ind <- data.frame(Bat = character(), Single_individual = numeric())
 
 freq_table <- genome_counts_filt %>%
   mutate(across(-genome, ~ . / sum(.))) %>%
-  filter(genome %in% bacteria$genome) %>% 
+#  filter(genome %in% bacteria$genome) %>% 
   column_to_rownames("genome") %>%
   mutate(across(everything(), ~ as.integer(. > 0))) %>%
   t() %>%
@@ -1247,7 +1249,7 @@ summary_table_ampli %>%
 
 ```{r summary_table_ampli, comment="", message=FALSE, warning=FALSE}
 total_asv <- genome_metadata %>% 
-  filter(domain=="Bacteria") %>% 
+#  filter(domain=="Bacteria") %>% 
   nrow()
 summary_table_ampli %>% 
   select(-Phylum,-Family, -Genus) %>% 

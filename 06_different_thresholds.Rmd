@@ -1100,10 +1100,10 @@ mantel_results <- map_dfr(seq_along(beta_list), function(i) {
   meta_aligned <- meta_S[common_samples, common_samples, drop = FALSE]
   amp_aligned  <- S_amp[common_samples, common_samples, drop = FALSE]
   
-print(names(beta_list)[i])
-print(common_samples)
-print(all(rownames(meta_aligned) == rownames(amp_aligned)))  # should be TRUE
-print(all(colnames(meta_aligned) == colnames(amp_aligned)))  # should be TRUE
+# print(names(beta_list)[i])
+# print(common_samples)
+# print(all(rownames(meta_aligned) == rownames(amp_aligned)))  # should be TRUE
+# print(all(colnames(meta_aligned) == colnames(amp_aligned)))  # should be TRUE
   
   # Convert similarity to distance
   meta_dist_mat <- meta_aligned

@@ -87,12 +87,7 @@ save(beta_q0n,
 **Richness**
 ```{r richness_metag, comment="", message=FALSE, warning=FALSE}
 betadisper(beta_q0n$S, sample_metadata$Species) %>% permutest(.)
-adonis2(
-  beta_q0n$S ~ Species,
-  by = "terms",
-  data = sample_metadata %>% arrange(match(sample, labels(beta_q0n$S))),
-  permutations = 999
-) %>%
+adonis2(beta_q0n$S ~ Species, data = sample_metadata %>% arrange(match(sample, labels(beta_q0n$S))), permutations = 999) %>%
   broom::tidy() %>%
   tt()
 ```
@@ -104,12 +99,7 @@ pairwise.adonis(beta_q0n$S, sample_metadata$Species, perm = 999)
 ```{r permanova_neutral_metag, comment="", message=FALSE, warning=FALSE}
 betadisper(beta_q1n$S, sample_metadata$Species) %>% permutest(.)
 
-adonis2(
-  beta_q1n$S ~ Species,
-  by = "terms",
-  data = sample_metadata %>% arrange(match(sample, labels(beta_q1n$S))),
-  permutations = 999
-) %>%
+adonis2(beta_q1n$S ~ Species, data = sample_metadata %>% arrange(match(sample, labels(beta_q1n$S))), permutations = 999) %>%
   broom::tidy() %>%
   tt()
 ```
@@ -264,25 +254,11 @@ beta_q0n_shot <- family_level_agg %>%
   column_to_rownames(., "family") %>% 
   hillpair(., q = 0)
 
-adonis2(
-  beta_q0n_shot$S ~ Species,
-  by = "terms",
-  data = sample_metadata %>%
-    filter(sample %in% labels(beta_q0n_shot$S)) %>%
-    arrange(match(sample, labels(beta_q0n_shot$S))),
-  permutations = 999
-) %>%
+adonis2(beta_q0n_shot$S ~ Species, data = sample_metadata %>% filter(sample %in% labels(beta_q0n_shot$S)) %>% arrange(match(sample, labels(beta_q0n_shot$S))), permutations = 999) %>%
   broom::tidy() %>%
   tt()
 
-pairwise.adonis(
-  beta_q0n_shot$S,
-  sample_metadata %>%
-    filter(sample %in% labels(beta_q0n_shot$S)) %>%
-    arrange(match(sample, labels(beta_q0n_shot$S))) %>%
-    pull(Species),
-  perm = 999
-)
+pairwise.adonis(beta_q0n_shot$S, sample_metadata %>% filter(sample %in% labels(beta_q0n_shot$S)) %>% arrange(match(sample, labels(beta_q0n_shot$S))) %>% pull(Species), perm = 999)
 ```
 ```{r pairwise_neutral_family_metag, comment="", message=FALSE, warning=FALSE}
 beta_q1n_shot <- family_level_agg %>%
@@ -290,25 +266,11 @@ beta_q1n_shot <- family_level_agg %>%
   column_to_rownames(., "family") %>% 
   hillpair(., q = 1)
 
-adonis2(
-  beta_q1n_shot$S ~ Species,
-  by = "terms",
-  data = sample_metadata %>%
-    filter(sample %in% labels(beta_q1n_shot$S)) %>%
-    arrange(match(sample, labels(beta_q1n_shot$S))),
-  permutations = 999
-) %>%
+adonis2(beta_q1n_shot$S ~ Species, data = sample_metadata %>% filter(sample %in% labels(beta_q1n_shot$S)) %>% arrange(match(sample, labels(beta_q1n_shot$S))), permutations = 999) %>%
   broom::tidy() %>%
   tt()
 
-pairwise.adonis(
-  beta_q1n_shot$S,
-  sample_metadata %>%
-    filter(sample %in% labels(beta_q1n_shot$S)) %>%
-    arrange(match(sample, labels(beta_q1n_shot$S))) %>%
-    pull(Species),
-  perm = 999
-)
+pairwise.adonis(beta_q1n_shot$S, sample_metadata %>% filter(sample %in% labels(beta_q1n_shot$S)) %>% arrange(match(sample, labels(beta_q1n_shot$S))) %>% pull(Species), perm = 999)
 ```
 
 ```{r beta_div1_both_fig7, comment="", message=FALSE, warning=FALSE, fig.height=6, fig.width=10, fig.fullwidth=TRUE}
@@ -395,25 +357,11 @@ beta_q1n_P_shot <- phylum_level_agg %>%
   column_to_rownames(., "phylum") %>% 
   hillpair(., q = 1)
 
-adonis2(
-  beta_q1n_P_shot$S ~ Species,
-  by = "terms",
-  data = sample_metadata %>%
-    filter(sample %in% labels(beta_q1n_P_shot$S)) %>%
-    arrange(match(sample, labels(beta_q1n_P_shot$S))),
-  permutations = 999
-) %>%
+adonis2(beta_q1n_P_shot$S ~ Species, data = sample_metadata %>% filter(sample %in% labels(beta_q1n_P_shot$S)) %>% arrange(match(sample, labels(beta_q1n_P_shot$S))), permutations = 999) %>%
   broom::tidy() %>%
   tt()
 
-pairwise.adonis(
-  beta_q1n_P_shot$S,
-  sample_metadata %>%
-    filter(sample %in% labels(beta_q1n_P_shot$S)) %>%
-    arrange(match(sample, labels(beta_q1n_P_shot$S))) %>%
-    pull(Species),
-  perm = 999
-)
+pairwise.adonis(beta_q1n_P_shot$S, sample_metadata %>% filter(sample %in% labels(beta_q1n_P_shot$S)) %>% arrange(match(sample, labels(beta_q1n_P_shot$S))) %>% pull(Species), perm = 999)
 ```
 
 ## Amplicon
@@ -439,56 +387,23 @@ beta_q1n <- genome_counts_filt %>%
 
 **Richness**
 ```{r permanova_ampli, comment="", message=FALSE, warning=FALSE}
-betadisper(
-  beta_q0n$S,
-  sample_metadata %>%
-    filter(sample %in% labels(beta_q0n$S)) %>%
-    arrange(match(sample, labels(beta_q0n$S))) %>%
-    pull(Species)
-) %>%
+betadisper(beta_q0n$S, sample_metadata %>% filter(sample %in% labels(beta_q0n$S)) %>% arrange(match(sample, labels(beta_q0n$S))) %>% pull(Species)) %>%
   permutest(.)
 
-adonis2(
-  beta_q0n$S ~ Species,
-  by = "terms",
-  data = sample_metadata %>%
-    filter(sample %in% labels(beta_q0n$S)) %>%
-    arrange(match(sample, labels(beta_q0n$S))),
-  permutations = 999
-) %>%
+adonis2(beta_q0n$S ~ Species,  data = sample_metadata %>% filter(sample %in% labels(beta_q0n$S)) %>% arrange(match(sample, labels(beta_q0n$S))), permutations = 999) %>%
   broom::tidy() %>%
   tt()
 ```
 ```{r pairwise_rich, comment="", message=FALSE, warning=FALSE}
-pairwise.adonis(
-  beta_q0n$S,
-  sample_metadata %>%
-    filter(sample %in% labels(beta_q0n$S)) %>%
-    arrange(match(sample, labels(beta_q0n$S))) %>%
-    pull(Species),
-  perm = 999
-)
+pairwise.adonis(beta_q0n$S, sample_metadata %>% filter(sample %in% labels(beta_q0n$S)) %>% arrange(match(sample, labels(beta_q0n$S))) %>% pull(Species), perm = 999)
 ```
 
 **Neutral**
 ```{r permanova_neutral_amplicon1, comment="", message=FALSE, warning=FALSE}
-betadisper(
-  beta_q1n$S,
-  sample_metadata %>%
-    filter(sample %in% labels(beta_q0n$S)) %>%
-    arrange(match(sample, labels(beta_q0n$S))) %>%
-    pull(Species)
-) %>%
+betadisper(beta_q1n$S, sample_metadata %>% filter(sample %in% labels(beta_q0n$S)) %>% arrange(match(sample, labels(beta_q0n$S))) %>% pull(Species)) %>%
   permutest(.)
 
-adonis2(
-  beta_q1n$S ~ Species,
-  by = "terms",
-  data = sample_metadata %>%
-    filter(sample %in% labels(beta_q0n$S)) %>%
-    arrange(match(sample, labels(beta_q0n$S))),
-  permutations = 999
-) %>%
+adonis2(beta_q1n$S ~ Species, data = sample_metadata %>% filter(sample %in% labels(beta_q0n$S)) %>% arrange(match(sample, labels(beta_q0n$S))), permutations = 999) %>%
   broom::tidy() %>%
   tt()
 ```
@@ -640,23 +555,11 @@ beta_q0n_ampli <- family_level_agg_ampli %>%
   column_to_rownames(., "family") %>% 
   hillpair(., q = 0)
 
-adonis2(
-  beta_q0n_ampli$S ~ Species,
-  by = "terms",
-  data = all_samples %>%
-    filter(sample %in% labels(beta_q0n_ampli$S)) %>%
-    arrange(match(sample, labels(beta_q0n_ampli$S))),
-  permutations = 999
-) %>%
+adonis2(beta_q0n_ampli$S ~ Species, data = all_samples %>% filter(sample %in% labels(beta_q0n_ampli$S)) %>% arrange(match(sample, labels(beta_q0n_ampli$S))), permutations = 999) %>%
   broom::tidy() %>%
   tt()
 
-pairwise.adonis(
-  beta_q0n_ampli$S,
-  all_samples %>%
-    filter(sample %in% labels(beta_q0n_ampli$S)) %>%
-    arrange(match(sample, labels(beta_q0n_ampli$S))) %>%
-    pull(Species),
+pairwise.adonis(beta_q0n_ampli$S, all_samples %>% filter(sample %in% labels(beta_q0n_ampli$S)) %>% arrange(match(sample, labels(beta_q0n_ampli$S))) %>% pull(Species),
   perm = 999) %>% 
   tt()
 ```
@@ -665,23 +568,11 @@ beta_q1n_ampli <- family_level_agg_ampli %>%
   column_to_rownames(., "family") %>% 
   hillpair(., q = 1)
 
-adonis2(
-  beta_q1n_ampli$S ~ Species,
-  by = "terms",
-  data = all_samples %>%
-    filter(sample %in% labels(beta_q1n_ampli$S)) %>%
-    arrange(match(sample, labels(beta_q1n_ampli$S))),
-  permutations = 999
-) %>%
+adonis2(beta_q1n_ampli$S ~ Species,  data = all_samples %>% filter(sample %in% labels(beta_q1n_ampli$S)) %>% arrange(match(sample, labels(beta_q1n_ampli$S))), permutations = 999) %>%
   broom::tidy() %>%
   tt()
 
-pairwise.adonis(
-  beta_q1n_ampli$S,
-  all_samples %>%
-    filter(sample %in% labels(beta_q1n_ampli$S)) %>%
-    arrange(match(sample, labels(beta_q1n_ampli$S))) %>%
-    pull(Species),
+pairwise.adonis(beta_q1n_ampli$S, all_samples %>% filter(sample %in% labels(beta_q1n_ampli$S)) %>% arrange(match(sample, labels(beta_q1n_ampli$S))) %>% pull(Species),
   perm = 999) %>% 
   tt()
 ```
@@ -766,24 +657,11 @@ beta_q1n_P_ampli <- phylum_level_agg_ampli %>%
   column_to_rownames(., "phylum") %>% 
   hillpair(., q = 1)
 
-adonis2(
-  beta_q1n_P_ampli$S ~ Species,
-  by = "terms",
-  data = all_samples %>%
-    filter(sample %in% labels(beta_q1n_P_ampli$S)) %>%
-    arrange(match(sample, labels(beta_q1n_P_ampli$S))),
-  permutations = 999
-) %>%
+adonis2(beta_q1n_P_ampli$S ~ Species, data = all_samples %>% filter(sample %in% labels(beta_q1n_P_ampli$S)) %>% arrange(match(sample, labels(beta_q1n_P_ampli$S))), permutations = 999) %>%
   broom::tidy() %>%
   tt()
 
-pairwise.adonis(
-  beta_q1n_ampli$S,
-  all_samples %>%
-    filter(sample %in% labels(beta_q1n_P_ampli$S)) %>%
-    arrange(match(sample, labels(beta_q1n_P_ampli$S))) %>%
-    pull(Species),
-  perm = 999)  %>%
+pairwise.adonis(beta_q1n_ampli$S, all_samples %>% filter(sample %in% labels(beta_q1n_P_ampli$S)) %>% arrange(match(sample, labels(beta_q1n_P_ampli$S))) %>% pull(Species), perm = 999)  %>%
   tt()
 ```
 
