@@ -1052,7 +1052,7 @@ for (f in filters) {
   beta <- hillpair(mat, q = 1)
     
   # 5. Check variance in distance matrix
-  dist_mat <- 1 - as.matrix(beta$S)
+  dist_mat <- as.matrix(beta$S)
   if (sd(dist_mat[upper.tri(dist_mat)]) == 0) {
     cat("Skipping", f, "- no variation in beta diversity\n")
     next
@@ -1162,8 +1162,8 @@ pca_data <- map_dfr(names(aligned_list), function(filter_name) {
   mat_meta <- aligned_list[[filter_name]]$meta
   
   # Convert similarity to distance
-  dist_amp  <- 1 - mat_amp
-  dist_meta <- 1 - mat_meta
+  dist_amp  <- mat_amp
+  dist_meta <- mat_meta
   
   # Flatten upper triangle to a vector
   vec_amp  <- dist_amp[upper.tri(dist_amp)]

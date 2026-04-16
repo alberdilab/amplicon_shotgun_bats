@@ -23,7 +23,7 @@
 <meta name="author" content="Chapter 3 Community composition | Anonymised" />
 
 
-<meta name="date" content="2026-04-14" />
+<meta name="date" content="2026-04-16" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -2419,8 +2419,8 @@ color: #a52929;
 
     <script>
 
-      function styleCell_fk4uigrm0zlfhwmqj0pz(i, j, css_id) {
-          var table = document.getElementById("tinytable_fk4uigrm0zlfhwmqj0pz");
+      function styleCell_saa2fvgcxle59r3q49tt(i, j, css_id) {
+          var table = document.getElementById("tinytable_saa2fvgcxle59r3q49tt");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -2430,7 +2430,7 @@ color: #a52929;
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_fk4uigrm0zlfhwmqj0pz');
+        var table = document.getElementById('tinytable_saa2fvgcxle59r3q49tt');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -2438,8 +2438,8 @@ color: #a52929;
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_fk4uigrm0zlfhwmqj0pz(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_fk4uigrm0zlfhwmqj0pz");
+      function spanCell_saa2fvgcxle59r3q49tt(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_saa2fvgcxle59r3q49tt");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -2469,14 +2469,14 @@ color: #a52929;
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 },  ], css_id: 'tinytable_css_g0yx50ep8va8n9sgbxb9',}, 
-          { positions: [ { i: 13, j: 0 }, { i: 13, j: 1 }, { i: 13, j: 2 }, { i: 13, j: 3 }, { i: 13, j: 4 },  ], css_id: 'tinytable_css_e2592rgoyaziao1ns9b2',}, 
+          { positions: [ { i: 13, j: 0 }, { i: 13, j: 1 }, { i: 13, j: 2 }, { i: 13, j: 3 }, { i: 13, j: 4 },  ], css_id: 'tinytable_css_f3nod2ah562zrssck1ti',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 },  ], css_id: 'tinytable_css_2s03wdqqf04w625swgpn',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_fk4uigrm0zlfhwmqj0pz(cell.i, cell.j, group.css_id);
+                  styleCell_saa2fvgcxle59r3q49tt(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -2484,11 +2484,11 @@ color: #a52929;
 
     <style>
 
-.table td.tinytable_css_g0yx50ep8va8n9sgbxb9, .table th.tinytable_css_g0yx50ep8va8n9sgbxb9 { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
-.table td.tinytable_css_e2592rgoyaziao1ns9b2, .table th.tinytable_css_e2592rgoyaziao1ns9b2 { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_f3nod2ah562zrssck1ti, .table th.tinytable_css_f3nod2ah562zrssck1ti { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_2s03wdqqf04w625swgpn, .table th.tinytable_css_2s03wdqqf04w625swgpn { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_fk4uigrm0zlfhwmqj0pz" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_saa2fvgcxle59r3q49tt" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -2614,8 +2614,8 @@ color: #a52929;
 
     <script>
 
-      function styleCell_k4liy9r9c67hpc5x6seb(i, j, css_id) {
-          var table = document.getElementById("tinytable_k4liy9r9c67hpc5x6seb");
+      function styleCell_gw8x8v4bbg7r2aapoact(i, j, css_id) {
+          var table = document.getElementById("tinytable_gw8x8v4bbg7r2aapoact");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -2625,7 +2625,7 @@ color: #a52929;
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_k4liy9r9c67hpc5x6seb');
+        var table = document.getElementById('tinytable_gw8x8v4bbg7r2aapoact');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -2633,8 +2633,8 @@ color: #a52929;
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_k4liy9r9c67hpc5x6seb(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_k4liy9r9c67hpc5x6seb");
+      function spanCell_gw8x8v4bbg7r2aapoact(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_gw8x8v4bbg7r2aapoact");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -2664,14 +2664,14 @@ color: #a52929;
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 3, j: 0 }, { i: 3, j: 1 }, { i: 3, j: 2 },  ], css_id: 'tinytable_css_i7r00k852naxjc5etyjb',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 },  ], css_id: 'tinytable_css_cq0qwc3sy0dc7p14dehe',}, 
+          { positions: [ { i: 3, j: 0 }, { i: 3, j: 1 }, { i: 3, j: 2 },  ], css_id: 'tinytable_css_yjswxbnxs1q0rn0pusvx',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 },  ], css_id: 'tinytable_css_2m8fco497o7yc8wg9uff',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_k4liy9r9c67hpc5x6seb(cell.i, cell.j, group.css_id);
+                  styleCell_gw8x8v4bbg7r2aapoact(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -2679,11 +2679,11 @@ color: #a52929;
 
     <style>
 
-.table td.tinytable_css_i7r00k852naxjc5etyjb, .table th.tinytable_css_i7r00k852naxjc5etyjb { border-bottom: solid #d3d8dc 0.1em; }
-.table td.tinytable_css_cq0qwc3sy0dc7p14dehe, .table th.tinytable_css_cq0qwc3sy0dc7p14dehe { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_yjswxbnxs1q0rn0pusvx, .table th.tinytable_css_yjswxbnxs1q0rn0pusvx { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_2m8fco497o7yc8wg9uff, .table th.tinytable_css_2m8fco497o7yc8wg9uff { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_k4liy9r9c67hpc5x6seb" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_gw8x8v4bbg7r2aapoact" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -2746,8 +2746,8 @@ color: #a52929;
 
     <script>
 
-      function styleCell_oyfryw238xsy5xfhpn82(i, j, css_id) {
-          var table = document.getElementById("tinytable_oyfryw238xsy5xfhpn82");
+      function styleCell_ptkf2wuyorc87d3tboiv(i, j, css_id) {
+          var table = document.getElementById("tinytable_ptkf2wuyorc87d3tboiv");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -2757,7 +2757,7 @@ color: #a52929;
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_oyfryw238xsy5xfhpn82');
+        var table = document.getElementById('tinytable_ptkf2wuyorc87d3tboiv');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -2765,8 +2765,8 @@ color: #a52929;
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_oyfryw238xsy5xfhpn82(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_oyfryw238xsy5xfhpn82");
+      function spanCell_ptkf2wuyorc87d3tboiv(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_ptkf2wuyorc87d3tboiv");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -2796,14 +2796,14 @@ color: #a52929;
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 },  ], css_id: 'tinytable_css_ydygsox1xkjezrthh9q2',}, 
-          { positions: [ { i: 55, j: 0 }, { i: 55, j: 1 }, { i: 55, j: 2 }, { i: 55, j: 3 },  ], css_id: 'tinytable_css_impkeuyorm56g8sw2p2s',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 },  ], css_id: 'tinytable_css_lft1vb59go0795jupa0f',}, 
+          { positions: [ { i: 55, j: 0 }, { i: 55, j: 1 }, { i: 55, j: 2 }, { i: 55, j: 3 },  ], css_id: 'tinytable_css_kpr73fjt58d63yq4qa22',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_oyfryw238xsy5xfhpn82(cell.i, cell.j, group.css_id);
+                  styleCell_ptkf2wuyorc87d3tboiv(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -2811,11 +2811,11 @@ color: #a52929;
 
     <style>
 
-.table td.tinytable_css_ydygsox1xkjezrthh9q2, .table th.tinytable_css_ydygsox1xkjezrthh9q2 { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
-.table td.tinytable_css_impkeuyorm56g8sw2p2s, .table th.tinytable_css_impkeuyorm56g8sw2p2s { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_lft1vb59go0795jupa0f, .table th.tinytable_css_lft1vb59go0795jupa0f { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_kpr73fjt58d63yq4qa22, .table th.tinytable_css_kpr73fjt58d63yq4qa22 { border-bottom: solid #d3d8dc 0.1em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_oyfryw238xsy5xfhpn82" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_ptkf2wuyorc87d3tboiv" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -3195,8 +3195,8 @@ color: #a52929;
 
     <script>
 
-      function styleCell_pn0xp3ouoycf8agjbhph(i, j, css_id) {
-          var table = document.getElementById("tinytable_pn0xp3ouoycf8agjbhph");
+      function styleCell_hxkeu94xsic25x6bzes9(i, j, css_id) {
+          var table = document.getElementById("tinytable_hxkeu94xsic25x6bzes9");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -3206,7 +3206,7 @@ color: #a52929;
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_pn0xp3ouoycf8agjbhph');
+        var table = document.getElementById('tinytable_hxkeu94xsic25x6bzes9');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -3214,8 +3214,8 @@ color: #a52929;
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_pn0xp3ouoycf8agjbhph(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_pn0xp3ouoycf8agjbhph");
+      function spanCell_hxkeu94xsic25x6bzes9(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_hxkeu94xsic25x6bzes9");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -3245,14 +3245,14 @@ color: #a52929;
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 70, j: 0 }, { i: 70, j: 1 }, { i: 70, j: 2 }, { i: 70, j: 3 },  ], css_id: 'tinytable_css_tw1zkos4138ei7if4o87',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 },  ], css_id: 'tinytable_css_4q6tzp4jiotr93r1d2bc',}, 
+          { positions: [ { i: 70, j: 0 }, { i: 70, j: 1 }, { i: 70, j: 2 }, { i: 70, j: 3 },  ], css_id: 'tinytable_css_lqjtlhcd7emuzbss50eb',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 },  ], css_id: 'tinytable_css_9uh5u65jx6847ygvwwu0',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_pn0xp3ouoycf8agjbhph(cell.i, cell.j, group.css_id);
+                  styleCell_hxkeu94xsic25x6bzes9(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -3260,11 +3260,11 @@ color: #a52929;
 
     <style>
 
-.table td.tinytable_css_tw1zkos4138ei7if4o87, .table th.tinytable_css_tw1zkos4138ei7if4o87 { border-bottom: solid #d3d8dc 0.1em; }
-.table td.tinytable_css_4q6tzp4jiotr93r1d2bc, .table th.tinytable_css_4q6tzp4jiotr93r1d2bc { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_lqjtlhcd7emuzbss50eb, .table th.tinytable_css_lqjtlhcd7emuzbss50eb { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_9uh5u65jx6847ygvwwu0, .table th.tinytable_css_9uh5u65jx6847ygvwwu0 { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_pn0xp3ouoycf8agjbhph" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_hxkeu94xsic25x6bzes9" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -3867,8 +3867,8 @@ color: #a52929;
 
     <script>
 
-      function styleCell_089qjmrh58ls1fi8se2g(i, j, css_id) {
-          var table = document.getElementById("tinytable_089qjmrh58ls1fi8se2g");
+      function styleCell_sgku9pjtg5a827mj2tsw(i, j, css_id) {
+          var table = document.getElementById("tinytable_sgku9pjtg5a827mj2tsw");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -3878,7 +3878,7 @@ color: #a52929;
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_089qjmrh58ls1fi8se2g');
+        var table = document.getElementById('tinytable_sgku9pjtg5a827mj2tsw');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -3886,8 +3886,8 @@ color: #a52929;
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_089qjmrh58ls1fi8se2g(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_089qjmrh58ls1fi8se2g");
+      function spanCell_sgku9pjtg5a827mj2tsw(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_sgku9pjtg5a827mj2tsw");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -3917,14 +3917,14 @@ color: #a52929;
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 6, j: 0 }, { i: 6, j: 1 }, { i: 6, j: 2 }, { i: 6, j: 3 },  ], css_id: 'tinytable_css_wssg05p7mqh53hh8hg0c',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 },  ], css_id: 'tinytable_css_drhjsyqhv3kfocpeyasj',}, 
+          { positions: [ { i: 6, j: 0 }, { i: 6, j: 1 }, { i: 6, j: 2 }, { i: 6, j: 3 },  ], css_id: 'tinytable_css_yeu6t994ftsvv7htbnn3',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 },  ], css_id: 'tinytable_css_gp2fjbuh35uw1a4wxqka',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_089qjmrh58ls1fi8se2g(cell.i, cell.j, group.css_id);
+                  styleCell_sgku9pjtg5a827mj2tsw(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -3932,11 +3932,11 @@ color: #a52929;
 
     <style>
 
-.table td.tinytable_css_wssg05p7mqh53hh8hg0c, .table th.tinytable_css_wssg05p7mqh53hh8hg0c { border-bottom: solid #d3d8dc 0.1em; }
-.table td.tinytable_css_drhjsyqhv3kfocpeyasj, .table th.tinytable_css_drhjsyqhv3kfocpeyasj { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_yeu6t994ftsvv7htbnn3, .table th.tinytable_css_yeu6t994ftsvv7htbnn3 { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_gp2fjbuh35uw1a4wxqka, .table th.tinytable_css_gp2fjbuh35uw1a4wxqka { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_089qjmrh58ls1fi8se2g" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_sgku9pjtg5a827mj2tsw" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -4022,8 +4022,8 @@ color: #a52929;
 
     <script>
 
-      function styleCell_rb19on6vo4bkd1ehynhh(i, j, css_id) {
-          var table = document.getElementById("tinytable_rb19on6vo4bkd1ehynhh");
+      function styleCell_bh2iwox0ab1fhwfaxb2m(i, j, css_id) {
+          var table = document.getElementById("tinytable_bh2iwox0ab1fhwfaxb2m");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -4033,7 +4033,7 @@ color: #a52929;
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_rb19on6vo4bkd1ehynhh');
+        var table = document.getElementById('tinytable_bh2iwox0ab1fhwfaxb2m');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -4041,8 +4041,8 @@ color: #a52929;
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_rb19on6vo4bkd1ehynhh(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_rb19on6vo4bkd1ehynhh");
+      function spanCell_bh2iwox0ab1fhwfaxb2m(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_bh2iwox0ab1fhwfaxb2m");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -4072,14 +4072,14 @@ color: #a52929;
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 12, j: 0 }, { i: 12, j: 1 }, { i: 12, j: 2 }, { i: 12, j: 3 }, { i: 12, j: 4 }, { i: 12, j: 5 },  ], css_id: 'tinytable_css_qydz0lkvy0lk0nd2bh7m',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 }, { i: 0, j: 5 },  ], css_id: 'tinytable_css_apdqlrisuje378qlpe4g',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 }, { i: 0, j: 5 },  ], css_id: 'tinytable_css_clb40sqnp0n6h2idej21',}, 
+          { positions: [ { i: 12, j: 0 }, { i: 12, j: 1 }, { i: 12, j: 2 }, { i: 12, j: 3 }, { i: 12, j: 4 }, { i: 12, j: 5 },  ], css_id: 'tinytable_css_ce89368vymxhdetymgo2',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_rb19on6vo4bkd1ehynhh(cell.i, cell.j, group.css_id);
+                  styleCell_bh2iwox0ab1fhwfaxb2m(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -4087,11 +4087,11 @@ color: #a52929;
 
     <style>
 
-.table td.tinytable_css_qydz0lkvy0lk0nd2bh7m, .table th.tinytable_css_qydz0lkvy0lk0nd2bh7m { border-bottom: solid #d3d8dc 0.1em; }
-.table td.tinytable_css_apdqlrisuje378qlpe4g, .table th.tinytable_css_apdqlrisuje378qlpe4g { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_clb40sqnp0n6h2idej21, .table th.tinytable_css_clb40sqnp0n6h2idej21 { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_ce89368vymxhdetymgo2, .table th.tinytable_css_ce89368vymxhdetymgo2 { border-bottom: solid #d3d8dc 0.1em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_rb19on6vo4bkd1ehynhh" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_bh2iwox0ab1fhwfaxb2m" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -4290,8 +4290,8 @@ color: #a52929;
 
     <script>
 
-      function styleCell_bc35hnln4dg0gwczftgo(i, j, css_id) {
-          var table = document.getElementById("tinytable_bc35hnln4dg0gwczftgo");
+      function styleCell_g8u04i09nuqgleqhkpix(i, j, css_id) {
+          var table = document.getElementById("tinytable_g8u04i09nuqgleqhkpix");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -4301,7 +4301,7 @@ color: #a52929;
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_bc35hnln4dg0gwczftgo');
+        var table = document.getElementById('tinytable_g8u04i09nuqgleqhkpix');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -4309,8 +4309,8 @@ color: #a52929;
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_bc35hnln4dg0gwczftgo(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_bc35hnln4dg0gwczftgo");
+      function spanCell_g8u04i09nuqgleqhkpix(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_g8u04i09nuqgleqhkpix");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -4340,14 +4340,14 @@ color: #a52929;
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 4, j: 0 }, { i: 4, j: 1 }, { i: 4, j: 2 }, { i: 4, j: 3 }, { i: 4, j: 4 }, { i: 4, j: 5 }, { i: 4, j: 6 }, { i: 4, j: 7 }, { i: 4, j: 8 },  ], css_id: 'tinytable_css_qvpr40laczjgy43ciw2a',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 }, { i: 0, j: 5 }, { i: 0, j: 6 }, { i: 0, j: 7 }, { i: 0, j: 8 },  ], css_id: 'tinytable_css_81mhcjo0qzzqoh4z6ffa',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 }, { i: 0, j: 5 }, { i: 0, j: 6 }, { i: 0, j: 7 }, { i: 0, j: 8 },  ], css_id: 'tinytable_css_waahl3423d3wc4glla3i',}, 
+          { positions: [ { i: 4, j: 0 }, { i: 4, j: 1 }, { i: 4, j: 2 }, { i: 4, j: 3 }, { i: 4, j: 4 }, { i: 4, j: 5 }, { i: 4, j: 6 }, { i: 4, j: 7 }, { i: 4, j: 8 },  ], css_id: 'tinytable_css_4h64cx2th08guz54oq5y',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_bc35hnln4dg0gwczftgo(cell.i, cell.j, group.css_id);
+                  styleCell_g8u04i09nuqgleqhkpix(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -4355,11 +4355,11 @@ color: #a52929;
 
     <style>
 
-.table td.tinytable_css_qvpr40laczjgy43ciw2a, .table th.tinytable_css_qvpr40laczjgy43ciw2a { border-bottom: solid #d3d8dc 0.1em; }
-.table td.tinytable_css_81mhcjo0qzzqoh4z6ffa, .table th.tinytable_css_81mhcjo0qzzqoh4z6ffa { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_waahl3423d3wc4glla3i, .table th.tinytable_css_waahl3423d3wc4glla3i { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_4h64cx2th08guz54oq5y, .table th.tinytable_css_4h64cx2th08guz54oq5y { border-bottom: solid #d3d8dc 0.1em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_bc35hnln4dg0gwczftgo" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_g8u04i09nuqgleqhkpix" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -4440,8 +4440,8 @@ color: #a52929;
 
     <script>
 
-      function styleCell_jt982ui8rs18gpgaqj3a(i, j, css_id) {
-          var table = document.getElementById("tinytable_jt982ui8rs18gpgaqj3a");
+      function styleCell_uqytdnkit3j8qyawa547(i, j, css_id) {
+          var table = document.getElementById("tinytable_uqytdnkit3j8qyawa547");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -4451,7 +4451,7 @@ color: #a52929;
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_jt982ui8rs18gpgaqj3a');
+        var table = document.getElementById('tinytable_uqytdnkit3j8qyawa547');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -4459,8 +4459,8 @@ color: #a52929;
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_jt982ui8rs18gpgaqj3a(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_jt982ui8rs18gpgaqj3a");
+      function spanCell_uqytdnkit3j8qyawa547(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_uqytdnkit3j8qyawa547");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -4490,14 +4490,14 @@ color: #a52929;
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 4, j: 0 }, { i: 4, j: 1 }, { i: 4, j: 2 }, { i: 4, j: 3 }, { i: 4, j: 4 }, { i: 4, j: 5 }, { i: 4, j: 6 },  ], css_id: 'tinytable_css_ekw6v11bac0kpqafts3r',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 }, { i: 0, j: 5 }, { i: 0, j: 6 },  ], css_id: 'tinytable_css_7kxngxe20p58fom1tpvy',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 }, { i: 0, j: 5 }, { i: 0, j: 6 },  ], css_id: 'tinytable_css_z3bqrfp8u2akq3o9y5sx',}, 
+          { positions: [ { i: 4, j: 0 }, { i: 4, j: 1 }, { i: 4, j: 2 }, { i: 4, j: 3 }, { i: 4, j: 4 }, { i: 4, j: 5 }, { i: 4, j: 6 },  ], css_id: 'tinytable_css_njgj05acvk4035dyou8o',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_jt982ui8rs18gpgaqj3a(cell.i, cell.j, group.css_id);
+                  styleCell_uqytdnkit3j8qyawa547(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -4505,11 +4505,11 @@ color: #a52929;
 
     <style>
 
-.table td.tinytable_css_ekw6v11bac0kpqafts3r, .table th.tinytable_css_ekw6v11bac0kpqafts3r { border-bottom: solid #d3d8dc 0.1em; }
-.table td.tinytable_css_7kxngxe20p58fom1tpvy, .table th.tinytable_css_7kxngxe20p58fom1tpvy { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_z3bqrfp8u2akq3o9y5sx, .table th.tinytable_css_z3bqrfp8u2akq3o9y5sx { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_njgj05acvk4035dyou8o, .table th.tinytable_css_njgj05acvk4035dyou8o { border-bottom: solid #d3d8dc 0.1em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_jt982ui8rs18gpgaqj3a" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_uqytdnkit3j8qyawa547" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -4599,8 +4599,8 @@ color: #a52929;
 
     <script>
 
-      function styleCell_bq0rwk3q0hirvysdp82f(i, j, css_id) {
-          var table = document.getElementById("tinytable_bq0rwk3q0hirvysdp82f");
+      function styleCell_a68ofvnnefl9vwo1jluj(i, j, css_id) {
+          var table = document.getElementById("tinytable_a68ofvnnefl9vwo1jluj");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -4610,7 +4610,7 @@ color: #a52929;
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_bq0rwk3q0hirvysdp82f');
+        var table = document.getElementById('tinytable_a68ofvnnefl9vwo1jluj');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -4618,8 +4618,8 @@ color: #a52929;
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_bq0rwk3q0hirvysdp82f(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_bq0rwk3q0hirvysdp82f");
+      function spanCell_a68ofvnnefl9vwo1jluj(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_a68ofvnnefl9vwo1jluj");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -4649,14 +4649,14 @@ color: #a52929;
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 2, j: 0 }, { i: 2, j: 1 }, { i: 2, j: 2 },  ], css_id: 'tinytable_css_tur9zhxmxzdklkwkk75x',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 },  ], css_id: 'tinytable_css_7g70og839jntk53lnadb',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 },  ], css_id: 'tinytable_css_u1ytkoi6ev9sufkszq4h',}, 
+          { positions: [ { i: 2, j: 0 }, { i: 2, j: 1 }, { i: 2, j: 2 },  ], css_id: 'tinytable_css_b6fx6hwkkdr5q6pl6xrb',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_bq0rwk3q0hirvysdp82f(cell.i, cell.j, group.css_id);
+                  styleCell_a68ofvnnefl9vwo1jluj(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -4664,11 +4664,11 @@ color: #a52929;
 
     <style>
 
-.table td.tinytable_css_tur9zhxmxzdklkwkk75x, .table th.tinytable_css_tur9zhxmxzdklkwkk75x { border-bottom: solid #d3d8dc 0.1em; }
-.table td.tinytable_css_7g70og839jntk53lnadb, .table th.tinytable_css_7g70og839jntk53lnadb { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_u1ytkoi6ev9sufkszq4h, .table th.tinytable_css_u1ytkoi6ev9sufkszq4h { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_b6fx6hwkkdr5q6pl6xrb, .table th.tinytable_css_b6fx6hwkkdr5q6pl6xrb { border-bottom: solid #d3d8dc 0.1em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_bq0rwk3q0hirvysdp82f" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_a68ofvnnefl9vwo1jluj" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -4730,8 +4730,8 @@ color: #a52929;
 
     <script>
 
-      function styleCell_9g8t4izeopzf8hyq3sjb(i, j, css_id) {
-          var table = document.getElementById("tinytable_9g8t4izeopzf8hyq3sjb");
+      function styleCell_022b7494grywtkgdjn9g(i, j, css_id) {
+          var table = document.getElementById("tinytable_022b7494grywtkgdjn9g");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -4741,7 +4741,7 @@ color: #a52929;
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_9g8t4izeopzf8hyq3sjb');
+        var table = document.getElementById('tinytable_022b7494grywtkgdjn9g');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -4749,8 +4749,8 @@ color: #a52929;
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_9g8t4izeopzf8hyq3sjb(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_9g8t4izeopzf8hyq3sjb");
+      function spanCell_022b7494grywtkgdjn9g(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_022b7494grywtkgdjn9g");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -4780,14 +4780,14 @@ color: #a52929;
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 },  ], css_id: 'tinytable_css_sf7141eolv4bs90j7eu7',}, 
-          { positions: [ { i: 1, j: 0 }, { i: 1, j: 1 },  ], css_id: 'tinytable_css_2vjxwd7omiobxqhwuxh1',}, 
+          { positions: [ { i: 1, j: 0 }, { i: 1, j: 1 },  ], css_id: 'tinytable_css_xeycdmy8wxo3y86mfgq0',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 },  ], css_id: 'tinytable_css_gw5jz8s7ieeqsz3kdcnd',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_9g8t4izeopzf8hyq3sjb(cell.i, cell.j, group.css_id);
+                  styleCell_022b7494grywtkgdjn9g(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -4795,11 +4795,11 @@ color: #a52929;
 
     <style>
 
-.table td.tinytable_css_sf7141eolv4bs90j7eu7, .table th.tinytable_css_sf7141eolv4bs90j7eu7 { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
-.table td.tinytable_css_2vjxwd7omiobxqhwuxh1, .table th.tinytable_css_2vjxwd7omiobxqhwuxh1 { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_xeycdmy8wxo3y86mfgq0, .table th.tinytable_css_xeycdmy8wxo3y86mfgq0 { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_gw5jz8s7ieeqsz3kdcnd, .table th.tinytable_css_gw5jz8s7ieeqsz3kdcnd { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_9g8t4izeopzf8hyq3sjb" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_022b7494grywtkgdjn9g" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -4828,8 +4828,8 @@ color: #a52929;
 
     <script>
 
-      function styleCell_myd63litcfl7498yd99g(i, j, css_id) {
-          var table = document.getElementById("tinytable_myd63litcfl7498yd99g");
+      function styleCell_vabnmj9i5yyotucb2w5l(i, j, css_id) {
+          var table = document.getElementById("tinytable_vabnmj9i5yyotucb2w5l");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -4839,7 +4839,7 @@ color: #a52929;
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_myd63litcfl7498yd99g');
+        var table = document.getElementById('tinytable_vabnmj9i5yyotucb2w5l');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -4847,8 +4847,8 @@ color: #a52929;
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_myd63litcfl7498yd99g(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_myd63litcfl7498yd99g");
+      function spanCell_vabnmj9i5yyotucb2w5l(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_vabnmj9i5yyotucb2w5l");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -4878,14 +4878,14 @@ color: #a52929;
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 3, j: 0 }, { i: 3, j: 1 }, { i: 3, j: 2 },  ], css_id: 'tinytable_css_qk5a6brtjsopa5etjk1f',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 },  ], css_id: 'tinytable_css_pgbbnojcz7jbo4ve6jij',}, 
+          { positions: [ { i: 3, j: 0 }, { i: 3, j: 1 }, { i: 3, j: 2 },  ], css_id: 'tinytable_css_txe3ep7ixmq1o1evdypl',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 },  ], css_id: 'tinytable_css_ksmic06fe390qlbqquin',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_myd63litcfl7498yd99g(cell.i, cell.j, group.css_id);
+                  styleCell_vabnmj9i5yyotucb2w5l(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -4893,11 +4893,11 @@ color: #a52929;
 
     <style>
 
-.table td.tinytable_css_qk5a6brtjsopa5etjk1f, .table th.tinytable_css_qk5a6brtjsopa5etjk1f { border-bottom: solid #d3d8dc 0.1em; }
-.table td.tinytable_css_pgbbnojcz7jbo4ve6jij, .table th.tinytable_css_pgbbnojcz7jbo4ve6jij { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_txe3ep7ixmq1o1evdypl, .table th.tinytable_css_txe3ep7ixmq1o1evdypl { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_ksmic06fe390qlbqquin, .table th.tinytable_css_ksmic06fe390qlbqquin { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_myd63litcfl7498yd99g" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_vabnmj9i5yyotucb2w5l" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -5114,8 +5114,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <script>
 
-      function styleCell_1pupgpsjouxmb3gji20q(i, j, css_id) {
-          var table = document.getElementById("tinytable_1pupgpsjouxmb3gji20q");
+      function styleCell_7sbi52993farggstwbno(i, j, css_id) {
+          var table = document.getElementById("tinytable_7sbi52993farggstwbno");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -5125,7 +5125,7 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_1pupgpsjouxmb3gji20q');
+        var table = document.getElementById('tinytable_7sbi52993farggstwbno');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -5133,8 +5133,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_1pupgpsjouxmb3gji20q(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_1pupgpsjouxmb3gji20q");
+      function spanCell_7sbi52993farggstwbno(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_7sbi52993farggstwbno");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -5164,14 +5164,14 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 },  ], css_id: 'tinytable_css_hnog2gg09x6cbgjcpytp',}, 
-          { positions: [ { i: 27, j: 0 }, { i: 27, j: 1 }, { i: 27, j: 2 }, { i: 27, j: 3 }, { i: 27, j: 4 },  ], css_id: 'tinytable_css_6r2vdxrfv7ve4o9mfce6',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 },  ], css_id: 'tinytable_css_m4cbk6i1rkf39nus1e1d',}, 
+          { positions: [ { i: 27, j: 0 }, { i: 27, j: 1 }, { i: 27, j: 2 }, { i: 27, j: 3 }, { i: 27, j: 4 },  ], css_id: 'tinytable_css_hwn7ubuci8s5uwa1rmkj',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_1pupgpsjouxmb3gji20q(cell.i, cell.j, group.css_id);
+                  styleCell_7sbi52993farggstwbno(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -5179,11 +5179,11 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <style>
 
-.table td.tinytable_css_hnog2gg09x6cbgjcpytp, .table th.tinytable_css_hnog2gg09x6cbgjcpytp { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
-.table td.tinytable_css_6r2vdxrfv7ve4o9mfce6, .table th.tinytable_css_6r2vdxrfv7ve4o9mfce6 { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_m4cbk6i1rkf39nus1e1d, .table th.tinytable_css_m4cbk6i1rkf39nus1e1d { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_hwn7ubuci8s5uwa1rmkj, .table th.tinytable_css_hwn7ubuci8s5uwa1rmkj { border-bottom: solid #d3d8dc 0.1em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_1pupgpsjouxmb3gji20q" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_7sbi52993farggstwbno" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -5408,8 +5408,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <script>
 
-      function styleCell_q2sueka866hzzenhjk8f(i, j, css_id) {
-          var table = document.getElementById("tinytable_q2sueka866hzzenhjk8f");
+      function styleCell_rawexvqp4y30j3jw1izt(i, j, css_id) {
+          var table = document.getElementById("tinytable_rawexvqp4y30j3jw1izt");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -5419,7 +5419,7 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_q2sueka866hzzenhjk8f');
+        var table = document.getElementById('tinytable_rawexvqp4y30j3jw1izt');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -5427,8 +5427,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_q2sueka866hzzenhjk8f(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_q2sueka866hzzenhjk8f");
+      function spanCell_rawexvqp4y30j3jw1izt(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_rawexvqp4y30j3jw1izt");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -5458,14 +5458,14 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 },  ], css_id: 'tinytable_css_c45wj7l6dyv4rtrm4tij',}, 
-          { positions: [ { i: 6, j: 0 }, { i: 6, j: 1 }, { i: 6, j: 2 },  ], css_id: 'tinytable_css_56ospsduwhy03saz4oko',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 },  ], css_id: 'tinytable_css_smv5w5zk6mpvhiquhcf6',}, 
+          { positions: [ { i: 6, j: 0 }, { i: 6, j: 1 }, { i: 6, j: 2 },  ], css_id: 'tinytable_css_nx6b1msbp9ytis2vhjzg',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_q2sueka866hzzenhjk8f(cell.i, cell.j, group.css_id);
+                  styleCell_rawexvqp4y30j3jw1izt(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -5473,11 +5473,11 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <style>
 
-.table td.tinytable_css_c45wj7l6dyv4rtrm4tij, .table th.tinytable_css_c45wj7l6dyv4rtrm4tij { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
-.table td.tinytable_css_56ospsduwhy03saz4oko, .table th.tinytable_css_56ospsduwhy03saz4oko { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_smv5w5zk6mpvhiquhcf6, .table th.tinytable_css_smv5w5zk6mpvhiquhcf6 { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_nx6b1msbp9ytis2vhjzg, .table th.tinytable_css_nx6b1msbp9ytis2vhjzg { border-bottom: solid #d3d8dc 0.1em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_q2sueka866hzzenhjk8f" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_rawexvqp4y30j3jw1izt" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -5555,8 +5555,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <script>
 
-      function styleCell_cf3tehkwc9cnavvvvlwz(i, j, css_id) {
-          var table = document.getElementById("tinytable_cf3tehkwc9cnavvvvlwz");
+      function styleCell_rxgeqidkd8xhcj0c90e3(i, j, css_id) {
+          var table = document.getElementById("tinytable_rxgeqidkd8xhcj0c90e3");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -5566,7 +5566,7 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_cf3tehkwc9cnavvvvlwz');
+        var table = document.getElementById('tinytable_rxgeqidkd8xhcj0c90e3');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -5574,8 +5574,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_cf3tehkwc9cnavvvvlwz(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_cf3tehkwc9cnavvvvlwz");
+      function spanCell_rxgeqidkd8xhcj0c90e3(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_rxgeqidkd8xhcj0c90e3");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -5605,14 +5605,14 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 262, j: 0 }, { i: 262, j: 1 }, { i: 262, j: 2 }, { i: 262, j: 3 }, { i: 262, j: 4 },  ], css_id: 'tinytable_css_frgk33bhs5w8riowqtwz',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 },  ], css_id: 'tinytable_css_c9nyh67d7gvu0e15d7jx',}, 
+          { positions: [ { i: 262, j: 0 }, { i: 262, j: 1 }, { i: 262, j: 2 }, { i: 262, j: 3 }, { i: 262, j: 4 },  ], css_id: 'tinytable_css_9ieoa15kmxbszm9e6fts',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 },  ], css_id: 'tinytable_css_7si1uizyehh9m6ayl42a',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_cf3tehkwc9cnavvvvlwz(cell.i, cell.j, group.css_id);
+                  styleCell_rxgeqidkd8xhcj0c90e3(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -5620,11 +5620,11 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <style>
 
-.table td.tinytable_css_frgk33bhs5w8riowqtwz, .table th.tinytable_css_frgk33bhs5w8riowqtwz { border-bottom: solid #d3d8dc 0.1em; }
-.table td.tinytable_css_c9nyh67d7gvu0e15d7jx, .table th.tinytable_css_c9nyh67d7gvu0e15d7jx { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_9ieoa15kmxbszm9e6fts, .table th.tinytable_css_9ieoa15kmxbszm9e6fts { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_7si1uizyehh9m6ayl42a, .table th.tinytable_css_7si1uizyehh9m6ayl42a { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_cf3tehkwc9cnavvvvlwz" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_rxgeqidkd8xhcj0c90e3" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -7510,8 +7510,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <script>
 
-      function styleCell_mwgmakh7ecwlz7sh7giz(i, j, css_id) {
-          var table = document.getElementById("tinytable_mwgmakh7ecwlz7sh7giz");
+      function styleCell_g9p0huqfqhji5wvld535(i, j, css_id) {
+          var table = document.getElementById("tinytable_g9p0huqfqhji5wvld535");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -7521,7 +7521,7 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_mwgmakh7ecwlz7sh7giz');
+        var table = document.getElementById('tinytable_g9p0huqfqhji5wvld535');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -7529,8 +7529,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_mwgmakh7ecwlz7sh7giz(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_mwgmakh7ecwlz7sh7giz");
+      function spanCell_g9p0huqfqhji5wvld535(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_g9p0huqfqhji5wvld535");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -7560,14 +7560,14 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 501, j: 0 }, { i: 501, j: 1 }, { i: 501, j: 2 }, { i: 501, j: 3 }, { i: 501, j: 4 },  ], css_id: 'tinytable_css_9cty0rqxfqvaqwyb0wwa',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 },  ], css_id: 'tinytable_css_3ub74802wflc41vqvb7d',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 },  ], css_id: 'tinytable_css_rrsmm129dpqapvkfh80z',}, 
+          { positions: [ { i: 501, j: 0 }, { i: 501, j: 1 }, { i: 501, j: 2 }, { i: 501, j: 3 }, { i: 501, j: 4 },  ], css_id: 'tinytable_css_1bdnbpu9vp0ticfp7k44',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_mwgmakh7ecwlz7sh7giz(cell.i, cell.j, group.css_id);
+                  styleCell_g9p0huqfqhji5wvld535(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -7575,11 +7575,11 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <style>
 
-.table td.tinytable_css_9cty0rqxfqvaqwyb0wwa, .table th.tinytable_css_9cty0rqxfqvaqwyb0wwa { border-bottom: solid #d3d8dc 0.1em; }
-.table td.tinytable_css_3ub74802wflc41vqvb7d, .table th.tinytable_css_3ub74802wflc41vqvb7d { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_rrsmm129dpqapvkfh80z, .table th.tinytable_css_rrsmm129dpqapvkfh80z { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_1bdnbpu9vp0ticfp7k44, .table th.tinytable_css_1bdnbpu9vp0ticfp7k44 { border-bottom: solid #d3d8dc 0.1em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_mwgmakh7ecwlz7sh7giz" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_g9p0huqfqhji5wvld535" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -11275,8 +11275,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <script>
 
-      function styleCell_5x2egzdrbom8314kgju9(i, j, css_id) {
-          var table = document.getElementById("tinytable_5x2egzdrbom8314kgju9");
+      function styleCell_tm5d34zmr7oyi683eaho(i, j, css_id) {
+          var table = document.getElementById("tinytable_tm5d34zmr7oyi683eaho");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -11286,7 +11286,7 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_5x2egzdrbom8314kgju9');
+        var table = document.getElementById('tinytable_tm5d34zmr7oyi683eaho');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -11294,8 +11294,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_5x2egzdrbom8314kgju9(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_5x2egzdrbom8314kgju9");
+      function spanCell_tm5d34zmr7oyi683eaho(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_tm5d34zmr7oyi683eaho");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -11325,14 +11325,14 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 18, j: 0 }, { i: 18, j: 1 }, { i: 18, j: 2 }, { i: 18, j: 3 },  ], css_id: 'tinytable_css_qbn62tsq1zzels2c0dr2',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 },  ], css_id: 'tinytable_css_9ub2yepzq7x4tj77l8eu',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 },  ], css_id: 'tinytable_css_r0o0en0g3fv96e3v426c',}, 
+          { positions: [ { i: 18, j: 0 }, { i: 18, j: 1 }, { i: 18, j: 2 }, { i: 18, j: 3 },  ], css_id: 'tinytable_css_oqxc5xnsw54j97p30wdl',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_5x2egzdrbom8314kgju9(cell.i, cell.j, group.css_id);
+                  styleCell_tm5d34zmr7oyi683eaho(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -11340,11 +11340,11 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <style>
 
-.table td.tinytable_css_qbn62tsq1zzels2c0dr2, .table th.tinytable_css_qbn62tsq1zzels2c0dr2 { border-bottom: solid #d3d8dc 0.1em; }
-.table td.tinytable_css_9ub2yepzq7x4tj77l8eu, .table th.tinytable_css_9ub2yepzq7x4tj77l8eu { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_r0o0en0g3fv96e3v426c, .table th.tinytable_css_r0o0en0g3fv96e3v426c { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_oqxc5xnsw54j97p30wdl, .table th.tinytable_css_oqxc5xnsw54j97p30wdl { border-bottom: solid #d3d8dc 0.1em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_5x2egzdrbom8314kgju9" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_tm5d34zmr7oyi683eaho" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -11506,8 +11506,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <script>
 
-      function styleCell_w4u92y55klpxdqyrdtv6(i, j, css_id) {
-          var table = document.getElementById("tinytable_w4u92y55klpxdqyrdtv6");
+      function styleCell_d7v91etkl951mj75b9vk(i, j, css_id) {
+          var table = document.getElementById("tinytable_d7v91etkl951mj75b9vk");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -11517,7 +11517,7 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_w4u92y55klpxdqyrdtv6');
+        var table = document.getElementById('tinytable_d7v91etkl951mj75b9vk');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -11525,8 +11525,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_w4u92y55klpxdqyrdtv6(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_w4u92y55klpxdqyrdtv6");
+      function spanCell_d7v91etkl951mj75b9vk(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_d7v91etkl951mj75b9vk");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -11556,14 +11556,14 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 }, { i: 0, j: 5 },  ], css_id: 'tinytable_css_xzt9bndi8ddo1v2lb0jx',}, 
-          { positions: [ { i: 26, j: 0 }, { i: 26, j: 1 }, { i: 26, j: 2 }, { i: 26, j: 3 }, { i: 26, j: 4 }, { i: 26, j: 5 },  ], css_id: 'tinytable_css_lmrmad3vmypg9qb9lsyz',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 }, { i: 0, j: 5 },  ], css_id: 'tinytable_css_nzfkp5ibwbxqrvds39dr',}, 
+          { positions: [ { i: 26, j: 0 }, { i: 26, j: 1 }, { i: 26, j: 2 }, { i: 26, j: 3 }, { i: 26, j: 4 }, { i: 26, j: 5 },  ], css_id: 'tinytable_css_5qojpzn3oi6b0ebsrh7j',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_w4u92y55klpxdqyrdtv6(cell.i, cell.j, group.css_id);
+                  styleCell_d7v91etkl951mj75b9vk(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -11571,11 +11571,11 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <style>
 
-.table td.tinytable_css_xzt9bndi8ddo1v2lb0jx, .table th.tinytable_css_xzt9bndi8ddo1v2lb0jx { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
-.table td.tinytable_css_lmrmad3vmypg9qb9lsyz, .table th.tinytable_css_lmrmad3vmypg9qb9lsyz { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_nzfkp5ibwbxqrvds39dr, .table th.tinytable_css_nzfkp5ibwbxqrvds39dr { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_5qojpzn3oi6b0ebsrh7j, .table th.tinytable_css_5qojpzn3oi6b0ebsrh7j { border-bottom: solid #d3d8dc 0.1em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_w4u92y55klpxdqyrdtv6" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_d7v91etkl951mj75b9vk" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -11901,8 +11901,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <script>
 
-      function styleCell_t6w28a1ebtf56b84akp1(i, j, css_id) {
-          var table = document.getElementById("tinytable_t6w28a1ebtf56b84akp1");
+      function styleCell_own5kabi81k7csuz9ky1(i, j, css_id) {
+          var table = document.getElementById("tinytable_own5kabi81k7csuz9ky1");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -11912,7 +11912,7 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_t6w28a1ebtf56b84akp1');
+        var table = document.getElementById('tinytable_own5kabi81k7csuz9ky1');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -11920,8 +11920,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_t6w28a1ebtf56b84akp1(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_t6w28a1ebtf56b84akp1");
+      function spanCell_own5kabi81k7csuz9ky1(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_own5kabi81k7csuz9ky1");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -11951,14 +11951,14 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 }, { i: 0, j: 5 }, { i: 0, j: 6 }, { i: 0, j: 7 }, { i: 0, j: 8 },  ], css_id: 'tinytable_css_dh59r5olz9ta7cc42jfv',}, 
-          { positions: [ { i: 4, j: 0 }, { i: 4, j: 1 }, { i: 4, j: 2 }, { i: 4, j: 3 }, { i: 4, j: 4 }, { i: 4, j: 5 }, { i: 4, j: 6 }, { i: 4, j: 7 }, { i: 4, j: 8 },  ], css_id: 'tinytable_css_8xf57p5amnzh1nazvejy',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 }, { i: 0, j: 5 }, { i: 0, j: 6 }, { i: 0, j: 7 }, { i: 0, j: 8 },  ], css_id: 'tinytable_css_z52vzg8ogvx58rgu8rm6',}, 
+          { positions: [ { i: 4, j: 0 }, { i: 4, j: 1 }, { i: 4, j: 2 }, { i: 4, j: 3 }, { i: 4, j: 4 }, { i: 4, j: 5 }, { i: 4, j: 6 }, { i: 4, j: 7 }, { i: 4, j: 8 },  ], css_id: 'tinytable_css_dnptdqqkbgm4z0g2vxrs',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_t6w28a1ebtf56b84akp1(cell.i, cell.j, group.css_id);
+                  styleCell_own5kabi81k7csuz9ky1(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -11966,11 +11966,11 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <style>
 
-.table td.tinytable_css_dh59r5olz9ta7cc42jfv, .table th.tinytable_css_dh59r5olz9ta7cc42jfv { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
-.table td.tinytable_css_8xf57p5amnzh1nazvejy, .table th.tinytable_css_8xf57p5amnzh1nazvejy { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_z52vzg8ogvx58rgu8rm6, .table th.tinytable_css_z52vzg8ogvx58rgu8rm6 { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_dnptdqqkbgm4z0g2vxrs, .table th.tinytable_css_dnptdqqkbgm4z0g2vxrs { border-bottom: solid #d3d8dc 0.1em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_t6w28a1ebtf56b84akp1" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_own5kabi81k7csuz9ky1" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -12053,8 +12053,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <script>
 
-      function styleCell_xmlvb7f87zvxlb4acxhu(i, j, css_id) {
-          var table = document.getElementById("tinytable_xmlvb7f87zvxlb4acxhu");
+      function styleCell_svcb67s6r9ygctq2zrfs(i, j, css_id) {
+          var table = document.getElementById("tinytable_svcb67s6r9ygctq2zrfs");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -12064,7 +12064,7 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_xmlvb7f87zvxlb4acxhu');
+        var table = document.getElementById('tinytable_svcb67s6r9ygctq2zrfs');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -12072,8 +12072,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_xmlvb7f87zvxlb4acxhu(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_xmlvb7f87zvxlb4acxhu");
+      function spanCell_svcb67s6r9ygctq2zrfs(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_svcb67s6r9ygctq2zrfs");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -12103,14 +12103,14 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 4, j: 0 }, { i: 4, j: 1 }, { i: 4, j: 2 }, { i: 4, j: 3 }, { i: 4, j: 4 }, { i: 4, j: 5 }, { i: 4, j: 6 },  ], css_id: 'tinytable_css_newxhbbd37guxw4fbt12',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 }, { i: 0, j: 5 }, { i: 0, j: 6 },  ], css_id: 'tinytable_css_2e5pmvgmnxed3ckvco95',}, 
+          { positions: [ { i: 4, j: 0 }, { i: 4, j: 1 }, { i: 4, j: 2 }, { i: 4, j: 3 }, { i: 4, j: 4 }, { i: 4, j: 5 }, { i: 4, j: 6 },  ], css_id: 'tinytable_css_qjotyyejttl3zt5c2mk8',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }, { i: 0, j: 3 }, { i: 0, j: 4 }, { i: 0, j: 5 }, { i: 0, j: 6 },  ], css_id: 'tinytable_css_1lij8hle7p84wxldsbhp',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_xmlvb7f87zvxlb4acxhu(cell.i, cell.j, group.css_id);
+                  styleCell_svcb67s6r9ygctq2zrfs(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -12118,11 +12118,11 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <style>
 
-.table td.tinytable_css_newxhbbd37guxw4fbt12, .table th.tinytable_css_newxhbbd37guxw4fbt12 { border-bottom: solid #d3d8dc 0.1em; }
-.table td.tinytable_css_2e5pmvgmnxed3ckvco95, .table th.tinytable_css_2e5pmvgmnxed3ckvco95 { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_qjotyyejttl3zt5c2mk8, .table th.tinytable_css_qjotyyejttl3zt5c2mk8 { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_1lij8hle7p84wxldsbhp, .table th.tinytable_css_1lij8hle7p84wxldsbhp { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_xmlvb7f87zvxlb4acxhu" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_svcb67s6r9ygctq2zrfs" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -12219,8 +12219,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <script>
 
-      function styleCell_9ph7ihoo794jhpntktq0(i, j, css_id) {
-          var table = document.getElementById("tinytable_9ph7ihoo794jhpntktq0");
+      function styleCell_j5dkpodrs06z9ngevzpm(i, j, css_id) {
+          var table = document.getElementById("tinytable_j5dkpodrs06z9ngevzpm");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -12230,7 +12230,7 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_9ph7ihoo794jhpntktq0');
+        var table = document.getElementById('tinytable_j5dkpodrs06z9ngevzpm');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -12238,8 +12238,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_9ph7ihoo794jhpntktq0(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_9ph7ihoo794jhpntktq0");
+      function spanCell_j5dkpodrs06z9ngevzpm(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_j5dkpodrs06z9ngevzpm");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -12269,14 +12269,14 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 14, j: 0 }, { i: 14, j: 1 }, { i: 14, j: 2 },  ], css_id: 'tinytable_css_smuxo21hh0udg9wq3ztc',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 },  ], css_id: 'tinytable_css_5e4nklehh9rnbaml6851',}, 
+          { positions: [ { i: 14, j: 0 }, { i: 14, j: 1 }, { i: 14, j: 2 },  ], css_id: 'tinytable_css_t44ip8m5vq6fzhrsg856',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 },  ], css_id: 'tinytable_css_o061e912am7ip4xwvo4n',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_9ph7ihoo794jhpntktq0(cell.i, cell.j, group.css_id);
+                  styleCell_j5dkpodrs06z9ngevzpm(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -12284,11 +12284,11 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <style>
 
-.table td.tinytable_css_smuxo21hh0udg9wq3ztc, .table th.tinytable_css_smuxo21hh0udg9wq3ztc { border-bottom: solid #d3d8dc 0.1em; }
-.table td.tinytable_css_5e4nklehh9rnbaml6851, .table th.tinytable_css_5e4nklehh9rnbaml6851 { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_t44ip8m5vq6fzhrsg856, .table th.tinytable_css_t44ip8m5vq6fzhrsg856 { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_o061e912am7ip4xwvo4n, .table th.tinytable_css_o061e912am7ip4xwvo4n { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_9ph7ihoo794jhpntktq0" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_j5dkpodrs06z9ngevzpm" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -12394,8 +12394,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <script>
 
-      function styleCell_8tqfg1x56vu2f12zxwik(i, j, css_id) {
-          var table = document.getElementById("tinytable_8tqfg1x56vu2f12zxwik");
+      function styleCell_a9moi0wtnrrusu8czjwf(i, j, css_id) {
+          var table = document.getElementById("tinytable_a9moi0wtnrrusu8czjwf");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -12405,7 +12405,7 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_8tqfg1x56vu2f12zxwik');
+        var table = document.getElementById('tinytable_a9moi0wtnrrusu8czjwf');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -12413,8 +12413,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_8tqfg1x56vu2f12zxwik(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_8tqfg1x56vu2f12zxwik");
+      function spanCell_a9moi0wtnrrusu8czjwf(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_a9moi0wtnrrusu8czjwf");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -12444,14 +12444,14 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 3, j: 0 }, { i: 3, j: 1 },  ], css_id: 'tinytable_css_a4zlpfd4pb0fqlz7nxfa',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 },  ], css_id: 'tinytable_css_928e4bvbcy49a0z7gbxa',}, 
+          { positions: [ { i: 3, j: 0 }, { i: 3, j: 1 },  ], css_id: 'tinytable_css_mtili9ix7rterbm5vp87',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 },  ], css_id: 'tinytable_css_alm57rd1vghnmv3bmiu5',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_8tqfg1x56vu2f12zxwik(cell.i, cell.j, group.css_id);
+                  styleCell_a9moi0wtnrrusu8czjwf(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -12459,11 +12459,11 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <style>
 
-.table td.tinytable_css_a4zlpfd4pb0fqlz7nxfa, .table th.tinytable_css_a4zlpfd4pb0fqlz7nxfa { border-bottom: solid #d3d8dc 0.1em; }
-.table td.tinytable_css_928e4bvbcy49a0z7gbxa, .table th.tinytable_css_928e4bvbcy49a0z7gbxa { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_mtili9ix7rterbm5vp87, .table th.tinytable_css_mtili9ix7rterbm5vp87 { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_alm57rd1vghnmv3bmiu5, .table th.tinytable_css_alm57rd1vghnmv3bmiu5 { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_8tqfg1x56vu2f12zxwik" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_a9moi0wtnrrusu8czjwf" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -12510,8 +12510,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <script>
 
-      function styleCell_h698y8ev4b6knd8cm05t(i, j, css_id) {
-          var table = document.getElementById("tinytable_h698y8ev4b6knd8cm05t");
+      function styleCell_jwfmxyq9uaz6qety08nw(i, j, css_id) {
+          var table = document.getElementById("tinytable_jwfmxyq9uaz6qety08nw");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -12521,7 +12521,7 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_h698y8ev4b6knd8cm05t');
+        var table = document.getElementById('tinytable_jwfmxyq9uaz6qety08nw');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -12529,8 +12529,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_h698y8ev4b6knd8cm05t(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_h698y8ev4b6knd8cm05t");
+      function spanCell_jwfmxyq9uaz6qety08nw(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_jwfmxyq9uaz6qety08nw");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -12560,14 +12560,14 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 },  ], css_id: 'tinytable_css_w9d1pp12blgl3of2wiu8',}, 
-          { positions: [ { i: 3, j: 0 }, { i: 3, j: 1 },  ], css_id: 'tinytable_css_ld1ovvxsfsuokzaqla80',}, 
+          { positions: [ { i: 3, j: 0 }, { i: 3, j: 1 },  ], css_id: 'tinytable_css_w0gkoss0uiz1uph4vvs1',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 },  ], css_id: 'tinytable_css_iz608h2rllsy8cwbc962',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_h698y8ev4b6knd8cm05t(cell.i, cell.j, group.css_id);
+                  styleCell_jwfmxyq9uaz6qety08nw(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -12575,11 +12575,11 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <style>
 
-.table td.tinytable_css_w9d1pp12blgl3of2wiu8, .table th.tinytable_css_w9d1pp12blgl3of2wiu8 { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
-.table td.tinytable_css_ld1ovvxsfsuokzaqla80, .table th.tinytable_css_ld1ovvxsfsuokzaqla80 { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_w0gkoss0uiz1uph4vvs1, .table th.tinytable_css_w0gkoss0uiz1uph4vvs1 { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_iz608h2rllsy8cwbc962, .table th.tinytable_css_iz608h2rllsy8cwbc962 { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_h698y8ev4b6knd8cm05t" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_jwfmxyq9uaz6qety08nw" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -12621,8 +12621,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <script>
 
-      function styleCell_fisrgr7sosgbj6ctzl9c(i, j, css_id) {
-          var table = document.getElementById("tinytable_fisrgr7sosgbj6ctzl9c");
+      function styleCell_r4vycu7q3qlmfk3x9hv3(i, j, css_id) {
+          var table = document.getElementById("tinytable_r4vycu7q3qlmfk3x9hv3");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -12632,7 +12632,7 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_fisrgr7sosgbj6ctzl9c');
+        var table = document.getElementById('tinytable_r4vycu7q3qlmfk3x9hv3');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -12640,8 +12640,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_fisrgr7sosgbj6ctzl9c(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_fisrgr7sosgbj6ctzl9c");
+      function spanCell_r4vycu7q3qlmfk3x9hv3(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_r4vycu7q3qlmfk3x9hv3");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -12671,14 +12671,14 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 },  ], css_id: 'tinytable_css_ct4jfov19jystggjttaz',}, 
-          { positions: [ { i: 1, j: 0 }, { i: 1, j: 1 },  ], css_id: 'tinytable_css_9fl9cv42qbf62vt87hve',}, 
+          { positions: [ { i: 1, j: 0 }, { i: 1, j: 1 },  ], css_id: 'tinytable_css_ysrjatz30f776cz71taj',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 },  ], css_id: 'tinytable_css_kv0knk46nd8dyoi5cxor',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_fisrgr7sosgbj6ctzl9c(cell.i, cell.j, group.css_id);
+                  styleCell_r4vycu7q3qlmfk3x9hv3(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -12686,11 +12686,11 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <style>
 
-.table td.tinytable_css_ct4jfov19jystggjttaz, .table th.tinytable_css_ct4jfov19jystggjttaz { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
-.table td.tinytable_css_9fl9cv42qbf62vt87hve, .table th.tinytable_css_9fl9cv42qbf62vt87hve { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_ysrjatz30f776cz71taj, .table th.tinytable_css_ysrjatz30f776cz71taj { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_kv0knk46nd8dyoi5cxor, .table th.tinytable_css_kv0knk46nd8dyoi5cxor { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_fisrgr7sosgbj6ctzl9c" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_r4vycu7q3qlmfk3x9hv3" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -12725,8 +12725,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <script>
 
-      function styleCell_b8qct5jarvo1mwtff50o(i, j, css_id) {
-          var table = document.getElementById("tinytable_b8qct5jarvo1mwtff50o");
+      function styleCell_t7tg3pi283e2yi4rcocc(i, j, css_id) {
+          var table = document.getElementById("tinytable_t7tg3pi283e2yi4rcocc");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -12736,7 +12736,7 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_b8qct5jarvo1mwtff50o');
+        var table = document.getElementById('tinytable_t7tg3pi283e2yi4rcocc');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -12744,8 +12744,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_b8qct5jarvo1mwtff50o(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_b8qct5jarvo1mwtff50o");
+      function spanCell_t7tg3pi283e2yi4rcocc(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_t7tg3pi283e2yi4rcocc");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -12775,14 +12775,14 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 },  ], css_id: 'tinytable_css_efs59cnc6ezz56k2t683',}, 
-          { positions: [ { i: 3, j: 0 }, { i: 3, j: 1 }, { i: 3, j: 2 },  ], css_id: 'tinytable_css_2bukxp1h1osk3ohyqqk5',}, 
+          { positions: [ { i: 3, j: 0 }, { i: 3, j: 1 }, { i: 3, j: 2 },  ], css_id: 'tinytable_css_lapdt5lm2zlhrto66wpk',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 },  ], css_id: 'tinytable_css_j016lorncuygp8id6ss9',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_b8qct5jarvo1mwtff50o(cell.i, cell.j, group.css_id);
+                  styleCell_t7tg3pi283e2yi4rcocc(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -12790,11 +12790,11 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <style>
 
-.table td.tinytable_css_efs59cnc6ezz56k2t683, .table th.tinytable_css_efs59cnc6ezz56k2t683 { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
-.table td.tinytable_css_2bukxp1h1osk3ohyqqk5, .table th.tinytable_css_2bukxp1h1osk3ohyqqk5 { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_lapdt5lm2zlhrto66wpk, .table th.tinytable_css_lapdt5lm2zlhrto66wpk { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_j016lorncuygp8id6ss9, .table th.tinytable_css_j016lorncuygp8id6ss9 { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_b8qct5jarvo1mwtff50o" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_t7tg3pi283e2yi4rcocc" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -12831,8 +12831,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <script>
 
-      function styleCell_du5g06crz7hvei5e1z4r(i, j, css_id) {
-          var table = document.getElementById("tinytable_du5g06crz7hvei5e1z4r");
+      function styleCell_3s1sasuq4a9ceobc50wu(i, j, css_id) {
+          var table = document.getElementById("tinytable_3s1sasuq4a9ceobc50wu");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -12842,7 +12842,7 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_du5g06crz7hvei5e1z4r');
+        var table = document.getElementById('tinytable_3s1sasuq4a9ceobc50wu');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -12850,8 +12850,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_du5g06crz7hvei5e1z4r(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_du5g06crz7hvei5e1z4r");
+      function spanCell_3s1sasuq4a9ceobc50wu(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_3s1sasuq4a9ceobc50wu");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -12881,14 +12881,14 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 0, j: 0 },  ], css_id: 'tinytable_css_ald689rfr53o6gnmsi3k',}, 
-          { positions: [ { i: 21, j: 0 },  ], css_id: 'tinytable_css_4kxd8o9lhafcepf86dhj',}, 
+          { positions: [ { i: 21, j: 0 },  ], css_id: 'tinytable_css_lo1m17loiypz4hoia6dk',}, 
+          { positions: [ { i: 0, j: 0 },  ], css_id: 'tinytable_css_9fil011j0eu4l16vn812',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_du5g06crz7hvei5e1z4r(cell.i, cell.j, group.css_id);
+                  styleCell_3s1sasuq4a9ceobc50wu(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -12896,11 +12896,11 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <style>
 
-.table td.tinytable_css_ald689rfr53o6gnmsi3k, .table th.tinytable_css_ald689rfr53o6gnmsi3k { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
-.table td.tinytable_css_4kxd8o9lhafcepf86dhj, .table th.tinytable_css_4kxd8o9lhafcepf86dhj { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_lo1m17loiypz4hoia6dk, .table th.tinytable_css_lo1m17loiypz4hoia6dk { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_9fil011j0eu4l16vn812, .table th.tinytable_css_9fil011j0eu4l16vn812 { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_du5g06crz7hvei5e1z4r" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_3s1sasuq4a9ceobc50wu" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
@@ -12991,8 +12991,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <script>
 
-      function styleCell_srmcyw293kooo9zzc6gr(i, j, css_id) {
-          var table = document.getElementById("tinytable_srmcyw293kooo9zzc6gr");
+      function styleCell_uhf4dd2dx8034fxi4x4f(i, j, css_id) {
+          var table = document.getElementById("tinytable_uhf4dd2dx8034fxi4x4f");
           var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
           if (cell) {
               console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
@@ -13002,7 +13002,7 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
           }
       }
       function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_srmcyw293kooo9zzc6gr');
+        var table = document.getElementById('tinytable_uhf4dd2dx8034fxi4x4f');
         var newRow = table.insertRow(i);
         var newCell = newRow.insertCell(0);
         newCell.setAttribute("colspan", colspan);
@@ -13010,8 +13010,8 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
         // this may be unsafe, but innerText does not interpret <br>
         newCell.innerHTML = content;
       }
-      function spanCell_srmcyw293kooo9zzc6gr(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_srmcyw293kooo9zzc6gr");
+      function spanCell_uhf4dd2dx8034fxi4x4f(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_uhf4dd2dx8034fxi4x4f");
         const targetRow = table.rows[i];
         const targetCell = targetRow.cells[j];
         for (let r = 0; r < rowspan; r++) {
@@ -13041,14 +13041,14 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: 39, j: 0 }, { i: 39, j: 1 },  ], css_id: 'tinytable_css_y3x0wu42e8ut881gj2od',}, 
-          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 },  ], css_id: 'tinytable_css_vqqibaycf7fpot9sg7gr',}, 
+          { positions: [ { i: 39, j: 0 }, { i: 39, j: 1 },  ], css_id: 'tinytable_css_tu6gsuemf1j11zv9begm',}, 
+          { positions: [ { i: 0, j: 0 }, { i: 0, j: 1 },  ], css_id: 'tinytable_css_mwtm7lp444ck66yfcfrh',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  styleCell_srmcyw293kooo9zzc6gr(cell.i, cell.j, group.css_id);
+                  styleCell_uhf4dd2dx8034fxi4x4f(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -13056,11 +13056,11 @@ Kruskal-Wallis chi-squared = 558.6, df = 16, p-value &lt; 2.2e-16</code></pre>
 
     <style>
 
-.table td.tinytable_css_y3x0wu42e8ut881gj2od, .table th.tinytable_css_y3x0wu42e8ut881gj2od { border-bottom: solid #d3d8dc 0.1em; }
-.table td.tinytable_css_vqqibaycf7fpot9sg7gr, .table th.tinytable_css_vqqibaycf7fpot9sg7gr { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+.table td.tinytable_css_tu6gsuemf1j11zv9begm, .table th.tinytable_css_tu6gsuemf1j11zv9begm { border-bottom: solid #d3d8dc 0.1em; }
+.table td.tinytable_css_mwtm7lp444ck66yfcfrh, .table th.tinytable_css_mwtm7lp444ck66yfcfrh { border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
 </style>
     <div class="container">
-      <table class="table table-borderless" id="tinytable_srmcyw293kooo9zzc6gr" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="table table-borderless" id="tinytable_uhf4dd2dx8034fxi4x4f" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         <thead>
         
               <tr>
